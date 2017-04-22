@@ -16,6 +16,18 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Threading;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -24,25 +36,13 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using Avalonia;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Indentation;
-using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Utils;
-using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.Threading;
 
 namespace AvaloniaEdit.Editing
 {
     /// <summary>
     /// Control that wraps a TextView and adds support for user input and the caret.
     /// </summary>
-    public class TextArea : TemplatedControl, ITextEditorComponent, IRoutedCommandBindable
+    public class TextArea : TemplatedControl, ITextEditorComponent, IRoutedCommandBindable, ILogicalScrollable
     {
         #region Constructor
         static TextArea()
@@ -563,12 +563,33 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public Caret Caret { get; }
 
+        public void ScrollToLine(int line, double borderSizePc = 0.5)
+        {
+            var offset = line - (Viewport.Height * borderSizePc);
+
+            if (offset < 0)
+            {
+                offset = 0;
+            }
+
+            this.BringIntoView(new Rect(1, offset, 0, 1));
+
+            offset = line + (Viewport.Height * borderSizePc);
+
+            if (offset >= 0)
+            {
+                this.BringIntoView(new Rect(1, offset, 0, 1));
+            }
+        }
+
         private void CaretPositionChanged(object sender, EventArgs e)
         {
             if (TextView == null)
                 return;
 
             TextView.HighlightedLine = Caret.Line;
+
+            ScrollToLine(Caret.Line);
         }
 
         public static readonly DirectProperty<TextArea, ObservableCollection<IControl>> LeftMarginsProperty
@@ -936,7 +957,103 @@ namespace AvaloniaEdit.Editing
             TextCopied?.Invoke(this, e);
         }
 
+        private int LogicalScrollSize
+        {
+            get
+            {
+                if (TextView?.Document != null)
+                {
+                    return TextView.Document.LineCount + 2;
+                }
+
+                return 2;
+            }
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var result = availableSize;
+
+            if (TextView?.Document != null)
+            {
+                result = new Size(availableSize.Width, LogicalScrollSize * TextView.DefaultLineHeight);
+
+                base.MeasureOverride(result);
+            }
+
+            return result;
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (TextView?.Document != null)
+            {
+                Viewport = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
+                Extent = new Size(finalSize.Width, LogicalScrollSize);
+
+                InvalidateScroll.Invoke();
+            }
+
+            var result = finalSize;
+            var arrangeOffset = new Vector(Math.Floor(Offset.X) * 10, Math.Floor(Offset.Y) * TextView.DefaultLineHeight);
+
+            result = base.ArrangeOverride(new Size(result.Width, result.Height + arrangeOffset.Y));
+
+            return result;
+        }
+
+        public bool BringIntoView(IControl target, Rect targetRect)
+        {
+            var result = false;
+
+            if (Offset.Y > targetRect.Y)
+            {
+                TextView?.SetScrollOffset(new Vector(targetRect.X, targetRect.Y * TextView.DefaultLineHeight));
+                result = true;
+            }
+
+            if (Offset.Y + Viewport.Height < targetRect.Y)
+            {
+                TextView?.SetScrollOffset(new Vector(targetRect.X, (targetRect.Y - Viewport.Height) * TextView.DefaultLineHeight));
+                result = true;
+            }
+
+            return result;
+        }
+
+        public IControl GetControlInDirection(NavigationDirection direction, IControl from)
+        {
+            return null;
+        }
+
         public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+
+        public bool IsLogicalScrollEnabled => true;
+
+        public Action InvalidateScroll { get; set; }
+
+        public Size ScrollSize => new Size(Bounds.Width, 2);
+
+        public Size PageScrollSize => throw new NotImplementedException();
+
+        public Size Extent { get; private set; }
+
+        private Vector _offset;
+        public Vector Offset
+        {
+            get
+            {
+                return _offset;
+            }
+            set
+            {
+                _offset = value;
+
+                TextView?.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
+            }
+        }
+
+        public Size Viewport { get; private set; }
     }
 
     /// <summary>
