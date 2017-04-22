@@ -1411,7 +1411,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public event EventHandler ScrollOffsetChanged;
 
-        private void SetScrollOffset(Vector vector)
+        internal void SetScrollOffset(Vector vector)
         {
             if (!_canHorizontallyScroll)
                 vector = new Vector(0, vector.Y);
