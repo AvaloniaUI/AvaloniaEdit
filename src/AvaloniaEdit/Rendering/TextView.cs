@@ -1387,7 +1387,7 @@ namespace AvaloniaEdit.Rendering
             //}
         }
 
-        private bool _canVerticallyScroll;
+        private bool _canVerticallyScroll = true;
 
         private bool _canHorizontallyScroll;
 
