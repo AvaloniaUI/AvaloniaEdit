@@ -1,5 +1,6 @@
 # AvaloniaEdit
 
+[![CodeFactor](https://www.codefactor.io/repository/github/danwalmsley/avaloniaedit/badge)](https://www.codefactor.io/repository/github/danwalmsley/avaloniaedit)
 [![Build status](https://ci.appveyor.com/api/projects/status/ny6p4tls6upv4005/branch/master?svg=true)](https://ci.appveyor.com/project/danwalmsley/avaloniaedit)
 [![Build Status](https://travis-ci.org/danwalmsley/AvaloniaEdit.svg?branch=master)](https://travis-ci.org/danwalmsley/AvaloniaEdit)
 
