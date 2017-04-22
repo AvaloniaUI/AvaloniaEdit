@@ -1,0 +1,121 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit">
+    <Styles.Resources>
+        <cc:CollapseIfSingleOverloadConverter x:Key="collapseIfSingleOverloadConverter" />
+
+        <DataTemplate x:Key="TextBlockTemplate">
+            <TextBlock TextWrapping="Wrap"
+                       Text="{TemplateBinding Path=Content}" />
+        </DataTemplate>
+    </Styles.Resources>
+
+    <Style Selector="cc|InsightWindow">
+        <Setter Property="SizeToContent"
+                Value="WidthAndHeight" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="Padding"
+                Value="1,1,3,1" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Left" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}"
+                        CornerRadius="2,2,2,2"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Background="{TemplateBinding Background}">
+                    <AdornerDecorator>
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </AdornerDecorator>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="cc|OverloadViewer /template/ Button">
+        <Setter Property="Background"
+                Value="LightGray" />
+        <Setter Property="Padding"
+                Value="2,2,2,2" />
+        <Setter Property="Width"
+                Value="9" />
+        <Setter Property="Height"
+                Value="9" />
+        <Setter Property="SnapsToDevicePixels"
+                Value="True" />
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="bd"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="2">
+                    <ContentPresenter Margin="{TemplateBinding Padding}"
+                                      Content="{TemplateBinding Content}" />
+                </Border>
+                <!--<ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver"
+                             Value="true">
+                        <Setter TargetName="bd"
+                                Property="Background"
+                                Value="LightBlue" />
+                    </Trigger>
+                </ControlTemplate.Triggers>-->
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="cc|OverloadViewer">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,4,0"
+                                Orientation="Horizontal"
+                                Visibility="{TemplateBinding Path=Provider.Count, Converter={StaticResource collapseIfSingleOverloadConverter}}">
+                        <Button Name="PART_UP">
+                            <Path Stroke="Black"
+                                  Fill="Black"
+                                  Data="M 0,0.866 L 1,0.866 L 0.5,0 Z"
+                                  Stretch="UniformToFill" />
+                        </Button>
+                        <TextBlock Margin="2,0,2,0"
+                                   Text="{TemplateBinding Path=Provider.CurrentIndexText}" />
+                        <Button Name="PART_DOWN">
+                            <Path Stroke="Black"
+                                  Fill="Black"
+                                  Data="M 0,0 L 1,0 L 0.5,0.866 Z"
+                                  Stretch="UniformToFill" />
+                        </Button>
+                    </StackPanel>
+                    <ContentPresenter Grid.Row="0"
+                                      Grid.Column="1"
+                                      Content="{TemplateBinding Path=Provider.CurrentHeader}" />
+                    <ContentPresenter Grid.Row="1"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="2"
+                                      Content="{TemplateBinding Path=Provider.CurrentContent}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

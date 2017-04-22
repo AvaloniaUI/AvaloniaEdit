@@ -1,0 +1,24 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit">
+
+    <Style Selector="cc|CompletionList">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <cc:CompletionListBox Name="PART_ListBox">
+                    <cc:CompletionListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{Binding Image}"
+                                       Width="16"
+                                       Height="16"
+                                       Margin="0,0,2,0" />
+                                <ContentPresenter Content="{Binding Content}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </cc:CompletionListBox.ItemTemplate>
+                </cc:CompletionListBox>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+</Styles>
