@@ -5,22 +5,52 @@ VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit", "AvaloniaEdit\AvaloniaEdit.csproj", "{4B04026F-BA96-4721-AE28-0970CB5806A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaEdit.Demo", "AvaloniaEdit.Demo\AvaloniaEdit.Demo.csproj", "{7FE6C9F6-0DC5-4817-BD0E-98ECFB4BF02B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit.Demo.NetCore", "AvaloniaEdit.Demo.NetCore\AvaloniaEdit.Demo.NetCore.csproj", "{226568F6-7B23-47BE-9D20-581F3598B32A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaEdit.Demo", "AvaloniaEdit.Demo\AvaloniaEdit.Demo.csproj", "{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaEdit.Demo.Net46", "AvaloniaEdit.Demo.Net46\AvaloniaEdit.Demo.Net46.csproj", "{7D155565-0022-4FC7-9B34-408DE35C6D23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4B04026F-BA96-4721-AE28-0970CB5806A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B04026F-BA96-4721-AE28-0970CB5806A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B04026F-BA96-4721-AE28-0970CB5806A9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4B04026F-BA96-4721-AE28-0970CB5806A9}.Debug|x64.Build.0 = Debug|Any CPU
 		{4B04026F-BA96-4721-AE28-0970CB5806A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B04026F-BA96-4721-AE28-0970CB5806A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FE6C9F6-0DC5-4817-BD0E-98ECFB4BF02B}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{7FE6C9F6-0DC5-4817-BD0E-98ECFB4BF02B}.Debug|Any CPU.Build.0 = Debug|x64
-		{7FE6C9F6-0DC5-4817-BD0E-98ECFB4BF02B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FE6C9F6-0DC5-4817-BD0E-98ECFB4BF02B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B04026F-BA96-4721-AE28-0970CB5806A9}.Release|x64.ActiveCfg = Release|Any CPU
+		{4B04026F-BA96-4721-AE28-0970CB5806A9}.Release|x64.Build.0 = Release|Any CPU
+		{226568F6-7B23-47BE-9D20-581F3598B32A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226568F6-7B23-47BE-9D20-581F3598B32A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226568F6-7B23-47BE-9D20-581F3598B32A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{226568F6-7B23-47BE-9D20-581F3598B32A}.Debug|x64.Build.0 = Debug|Any CPU
+		{226568F6-7B23-47BE-9D20-581F3598B32A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226568F6-7B23-47BE-9D20-581F3598B32A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{226568F6-7B23-47BE-9D20-581F3598B32A}.Release|x64.ActiveCfg = Release|Any CPU
+		{226568F6-7B23-47BE-9D20-581F3598B32A}.Release|x64.Build.0 = Release|Any CPU
+		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Debug|x64.Build.0 = Debug|Any CPU
+		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|x64.ActiveCfg = Release|Any CPU
+		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|x64.Build.0 = Release|Any CPU
+		{7D155565-0022-4FC7-9B34-408DE35C6D23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D155565-0022-4FC7-9B34-408DE35C6D23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D155565-0022-4FC7-9B34-408DE35C6D23}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7D155565-0022-4FC7-9B34-408DE35C6D23}.Debug|x64.Build.0 = Debug|Any CPU
+		{7D155565-0022-4FC7-9B34-408DE35C6D23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D155565-0022-4FC7-9B34-408DE35C6D23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D155565-0022-4FC7-9B34-408DE35C6D23}.Release|x64.ActiveCfg = Release|Any CPU
+		{7D155565-0022-4FC7-9B34-408DE35C6D23}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
