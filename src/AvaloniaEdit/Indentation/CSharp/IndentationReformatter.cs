@@ -179,8 +179,7 @@ namespace AvaloniaEdit.Indentation.CSharp
                     return;
                 indent.Append(_block.InnerIndent);
                 indent.Append(Repeat(set.IndentString, _block.OneLineBlock));
-                if (_block.Continuation)
-                    indent.Append(set.IndentString);
+                
                 if (doc.Text != indent.ToString())
                     doc.Text = indent.ToString();
                 return;
