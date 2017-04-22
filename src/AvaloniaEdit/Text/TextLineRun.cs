@@ -7,8 +7,8 @@ namespace AvaloniaEdit.Text
     internal sealed class TextLineRun
     {
         private const string NewlineString = "\r\n";
-        private const double BaselineFactor = 0.1;
-        private const double HeightFactor = 1.2;
+        internal const double BaselineFactor = 0.1;
+        internal const double HeightFactor = 1.2;
 
         private FormattedText _formattedText;
         private Size _formattedTextSize;
