@@ -36,13 +36,15 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using AvaloniaEdit.Text;
+using Avalonia.Layout;
 
 namespace AvaloniaEdit.Editing
 {
     /// <summary>
     /// Control that wraps a TextView and adds support for user input and the caret.
     /// </summary>
-    public class TextArea : TemplatedControl, ITextEditorComponent, IRoutedCommandBindable
+    public class TextArea : TemplatedControl, ITextEditorComponent, IRoutedCommandBindable, ILogicalScrollable
     {
         #region Constructor
         static TextArea()
@@ -52,6 +54,9 @@ namespace AvaloniaEdit.Editing
 
             DocumentProperty.Changed.Subscribe(OnDocumentChanged);
             OptionsProperty.Changed.Subscribe(OnOptionsChanged);
+
+            AffectsArrange(OffsetProperty);
+            AffectsRender(OffsetProperty);
         }
 
         /// <summary>
@@ -90,6 +95,7 @@ namespace AvaloniaEdit.Editing
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             base.OnTemplateApplied(e);
+
             if (e.NameScope.Find("PART_CP") is ContentPresenter contentPresenter)
             {
                 contentPresenter.Content = TextView;
@@ -97,6 +103,15 @@ namespace AvaloniaEdit.Editing
         }
 
         #endregion
+
+        /// <summary>
+        ///     Defines the <see cref="Offset" /> property.
+        /// </summary>
+        public static readonly DirectProperty<TextArea, Vector> OffsetProperty =
+            AvaloniaProperty.RegisterDirect<TextArea, Vector>(
+                nameof(Offset),
+                o => o.Offset,
+                (o, v) => o.Offset = v);
 
         #region InputHandler management
         /// <summary>
@@ -563,12 +578,33 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public Caret Caret { get; }
 
+        public void ScrollToLine(int line, double borderSizePc = 0.5)
+        {
+            var offset = line - (Viewport.Height * borderSizePc);
+
+            if (offset < 0)
+            {
+                offset = 0;
+            }
+
+            this.BringIntoView(new Rect(1, offset, 0, 1));
+
+            offset = line + (Viewport.Height * borderSizePc);
+
+            if (offset >= 0)
+            {
+                this.BringIntoView(new Rect(1, offset, 0, 1));
+            }
+        }
+
         private void CaretPositionChanged(object sender, EventArgs e)
         {
             if (TextView == null)
                 return;
 
             TextView.HighlightedLine = Caret.Line;
+
+            ScrollToLine(Caret.Line);
         }
 
         public static readonly DirectProperty<TextArea, ObservableCollection<IControl>> LeftMarginsProperty
@@ -812,7 +848,7 @@ namespace AvaloniaEdit.Editing
         #endregion
 
         #region OnKeyDown/OnKeyUp
-        
+
         // Make life easier for text editor extensions that use a different cursor based on the pressed modifier keys.
         /// <inheritdoc/>
         protected override void OnKeyDown(KeyEventArgs e)
@@ -936,7 +972,104 @@ namespace AvaloniaEdit.Editing
             TextCopied?.Invoke(this, e);
         }
 
+        private int LogicalScrollSize
+        {
+            get
+            {
+                if (TextView?.Document != null)
+                {
+                    return TextView.Document.LineCount + 2;
+                }
+
+                return 2;
+            }
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var result = availableSize;
+
+            if (TextView?.Document != null)
+            {
+                result = new Size(availableSize.Width, LogicalScrollSize * TextView.DefaultLineHeight);
+
+                base.MeasureOverride(result);
+            }
+
+            return result;
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (TextView?.Document != null)
+            {
+                Viewport = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
+                Extent = new Size(finalSize.Width, LogicalScrollSize);
+
+                InvalidateScroll.Invoke();
+            }
+
+            return base.ArrangeOverride(finalSize);
+        }
+
+        public bool BringIntoView(IControl target, Rect targetRect)
+        {
+            var result = false;
+
+            var offset = Offset;
+            if (Offset.Y > targetRect.Y)
+            {
+                offset = Offset.WithY(targetRect.Y);
+                result = true;
+            }
+
+            if (Offset.Y + Viewport.Height < targetRect.Y)
+            {
+                offset = Offset.WithY(targetRect.Y - Viewport.Height);
+                result = true;
+            }
+
+            if (result)
+            {
+                Offset = offset;
+            }
+
+            return result;
+        }
+
+        public IControl GetControlInDirection(NavigationDirection direction, IControl from)
+        {
+            return null;
+        }
+
         public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+
+        public bool IsLogicalScrollEnabled => true;
+
+        public Action InvalidateScroll { get; set; }
+
+        public Size ScrollSize => new Size(Bounds.Width, 2);
+
+        public Size PageScrollSize => throw new NotImplementedException();
+
+        public Size Extent { get; private set; }
+
+        private Vector _offset;
+        public Vector Offset
+        {
+            get
+            {
+                return _offset;
+            }
+            set
+            {
+                TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
+
+                SetAndRaise(OffsetProperty, ref _offset, value);
+            }
+        }
+
+        public Size Viewport { get; private set; }
     }
 
     /// <summary>
