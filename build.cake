@@ -12,12 +12,12 @@ var zipRootDir = artifactsDir.Combine("zip");
 
 var fileZipSuffix = ".zip";
 
-var buildDirs = GetDirectories("./src/AvalonStudio/**/bin/**") + 
-    GetDirectories("./src/AvalonStudio/**/obj/**") +     
+var buildDirs = GetDirectories("./src/**/bin/**") + 
+    GetDirectories("./src/**/obj/**") +     
     GetDirectories("./artifacts/**/zip/**");
 
 var netCoreAppsRoot= "./src/";
-var netCoreApps = new string[] { "AvaloniaEdit.Demo.NetCore" };
+var netCoreApps = new string[] { "AvaloniaEdit.Demo" };
 var netCoreProjects = netCoreApps.Select(name => 
     new {
         Path = string.Format("{0}/{1}", netCoreAppsRoot, name),
