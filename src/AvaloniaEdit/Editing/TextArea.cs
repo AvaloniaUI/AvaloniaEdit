@@ -46,6 +46,11 @@ namespace AvaloniaEdit.Editing
     /// </summary>
     public class TextArea : TemplatedControl, ITextEditorComponent, IRoutedCommandBindable, ILogicalScrollable
     {
+        /// <summary>
+        /// This is the extra scrolling space that occurs after the last line.
+        /// </summary>
+        private const int AdditionalVerticalScrollAmount = 2;
+
         #region Constructor
         static TextArea()
         {
@@ -978,10 +983,10 @@ namespace AvaloniaEdit.Editing
             {
                 if (TextView?.Document != null)
                 {
-                    return TextView.Document.LineCount + 2;
+                    return TextView.Document.LineCount + AdditionalVerticalScrollAmount;
                 }
 
-                return 2;
+                return AdditionalVerticalScrollAmount;
             }
         }
 
