@@ -30,6 +30,7 @@ namespace AvaloniaEdit.Demo
             var lineNumberMargin = new LineNumberMargin { Margin = new Thickness(0, 0, 10, 0) };
             TextBlock.SetForeground(lineNumberMargin, Brushes.Gray);
             _textEditor.TextArea.LeftMargins.Add(lineNumberMargin);
+            _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy( );
         }
 
         private void InitializeComponent()
