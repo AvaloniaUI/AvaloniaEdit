@@ -56,7 +56,7 @@ namespace AvaloniaEdit.Editing
             OptionsProperty.Changed.Subscribe(OnOptionsChanged);
 
             AffectsArrange(OffsetProperty);
-            AffectsRender(OffsetProperty);            
+            AffectsRender(OffsetProperty);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace AvaloniaEdit.Editing
             LeftMargins.CollectionChanged += LeftMargins_CollectionChanged;
 
             DefaultInputHandler = new TextAreaDefaultInputHandler(this);
-            ActiveInputHandler = DefaultInputHandler;            
+            ActiveInputHandler = DefaultInputHandler;
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
@@ -1018,20 +1018,20 @@ namespace AvaloniaEdit.Editing
 
             var offset = Offset;
             if (Offset.Y > targetRect.Y)
-            {                
-                offset = Offset.WithY(targetRect.Y);                               
+            {
+                offset = Offset.WithY(targetRect.Y);
                 result = true;
             }
 
             if (Offset.Y + Viewport.Height < targetRect.Y)
-            {                
+            {
                 offset = Offset.WithY(targetRect.Y - Viewport.Height);
                 result = true;
             }
 
-            if(result)
+            if (result)
             {
-                Offset = offset;      
+                Offset = offset;
             }
 
             return result;
@@ -1053,7 +1053,7 @@ namespace AvaloniaEdit.Editing
         public Size PageScrollSize => throw new NotImplementedException();
 
         public Size Extent { get; private set; }
-        
+
         private Vector _offset;
         public Vector Offset
         {
@@ -1064,7 +1064,7 @@ namespace AvaloniaEdit.Editing
             set
             {
                 TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
-                
+
                 SetAndRaise(OffsetProperty, ref _offset, value);
             }
         }
