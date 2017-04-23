@@ -46,6 +46,15 @@ namespace AvaloniaEdit.Editing
     /// </summary>
     public class TextArea : TemplatedControl, ITextEditorComponent, IRoutedCommandBindable, ILogicalScrollable
     {
+        /// <summary>
+        /// This is the extra scrolling space that occurs after the last line.
+        /// </summary>
+        private const int AdditionalVerticalScrollAmount = 2;
+
+        private Size _viewPort;
+        private Size _extent;
+        private Vector _offset;
+
         #region Constructor
         static TextArea()
         {
@@ -109,9 +118,9 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public static readonly DirectProperty<TextArea, Vector> OffsetProperty =
             AvaloniaProperty.RegisterDirect<TextArea, Vector>(
-                nameof(Offset),
-                o => o.Offset,
-                (o, v) => o.Offset = v);
+                nameof(IScrollable.Offset),
+                o => (o as IScrollable).Offset,
+                (o, v) => (o as IScrollable).Offset = v);
 
         #region InputHandler management
         /// <summary>
@@ -580,7 +589,7 @@ namespace AvaloniaEdit.Editing
 
         public void ScrollToLine(int line, double borderSizePc = 0.5)
         {
-            var offset = line - (Viewport.Height * borderSizePc);
+            var offset = line - (_viewPort.Height * borderSizePc);
 
             if (offset < 0)
             {
@@ -589,7 +598,7 @@ namespace AvaloniaEdit.Editing
 
             this.BringIntoView(new Rect(1, offset, 0, 1));
 
-            offset = line + (Viewport.Height * borderSizePc);
+            offset = line + (_viewPort.Height * borderSizePc);
 
             if (offset >= 0)
             {
@@ -978,10 +987,10 @@ namespace AvaloniaEdit.Editing
             {
                 if (TextView?.Document != null)
                 {
-                    return TextView.Document.LineCount + 2;
+                    return TextView.Document.LineCount + AdditionalVerticalScrollAmount;
                 }
 
-                return 2;
+                return AdditionalVerticalScrollAmount;
             }
         }
 
@@ -1003,10 +1012,10 @@ namespace AvaloniaEdit.Editing
         {
             if (TextView?.Document != null)
             {
-                Viewport = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
-                Extent = new Size(finalSize.Width, LogicalScrollSize);
+                _viewPort = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
+                _extent = new Size(finalSize.Width, LogicalScrollSize);
 
-                InvalidateScroll.Invoke();
+                (this as ILogicalScrollable).InvalidateScroll?.Invoke();
             }
 
             return base.ArrangeOverride(finalSize);
@@ -1016,22 +1025,22 @@ namespace AvaloniaEdit.Editing
         {
             var result = false;
 
-            var offset = Offset;
-            if (Offset.Y > targetRect.Y)
+            var offset = _offset;
+            if (_offset.Y > targetRect.Y)
             {
-                offset = Offset.WithY(targetRect.Y);
+                offset = _offset.WithY(targetRect.Y);
                 result = true;
             }
 
-            if (Offset.Y + Viewport.Height < targetRect.Y)
+            if (_offset.Y + _viewPort.Height < targetRect.Y)
             {
-                offset = Offset.WithY(targetRect.Y - Viewport.Height);
+                offset = _offset.WithY(targetRect.Y - _viewPort.Height);
                 result = true;
             }
 
             if (result)
             {
-                Offset = offset;
+                (this as IScrollable).Offset = offset;
             }
 
             return result;
@@ -1044,18 +1053,17 @@ namespace AvaloniaEdit.Editing
 
         public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
 
-        public bool IsLogicalScrollEnabled => true;
+        bool ILogicalScrollable.IsLogicalScrollEnabled => true;
 
-        public Action InvalidateScroll { get; set; }
+        Action ILogicalScrollable.InvalidateScroll { get; set; }
 
-        public Size ScrollSize => new Size(Bounds.Width, 2);
+        Size ILogicalScrollable.ScrollSize => new Size(Bounds.Width, 2);
 
-        public Size PageScrollSize => throw new NotImplementedException();
+        Size ILogicalScrollable.PageScrollSize => throw new NotImplementedException();
 
-        public Size Extent { get; private set; }
+        Size IScrollable.Extent => _extent;
 
-        private Vector _offset;
-        public Vector Offset
+        Vector IScrollable.Offset
         {
             get
             {
@@ -1069,7 +1077,7 @@ namespace AvaloniaEdit.Editing
             }
         }
 
-        public Size Viewport { get; private set; }
+        Size IScrollable.Viewport => _viewPort;
     }
 
     /// <summary>
