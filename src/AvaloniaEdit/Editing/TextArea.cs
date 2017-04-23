@@ -1049,13 +1049,25 @@ namespace AvaloniaEdit.Editing
 
         public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
 
-        public bool IsLogicalScrollEnabled => true;
+        public bool IsLogicalScrollEnabled { get; } = true;
 
         public Action InvalidateScroll { get; set; }
 
-        public Size ScrollSize => new Size(Bounds.Width, 2);
+        public Size ScrollSize
+        {
+            get
+            {
+                return new Size(Bounds.Width, 2);
+            }
+        }
 
-        public Size PageScrollSize => throw new NotImplementedException();
+        public Size PageScrollSize
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public Size Extent { get; private set; }
 
