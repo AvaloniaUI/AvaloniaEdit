@@ -1,8 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.1</TargetFramework>
+    <OutputType>exe</OutputType>
+    <TargetFrameworks>netcoreapp1.1;net461</TargetFrameworks>
+    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net45</PackageTargetFallback>
+    <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;osx.10.12-x64</RuntimeIdentifiers>
     <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build2959-alpha" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.4.1-build2959-alpha" />
+    <PackageReference Include="SkiaSharp" Version="1.57.0" />
   </ItemGroup>
 
   <ItemGroup>
