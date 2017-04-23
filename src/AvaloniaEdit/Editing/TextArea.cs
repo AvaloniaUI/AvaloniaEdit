@@ -1063,14 +1063,8 @@ namespace AvaloniaEdit.Editing
             }
             set
             {
+                TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
                 
-
-                Debug.WriteLine($"Setting OffsetY: {value.Y}");
-                //Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
-                }//);
-
                 SetAndRaise(OffsetProperty, ref _offset, value);
             }
         }
