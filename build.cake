@@ -34,7 +34,7 @@ if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
         version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER");
 }
 
-var MainRepo = "danwalmsley/AvaloniaEdit";
+var MainRepo = "AvaloniaUI/AvaloniaEdit";
 var MasterBranch = "master";
 var ReleasePlatform = "Any CPU";
 var ReleaseConfiguration = "Release";
