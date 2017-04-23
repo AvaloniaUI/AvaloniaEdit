@@ -16,18 +16,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.Threading;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Indentation;
-using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -36,6 +24,20 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using Avalonia;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Utils;
+using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Threading;
+using AvaloniaEdit.Text;
+using Avalonia.Layout;
 
 namespace AvaloniaEdit.Editing
 {
@@ -52,6 +54,9 @@ namespace AvaloniaEdit.Editing
 
             DocumentProperty.Changed.Subscribe(OnDocumentChanged);
             OptionsProperty.Changed.Subscribe(OnOptionsChanged);
+
+            AffectsArrange(OffsetProperty);
+            AffectsRender(OffsetProperty);            
         }
 
         /// <summary>
@@ -84,12 +89,13 @@ namespace AvaloniaEdit.Editing
             LeftMargins.CollectionChanged += LeftMargins_CollectionChanged;
 
             DefaultInputHandler = new TextAreaDefaultInputHandler(this);
-            ActiveInputHandler = DefaultInputHandler;
+            ActiveInputHandler = DefaultInputHandler;            
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             base.OnTemplateApplied(e);
+
             if (e.NameScope.Find("PART_CP") is ContentPresenter contentPresenter)
             {
                 contentPresenter.Content = TextView;
@@ -97,6 +103,15 @@ namespace AvaloniaEdit.Editing
         }
 
         #endregion
+
+        /// <summary>
+        ///     Defines the <see cref="Offset" /> property.
+        /// </summary>
+        public static readonly DirectProperty<TextArea, Vector> OffsetProperty =
+            AvaloniaProperty.RegisterDirect<TextArea, Vector>(
+                nameof(Offset),
+                o => o.Offset,
+                (o, v) => o.Offset = v);
 
         #region InputHandler management
         /// <summary>
@@ -833,7 +848,7 @@ namespace AvaloniaEdit.Editing
         #endregion
 
         #region OnKeyDown/OnKeyUp
-        
+
         // Make life easier for text editor extensions that use a different cursor based on the pressed modifier keys.
         /// <inheritdoc/>
         protected override void OnKeyDown(KeyEventArgs e)
@@ -994,28 +1009,29 @@ namespace AvaloniaEdit.Editing
                 InvalidateScroll.Invoke();
             }
 
-            var result = finalSize;
-            var arrangeOffset = new Vector(Math.Floor(Offset.X) * 10, Math.Floor(Offset.Y) * TextView.DefaultLineHeight);
-
-            result = base.ArrangeOverride(new Size(result.Width, result.Height + arrangeOffset.Y));
-
-            return result;
+            return base.ArrangeOverride(finalSize);
         }
 
         public bool BringIntoView(IControl target, Rect targetRect)
         {
             var result = false;
 
+            var offset = Offset;
             if (Offset.Y > targetRect.Y)
-            {
-                TextView?.SetScrollOffset(new Vector(targetRect.X, targetRect.Y * TextView.DefaultLineHeight));
+            {                
+                offset = Offset.WithY(targetRect.Y);                               
                 result = true;
             }
 
             if (Offset.Y + Viewport.Height < targetRect.Y)
-            {
-                TextView?.SetScrollOffset(new Vector(targetRect.X, (targetRect.Y - Viewport.Height) * TextView.DefaultLineHeight));
+            {                
+                offset = Offset.WithY(targetRect.Y - Viewport.Height);
                 result = true;
+            }
+
+            if(result)
+            {
+                Offset = offset;      
             }
 
             return result;
@@ -1037,7 +1053,7 @@ namespace AvaloniaEdit.Editing
         public Size PageScrollSize => throw new NotImplementedException();
 
         public Size Extent { get; private set; }
-
+        
         private Vector _offset;
         public Vector Offset
         {
@@ -1047,9 +1063,15 @@ namespace AvaloniaEdit.Editing
             }
             set
             {
-                _offset = value;
+                
 
-                TextView?.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
+                Debug.WriteLine($"Setting OffsetY: {value.Y}");
+                //Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
+                }//);
+
+                SetAndRaise(OffsetProperty, ref _offset, value);
             }
         }
 
