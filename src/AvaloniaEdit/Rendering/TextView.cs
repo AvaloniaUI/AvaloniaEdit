@@ -1387,7 +1387,7 @@ namespace AvaloniaEdit.Rendering
             //}
         }
 
-        private bool _canVerticallyScroll;
+        private bool _canVerticallyScroll = true;
 
         private bool _canHorizontallyScroll;
 
@@ -1411,7 +1411,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public event EventHandler ScrollOffsetChanged;
 
-        private void SetScrollOffset(Vector vector)
+        internal void SetScrollOffset(Vector vector)
         {
             if (!_canHorizontallyScroll)
                 vector = new Vector(0, vector.Y);
