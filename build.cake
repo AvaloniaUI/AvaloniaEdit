@@ -79,7 +79,8 @@ Task("Build-NetCore")
     {
         Information("Building: {0}", project.Name);
         DotNetCoreBuild(project.Path, new DotNetCoreBuildSettings {
-            Configuration = configuration
+            Configuration = configuration,
+            Framework = "netcoreapp2.0"
         });
     }
 });
