@@ -375,11 +375,11 @@ namespace AvaloniaEdit.Rendering
                         case VisualYPosition.LineBottom:
                             return pos + tl.Height;
                         case VisualYPosition.TextTop:
-                            return pos + tl.Baseline - (_textView.DefaultBaseline * TextLineRun.BaselineFactor);
+                            return pos + tl.Baseline - _textView.DefaultBaseline;
                         case VisualYPosition.TextBottom:
-                            return pos + tl.Baseline - (_textView.DefaultBaseline * TextLineRun.BaselineFactor) + (_textView.DefaultLineHeight * TextLineRun.HeightFactor);
+                            return pos + tl.Baseline - _textView.DefaultBaseline + _textView.DefaultLineHeight;
                         case VisualYPosition.TextMiddle:
-                            return pos + tl.Baseline - (_textView.DefaultBaseline * TextLineRun.BaselineFactor) + (_textView.DefaultLineHeight * TextLineRun.HeightFactor) / 2;
+                            return pos + tl.Baseline - _textView.DefaultBaseline + _textView.DefaultLineHeight / 2;
                         case VisualYPosition.Baseline:
                             return pos + tl.Baseline;
                         default:
