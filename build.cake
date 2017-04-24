@@ -78,10 +78,17 @@ Task("Build-NetCore")
     foreach (var project in netCoreProjects)
     {
         Information("Building: {0}", project.Name);
-        DotNetCoreBuild(project.Path, new DotNetCoreBuildSettings {
-            Configuration = configuration,
-            Framework = "netcoreapp2.0"
-        });
+
+        var settings = new DotNetCoreBuildSettings {
+            Configuration = configuration
+        };
+
+        if (!IsRunningOnWindows())
+        {
+            settings.Framework = "netcoreapp1.1";
+        }
+
+        DotNetCoreBuild(project.Path, settings);
     }
 });
 
