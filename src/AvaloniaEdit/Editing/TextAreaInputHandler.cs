@@ -233,7 +233,7 @@ namespace AvaloniaEdit.Editing
             foreach (var handler in _nestedInputHandlers)
                 handler.Attach();
         }
-        
+
         /// <inheritdoc/>
         public virtual void Detach()
         {

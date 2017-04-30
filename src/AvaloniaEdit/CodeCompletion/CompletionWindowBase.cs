@@ -28,6 +28,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -86,7 +87,7 @@ namespace AvaloniaEdit.CodeCompletion
             AddHandler(PointerReleasedEvent, OnMouseUp, handledEventsToo: true);
 
             StartOffset = EndOffset = TextArea.Caret.Offset;
-
+            
             // TODO: these events do not fire on PopupRoot
             Deactivated += OnDeactivated;
             //Closed += (sender, args) => DetachEvents();
@@ -135,11 +136,14 @@ namespace AvaloniaEdit.CodeCompletion
 
         private void AttachEvents()
         {
+            ((ISetLogicalParent)this).SetParent(TextArea.GetVisualRoot() as ILogical);
+
             _document = TextArea.Document;
             if (_document != null)
             {
                 _document.Changing += TextArea_Document_Changing;
             }
+
             // LostKeyboardFocus seems to be more reliable than PreviewLostKeyboardFocus - see SD-1729
             TextArea.LostFocus += TextAreaLostFocus;
             TextArea.TextView.ScrollOffsetChanged += TextViewScrollOffsetChanged;
@@ -166,6 +170,8 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         protected virtual void DetachEvents()
         {
+            ((ISetLogicalParent)this).SetParent(null);
+
             if (_document != null)
             {
                 _document.Changing -= TextArea_Document_Changing;

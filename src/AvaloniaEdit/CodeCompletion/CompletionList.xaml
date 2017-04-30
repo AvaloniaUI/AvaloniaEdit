@@ -2,7 +2,6 @@
         xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit">
 
     <Style Selector="cc|CompletionList">
-        <Setter Property="FontFamily" Value="" />
         <Setter Property="Template">
             <ControlTemplate>
                 <cc:CompletionListBox Name="PART_ListBox">

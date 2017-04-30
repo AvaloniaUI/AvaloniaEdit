@@ -60,8 +60,9 @@ namespace AvaloniaEdit.CodeCompletion
                 StaysOpen = false,
                 PlacementTarget = this,
                 PlacementMode = PlacementMode.Right,
-                [TextBlock.FontFamilyProperty] = string.Empty
             };
+
+            LogicalChildren.Add(_toolTip);
 
             _toolTip.Closed += (o, e) => ((Popup)o).Child = null;
 
