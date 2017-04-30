@@ -28,7 +28,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 
@@ -37,16 +39,14 @@ namespace AvaloniaEdit.CodeCompletion
     /// <summary>
     /// Base class for completion windows. Handles positioning the window at the caret.
     /// </summary>
-    public class CompletionWindowBase : PopupRoot
+    public class CompletionWindowBase : PopupRoot, IStyleable
     {
         static CompletionWindowBase()
         {
             BackgroundProperty.OverrideDefaultValue(typeof(CompletionWindowBase), Brushes.White);
-
-            // TODO
-            //ShowActivatedProperty.OverrideMetadata(typeof(CompletionWindowBase), new FrameworkPropertyMetadata(Boxes.False));
-            //ShowInTaskbarProperty.OverrideMetadata(typeof(CompletionWindowBase), new FrameworkPropertyMetadata(Boxes.False));
         }
+
+        Type IStyleable.StyleKey => typeof(PopupRoot);
 
         /// <summary>
         /// Gets the parent TextArea.
@@ -80,18 +80,26 @@ namespace AvaloniaEdit.CodeCompletion
         {
             TextArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
             _parentWindow = textArea.GetVisualRoot() as Window;
+            
             // TODO: owner
             //this.Owner = parentWindow;
+
             AddHandler(PointerReleasedEvent, OnMouseUp, handledEventsToo: true);
 
             StartOffset = EndOffset = TextArea.Caret.Offset;
-
+            
+            // TODO: these events do not fire on PopupRoot
             Deactivated += OnDeactivated;
-            Closed += (sender, args) => DetachEvents();
+            //Closed += (sender, args) => DetachEvents();
 
             AttachEvents();
 
             Initailize();
+        }
+
+        protected virtual void OnClosed()
+        {
+            DetachEvents();
         }
 
         private void Initailize()
@@ -120,17 +128,22 @@ namespace AvaloniaEdit.CodeCompletion
             {
                 base.Hide();
             }
+
+            OnClosed();
         }
 
         #region Event Handlers
 
         private void AttachEvents()
         {
+            ((ISetLogicalParent)this).SetParent(TextArea.GetVisualRoot() as ILogical);
+
             _document = TextArea.Document;
             if (_document != null)
             {
                 _document.Changing += TextArea_Document_Changing;
             }
+
             // LostKeyboardFocus seems to be more reliable than PreviewLostKeyboardFocus - see SD-1729
             TextArea.LostFocus += TextAreaLostFocus;
             TextArea.TextView.ScrollOffsetChanged += TextViewScrollOffsetChanged;
@@ -138,10 +151,11 @@ namespace AvaloniaEdit.CodeCompletion
             if (_parentWindow != null)
             {
                 _parentWindow.PositionChanged += ParentWindow_LocationChanged;
+                _parentWindow.Deactivated += ParentWindow_Deactivated;
             }
 
             // close previous completion windows of same type
-            foreach (InputHandler x in TextArea.StackedInputHandlers.OfType<InputHandler>())
+            foreach (var x in TextArea.StackedInputHandlers.OfType<InputHandler>())
             {
                 if (x.Window.GetType() == GetType())
                     TextArea.PopStackedInputHandler(x);
@@ -156,6 +170,8 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         protected virtual void DetachEvents()
         {
+            ((ISetLogicalParent)this).SetParent(null);
+
             if (_document != null)
             {
                 _document.Changing -= TextArea_Document_Changing;
@@ -166,6 +182,7 @@ namespace AvaloniaEdit.CodeCompletion
             if (_parentWindow != null)
             {
                 _parentWindow.PositionChanged -= ParentWindow_LocationChanged;
+                _parentWindow.Deactivated -= ParentWindow_Deactivated;
             }
             TextArea.PopStackedInputHandler(_myInputHandler);
         }
@@ -195,13 +212,11 @@ namespace AvaloniaEdit.CodeCompletion
                 base.Detach();
                 Window.Hide();
             }
-
-            private const Key KeyDeadCharProcessed = (Key)0xac; // Key.DeadCharProcessed; // new in .NET 4
-
+            
             public override void OnPreviewKeyDown(KeyEventArgs e)
             {
                 // prevents crash when typing deadchar while CC window is open
-                if (e.Key == KeyDeadCharProcessed)
+                if (e.Key == Key.DeadCharProcessed)
                     return;
                 e.Handled = RaiseEventPair(Window, null, KeyDownEvent,
                                            new KeyEventArgs { Device = e.Device, Key = e.Key });
@@ -209,7 +224,7 @@ namespace AvaloniaEdit.CodeCompletion
 
             public override void OnPreviewKeyUp(KeyEventArgs e)
             {
-                if (e.Key == KeyDeadCharProcessed)
+                if (e.Key == Key.DeadCharProcessed)
                     return;
                 e.Handled = RaiseEventPair(Window, null, KeyUpEvent,
                     new KeyEventArgs { Device = e.Device, Key = e.Key });
@@ -219,14 +234,17 @@ namespace AvaloniaEdit.CodeCompletion
 
         private void TextViewScrollOffsetChanged(object sender, EventArgs e)
         {
-            // TODO: handle scroll
-            //IScrollInfo scrollInfo = TextArea.TextView;
-            //Rect visibleRect = new Rect(scrollInfo.HorizontalOffset, scrollInfo.VerticalOffset, scrollInfo.ViewportWidth, scrollInfo.ViewportHeight);
-            // close completion window when the user scrolls so far that the anchor position is leaving the visible area
-            //if (visibleRect.Contains(visualLocation) || visibleRect.Contains(visualLocationTop))
-            //	UpdatePosition();
-            //else
-            //	Close();
+            ILogicalScrollable textView = TextArea;
+            var visibleRect = new Rect(textView.Offset.X, textView.Offset.Y, textView.Viewport.Width, textView.Viewport.Height);
+            //close completion window when the user scrolls so far that the anchor position is leaving the visible area
+            if (visibleRect.Contains(_visualLocation) || visibleRect.Contains(_visualLocationTop))
+            {
+                UpdatePosition();
+            }
+            else
+            {
+                Hide();
+            }
         }
 
         private void TextAreaDocumentChanged(object sender, EventArgs e)
@@ -239,6 +257,11 @@ namespace AvaloniaEdit.CodeCompletion
             Dispatcher.UIThread.InvokeAsync(CloseIfFocusLost, DispatcherPriority.Background);
         }
 
+        private void ParentWindow_Deactivated(object sender, EventArgs e)
+        {
+            Hide();
+        }
+
         private void ParentWindow_LocationChanged(object sender, EventArgs e)
         {
             UpdatePosition();
@@ -249,6 +272,7 @@ namespace AvaloniaEdit.CodeCompletion
         {
             Dispatcher.UIThread.InvokeAsync(CloseIfFocusLost, DispatcherPriority.Background);
         }
+
         #endregion
 
         /// <summary>
@@ -328,17 +352,19 @@ namespace AvaloniaEdit.CodeCompletion
             }
         }
 
-        private Point _visualLocation, _visualLocationTop;
+        private Point _visualLocation;
+        private Point _visualLocationTop;
 
         /// <summary>
         /// Positions the completion window at the specified position.
         /// </summary>
         protected void SetPosition(TextViewPosition position)
         {
-            TextView textView = TextArea.TextView;
+            var textView = TextArea.TextView;
 
             _visualLocation = textView.GetVisualPosition(position, VisualYPosition.LineBottom);
             _visualLocationTop = textView.GetVisualPosition(position, VisualYPosition.LineTop);
+
             UpdatePosition();
         }
 
@@ -348,44 +374,10 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         protected void UpdatePosition()
         {
-            TextView textView = TextArea.TextView;
-            // PointToScreen returns device dependent units (physical pixels)
-            Point location = textView.PointToScreen(_visualLocation - textView.ScrollOffset);
-            Point locationTop = textView.PointToScreen(_visualLocationTop - textView.ScrollOffset);
+            var textView = TextArea.TextView;
+            var position = textView.PointToScreen(_visualLocation - textView.ScrollOffset);
 
-            // Let's use device dependent units for everything
-            var completionWindowSize = this.PointToScreen(new Point(Bounds.Width, Bounds.Height));
-            Rect bounds = new Rect(location, completionWindowSize);
-
-            // TODO: position relative to working area
-            //Rect workingScreen = System.Windows.Forms.Screen.GetWorkingArea(location.ToSystemDrawing()).ToWpf();
-            //if (!workingScreen.Contains(bounds))
-            //{
-            //    if (bounds.Left < workingScreen.Left)
-            //    {
-            //        bounds.X = workingScreen.Left;
-            //    }
-            //    else if (bounds.Right > workingScreen.Right)
-            //    {
-            //        bounds.X = workingScreen.Right - bounds.Width;
-            //    }
-            //    if (bounds.Bottom > workingScreen.Bottom)
-            //    {
-            //        bounds.Y = locationTop.Y - bounds.Height;
-            //        IsUp = true;
-            //    }
-            //    else
-            //    {
-            //        IsUp = false;
-            //    }
-            //    if (bounds.Y < workingScreen.Top)
-            //    {
-            //        bounds.Y = workingScreen.Top;
-            //    }
-            //}
-
-            // Convert the window bounds to device independent units
-            Position = this.PointToClient(new Point(bounds.X, bounds.Y));
+            Position = position;
         }
 
         // TODO: check if needed

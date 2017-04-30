@@ -22,7 +22,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Avalonia;
-using Avalonia.Layout;
+using Avalonia.Controls;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Text;
@@ -749,7 +749,8 @@ namespace AvaloniaEdit.Rendering
         }
     }
 
-    internal sealed class VisualLineDrawingVisual : Layoutable
+    // TODO: can inherit from Layoutable, but dev tools crash
+    internal sealed class VisualLineDrawingVisual : Control
     {
         public VisualLine VisualLine { get; }
         public double LineHeight { get; }

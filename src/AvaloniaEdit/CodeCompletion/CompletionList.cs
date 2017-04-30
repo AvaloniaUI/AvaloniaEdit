@@ -263,14 +263,14 @@ namespace AvaloniaEdit.CodeCompletion
             var suggestedItem = _listBox.SelectedIndex != -1 ? (ICompletionData)_listBox.SelectedItem : null;
 
             var listBoxItems = new ObservableCollection<ICompletionData>();
-            int bestIndex = -1;
-            int bestQuality = -1;
+            var bestIndex = -1;
+            var bestQuality = -1;
             double bestPriority = 0;
-            int i = 0;
+            var i = 0;
             foreach (var matchingItem in matchingItems)
             {
-                double priority = matchingItem.Item == suggestedItem ? double.PositiveInfinity : matchingItem.Item.Priority;
-                int quality = matchingItem.Quality;
+                var priority = matchingItem.Item == suggestedItem ? double.PositiveInfinity : matchingItem.Item.Priority;
+                var quality = matchingItem.Quality;
                 if (quality > bestQuality || quality == bestQuality && priority > bestPriority)
                 {
                     bestIndex = i;
@@ -280,7 +280,9 @@ namespace AvaloniaEdit.CodeCompletion
                 listBoxItems.Add(matchingItem.Item);
                 i++;
             }
+
             _currentList = listBoxItems;
+            _listBox.Items = null;
             _listBox.Items = listBoxItems;
             SelectIndexCentered(bestIndex);
         }
@@ -293,18 +295,18 @@ namespace AvaloniaEdit.CodeCompletion
             if (string.IsNullOrEmpty(query))
                 return;
 
-            int suggestedIndex = _listBox.SelectedIndex;
+            var suggestedIndex = _listBox.SelectedIndex;
 
-            int bestIndex = -1;
-            int bestQuality = -1;
+            var bestIndex = -1;
+            var bestQuality = -1;
             double bestPriority = 0;
-            for (int i = 0; i < _completionData.Count; ++i)
+            for (var i = 0; i < _completionData.Count; ++i)
             {
-                int quality = GetMatchQuality(_completionData[i].Text, query);
+                var quality = GetMatchQuality(_completionData[i].Text, query);
                 if (quality < 0)
                     continue;
 
-                double priority = _completionData[i].Priority;
+                var priority = _completionData[i].Priority;
                 bool useThisItem;
                 if (bestQuality < quality)
                 {
@@ -344,7 +346,7 @@ namespace AvaloniaEdit.CodeCompletion
             }
             else
             {
-                int firstItem = _listBox.FirstVisibleItem;
+                var firstItem = _listBox.FirstVisibleItem;
                 if (bestIndex < firstItem || firstItem + _listBox.VisibleItemCount <= bestIndex)
                 {
                     // CenterViewOn does nothing as CompletionListBox.ScrollViewer is null
@@ -415,7 +417,7 @@ namespace AvaloniaEdit.CodeCompletion
                 .Take(1)
                 .Concat(text.AsEnumerable().Skip(1).Where(char.IsUpper));
 
-            int i = 0;
+            var i = 0;
             foreach (var letter in theFirstLetterOfEachWord)
             {
                 if (i > query.Length - 1)
