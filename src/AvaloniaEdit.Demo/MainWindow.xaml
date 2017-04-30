@@ -3,7 +3,14 @@
         MinWidth="500"
         MinHeight="300"
         Title="AvaloniaEdit Demo">
-    <AvalonEdit:TextEditor Name="Editor"
-                           Margin="30"
-                           TextBlock.FontSize="30" />
+    <DockPanel>
+        <StackPanel Orientation="Horizontal"
+                    DockPanel.Dock="Top"
+                    Margin="3">
+            <Button Content="Copy" />
+        </StackPanel>
+        <AvalonEdit:TextEditor Name="Editor"
+                               Margin="30"
+                               TextBlock.FontSize="30" />
+    </DockPanel>
 </Window>

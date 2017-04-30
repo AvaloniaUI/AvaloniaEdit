@@ -152,7 +152,7 @@ namespace AvaloniaEdit.Text
             }
 
             var width = 0;
-            var y = origin.Y + Baseline;
+            var y = origin.Y;
 
             foreach (var run in _runs)
             {
