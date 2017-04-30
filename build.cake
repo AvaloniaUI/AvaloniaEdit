@@ -105,7 +105,7 @@ Task("Publish-NetCore")
 
             Information("Publishing: {0}, runtime: {1}", project.Name, runtime);
             DotNetCorePublish(project.Path, new DotNetCorePublishSettings {
-                Framework = project.Framework,
+                Framework = "netcoreapp1.1",
                 Configuration = configuration,
                 Runtime = runtime,
                 OutputDirectory = outputDir.FullPath
