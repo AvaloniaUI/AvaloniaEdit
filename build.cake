@@ -67,7 +67,7 @@ var isNuGetRelease = isTagged && isReleasable;
 // VERSION
 ///////////////////////////////////////////////////////////////////////////////
 
-var version = 0.2.0; //XmlPeek("./src/AvaloniaEdit/AvaloniaEdit.csproj", "//*[local-name()='Version']/text()");
+var version = "0.2.0"; //XmlPeek("./src/AvaloniaEdit/AvaloniaEdit.csproj", "//*[local-name()='Version']/text()");
 
 if (isRunningOnAppVeyor)
 {
