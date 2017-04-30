@@ -94,7 +94,7 @@ Task("Build-NetCore")
 
 Task("Publish-NetCore")
     .IsDependentOn("Restore-NetCore")
-    //.WithCriteria(()=>isMainRepo && isMasterBranch)
+    .WithCriteria(()=>isMainRepo && isMasterBranch)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
