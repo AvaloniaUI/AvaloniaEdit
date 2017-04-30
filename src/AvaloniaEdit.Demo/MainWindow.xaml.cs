@@ -65,14 +65,14 @@ namespace AvaloniaEdit.Demo
             {
                 // Open code completion after the user has pressed dot:
                 _completionWindow = new CompletionWindow(_textEditor.TextArea);
-                IList<ICompletionData> data = _completionWindow.CompletionList.CompletionData;
+
+                var data = _completionWindow.CompletionList.CompletionData;
                 data.Add(new MyCompletionData("Item1"));
                 data.Add(new MyCompletionData("Item2"));
                 data.Add(new MyCompletionData("Item3"));
+
                 _completionWindow.Show();
-                _completionWindow.Closed += delegate {
-                    _completionWindow = null;
-                };
+                _completionWindow.Closed += (o, args) => _completionWindow = null;
             }
         }
 

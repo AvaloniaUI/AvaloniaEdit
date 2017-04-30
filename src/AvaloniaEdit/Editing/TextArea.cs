@@ -73,6 +73,8 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public TextArea() : this(new TextView())
         {
+            AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
+            AddHandler(KeyUpEvent, OnPreviewKeyUp, RoutingStrategies.Tunnel);
         }
 
         /// <summary>
@@ -866,13 +868,13 @@ namespace AvaloniaEdit.Editing
             TextView.InvalidateCursorIfPointerWithinTextView();
         }
 
-        private void OnPreviewKeyDown(KeyEventArgs e)
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             foreach (var h in StackedInputHandlers)
             {
                 if (e.Handled)
                     break;
-                h.OnPreviewKeyUp(e);
+                h.OnPreviewKeyDown(e);
             }
         }
 
@@ -883,13 +885,13 @@ namespace AvaloniaEdit.Editing
             TextView.InvalidateCursorIfPointerWithinTextView();
         }
 
-        private void OnPreviewKeyUp(KeyEventArgs e)
+        private void OnPreviewKeyUp(object sender, KeyEventArgs e)
         {
             foreach (var h in StackedInputHandlers)
             {
                 if (e.Handled)
                     break;
-                h.OnPreviewKeyDown(e);
+                h.OnPreviewKeyUp(e);
             }
         }
 

@@ -109,7 +109,7 @@ namespace AvaloniaEdit.Editing
     public class TextAreaInputHandler : ITextAreaInputHandler
     {
         private readonly ObserveAddRemoveCollection<RoutedCommandBinding> _commandBindings;
-        private readonly ObserveAddRemoveCollection<KeyBinding> _keyBindings;
+        private readonly List<KeyBinding> _keyBindings;
         private readonly ObserveAddRemoveCollection<ITextAreaInputHandler> _nestedInputHandlers;
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace AvaloniaEdit.Editing
         {
             TextArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
             _commandBindings = new ObserveAddRemoveCollection<RoutedCommandBinding>(CommandBinding_Added, CommandBinding_Removed);
-            _keyBindings = new ObserveAddRemoveCollection<KeyBinding>(KeyBinding_Added, KeyBinding_Removed);
+            _keyBindings = new List<KeyBinding>();
             _nestedInputHandlers = new ObserveAddRemoveCollection<ITextAreaInputHandler>(NestedInputHandler_Added, NestedInputHandler_Removed);
         }
 
@@ -154,17 +154,17 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public ICollection<KeyBinding> KeyBindings => _keyBindings;
 
-        private void KeyBinding_Added(KeyBinding keyBinding)
-        {
-            if (IsAttached)
-                TextArea.KeyBindings.Add(keyBinding);
-        }
+        //private void KeyBinding_Added(KeyBinding keyBinding)
+        //{
+        //    if (IsAttached)
+        //        TextArea.KeyBindings.Add(keyBinding);
+        //}
 
-        private void KeyBinding_Removed(KeyBinding keyBinding)
-        {
-            if (IsAttached)
-                TextArea.KeyBindings.Remove(keyBinding);
-        }
+        //private void KeyBinding_Removed(KeyBinding keyBinding)
+        //{
+        //    if (IsAttached)
+        //        TextArea.KeyBindings.Remove(keyBinding);
+        //}
 
         /// <summary>
         /// Adds a command and input binding.
@@ -202,6 +202,21 @@ namespace AvaloniaEdit.Editing
             if (IsAttached)
                 handler.Detach();
         }
+
+        // workaround since InputElement.KeyBindings can't be marked as handled
+        private void TextAreaOnKeyDown(object sender, KeyEventArgs keyEventArgs)
+        {
+            foreach (var keyBinding in _keyBindings)
+            {
+                if (keyEventArgs.Handled)
+                {
+                    break;
+                }
+
+                keyBinding.TryHandle(keyEventArgs);
+            }
+        }
+
         #endregion
 
         #region Attach/Detach
@@ -213,11 +228,12 @@ namespace AvaloniaEdit.Editing
             IsAttached = true;
 
             TextArea.CommandBindings.AddRange(_commandBindings);
-            TextArea.KeyBindings.AddRange(_keyBindings);
-            foreach (ITextAreaInputHandler handler in _nestedInputHandlers)
+            TextArea.KeyDown += TextAreaOnKeyDown;
+            //TextArea.KeyBindings.AddRange(_keyBindings);
+            foreach (var handler in _nestedInputHandlers)
                 handler.Attach();
         }
-
+        
         /// <inheritdoc/>
         public virtual void Detach()
         {
@@ -227,9 +243,11 @@ namespace AvaloniaEdit.Editing
 
             foreach (var b in _commandBindings)
                 TextArea.CommandBindings.Remove(b);
-            foreach (var b in _keyBindings)
-                TextArea.KeyBindings.Remove(b);
-            foreach (ITextAreaInputHandler handler in _nestedInputHandlers)
+
+            TextArea.KeyDown -= TextAreaOnKeyDown;
+            //foreach (var b in _keyBindings)
+            //    TextArea.KeyBindings.Remove(b);
+            foreach (var handler in _nestedInputHandlers)
                 handler.Detach();
         }
         #endregion

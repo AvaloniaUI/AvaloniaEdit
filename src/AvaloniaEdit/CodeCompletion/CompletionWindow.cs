@@ -17,11 +17,13 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using Avalonia;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Media;
 
 namespace AvaloniaEdit.CodeCompletion
@@ -31,64 +33,65 @@ namespace AvaloniaEdit.CodeCompletion
     /// </summary>
     public class CompletionWindow : CompletionWindowBase
     {
-        private readonly CompletionList _completionList = new CompletionList();
-        private readonly ToolTip _toolTip = new ToolTip();
+        private PopupWithCustomPosition _toolTip;
 
         /// <summary>
         /// Gets the completion list used in this completion window.
         /// </summary>
-        public CompletionList CompletionList => _completionList;
+        public CompletionList CompletionList { get; }
 
         /// <summary>
         /// Creates a new code completion window.
         /// </summary>
         public CompletionWindow(TextArea textArea) : base(textArea)
         {
+            CompletionList = new CompletionList();
             // keep height automatic
             CloseAutomatically = true;
             MaxHeight = 300;
             Width = 175;
-            Content = _completionList;
+            Content = CompletionList;
             // prevent user from resizing window to 0x0
             MinHeight = 15;
             MinWidth = 30;
 
-            // TODO: tooltip
-            //toolTip.PlacementTarget = this;
-            //toolTip.Placement = PlacementMode.Right;
-            //toolTip.Closed += toolTip_Closed;
-            //Closed += (sender, args) =>
-            //{
-            //    if (toolTip != null)
-            //    {
-            //        toolTip.IsOpen = false;
-            //        toolTip = null;
-            //    }
-            //};
+            _toolTip = new PopupWithCustomPosition
+            {
+                StaysOpen = false,
+                PlacementTarget = this,
+                PlacementMode = PlacementMode.Right,
+                [TextBlock.FontFamilyProperty] = string.Empty
+            };
+
+            _toolTip.Closed += (o, e) => ((Popup)o).Child = null;
 
             AttachEvents();
         }
 
-        #region ToolTip handling
-
-        private void ToolTip_Closed(object sender, RoutedEventArgs e)
+        protected override void OnClosed()
         {
-            // Clear content after tooltip is closed.
-            // We cannot clear is immediately when setting IsOpen=false
-            // because the tooltip uses an animation for closing.
+            base.OnClosed();
+
             if (_toolTip != null)
-                _toolTip.Content = null;
+            {
+                _toolTip.IsOpen = false;
+                _toolTip = null;
+            }
         }
+
+        #region ToolTip handling
 
         private void CompletionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var item = _completionList.SelectedItem;
+            if (_toolTip == null) return;
+
+            var item = CompletionList.SelectedItem;
             var description = item?.Description;
             if (description != null)
             {
                 if (description is string descriptionText)
                 {
-                    _toolTip.Content = new TextBlock
+                    _toolTip.Child = new TextBlock
                     {
                         Text = descriptionText,
                         TextWrapping = TextWrapping.Wrap
@@ -96,13 +99,18 @@ namespace AvaloniaEdit.CodeCompletion
                 }
                 else
                 {
-                    _toolTip.Content = description;
+                    _toolTip.Child = new ContentPresenter {Content = description};
                 }
-                // TODO: tooltip
-                //toolTip.IsOpen = true;
+
+                _toolTip.Position = this.PointToScreen(Bounds.TopRight);
+                _toolTip.IsOpen = true;
             }
-            // else toolTip.IsOpen = false;
+            else
+            {
+                _toolTip.IsOpen = false;
+            }
         }
+
         #endregion
 
         private void CompletionList_InsertionRequested(object sender, EventArgs e)
@@ -110,14 +118,14 @@ namespace AvaloniaEdit.CodeCompletion
             Hide();
             // The window must close before Complete() is called.
             // If the Complete callback pushes stacked input handlers, we don't want to pop those when the CC window closes.
-            var item = _completionList.SelectedItem;
+            var item = CompletionList.SelectedItem;
             item?.Complete(TextArea, new AnchorSegment(TextArea.Document, StartOffset, EndOffset - StartOffset), e);
         }
 
         private void AttachEvents()
         {
-            _completionList.InsertionRequested += CompletionList_InsertionRequested;
-            _completionList.SelectionChanged += CompletionList_SelectionChanged;
+            CompletionList.InsertionRequested += CompletionList_InsertionRequested;
+            CompletionList.SelectionChanged += CompletionList_SelectionChanged;
             TextArea.Caret.PositionChanged += CaretPositionChanged;
             TextArea.PointerWheelChanged += TextArea_MouseWheel;
             TextArea.TextInput += TextArea_PreviewTextInput;
@@ -126,8 +134,8 @@ namespace AvaloniaEdit.CodeCompletion
         /// <inheritdoc/>
         protected override void DetachEvents()
         {
-            _completionList.InsertionRequested -= CompletionList_InsertionRequested;
-            _completionList.SelectionChanged -= CompletionList_SelectionChanged;
+            CompletionList.InsertionRequested -= CompletionList_InsertionRequested;
+            CompletionList.SelectionChanged -= CompletionList_SelectionChanged;
             TextArea.Caret.PositionChanged -= CaretPositionChanged;
             TextArea.PointerWheelChanged -= TextArea_MouseWheel;
             TextArea.TextInput -= TextArea_PreviewTextInput;
@@ -140,7 +148,7 @@ namespace AvaloniaEdit.CodeCompletion
             base.OnKeyDown(e);
             if (!e.Handled)
             {
-                _completionList.HandleKey(e);
+                CompletionList.HandleKey(e);
             }
         }
 
@@ -159,9 +167,9 @@ namespace AvaloniaEdit.CodeCompletion
 
         private Control GetScrollEventTarget()
         {
-            if (_completionList == null)
+            if (CompletionList == null)
                 return this;
-            return _completionList.ScrollViewer ?? _completionList.ListBox ?? (Control)_completionList;
+            return CompletionList.ScrollViewer ?? CompletionList.ListBox ?? (Control)CompletionList;
         }
 
         /// <summary>
@@ -192,7 +200,7 @@ namespace AvaloniaEdit.CodeCompletion
                 }
                 else
                 {
-                    _completionList.SelectItem(string.Empty);
+                    CompletionList.SelectItem(string.Empty);
                 }
                 return;
             }
@@ -208,7 +216,7 @@ namespace AvaloniaEdit.CodeCompletion
                 var document = TextArea.Document;
                 if (document != null)
                 {
-                    _completionList.SelectItem(document.GetText(StartOffset, offset - StartOffset));
+                    CompletionList.SelectItem(document.GetText(StartOffset, offset - StartOffset));
                 }
             }
         }
