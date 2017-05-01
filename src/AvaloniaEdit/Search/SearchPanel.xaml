@@ -1,0 +1,160 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:search="clr-namespace:AvaloniaEdit.Search;assembly=AvaloniaEdit">
+
+    <Style Selector="ToggleButton.ExpanderToggle">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Path Fill="Black"
+                      Data="M 0 2 L 4 6 L 0 10 Z" />
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="ToggleButton.ExpanderToggle:checked /template/ Path">
+        <Setter Property="RenderTransform">
+            <ScaleTransform ScaleY="-1" />
+        </Setter>
+    </Style>
+
+    <Style Selector="search|SearchPanel">
+        <Setter Property="BorderThickness"
+                Value="0,0,0,3" />
+        <Setter Property="BorderBrush"
+                Value="DarkGray" />
+        <Setter Property="Background"
+                Value="#eeeeee" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border BorderThickness="{TemplateBinding BorderThickness}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Background="{TemplateBinding Background}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto"
+                          RowDefinitions="Auto,Auto">
+                        <ToggleButton Classes="ExpanderToggle"
+                                      IsChecked="{TemplateBinding IsReplaceMode}"
+                                      Grid.Column="0"
+                                      Grid.Row="0"
+                                      Width="16"
+                                      Margin="2">
+                            <ToolTip.Tip>
+                                <TextBlock Text="{Static ae:SR.SearchToggleReplace}" />
+                            </ToolTip.Tip>
+                        </ToggleButton>
+
+                        <TextBox Name="PART_searchTextBox"
+                                 Grid.Column="1"
+                                 Grid.Row="0"
+                                 Width="150"
+                                 Height="24"
+                                 Margin="3,3,3,0"
+                                 Text="{TemplateBinding SearchPattern}" />
+
+                        <TextBox Name="ReplaceBox"
+                                 IsVisible="{TemplateBinding IsSearchMode}"
+                                 Grid.Column="1"
+                                 Grid.Row="1"
+                                 Width="150"
+                                 Height="24"
+                                 Margin="3 3 3 0"
+                                 Text="{TemplateBinding ReplacePattern}" />
+
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Column="2"
+                                    Grid.Row="0">
+                            <search:DropDownButton Height="24">
+                                <search:DropDownButton.DropDownContent>
+                                    <Popup StaysOpen="False">
+                                        <Border BorderThickness="1">
+                                            <StackPanel Orientation="Vertical">
+                                                <CheckBox IsChecked="{TemplateBinding MatchCase}"
+                                                          Content="{Static ae:SR.SearchMatchCaseText}"
+                                                          Margin="3" />
+                                                <CheckBox IsChecked="{TemplateBinding WholeWords}"
+                                                          Content="{Static ae:SR.SearchMatchWholeWordsText}"
+                                                          Margin="3" />
+                                                <CheckBox IsChecked="{TemplateBinding UseRegex}"
+                                                          Content="{Static ae:SR.SearchUseRegexText}"
+                                                          Margin="3" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Popup>
+                                </search:DropDownButton.DropDownContent>
+                            </search:DropDownButton>
+                            <Button Margin="3"
+                                    Height="24"
+                                    Width="24"
+                                    Command="{Static search:SearchCommands.FindPrevious}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="{Static ae:SR.SearchFindPreviousText}" />
+                                </ToolTip.Tip>
+                                <Image Width="16"
+                                       Height="16"
+                                       Stretch="Fill"
+                                       Source="resm:AvaloniaEdit.Search.Assets.FindPrevious.png?assembly=AvaloniaEdit" />
+                            </Button>
+                            <Button Margin="3"
+                                    Height="24"
+                                    Width="24"
+                                    Command="{Static search:SearchCommands.FindNext}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="{Static ae:SR.SearchFindNextText}" />
+                                </ToolTip.Tip>
+                                <Image Width="16"
+                                       Height="16"
+                                       Stretch="Fill"
+                                       Source="resm:AvaloniaEdit.Search.Assets.FindNext.png?assembly=AvaloniaEdit" />
+                            </Button>
+                            <Button Height="16"
+                                    Width="16"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Command="{Static search:SearchCommands.CloseSearchPanel}"
+                                    VerticalContentAlignment="Center"
+                                    HorizontalContentAlignment="Center"
+                                    Focusable="False">
+                                <Path Data="M 0,0 L 8,8 M 8,0 L 0,8"
+                                      Stroke="Black"
+                                      StrokeThickness="1" />
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel Name="ReplaceButtons"
+                                    IsVisible="{TemplateBinding IsSearchMode}"
+                                    Orientation="Horizontal"
+                                    Grid.Column="2"
+                                    Grid.Row="1">
+                            <Button Margin="3"
+                                    Height="24"
+                                    Width="24"
+                                    Command="{Static search:SearchCommands.ReplaceNext}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="{Static ae:SR.SearchReplaceNext}" />
+                                </ToolTip.Tip>
+                                <Image Width="16"
+                                       Height="16"
+                                       Stretch="Fill"
+                                       Source="resm:AvaloniaEdit.Search.Assets.ReplaceNext.png?assembly=AvaloniaEdit" />
+                            </Button>
+                            <Button Margin="3"
+                                    Height="24"
+                                    Width="24"
+                                    Command="{Static search:SearchCommands.ReplaceAll}">
+                                <ToolTip.Tip>
+                                    <TextBlock Text="{Static ae:SR.SearchReplaceAll}" />
+                                </ToolTip.Tip>
+                                <Image Width="16"
+                                       Height="16"
+                                       Stretch="Fill"
+                                       Source="resm:AvaloniaEdit.Search.Assets.ReplaceAll.png?assembly=AvaloniaEdit" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

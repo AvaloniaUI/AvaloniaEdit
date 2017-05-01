@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -10,6 +11,7 @@ using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Highlighting;
+using AvaloniaEdit.Search;
 
 namespace AvaloniaEdit.Demo
 {
@@ -31,6 +33,7 @@ namespace AvaloniaEdit.Demo
             TextBlock.SetForeground(lineNumberMargin, Brushes.Gray);
             _textEditor.TextArea.LeftMargins.Add(lineNumberMargin);
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy( );
+            SearchPanel.Install(_textEditor);
         }
 
         private void InitializeComponent()
