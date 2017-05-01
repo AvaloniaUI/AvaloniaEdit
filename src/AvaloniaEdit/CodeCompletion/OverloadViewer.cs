@@ -49,19 +49,25 @@ namespace AvaloniaEdit.CodeCompletion
         {
             base.OnTemplateApplied(args);
 
-            Button upButton = (Button)args.NameScope.Find("PART_UP");
-            upButton.Click += (sender, e) =>
+            var upButton = args.NameScope.Find<Button>("PART_UP");
+            if (upButton != null)
             {
-                e.Handled = true;
-                ChangeIndex(-1);
-            };
+                upButton.Click += (sender, e) =>
+                  {
+                      e.Handled = true;
+                      ChangeIndex(-1);
+                  };
+            }
 
-            Button downButton = (Button)args.NameScope.Find("PART_DOWN");
-            downButton.Click += (sender, e) =>
+            var downButton = args.NameScope.Find<Button>("PART_DOWN");
+            if (downButton != null)
             {
-                e.Handled = true;
-                ChangeIndex(+1);
-            };
+                downButton.Click += (sender, e) =>
+                  {
+                      e.Handled = true;
+                      ChangeIndex(+1);
+                  };
+            }
         }
 
         /// <summary>
@@ -85,10 +91,10 @@ namespace AvaloniaEdit.CodeCompletion
         /// <param name="relativeIndexChange">The relative index change - usual values are +1 or -1.</param>
         public void ChangeIndex(int relativeIndexChange)
         {
-            IOverloadProvider p = Provider;
+            var p = Provider;
             if (p != null)
             {
-                int newIndex = p.SelectedIndex + relativeIndexChange;
+                var newIndex = p.SelectedIndex + relativeIndexChange;
                 if (newIndex < 0)
                     newIndex = p.Count - 1;
                 if (newIndex >= p.Count)
@@ -100,6 +106,8 @@ namespace AvaloniaEdit.CodeCompletion
 
     internal sealed class CollapseIfSingleOverloadConverter : IValueConverter
     {
+        public static CollapseIfSingleOverloadConverter Instance { get; } = new CollapseIfSingleOverloadConverter();
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (int)value >= 2;

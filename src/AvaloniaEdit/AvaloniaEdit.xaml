@@ -3,6 +3,6 @@
     <StyleInclude Source="resm:AvaloniaEdit.TextEditor.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvaloniaEdit.Editing.TextArea.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvaloniaEdit.CodeCompletion.CompletionList.xaml?assembly=AvaloniaEdit" />
-    <!--<StyleInclude Source="resm:AvaloniaEdit.CodeCompletion.InsightWindow.xaml?assembly=AvaloniaEdit" />-->
+    <StyleInclude Source="resm:AvaloniaEdit.CodeCompletion.InsightWindow.xaml?assembly=AvaloniaEdit" />
 
 </Styles>
