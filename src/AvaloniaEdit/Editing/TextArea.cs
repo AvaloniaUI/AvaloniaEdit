@@ -36,8 +36,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
-using AvaloniaEdit.Text;
-using Avalonia.Layout;
 
 namespace AvaloniaEdit.Editing
 {
@@ -116,7 +114,7 @@ namespace AvaloniaEdit.Editing
         #endregion
 
         /// <summary>
-        ///     Defines the <see cref="Offset" /> property.
+        ///     Defines the <see cref="IScrollable.Offset" /> property.
         /// </summary>
         public static readonly DirectProperty<TextArea, Vector> OffsetProperty =
             AvaloniaProperty.RegisterDirect<TextArea, Vector>(
@@ -129,7 +127,7 @@ namespace AvaloniaEdit.Editing
         /// Gets the default input handler.
         /// </summary>
         /// <remarks><inheritdoc cref="ITextAreaInputHandler"/></remarks>
-        public ITextAreaInputHandler DefaultInputHandler { get; }
+        public TextAreaDefaultInputHandler DefaultInputHandler { get; }
 
         private ITextAreaInputHandler _activeInputHandler;
         private bool _isChangingInputHandler;
