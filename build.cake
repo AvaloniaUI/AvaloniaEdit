@@ -164,7 +164,7 @@ Information("Package: Avalonia, version: {0}", AvaloniaVersion);
 
 var nuspecNuGetBehaviors = new NuGetPackSettings()
 {
-    Id = "AvaloniaEdit",
+    Id = "Avalonia.AvaloniaEdit",
     Version = version,
     Authors = new [] { "Avalonia Team" },
     Owners = new [] { "Avalonia" },
@@ -286,8 +286,8 @@ Task("Publish-MyGet")
     .WithCriteria(() => !isLocalBuild)
     .WithCriteria(() => !isPullRequest)
     .WithCriteria(() => isMainRepo)
-    .WithCriteria(() => isMasterBranch)
-    .WithCriteria(() => isMyGetRelease)
+    //.WithCriteria(() => isMasterBranch)
+    //.WithCriteria(() => isMyGetRelease)
     .Does(() =>
 {
     var apiKey = EnvironmentVariable("MYGET_API_KEY");
