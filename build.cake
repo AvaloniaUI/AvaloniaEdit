@@ -284,10 +284,9 @@ Task("Create-NuGet-Packages")
 Task("Publish-MyGet")
     .IsDependentOn("Create-NuGet-Packages")
     .WithCriteria(() => !isLocalBuild)
-    //.WithCriteria(() => !isPullRequest)
+    .WithCriteria(() => !isPullRequest)
     .WithCriteria(() => isMainRepo)
-    //.WithCriteria(() => isMasterBranch)
-    //.WithCriteria(() => isMyGetRelease)
+    .WithCriteria(() => isMasterBranch)    
     .Does(() =>
 {
     var apiKey = EnvironmentVariable("MYGET_API_KEY");
