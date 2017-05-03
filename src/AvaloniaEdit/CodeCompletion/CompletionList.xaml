@@ -20,5 +20,16 @@
             </ControlTemplate>
         </Setter>
     </Style>
-    
+
+    <Style Selector="ContentControl.ToolTip">
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="BorderBrush"
+                Value="Black" />
+        <Setter Property="Background"
+                Value="#eeeeee" />
+        <Setter Property="Padding"
+                Value="2" />
+    </Style>
+
 </Styles>

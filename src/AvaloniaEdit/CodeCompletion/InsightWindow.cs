@@ -55,7 +55,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <inheritdoc/>
         protected override bool CloseOnFocusLost => CloseAutomatically;
 
-        void AttachEvents()
+        private void AttachEvents()
         {
             TextArea.Caret.PositionChanged += CaretPositionChanged;
         }
@@ -67,7 +67,7 @@ namespace AvaloniaEdit.CodeCompletion
             base.DetachEvents();
         }
 
-        void CaretPositionChanged(object sender, EventArgs e)
+        private void CaretPositionChanged(object sender, EventArgs e)
         {
             if (CloseAutomatically)
             {
