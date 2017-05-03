@@ -7,7 +7,7 @@ before_build:
 
 build_script:
 - cmd: dotnet --info
-- ps: .\build.ps1
+- ps: .\build.ps1 -Platform "Any CPU" -Configuration "Release"
 
 test: off
 
