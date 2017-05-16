@@ -1422,6 +1422,8 @@ namespace AvaloniaEdit.Rendering
             {
                 _scrollOffset = vector;
                 ScrollOffsetChanged?.Invoke(this, EventArgs.Empty);
+
+                InvalidateMeasure();
             }
         }
 

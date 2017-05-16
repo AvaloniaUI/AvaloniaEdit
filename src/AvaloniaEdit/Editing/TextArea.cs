@@ -616,6 +616,11 @@ namespace AvaloniaEdit.Editing
             TextView.HighlightedLine = Caret.Line;
 
             ScrollToLine(Caret.Line);
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                (this as ILogicalScrollable).InvalidateScroll?.Invoke();
+            });
         }
 
         public static readonly DirectProperty<TextArea, ObservableCollection<IControl>> LeftMarginsProperty
@@ -1075,7 +1080,7 @@ namespace AvaloniaEdit.Editing
             {
                 TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
 
-                SetAndRaise(OffsetProperty, ref _offset, value);
+                _offset = value;
             }
         }
 
