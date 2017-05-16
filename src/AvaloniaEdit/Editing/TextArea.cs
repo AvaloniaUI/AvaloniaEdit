@@ -1075,7 +1075,7 @@ namespace AvaloniaEdit.Editing
             {
                 TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
 
-                SetAndRaise(OffsetProperty, ref _offset, value);
+                _offset = value;
             }
         }
 
