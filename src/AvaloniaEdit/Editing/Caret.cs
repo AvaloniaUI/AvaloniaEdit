@@ -465,7 +465,7 @@ namespace AvaloniaEdit.Editing
             BringCaretToView(MinimumDistanceToViewBorder);
         }
 
-        internal void BringCaretToView(double border)
+        public void BringCaretToView(double border)
         {
             var caretRectangle = CalculateCaretRectangle();
             if (!caretRectangle.IsEmpty)
