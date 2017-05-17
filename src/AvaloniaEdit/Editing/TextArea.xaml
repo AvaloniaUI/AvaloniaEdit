@@ -22,7 +22,7 @@
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
-                    <ContentPresenter Name="PART_CP"
+                    <ContentPresenter Name="PART_CP" Cursor="IBeam"
                                       Focusable="False" />
                 </DockPanel>
             </ControlTemplate>
