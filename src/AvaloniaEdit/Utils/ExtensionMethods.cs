@@ -27,7 +27,7 @@ using Avalonia.VisualTree;
 
 namespace AvaloniaEdit.Utils
 {
-    internal static class ExtensionMethods
+    public static class ExtensionMethods
     {
         #region Epsilon / IsClose / CoerceValue
         /// <summary>

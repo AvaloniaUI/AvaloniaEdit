@@ -27,7 +27,7 @@ namespace AvaloniaEdit.Utils
     /// <summary>
     /// Creates TextFormatter instances that with the correct TextFormattingMode, if running on .NET 4.0.
     /// </summary>
-    internal static class TextFormatterFactory
+    public static class TextFormatterFactory
 	{
 	    public static TextFormatter Create()
 	    {

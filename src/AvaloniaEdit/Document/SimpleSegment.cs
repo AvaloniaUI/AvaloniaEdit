@@ -27,7 +27,7 @@ namespace AvaloniaEdit.Document
     /// Represents a simple segment (Offset,Length pair) that is not automatically updated
     /// on document changes.
     /// </summary>
-    internal struct SimpleSegment : IEquatable<SimpleSegment>, ISegment
+    public struct SimpleSegment : IEquatable<SimpleSegment>, ISegment
     {
         public static readonly SimpleSegment Invalid = new SimpleSegment(-1, -1);
 
