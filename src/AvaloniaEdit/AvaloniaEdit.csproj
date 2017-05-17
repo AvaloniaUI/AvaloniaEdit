@@ -39,7 +39,6 @@
     <PackageReference Include="System.ValueTuple" Version="4.3.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.0" />
     <PackageReference Include="Avalonia" Version="0.5.0" />
-    <!--<PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />-->
   </ItemGroup>
 
 </Project>
