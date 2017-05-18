@@ -24,7 +24,7 @@ namespace AvaloniaEdit.Utils
 	/// <summary>
 	/// Contains static helper methods for aligning stuff on a whole number of pixels.
 	/// </summary>
-	internal static class PixelSnapHelpers
+	public static class PixelSnapHelpers
 	{
 		/// <summary>
 		/// Gets the pixel size on the screen containing visual.
