@@ -934,7 +934,7 @@ namespace AvaloniaEdit.Rendering
                 _inMeasure = true;
                 try
                 {
-                    maxWidth = CreateAndMeasureVisualLines(availableSize);
+                    maxWidth = CreateAndMeasureVisualLines(_scrollViewport);
                 }
                 finally
                 {
@@ -964,9 +964,6 @@ namespace AvaloniaEdit.Rendering
 
             TextLayer.SetVisualLines(_visibleVisualLines);
 
-            SetScrollData(availableSize,
-                          new Size(maxWidth, heightTreeHeight),
-                          _scrollOffset);
             VisualLinesChanged?.Invoke(this, EventArgs.Empty);
 
             return new Size(Math.Min(availableSize.Width, maxWidth), Math.Min(availableSize.Height, heightTreeHeight));
@@ -1079,9 +1076,7 @@ namespace AvaloniaEdit.Rendering
         {
             if (_heightTree.GetIsCollapsed(documentLine.LineNumber))
                 throw new InvalidOperationException("Trying to build visual line from collapsed line");
-
-            Debug.WriteLine("Building line " + documentLine.LineNumber);
-
+            
             var visualLine = new VisualLine(this, documentLine);
             var textSource = new VisualLineTextSource(visualLine)
             {
@@ -1205,8 +1200,6 @@ namespace AvaloniaEdit.Rendering
             {
                 newScrollOffsetY = Math.Max(0, _scrollExtent.Height - finalSize.Height);
             }
-            if (SetScrollData(_scrollViewport, _scrollExtent, new Vector(newScrollOffsetX, newScrollOffsetY)))
-                InvalidateMeasure(DispatcherPriority.Normal);
 
             Debug.WriteLine("Arrange finalSize=" + finalSize + ", scrollOffset=" + _scrollOffset);
 
@@ -1360,31 +1353,20 @@ namespace AvaloniaEdit.Rendering
 
         private void ClearScrollData()
         {
-            SetScrollData(new Size(), new Size(), new Vector());
+            SetScrollData(new Size(), new Size());
+            _scrollOffset = new Vector();
         }
 
-        private bool SetScrollData(Size viewport, Size extent, Vector offset)
+        public bool SetScrollData(Size viewport, Size extent)
         {
             if (!(viewport.IsClose(_scrollViewport)
-                  && extent.IsClose(_scrollExtent)
-                  && offset.IsClose(_scrollOffset)))
+                  && extent.IsClose(_scrollExtent)))
             {
                 _scrollViewport = viewport;
                 _scrollExtent = extent;
-                SetScrollOffset(offset);
-                OnScrollChange();
                 return true;
             }
             return false;
-        }
-
-        private void OnScrollChange()
-        {
-            //ScrollViewer scrollOwner = ((IScrollInfo)this).ScrollOwner;
-            //if (scrollOwner != null)
-            //{
-            //    scrollOwner.InvalidateScrollInfo();
-            //}
         }
 
         private bool _canVerticallyScroll = true;
@@ -1568,7 +1550,6 @@ namespace AvaloniaEdit.Rendering
             if (!_scrollOffset.IsClose(newScrollOffset))
             {
                 SetScrollOffset(newScrollOffset);
-                OnScrollChange();
                 InvalidateMeasure(DispatcherPriority.Normal);
             }
         }
@@ -1679,7 +1660,7 @@ namespace AvaloniaEdit.Rendering
             if (vl != null)
             {
                 var column = vl.GetVisualColumnFloor(visualPosition);
-                Debug.WriteLine(vl.FirstDocumentLine.LineNumber + " vc " + column);
+                
                 foreach (var element in vl.Elements)
                 {
                     if (element.VisualColumn + element.VisualLength <= column)

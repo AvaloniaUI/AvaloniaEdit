@@ -54,12 +54,12 @@ namespace AvaloniaEdit.Text
                 throw new NotSupportedException("Too many characters per line");
             }
 
-            while (run.IsEnd || run.Width <= widthLeft)
+            while (true)
             {
                 visibleLength += AddRunReturnVisibleLength(runs, run);
                 index += run.Length;
                 widthLeft -= run.Width;
-                if (run.IsEnd)
+                if (run.IsEnd || widthLeft <= 0)
                 {
                     trailing.SpaceWidth = 0;
                     UpdateTrailingInfo(runs, trailing);
@@ -68,8 +68,6 @@ namespace AvaloniaEdit.Text
 
                 run = TextLineRun.Create(textSource, index, firstIndex, widthLeft);
             }
-
-            return null;
         }
 
         private TextLineImpl(TextParagraphProperties paragraphProperties, int firstIndex, List<TextLineRun> runs, TrailingInfo trailing)

@@ -589,9 +589,9 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public Caret Caret { get; }
 
-        public void ScrollToLine(int line, double borderSizePc = 0.5)
+        public void ScrollToLine(int line, int linesEitherSide)
         {
-            var offset = line - (_viewPort.Height * borderSizePc);
+            var offset = line - linesEitherSide;
 
             if (offset < 0)
             {
@@ -600,7 +600,7 @@ namespace AvaloniaEdit.Editing
 
             this.BringIntoView(new Rect(1, offset, 0, 1));
 
-            offset = line + (_viewPort.Height * borderSizePc);
+            offset = line + linesEitherSide;
 
             if (offset >= 0)
             {
@@ -615,7 +615,7 @@ namespace AvaloniaEdit.Editing
 
             TextView.HighlightedLine = Caret.Line;
 
-            ScrollToLine(Caret.Line);
+            ScrollToLine(Caret.Line, 2);
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -1021,6 +1021,8 @@ namespace AvaloniaEdit.Editing
             {
                 _viewPort = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
                 _extent = new Size(finalSize.Width, LogicalScrollSize);
+
+                TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent);
 
                 (this as ILogicalScrollable).InvalidateScroll?.Invoke();
             }
