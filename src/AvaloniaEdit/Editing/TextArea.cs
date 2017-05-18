@@ -1022,6 +1022,8 @@ namespace AvaloniaEdit.Editing
                 _viewPort = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
                 _extent = new Size(finalSize.Width, LogicalScrollSize);
 
+                TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent);
+
                 (this as ILogicalScrollable).InvalidateScroll?.Invoke();
             }
 
