@@ -254,6 +254,8 @@ namespace AvaloniaEdit.Editing
                 TextDocumentWeakEventManager.Changed.AddHandler(newValue, OnDocumentChanged);
                 TextDocumentWeakEventManager.UpdateStarted.AddHandler(newValue, OnUpdateStarted);
                 TextDocumentWeakEventManager.UpdateFinished.AddHandler(newValue, OnUpdateFinished);
+
+                InvalidateArrange();
             }
             // Reset caret location and selection: this is necessary because the caret/selection might be invalid
             // in the new document (e.g. if new document is shorter than the old document).
