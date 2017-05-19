@@ -65,7 +65,8 @@ namespace AvaloniaEdit.Editing
 
         static EditingCommandHandler()
         {
-            AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.None), CanDelete);
+            // TODO ApplicationCommands.Delete gets called, but never editing commands.Delete (since porting to avalonia.)
+            AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.CharRight), CanDelete);
             AddBinding(EditingCommands.Delete, InputModifiers.None, Key.Delete, OnDelete(CaretMovementType.CharRight));
             AddBinding(EditingCommands.DeleteNextWord, InputModifiers.Control, Key.Delete,
                 OnDelete(CaretMovementType.WordRight));
@@ -329,11 +330,10 @@ namespace AvaloniaEdit.Editing
 
         private static void CanDelete(object target, CanExecuteRoutedEventArgs args)
         {
-            // HasSomethingSelected for delete command
             var textArea = GetTextArea(target);
             if (textArea?.Document != null)
             {
-                args.CanExecute = !textArea.Selection.IsEmpty;
+                args.CanExecute = true;
                 args.Handled = true;
             }
         }
