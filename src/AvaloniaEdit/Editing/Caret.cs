@@ -98,8 +98,6 @@ namespace AvaloniaEdit.Editing
 
                     _storedCaretOffset = -1;
 
-                    Debug.WriteLine("Caret position changing to " + value);
-
                     ValidatePosition();
                     InvalidateVisualColumn();
                     RaisePositionChanged();
@@ -301,7 +299,7 @@ namespace AvaloniaEdit.Editing
                 var document = _textArea.Document;
                 if (document != null)
                 {
-                    Debug.WriteLine("Explicit validation of caret column");
+                   // Debug.WriteLine("Explicit validation of caret column");
                     var documentLine = document.GetLineByNumber(_position.Line);
                     RevalidateVisualColumn(_textView.GetOrConstructVisualLine(documentLine));
                 }
@@ -545,7 +543,7 @@ namespace AvaloniaEdit.Editing
         private static void Log(string text)
         {
             // commented out to make debug output less noisy - add back if there are any problems with the caret
-            Debug.WriteLine(text);
+            //Debug.WriteLine(text);
         }
 
         /// <summary>
