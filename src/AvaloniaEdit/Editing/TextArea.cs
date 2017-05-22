@@ -411,7 +411,6 @@ namespace AvaloniaEdit.Editing
                     throw new ArgumentException("Cannot use a Selection instance that belongs to another text area.");
                 if (!Equals(_selection, value))
                 {
-                    //					Debug.WriteLine("Selection change from " + selection + " to " + value);
                     if (TextView != null)
                     {
                         var oldSegment = _selection.SurroundingSegment;
@@ -553,7 +552,6 @@ namespace AvaloniaEdit.Editing
             {
                 if (!_selection.IsEmpty && !_selection.Contains(Caret.Offset))
                 {
-                    Debug.WriteLine("Resetting selection because caret is outside");
                     ClearSelection();
                 }
             }
@@ -719,7 +717,6 @@ namespace AvaloniaEdit.Editing
 
         protected override void OnTextInput(TextInputEventArgs e)
         {
-            Debug.WriteLine($"TextInput: Text=\'{e.Text}\'");
             base.OnTextInput(e);
             if (!e.Handled && Document != null)
             {

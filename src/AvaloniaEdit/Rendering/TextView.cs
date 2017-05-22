@@ -978,7 +978,7 @@ namespace AvaloniaEdit.Rendering
             var globalTextRunProperties = CreateGlobalTextRunProperties();
             var paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
 
-            Debug.WriteLine("Measure availableSize=" + availableSize + ", scrollOffset=" + _scrollOffset);
+            //Debug.WriteLine("Measure availableSize=" + availableSize + ", scrollOffset=" + _scrollOffset);
             var firstLineInView = _heightTree.GetLineByVisualPosition(_scrollOffset.Y);
 
             // number of pixels clipped from the first visual line(s)
@@ -1201,7 +1201,7 @@ namespace AvaloniaEdit.Rendering
                 newScrollOffsetY = Math.Max(0, _scrollExtent.Height - finalSize.Height);
             }
 
-            Debug.WriteLine("Arrange finalSize=" + finalSize + ", scrollOffset=" + _scrollOffset);
+           // Debug.WriteLine("Arrange finalSize=" + finalSize + ", scrollOffset=" + _scrollOffset);
 
             if (_visibleVisualLines != null)
             {
