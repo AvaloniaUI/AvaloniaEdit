@@ -432,6 +432,14 @@ namespace AvaloniaEdit.Editing
                     }
                     else if (e.ClickCount == 1 && modifiers.HasFlag(InputModifiers.Control))
                     {
+                        _mode = SelectionMode.WholeWord;
+                        if (shift && !(TextArea.Selection is RectangleSelection))
+                        {
+                            TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
+                        }
+                    }
+                    else if(e.ClickCount == 1 && modifiers == InputModifiers.LeftMouseButton)
+                    {
                         _mode = SelectionMode.Normal;
                         if (shift && !(TextArea.Selection is RectangleSelection))
                         {
