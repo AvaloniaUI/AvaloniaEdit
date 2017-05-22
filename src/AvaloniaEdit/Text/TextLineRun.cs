@@ -12,13 +12,13 @@ namespace AvaloniaEdit.Text
 
         private FormattedText _formattedText;
         private Size _formattedTextSize;
-        private int[] _glyphWidths;
+        private double[] _glyphWidths;
 
         public StringRange StringRange { get; private set; }
 
         public int Length { get; set; }
 
-        public int Width { get; private set; }
+        public double Width { get; private set; }
 
         public TextRun TextRun { get; private set; }
 
@@ -40,14 +40,14 @@ namespace AvaloniaEdit.Text
         {
         }
 
-        public static TextLineRun Create(TextSource textSource, int index, int firstIndex, int lengthLeft)
+        public static TextLineRun Create(TextSource textSource, int index, int firstIndex, double lengthLeft)
         {
             var textRun = textSource.GetTextRun(index);
             var stringRange = textRun.GetStringRange();
             return Create(textSource, stringRange, textRun, index, lengthLeft);
         }
 
-        private static TextLineRun Create(TextSource textSource, StringRange stringRange, TextRun textRun, int index, int widthLeft)
+        private static TextLineRun Create(TextSource textSource, StringRange stringRange, TextRun textRun, int index, double widthLeft)
         {
             if (textRun is TextCharacters)
             {
@@ -62,7 +62,7 @@ namespace AvaloniaEdit.Text
 
             if (textRun is TextEmbeddedObject)
             {
-                return new TextLineRun(textRun.Length, textRun) { IsEmbedded = true, _glyphWidths = new int[textRun.Length] };
+                return new TextLineRun(textRun.Length, textRun) { IsEmbedded = true, _glyphWidths = new double[textRun.Length] };
             }
 
             throw new NotSupportedException("Unsupported run type");
@@ -116,7 +116,7 @@ namespace AvaloniaEdit.Text
             return run;
         }
 
-        internal static TextLineRun CreateRunForText(StringRange stringRange, TextRun textRun, int widthLeft, bool emergencyWrap, bool breakOnTabs)
+        internal static TextLineRun CreateRunForText(StringRange stringRange, TextRun textRun, double widthLeft, bool emergencyWrap, bool breakOnTabs)
         {
             var run = new TextLineRun
             {
@@ -137,7 +137,7 @@ namespace AvaloniaEdit.Text
             var size = formattedText.Measure();
             run._formattedTextSize = size;
 
-            run.Width = (int)size.Width;
+            run.Width = size.Width;
 
             run.SetGlyphWidths();
 
@@ -152,7 +152,7 @@ namespace AvaloniaEdit.Text
 
         private void SetGlyphWidths()
         {
-            var result = new int[StringRange.Length];
+            var result = new double[StringRange.Length];
 
             for (var i = 0; i < StringRange.Length; i++)
             {
@@ -163,7 +163,7 @@ namespace AvaloniaEdit.Text
                     Typeface = new Typeface(Typeface, FontSize)
                 }.Measure();
                 
-                result[i] = (int)Math.Round(size.Width);
+                result[i] = size.Width;
             }
 
             _glyphWidths = result;
@@ -218,7 +218,7 @@ namespace AvaloniaEdit.Text
             return false;
         }
 
-        public int GetDistanceFromCharacter(int index)
+        public double GetDistanceFromCharacter(int index)
         {
             if (!IsEnd && !IsTab)
             {
@@ -227,7 +227,7 @@ namespace AvaloniaEdit.Text
                     index = Length;
                 }
 
-                var distance = 0;
+                double distance = 0;
                 for (var i = 0; i < index; i++)
                 {
                     distance += _glyphWidths[i];
@@ -239,14 +239,14 @@ namespace AvaloniaEdit.Text
             return index > 0 ? Width : 0;
         }
 
-        public (int firstIndex, int trailingLength) GetCharacterFromDistance(int distance)
+        public (int firstIndex, int trailingLength) GetCharacterFromDistance(double distance)
         {
             if (IsEnd) return (0, 0);
 
             if (Length <= 0) return (0, 0);
 
             var index = 0;
-            var width = 0;
+            double width = 0;
             for (; index < Length; index++)
             {
                 width = IsTab ? Width / Length : _glyphWidths[index];
