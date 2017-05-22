@@ -1084,7 +1084,7 @@ namespace AvaloniaEdit
             if (Document == null)
                 return null;
             var textView = TextArea.TextView;
-            return textView.GetPosition(this.TranslatePoint(point, textView) + textView.ScrollOffset);
+            return textView.GetPosition(this.TranslatePoint(point + textView.ScrollOffset, textView));
         }
 
         /// <summary>
