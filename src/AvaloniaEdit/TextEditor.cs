@@ -75,6 +75,8 @@ namespace AvaloniaEdit
 
             SetValue(OptionsProperty, textArea.Options);
             SetValue(DocumentProperty, new TextDocument());
+
+            textArea[!BackgroundProperty] = this[!BackgroundProperty];
         }
 
         #endregion
