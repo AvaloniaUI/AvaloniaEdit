@@ -4,8 +4,7 @@
     <Style Selector="AvalonEdit|TextEditor">
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
+                <Border BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                     <ScrollViewer Focusable="False"
                                   Name="PART_ScrollViewer"
