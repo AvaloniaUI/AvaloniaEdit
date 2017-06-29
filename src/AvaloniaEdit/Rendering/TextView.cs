@@ -1256,6 +1256,11 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         public override void Render(DrawingContext drawingContext)
         {
+            if(!VisualLinesValid)
+            {
+                return;
+            }
+
             RenderBackground(drawingContext, KnownLayer.Background);
             foreach (var line in _visibleVisualLines)
             {
