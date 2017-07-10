@@ -72,8 +72,7 @@ namespace AvaloniaEdit.Editing
                 {
                     TextArea.Document.Insert(TextArea.Caret.Offset, newText);
                 }
-            }
-            TextArea.Caret.VisualColumn = -1;
+            }            
         }
 
         public override int Length => 0;
