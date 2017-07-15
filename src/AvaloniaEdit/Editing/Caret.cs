@@ -286,6 +286,7 @@ namespace AvaloniaEdit.Editing
         {
             if (_raisePositionChangedOnUpdateFinished)
             {
+                _raisePositionChangedOnUpdateFinished = false;
                 PositionChanged?.Invoke(this, EventArgs.Empty);
             }
         }

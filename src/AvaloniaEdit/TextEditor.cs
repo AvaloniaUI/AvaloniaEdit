@@ -814,7 +814,7 @@ namespace AvaloniaEdit
             set
             {
                 var textArea = TextArea;
-                if (textArea != null)
+                if (textArea != null && textArea.Caret.Offset != value)
                     textArea.Caret.Offset = value;
             }
         }
