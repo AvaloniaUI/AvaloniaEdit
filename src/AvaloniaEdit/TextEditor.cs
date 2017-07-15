@@ -34,6 +34,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Data;
 using Avalonia.Media;
+using Avalonia.Data;
 
 namespace AvaloniaEdit
 {
@@ -43,6 +44,8 @@ namespace AvaloniaEdit
     /// </summary>
     public class TextEditor : TemplatedControl, ITextEditorComponent
     {
+        private ScaleTransform _zoomTransform;
+
         #region Constructors
         static TextEditor()
         {
@@ -77,6 +80,13 @@ namespace AvaloniaEdit
             SetValue(DocumentProperty, new TextDocument());
 
             textArea[!BackgroundProperty] = this[!BackgroundProperty];
+
+            _zoomTransform = new ScaleTransform(1.0, 1.0);
+
+            this.GetObservable(ZoomLevelProperty).Subscribe(zoom =>
+            {
+                _zoomTransform.ScaleX = _zoomTransform.ScaleY = zoom / 100.0;
+            });
         }
 
         #endregion
@@ -260,7 +270,11 @@ namespace AvaloniaEdit
         {
             base.OnTemplateApplied(e);
             ScrollViewer = (ScrollViewer)e.NameScope.Find("PART_ScrollViewer");
-            ScrollViewer.Content = TextArea;
+            ScrollViewer.Content = new Grid
+            {
+                Children = new Controls{
+                new LayoutTransformControl() { LayoutTransform = _zoomTransform, Content = TextArea } }
+            };
         }
 
         /// <summary>
@@ -275,6 +289,61 @@ namespace AvaloniaEdit
         internal ScrollViewer ScrollViewer { get; private set; }
 
         #endregion
+
+        public static readonly StyledProperty<double> ZoomLevelProperty =
+            AvaloniaProperty.Register<TextEditor, double>(nameof(ZoomLevel), defaultBindingMode: BindingMode.TwoWay, defaultValue: 100, validate: (control, newValue) => 
+            {
+                if(newValue > control.MaximumZoomLevel)
+                {
+                    newValue = control.MaximumZoomLevel;
+                }
+                else if(newValue < control.MinimumZoomLevel)
+                {
+                    newValue = control.MinimumZoomLevel;
+                }
+
+                return newValue;
+            });
+
+        public double ZoomLevel
+        {
+            get { return GetValue(ZoomLevelProperty); }
+            set { SetValue(ZoomLevelProperty, value); }
+        }
+
+        public static readonly StyledProperty<double> MinimumZoomLevelProperty =
+            AvaloniaProperty.Register<TextEditor, double>(nameof(ZoomLevel), defaultBindingMode: BindingMode.TwoWay, defaultValue: 20, validate: (control, newValue) =>
+            {
+                if (newValue < 0)
+                {
+                    newValue = 0;
+                }
+
+                return newValue;
+            });
+
+        public double MinimumZoomLevel
+        {
+            get { return GetValue(MinimumZoomLevelProperty); }
+            set { SetValue(MinimumZoomLevelProperty, value); }
+        }
+
+        public static readonly StyledProperty<double> MaximumZoomLevelProperty =
+            AvaloniaProperty.Register<TextEditor, double>(nameof(ZoomLevel), defaultBindingMode: BindingMode.TwoWay, defaultValue: 400, validate: (control, newValue) =>
+            {
+                if (newValue < control.MinimumZoomLevel)
+                {
+                    newValue = control.MinimumZoomLevel;
+                }
+
+                return newValue;
+            });
+
+        public double MaximumZoomLevel
+        {
+            get { return GetValue(MaximumZoomLevelProperty); }
+            set { SetValue(MaximumZoomLevelProperty, value); }
+        }
 
         #region Syntax highlighting
         /// <summary>
