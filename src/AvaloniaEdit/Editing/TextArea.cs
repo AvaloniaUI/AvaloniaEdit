@@ -1002,13 +1002,11 @@ namespace AvaloniaEdit.Editing
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var result = availableSize;
+            var result = base.MeasureOverride(availableSize);
 
             if (TextView?.Document != null)
             {
-                result = new Size(availableSize.Width, LogicalScrollSize * TextView.DefaultLineHeight);
-
-                base.MeasureOverride(result);
+                result = new Size(result.Width, LogicalScrollSize * TextView.DefaultLineHeight);                
             }
 
             return result;

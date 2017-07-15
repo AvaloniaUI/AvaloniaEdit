@@ -16,6 +16,7 @@ namespace AvaloniaEdit.Text
         {
             Length = length;
             Properties = textRunProperties;
+            
         }
     }
 }
