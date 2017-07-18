@@ -666,7 +666,7 @@ namespace AvaloniaEdit.Editing
             else if (_mode == SelectionMode.WholeWord || _mode == SelectionMode.WholeLine)
             {
                 var newWord = (_mode == SelectionMode.WholeLine) ? GetLineAtMousePosition(e) : GetWordAtMousePosition(e);
-                if (newWord != SimpleSegment.Invalid)
+                if (newWord != SimpleSegment.Invalid &&_startWord != null)
                 {
                     TextArea.Selection = Selection.Create(TextArea,
                                                           Math.Min(newWord.Offset, _startWord.Offset),
