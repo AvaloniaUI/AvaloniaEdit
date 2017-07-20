@@ -16,6 +16,18 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Threading;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -24,20 +36,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using Avalonia;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Indentation;
-using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Utils;
-using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.Threading;
-using AvaloniaEdit.Text;
-using Avalonia.Layout;
 
 namespace AvaloniaEdit.Editing
 {
