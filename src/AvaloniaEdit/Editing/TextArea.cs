@@ -99,6 +99,11 @@ namespace AvaloniaEdit.Editing
 
             DefaultInputHandler = new TextAreaDefaultInputHandler(this);
             ActiveInputHandler = DefaultInputHandler;
+
+            textView.GetObservableWithHistory(TextBlock.FontSizeProperty).Subscribe(fontSizeChange =>
+            {
+                TextView.SetScrollOffset(new Vector(_offset.X, _offset.Y * TextView.DefaultLineHeight));
+            });
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
