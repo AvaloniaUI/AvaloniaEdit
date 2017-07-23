@@ -18,7 +18,8 @@
 
 using System;
 using System.Globalization;
-using OmniXaml.TypeConversion;
+using System.ComponentModel;
+using Portable.Xaml.ComponentModel;
 
 namespace AvaloniaEdit.Document
 {
@@ -167,22 +168,22 @@ namespace AvaloniaEdit.Document
     /// <summary>
     /// Converts strings of the form '0+[;,]0+' to a <see cref="TextLocation"/>.
     /// </summary>
-    public class TextLocationConverter : ITypeConverter
+    public class TextLocationConverter : TypeConverter
     {
         /// <inheritdoc/>
-        public bool CanConvertFrom(IValueContext context, Type sourceType)
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string);
         }
 
         /// <inheritdoc/>
-        public bool CanConvertTo(IValueContext context, Type destinationType)
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
             return destinationType == typeof(TextLocation);
         }
 
         /// <inheritdoc/>
-        public object ConvertFrom(IValueContext context, CultureInfo culture, object value)
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var s = value as string;
             var parts = s?.Split(';', ',');
@@ -194,7 +195,7 @@ namespace AvaloniaEdit.Document
         }
 
         /// <inheritdoc/>
-        public object ConvertTo(IValueContext context, CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (value is TextLocation loc && destinationType == typeof(string))
             {
