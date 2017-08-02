@@ -1087,6 +1087,11 @@ namespace AvaloniaEdit.Editing
                 TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
 
                 _offset = value;
+
+                foreach(var margin in LeftMargins)
+                {
+                    margin.InvalidateVisual();
+                }
             }
         }
 
