@@ -21,10 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="0.5.0" />
-    <PackageReference Include="Avalonia.Gtk3" Version="0.5.0" />
-    <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
-    <PackageReference Include="SkiaSharp" Version="1.57.1" />    
+    <PackageReference Include="Avalonia.Desktop" Version="0.5.1-build3595-alpha" />    
   </ItemGroup>
 
   <ItemGroup>
