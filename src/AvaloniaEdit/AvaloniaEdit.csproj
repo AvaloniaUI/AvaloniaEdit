@@ -1,43 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.1</TargetFramework>
+    <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Editing\TextArea.xaml" />
-    <EmbeddedResource Include="TextEditor.xaml" />
-    <EmbeddedResource Include="AvaloniaEdit.xaml" />
-    <EmbeddedResource Include="CodeCompletion\CompletionList.xaml" />
-    <EmbeddedResource Include="CodeCompletion\InsightWindow.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Highlighting\Resources\ASPX.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Boo.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Coco-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\CPP-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\CSharp-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\CSS-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\HTML-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Java-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\JavaScript-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\MarkDown-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\ModeV1.xsd" />
-    <EmbeddedResource Include="Highlighting\Resources\ModeV2.xsd" />
-    <EmbeddedResource Include="Highlighting\Resources\Patch-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\PHP-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\PowerShell.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Tex-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\VB-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\XML-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\XmlDoc.xshd" />
+    <EmbeddedResource Include="**\*.xshd;**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.0" />
-    <PackageReference Include="Avalonia" Version="0.5.1-build3466-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3595-alpha" />
   </ItemGroup>
 
 </Project>
