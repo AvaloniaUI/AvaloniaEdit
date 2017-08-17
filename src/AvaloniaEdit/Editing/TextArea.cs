@@ -1027,8 +1027,6 @@ namespace AvaloniaEdit.Editing
                 TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent);
 
                 (this as ILogicalScrollable).InvalidateScroll?.Invoke();
-                
-                TextView.Redraw();
             }
 
             return base.ArrangeOverride(finalSize);
