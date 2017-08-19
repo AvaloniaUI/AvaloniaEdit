@@ -27,12 +27,11 @@ namespace AvaloniaEdit.Demo
             this.AttachDevTools();
 
             _textEditor = this.FindControl<TextEditor>("Editor");
+            _textEditor.Background = Brushes.Transparent;
+            _textEditor.ShowLineNumbers = true;
             _textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
-            var lineNumberMargin = new LineNumberMargin { Margin = new Thickness(0, 0, 10, 0) };
-            TextBlock.SetForeground(lineNumberMargin, Brushes.Gray);
-            _textEditor.TextArea.LeftMargins.Add(lineNumberMargin);
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
         }
 
