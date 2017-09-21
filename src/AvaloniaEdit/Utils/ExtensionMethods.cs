@@ -15,6 +15,7 @@
 // FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
+extern alias SystemDrawing;
 
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ using System.Xml;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using SystemDrawingColor = global::System.Drawing;
+
 
 namespace AvaloniaEdit.Utils
 {
@@ -177,22 +180,22 @@ namespace AvaloniaEdit.Utils
         #endregion
 
         #region System.Drawing <-> Avalonia conversions
-        public static System.Drawing.Point ToSystemDrawing(this Point p)
+        public static SystemDrawing::System.Drawing.Point ToSystemDrawing(this Point p)
         {
-            return new System.Drawing.Point((int)p.X, (int)p.Y);
+            return new SystemDrawing::System.Drawing.Point((int)p.X, (int)p.Y);
         }
 
-        public static Point ToAvalonia(this System.Drawing.Point p)
+        public static Point ToAvalonia(this SystemDrawing::System.Drawing.Point p)
         {
             return new Point(p.X, p.Y);
         }
 
-        public static Size ToAvalonia(this System.Drawing.Size s)
+        public static Size ToAvalonia(this SystemDrawing::System.Drawing.Size s)
         {
             return new Size(s.Width, s.Height);
         }
 
-        public static Rect ToAvalonia(this System.Drawing.Rectangle rect)
+        public static Rect ToAvalonia(this SystemDrawing::System.Drawing.Rectangle rect)
         {
             return new Rect(rect.Location.ToAvalonia(), rect.Size.ToAvalonia());
         }
