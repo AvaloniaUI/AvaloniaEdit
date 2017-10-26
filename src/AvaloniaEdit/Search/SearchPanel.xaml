@@ -20,7 +20,7 @@
 
     <Style Selector="search|SearchPanel">
         <Setter Property="BorderThickness"
-                Value="0,0,0,3" />
+                Value="1" />
         <Setter Property="BorderBrush"
                 Value="DarkGray" />
         <Setter Property="Background"

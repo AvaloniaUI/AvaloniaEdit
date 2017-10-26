@@ -12,7 +12,7 @@
                 Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />-->
         <Setter Property="Template">
             <ControlTemplate>
-                <DockPanel Focusable="False">
+                <DockPanel Focusable="False" Background="{TemplateBinding Background}">
                     <ItemsControl DockPanel.Dock="Left"
                                   Focusable="False"
                                   Items="{TemplateBinding LeftMargins}">
@@ -22,8 +22,8 @@
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
-                    <ContentPresenter Name="PART_CP"
-                                      Focusable="False" />
+                    <ContentPresenter Name="PART_CP" Cursor="IBeam"
+                                      Focusable="False" Background="{TemplateBinding Background}" />
                 </DockPanel>
             </ControlTemplate>
         </Setter>

@@ -30,7 +30,7 @@ namespace AvaloniaEdit.Highlighting
 		/// Gets the real brush.
 		/// </summary>
 		/// <param name="context">The construction context. context can be null!</param>
-		public abstract Brush GetBrush(ITextRunConstructionContext context);
+		public abstract IBrush GetBrush(ITextRunConstructionContext context);
 		
 		/// <summary>
 		/// Gets the color of the brush.
@@ -62,7 +62,7 @@ namespace AvaloniaEdit.Highlighting
 		public SimpleHighlightingBrush(Color color) : this(new SolidColorBrush(color)) {}
 		
 		/// <inheritdoc/>
-		public override Brush GetBrush(ITextRunConstructionContext context)
+		public override IBrush GetBrush(ITextRunConstructionContext context)
 		{
 			return _brush;
 		}

@@ -36,11 +36,6 @@ namespace AvaloniaEdit.Utils
 		void Freeze();
 	}
 
-    internal interface ICloneable
-    {
-        object Clone();
-    }
-
     internal static class FreezableHelper
 	{
 		public static void ThrowIfFrozen(IFreezable freezable)

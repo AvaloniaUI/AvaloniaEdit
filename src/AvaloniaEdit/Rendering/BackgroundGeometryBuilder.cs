@@ -99,7 +99,6 @@ namespace AvaloniaEdit.Rendering
                              PixelSnapHelpers.Round(r.Y - halfBorder, pixelSize.Height) + halfBorder,
                              PixelSnapHelpers.Round(r.Right + halfBorder, pixelSize.Width) - halfBorder,
                              PixelSnapHelpers.Round(r.Bottom + halfBorder, pixelSize.Height) - halfBorder);
-                Debug.WriteLine($"{r} -> {new Rect(_lastLeft, _lastTop, _lastRight - _lastLeft, _lastBottom - _lastTop)}");
             }
             else
             {

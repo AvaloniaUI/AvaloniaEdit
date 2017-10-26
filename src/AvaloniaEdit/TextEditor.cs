@@ -75,6 +75,8 @@ namespace AvaloniaEdit
 
             SetValue(OptionsProperty, textArea.Options);
             SetValue(DocumentProperty, new TextDocument());
+
+            textArea[!BackgroundProperty] = this[!BackgroundProperty];
         }
 
         #endregion
@@ -812,7 +814,7 @@ namespace AvaloniaEdit
             set
             {
                 var textArea = TextArea;
-                if (textArea != null)
+                if (textArea != null && textArea.Caret.Offset != value)
                     textArea.Caret.Offset = value;
             }
         }
@@ -1084,7 +1086,7 @@ namespace AvaloniaEdit
             if (Document == null)
                 return null;
             var textView = TextArea.TextView;
-            return textView.GetPosition(this.TranslatePoint(point, textView) + textView.ScrollOffset);
+            return textView.GetPosition(this.TranslatePoint(point + new Point(textView.ScrollOffset.X, Math.Floor(textView.ScrollOffset.Y)), textView));
         }
 
         /// <summary>

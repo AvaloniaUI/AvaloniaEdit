@@ -160,24 +160,9 @@ namespace AvaloniaEdit.Folding
             return base.ArrangeOverride(finalSize);
         }
 
-        /// <inheritdoc/>
-        protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
-        {
-            if (oldTextView != null)
-            {
-                oldTextView.VisualLinesChanged -= TextViewVisualLinesChanged;
-            }
-            base.OnTextViewChanged(oldTextView, newTextView);
-            if (newTextView != null)
-            {
-                newTextView.VisualLinesChanged += TextViewVisualLinesChanged;
-            }
-            TextViewVisualLinesChanged(null, null);
-        }
-
         private readonly List<FoldingMarginMarker> _markers = new List<FoldingMarginMarker>();
 
-        private void TextViewVisualLinesChanged(object sender, EventArgs e)
+        protected override void OnTextViewVisualLinesChanged()
         {
             foreach (var m in _markers)
             {

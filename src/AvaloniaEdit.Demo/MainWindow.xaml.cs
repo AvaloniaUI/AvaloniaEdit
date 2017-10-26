@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -19,6 +21,7 @@ namespace AvaloniaEdit.Demo
     {
         private readonly TextEditor _textEditor;
         private CompletionWindow _completionWindow;
+        private OverloadInsightWindow _insightWindow;
 
         public MainWindow()
         {
@@ -26,9 +29,12 @@ namespace AvaloniaEdit.Demo
             this.AttachDevTools();
 
             _textEditor = this.FindControl<TextEditor>("Editor");
+            _textEditor.Background = Brushes.Transparent;
+            _textEditor.ShowLineNumbers = true;
             _textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
+            _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
             var lineNumberMargin = new LineNumberMargin { Margin = new Thickness(0, 0, 10, 0) };
             TextBlock.SetForeground(lineNumberMargin, Brushes.Gray);
             _textEditor.TextArea.LeftMargins.Add(lineNumberMargin);
@@ -58,6 +64,9 @@ namespace AvaloniaEdit.Demo
                     _completionWindow.CompletionList.RequestInsertion(e);
                 }
             }
+
+            _insightWindow?.Hide();
+
             // Do not set e.Handled=true.
             // We still want to insert the character that was typed.
         }
@@ -68,6 +77,7 @@ namespace AvaloniaEdit.Demo
             {
                 // Open code completion after the user has pressed dot:
                 _completionWindow = new CompletionWindow(_textEditor.TextArea);
+                _completionWindow.Closed += (o, args) => _completionWindow = null;
 
                 var data = _completionWindow.CompletionList.CompletionData;
                 data.Add(new MyCompletionData("Item1"));
@@ -75,7 +85,58 @@ namespace AvaloniaEdit.Demo
                 data.Add(new MyCompletionData("Item3"));
 
                 _completionWindow.Show();
-                _completionWindow.Closed += (o, args) => _completionWindow = null;
+            }
+            else if (e.Text == "(")
+            {
+                _insightWindow = new OverloadInsightWindow(_textEditor.TextArea);
+                _insightWindow.Closed += (o, args) => _insightWindow = null;
+
+                _insightWindow.Provider = new MyOverloadProvider(new[]
+                {
+                    ("Method1(int, string)", "Method1 description"),
+                    ("Method2(int)", "Method2 description"),
+                    ("Method3(string)", "Method3 description"),
+                });
+
+                _insightWindow.Show();
+            }
+        }
+
+        private class MyOverloadProvider : IOverloadProvider
+        {
+            private readonly IList<(string header, string content)> _items;
+            private int _selectedIndex;
+
+            public MyOverloadProvider(IList<(string header, string content)> items)
+            {
+                _items = items;
+                SelectedIndex = 0;
+            }
+
+            public int SelectedIndex
+            {
+                get => _selectedIndex;
+                set
+                {
+                    _selectedIndex = value;
+                    OnPropertyChanged();
+                    // ReSharper disable ExplicitCallerInfoArgument
+                    OnPropertyChanged(nameof(CurrentHeader));
+                    OnPropertyChanged(nameof(CurrentContent));
+                    // ReSharper restore ExplicitCallerInfoArgument
+                }
+            }
+
+            public int Count => _items.Count;
+            public string CurrentIndexText => null;
+            public object CurrentHeader => _items[SelectedIndex].header;
+            public object CurrentContent => _items[SelectedIndex].content;
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 

@@ -432,6 +432,14 @@ namespace AvaloniaEdit.Editing
                     }
                     else if (e.ClickCount == 1 && modifiers.HasFlag(InputModifiers.Control))
                     {
+                        _mode = SelectionMode.WholeWord;
+                        if (shift && !(TextArea.Selection is RectangleSelection))
+                        {
+                            TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
+                        }
+                    }
+                    else if(e.ClickCount == 1 && modifiers == InputModifiers.LeftMouseButton)
+                    {
                         _mode = SelectionMode.Normal;
                         if (shift && !(TextArea.Selection is RectangleSelection))
                         {
@@ -658,7 +666,7 @@ namespace AvaloniaEdit.Editing
             else if (_mode == SelectionMode.WholeWord || _mode == SelectionMode.WholeLine)
             {
                 var newWord = (_mode == SelectionMode.WholeLine) ? GetLineAtMousePosition(e) : GetWordAtMousePosition(e);
-                if (newWord != SimpleSegment.Invalid)
+                if (newWord != SimpleSegment.Invalid &&_startWord != null)
                 {
                     TextArea.Selection = Selection.Create(TextArea,
                                                           Math.Min(newWord.Offset, _startWord.Offset),

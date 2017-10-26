@@ -16,6 +16,18 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Threading;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -24,18 +36,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using Avalonia;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Indentation;
-using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Utils;
-using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.Threading;
 
 namespace AvaloniaEdit.Editing
 {
@@ -99,6 +99,11 @@ namespace AvaloniaEdit.Editing
 
             DefaultInputHandler = new TextAreaDefaultInputHandler(this);
             ActiveInputHandler = DefaultInputHandler;
+
+            textView.GetObservableWithHistory(TextBlock.FontSizeProperty).Subscribe(fontSizeChange =>
+            {
+                TextView.SetScrollOffset(new Vector(_offset.X, _offset.Y * TextView.DefaultLineHeight));
+            });
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
@@ -252,6 +257,8 @@ namespace AvaloniaEdit.Editing
                 TextDocumentWeakEventManager.Changed.AddHandler(newValue, OnDocumentChanged);
                 TextDocumentWeakEventManager.UpdateStarted.AddHandler(newValue, OnUpdateStarted);
                 TextDocumentWeakEventManager.UpdateFinished.AddHandler(newValue, OnUpdateFinished);
+
+                InvalidateArrange();
             }
             // Reset caret location and selection: this is necessary because the caret/selection might be invalid
             // in the new document (e.g. if new document is shorter than the old document).
@@ -407,7 +414,6 @@ namespace AvaloniaEdit.Editing
                     throw new ArgumentException("Cannot use a Selection instance that belongs to another text area.");
                 if (!Equals(_selection, value))
                 {
-                    //					Debug.WriteLine("Selection change from " + selection + " to " + value);
                     if (TextView != null)
                     {
                         var oldSegment = _selection.SurroundingSegment;
@@ -549,7 +555,6 @@ namespace AvaloniaEdit.Editing
             {
                 if (!_selection.IsEmpty && !_selection.Contains(Caret.Offset))
                 {
-                    Debug.WriteLine("Resetting selection because caret is outside");
                     ClearSelection();
                 }
             }
@@ -587,9 +592,9 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public Caret Caret { get; }
 
-        public void ScrollToLine(int line, double borderSizePc = 0.5)
+        public void ScrollToLine(int line, int linesEitherSide)
         {
-            var offset = line - (_viewPort.Height * borderSizePc);
+            var offset = line - linesEitherSide;
 
             if (offset < 0)
             {
@@ -598,7 +603,7 @@ namespace AvaloniaEdit.Editing
 
             this.BringIntoView(new Rect(1, offset, 0, 1));
 
-            offset = line + (_viewPort.Height * borderSizePc);
+            offset = line + linesEitherSide;
 
             if (offset >= 0)
             {
@@ -613,7 +618,12 @@ namespace AvaloniaEdit.Editing
 
             TextView.HighlightedLine = Caret.Line;
 
-            ScrollToLine(Caret.Line);
+            ScrollToLine(Caret.Line, 2);
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                (this as ILogicalScrollable).InvalidateScroll?.Invoke();
+            });
         }
 
         public static readonly DirectProperty<TextArea, ObservableCollection<IControl>> LeftMarginsProperty
@@ -710,7 +720,6 @@ namespace AvaloniaEdit.Editing
 
         protected override void OnTextInput(TextInputEventArgs e)
         {
-            Debug.WriteLine($"TextInput: Text=\'{e.Text}\'");
             base.OnTextInput(e);
             if (!e.Handled && Document != null)
             {
@@ -1015,7 +1024,11 @@ namespace AvaloniaEdit.Editing
                 _viewPort = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
                 _extent = new Size(finalSize.Width, LogicalScrollSize);
 
+                TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent);
+
                 (this as ILogicalScrollable).InvalidateScroll?.Invoke();
+                
+                TextView.Redraw();
             }
 
             return base.ArrangeOverride(finalSize);
@@ -1073,7 +1086,7 @@ namespace AvaloniaEdit.Editing
             {
                 TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
 
-                SetAndRaise(OffsetProperty, ref _offset, value);
+                _offset = value;
             }
         }
 

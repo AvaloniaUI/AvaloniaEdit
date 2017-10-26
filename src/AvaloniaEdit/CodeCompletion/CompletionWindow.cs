@@ -21,7 +21,6 @@ using Avalonia;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
@@ -34,6 +33,7 @@ namespace AvaloniaEdit.CodeCompletion
     public class CompletionWindow : CompletionWindowBase
     {
         private PopupWithCustomPosition _toolTip;
+        private ContentControl _toolTipContent;
 
         /// <summary>
         /// Gets the completion list used in this completion window.
@@ -54,12 +54,16 @@ namespace AvaloniaEdit.CodeCompletion
             // prevent user from resizing window to 0x0
             MinHeight = 15;
             MinWidth = 30;
+            
+            _toolTipContent = new ContentControl();
+            _toolTipContent.Classes.Add("ToolTip");
 
             _toolTip = new PopupWithCustomPosition
             {
                 StaysOpen = false,
                 PlacementTarget = this,
                 PlacementMode = PlacementMode.Right,
+                Child = _toolTipContent,
             };
 
             LogicalChildren.Add(_toolTip);
@@ -77,6 +81,7 @@ namespace AvaloniaEdit.CodeCompletion
             {
                 _toolTip.IsOpen = false;
                 _toolTip = null;
+                _toolTipContent = null;
             }
         }
 
@@ -84,7 +89,7 @@ namespace AvaloniaEdit.CodeCompletion
 
         private void CompletionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_toolTip == null) return;
+            if (_toolTipContent == null) return;
 
             var item = CompletionList.SelectedItem;
             var description = item?.Description;
@@ -92,7 +97,7 @@ namespace AvaloniaEdit.CodeCompletion
             {
                 if (description is string descriptionText)
                 {
-                    _toolTip.Child = new TextBlock
+                    _toolTipContent.Content = new TextBlock
                     {
                         Text = descriptionText,
                         TextWrapping = TextWrapping.Wrap
@@ -100,10 +105,10 @@ namespace AvaloniaEdit.CodeCompletion
                 }
                 else
                 {
-                    _toolTip.Child = new ContentPresenter {Content = description};
+                    _toolTipContent.Content = description;
                 }
 
-                _toolTip.Position = this.PointToScreen(Bounds.TopRight);
+                _toolTip.Position = this.PointToScreen(Bounds.TopRight.WithX(Bounds.Right + 10));
                 _toolTip.IsOpen = true;
             }
             else

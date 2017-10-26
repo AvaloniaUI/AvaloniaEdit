@@ -88,28 +88,6 @@ namespace AvaloniaEdit.Editing
         }
 
         /// <inheritdoc/>
-        protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
-        {
-            if (oldTextView != null)
-            {
-                oldTextView.VisualLinesChanged -= TextViewVisualLinesChanged;
-            }
-            base.OnTextViewChanged(oldTextView, newTextView);
-            if (newTextView != null)
-            {
-                newTextView.VisualLinesChanged += TextViewVisualLinesChanged;
-
-                // find the text area belonging to the new text view
-                _textArea = newTextView.GetService(typeof(TextArea)) as TextArea;
-            }
-            else
-            {
-                _textArea = null;
-            }
-            InvalidateVisual();
-        }
-
-        /// <inheritdoc/>
         protected override void OnDocumentChanged(TextDocument oldDocument, TextDocument newDocument)
         {
             if (oldDocument != null)
@@ -149,11 +127,6 @@ namespace AvaloniaEdit.Editing
                 MaxLineNumberLength = newLength;
                 InvalidateMeasure();
             }
-        }
-
-        private void TextViewVisualLinesChanged(object sender, EventArgs e)
-        {
-            InvalidateVisual();
         }
 
         private AnchorSegment _selectionStart;
@@ -238,7 +211,7 @@ namespace AvaloniaEdit.Editing
             base.OnPointerMoved(e);
         }
 
-        protected override void OnPointerReleased(PointerEventArgs e)
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
             if (_selecting)
             {

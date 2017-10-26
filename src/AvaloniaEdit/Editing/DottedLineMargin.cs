@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Markup.Xaml.Data;
@@ -41,7 +42,7 @@ namespace AvaloniaEdit.Editing
             {
                 StartPoint = new Point(0, 0),
                 EndPoint = new Point(0, 1),
-                StrokeDashArray = { 0, 2 },
+                StrokeDashArray = new AvaloniaList<double> { 0, 2 },
                 Stretch = Stretch.Fill,
                 StrokeThickness = 1,
                 StrokeDashCap = PenLineCap.Round,

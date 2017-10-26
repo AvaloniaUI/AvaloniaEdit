@@ -706,7 +706,6 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         private void ClearVisualLines()
         {
-            _visibleVisualLines = null;
             if (_allVisualLines.Count != 0)
             {
                 foreach (var visualLine in _allVisualLines)
@@ -714,6 +713,8 @@ namespace AvaloniaEdit.Rendering
                     DisposeVisualLine(visualLine);
                 }
                 _allVisualLines.Clear();
+
+                _visibleVisualLines = new ReadOnlyCollection<VisualLine>(_allVisualLines);
             }
         }
 
@@ -723,8 +724,7 @@ namespace AvaloniaEdit.Rendering
             {
                 throw new ArgumentException("Cannot dispose visual line because it is in construction!");
             }
-
-            _visibleVisualLines = null;
+            
             visualLine.Dispose();
             RemoveInlineObjects(visualLine);
         }
@@ -934,7 +934,7 @@ namespace AvaloniaEdit.Rendering
                 _inMeasure = true;
                 try
                 {
-                    maxWidth = CreateAndMeasureVisualLines(availableSize);
+                    maxWidth = CreateAndMeasureVisualLines(_scrollViewport);
                 }
                 finally
                 {
@@ -964,9 +964,6 @@ namespace AvaloniaEdit.Rendering
 
             TextLayer.SetVisualLines(_visibleVisualLines);
 
-            SetScrollData(availableSize,
-                          new Size(maxWidth, heightTreeHeight),
-                          _scrollOffset);
             VisualLinesChanged?.Invoke(this, EventArgs.Empty);
 
             return new Size(Math.Min(availableSize.Width, maxWidth), Math.Min(availableSize.Height, heightTreeHeight));
@@ -981,7 +978,7 @@ namespace AvaloniaEdit.Rendering
             var globalTextRunProperties = CreateGlobalTextRunProperties();
             var paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
 
-            Debug.WriteLine("Measure availableSize=" + availableSize + ", scrollOffset=" + _scrollOffset);
+            //Debug.WriteLine("Measure availableSize=" + availableSize + ", scrollOffset=" + _scrollOffset);
             var firstLineInView = _heightTree.GetLineByVisualPosition(_scrollOffset.Y);
 
             // number of pixels clipped from the first visual line(s)
@@ -1079,9 +1076,7 @@ namespace AvaloniaEdit.Rendering
         {
             if (_heightTree.GetIsCollapsed(documentLine.LineNumber))
                 throw new InvalidOperationException("Trying to build visual line from collapsed line");
-
-            Debug.WriteLine("Building line " + documentLine.LineNumber);
-
+            
             var visualLine = new VisualLine(this, documentLine);
             var textSource = new VisualLineTextSource(visualLine)
             {
@@ -1205,10 +1200,8 @@ namespace AvaloniaEdit.Rendering
             {
                 newScrollOffsetY = Math.Max(0, _scrollExtent.Height - finalSize.Height);
             }
-            if (SetScrollData(_scrollViewport, _scrollExtent, new Vector(newScrollOffsetX, newScrollOffsetY)))
-                InvalidateMeasure(DispatcherPriority.Normal);
 
-            Debug.WriteLine("Arrange finalSize=" + finalSize + ", scrollOffset=" + _scrollOffset);
+           // Debug.WriteLine("Arrange finalSize=" + finalSize + ", scrollOffset=" + _scrollOffset);
 
             if (_visibleVisualLines != null)
             {
@@ -1263,6 +1256,11 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         public override void Render(DrawingContext drawingContext)
         {
+            if(!VisualLinesValid)
+            {
+                return;
+            }
+
             RenderBackground(drawingContext, KnownLayer.Background);
             foreach (var line in _visibleVisualLines)
             {
@@ -1360,31 +1358,20 @@ namespace AvaloniaEdit.Rendering
 
         private void ClearScrollData()
         {
-            SetScrollData(new Size(), new Size(), new Vector());
+            SetScrollData(new Size(), new Size());
+            _scrollOffset = new Vector();
         }
 
-        private bool SetScrollData(Size viewport, Size extent, Vector offset)
+        public bool SetScrollData(Size viewport, Size extent)
         {
             if (!(viewport.IsClose(_scrollViewport)
-                  && extent.IsClose(_scrollExtent)
-                  && offset.IsClose(_scrollOffset)))
+                  && extent.IsClose(_scrollExtent)))
             {
                 _scrollViewport = viewport;
                 _scrollExtent = extent;
-                SetScrollOffset(offset);
-                OnScrollChange();
                 return true;
             }
             return false;
-        }
-
-        private void OnScrollChange()
-        {
-            //ScrollViewer scrollOwner = ((IScrollInfo)this).ScrollOwner;
-            //if (scrollOwner != null)
-            //{
-            //    scrollOwner.InvalidateScrollInfo();
-            //}
         }
 
         private bool _canVerticallyScroll = true;
@@ -1422,6 +1409,8 @@ namespace AvaloniaEdit.Rendering
             {
                 _scrollOffset = vector;
                 ScrollOffsetChanged?.Invoke(this, EventArgs.Empty);
+
+                InvalidateMeasure();
             }
         }
 
@@ -1566,7 +1555,6 @@ namespace AvaloniaEdit.Rendering
             if (!_scrollOffset.IsClose(newScrollOffset))
             {
                 SetScrollOffset(newScrollOffset);
-                OnScrollChange();
                 InvalidateMeasure(DispatcherPriority.Normal);
             }
         }
@@ -1626,7 +1614,7 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
-        protected override void OnPointerReleased(PointerEventArgs e)
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
             base.OnPointerReleased(e);
 
@@ -1677,7 +1665,7 @@ namespace AvaloniaEdit.Rendering
             if (vl != null)
             {
                 var column = vl.GetVisualColumnFloor(visualPosition);
-                Debug.WriteLine(vl.FirstDocumentLine.LineNumber + " vc " + column);
+                
                 foreach (var element in vl.Elements)
                 {
                     if (element.VisualColumn + element.VisualLength <= column)

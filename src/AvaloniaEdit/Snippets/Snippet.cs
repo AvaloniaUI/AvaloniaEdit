@@ -30,7 +30,7 @@ namespace AvaloniaEdit.Snippets
         /// <summary>
         /// Inserts the snippet into the text area.
         /// </summary>
-        public void Insert(TextArea textArea)
+        public InsertionContext Insert(TextArea textArea)
         {
             if (textArea == null)
                 throw new ArgumentNullException(nameof(textArea));
@@ -53,6 +53,8 @@ namespace AvaloniaEdit.Snippets
                 Insert(context);
                 context.RaiseInsertionCompleted(EventArgs.Empty);
             }
+
+            return context;
         }
     }
 }

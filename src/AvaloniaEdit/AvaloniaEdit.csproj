@@ -1,61 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Search\DropDownButton.xaml" />
-    <None Remove="Search\next.png" />
-    <None Remove="Search\prev.png" />
-    <None Remove="Search\SearchPanel.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Search\Assets\ReplaceNext.png" />
-    <EmbeddedResource Include="Search\DropDownButton.xaml" />
-    <EmbeddedResource Include="Search\SearchPanel.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Editing\TextArea.xaml" />
-    <EmbeddedResource Include="Search\Assets\FindNext.png" />
-    <EmbeddedResource Include="Search\Assets\FindPrevious.png" />
-    <EmbeddedResource Include="Search\Assets\ReplaceAll.png" />
-    <EmbeddedResource Include="TextEditor.xaml" />
-    <EmbeddedResource Include="AvaloniaEdit.xaml" />
-    <EmbeddedResource Include="CodeCompletion\CompletionList.xaml" />
-    <EmbeddedResource Include="CodeCompletion\InsightWindow.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Highlighting\Resources\ASPX.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Boo.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Coco-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\CPP-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\CSharp-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\CSS-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\HTML-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Java-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\JavaScript-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\MarkDown-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\ModeV1.xsd" />
-    <EmbeddedResource Include="Highlighting\Resources\ModeV2.xsd" />
-    <EmbeddedResource Include="Highlighting\Resources\Patch-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\PHP-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\PowerShell.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Tex-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\VB-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\XML-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\XmlDoc.xshd" />
+    <EmbeddedResource Include="**\*.xshd;**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
-    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.0" />
-    <PackageReference Include="Avalonia" Version="0.4.1-build2959-alpha" />
-    <!--<PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />-->
+    <PackageReference Include="Avalonia" Version="0.5.2-build4186-alpha" />
   </ItemGroup>
 
   <ItemGroup>

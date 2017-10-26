@@ -7,10 +7,10 @@ before_build:
 
 build_script:
 - cmd: dotnet --info
-- ps: .\build.ps1
+- ps: .\build.ps1 -Platform "AnyCPU" -Configuration "Release"
 
 test: off
 
 artifacts:
 - path: artifacts/zip/*.zip
-- path: latest-version-badge.svg
+- path: artifacts/nuget/*.nupkg

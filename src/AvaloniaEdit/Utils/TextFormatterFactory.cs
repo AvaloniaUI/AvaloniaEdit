@@ -20,13 +20,14 @@ using System;
 using AvaloniaEdit.Text;
 using Avalonia.Controls;
 using Avalonia.Media;
+using AvaloniaEdit.Rendering;
 
 namespace AvaloniaEdit.Utils
 {
     /// <summary>
     /// Creates TextFormatter instances that with the correct TextFormattingMode, if running on .NET 4.0.
     /// </summary>
-    internal static class TextFormatterFactory
+    public static class TextFormatterFactory
 	{
 	    public static TextFormatter Create()
 	    {
@@ -54,12 +55,15 @@ namespace AvaloniaEdit.Utils
 	            emSize = TextBlock.GetFontSize(element);
 	        if (foreground == null)
 	            foreground = TextBlock.GetForeground(element);
-	        var formattedText = new FormattedText(
-	            text,
-	            typeface,
-	            emSize.Value
-	        );
-	        formattedText.SetForegroundBrush(foreground, 0, 0);
+
+            var formattedText = new FormattedText
+            {
+                Text = text,
+                Typeface = new Typeface(typeface, emSize.Value)
+            };
+	        
+	        formattedText.SetTextStyle(0, text.Length, foreground);
+
 	        return formattedText;
 	    }
 	}

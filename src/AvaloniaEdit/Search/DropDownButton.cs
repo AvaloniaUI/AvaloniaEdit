@@ -59,7 +59,7 @@ namespace AvaloniaEdit.Search
             protected set => SetValue(IsDropDownContentOpenProperty, value);
         }
 
-        protected override void OnClick(RoutedEventArgs e)
+       /* protected override void OnClick(RoutedEventArgs e)
         {
             base.OnClick(e);
 
@@ -71,7 +71,7 @@ namespace AvaloniaEdit.Search
                 DropDownContent.Closed += DropDownContent_Closed;
                 IsDropDownContentOpen = true;
             }
-        }
+        }*/
 
         private void DropDownContent_Closed(object sender, EventArgs e)
         {

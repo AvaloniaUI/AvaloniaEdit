@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <OutputType>exe</OutputType>
-    <TargetFrameworks>netcoreapp1.1;net461</TargetFrameworks>
-    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net45</PackageTargetFallback>
+    <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
     <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;osx.10.12-x64</RuntimeIdentifiers>
     <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -22,11 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="0.4.1-build2959-alpha" />
-    <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build2959-alpha" />
-    <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.56.1.3" />
-    <PackageReference Include="SkiaSharp" Version="1.56.1" Condition="'$(TargetFramework)' == 'netcoreapp1.1'"/>
-    <PackageReference Include="SkiaSharp" Version="1.57.0" Condition="'$(TargetFramework)' != 'netcoreapp1.1'"/>
+    <PackageReference Include="Avalonia.Desktop" Version="0.5.2-build4186-alpha" />    
   </ItemGroup>
 
   <ItemGroup>

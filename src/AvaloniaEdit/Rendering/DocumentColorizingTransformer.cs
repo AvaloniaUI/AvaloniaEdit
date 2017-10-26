@@ -88,8 +88,8 @@ namespace AvaloniaEdit.Rendering
         {
             if (startOffset < _currentDocumentLineStartOffset || startOffset > _currentDocumentLineEndOffset)
                 throw new ArgumentOutOfRangeException(nameof(startOffset), startOffset, "Value must be between " + _currentDocumentLineStartOffset + " and " + _currentDocumentLineEndOffset);
-            if (endOffset < startOffset || endOffset > _currentDocumentLineEndOffset)
-                throw new ArgumentOutOfRangeException(nameof(endOffset), endOffset, "Value must be between " + startOffset + " and " + _currentDocumentLineEndOffset);
+            if (endOffset < _currentDocumentLineStartOffset || endOffset > _currentDocumentLineEndOffset)
+                throw new ArgumentOutOfRangeException(nameof(endOffset), endOffset, "Value must be between " + _currentDocumentLineStartOffset + " and " + _currentDocumentLineEndOffset);
             var vl = CurrentContext.VisualLine;
             var visualStart = vl.GetVisualColumn(startOffset - _firstLineStart);
             var visualEnd = vl.GetVisualColumn(endOffset - _firstLineStart);

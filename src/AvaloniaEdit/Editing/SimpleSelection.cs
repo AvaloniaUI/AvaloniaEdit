@@ -26,7 +26,7 @@ namespace AvaloniaEdit.Editing
     /// <summary>
     /// A simple selection.
     /// </summary>
-    internal sealed class SimpleSelection : Selection
+    public sealed class SimpleSelection : Selection
     {
         private readonly TextViewPosition _start;
         private readonly TextViewPosition _end;

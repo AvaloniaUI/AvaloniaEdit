@@ -17,7 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
-using OmniXaml.TypeConversion;
+using System.ComponentModel;
 
 namespace AvaloniaEdit.Highlighting
 {

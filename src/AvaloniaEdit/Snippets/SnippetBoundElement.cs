@@ -123,6 +123,7 @@ namespace AvaloniaEdit.Snippets
 
         public void Deactivate(SnippetEventArgs e)
         {
+            TargetElement.TextChanged -= targetElement_TextChanged;
         }
 
         public bool IsEditable => false;

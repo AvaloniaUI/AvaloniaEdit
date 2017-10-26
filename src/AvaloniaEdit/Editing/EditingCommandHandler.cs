@@ -24,6 +24,7 @@ using Avalonia;
 using AvaloniaEdit.Document;
 using Avalonia.Input;
 using AvaloniaEdit.Utils;
+using System.Threading.Tasks;
 
 namespace AvaloniaEdit.Editing
 {
@@ -61,7 +62,8 @@ namespace AvaloniaEdit.Editing
 
         static EditingCommandHandler()
         {
-            AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.None), CanDelete);
+            // TODO ApplicationCommands.Delete gets called, but never editing commands.Delete (since porting to avalonia.)
+            AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.CharRight), CanDelete);
             AddBinding(EditingCommands.Delete, InputModifiers.None, Key.Delete, OnDelete(CaretMovementType.CharRight));
             AddBinding(EditingCommands.DeleteNextWord, InputModifiers.Control, Key.Delete,
                 OnDelete(CaretMovementType.WordRight));
@@ -325,11 +327,10 @@ namespace AvaloniaEdit.Editing
 
         private static void CanDelete(object target, CanExecuteRoutedEventArgs args)
         {
-            // HasSomethingSelected for delete command
             var textArea = GetTextArea(target);
             if (textArea?.Document != null)
             {
-                args.CanExecute = !textArea.Selection.IsEmpty;
+                args.CanExecute = true;
                 args.Handled = true;
             }
         }
@@ -465,26 +466,26 @@ namespace AvaloniaEdit.Editing
             var textArea = GetTextArea(target);
             if (textArea?.Document != null)
             {
-                args.CanExecute = textArea.ReadOnlySectionProvider.CanInsert(textArea.Caret.Offset)
-                                  && !string.IsNullOrEmpty(Application.Current.Clipboard.GetTextAsync()
-                                      .GetAwaiter()
-                                      .GetResult());
+                args.CanExecute = textArea.ReadOnlySectionProvider.CanInsert(textArea.Caret.Offset);
                 args.Handled = true;
             }
         }
 
-        private static void OnPaste(object target, ExecutedRoutedEventArgs args)
+        private static async void OnPaste(object target, ExecutedRoutedEventArgs args)
         {
             var textArea = GetTextArea(target);
             if (textArea?.Document != null)
             {
-                string text;
+                textArea.Document.BeginUpdate();
+
+                string text = null;
                 try
                 {
-                    text = Application.Current.Clipboard.GetTextAsync().GetAwaiter().GetResult();
+                     text = await Application.Current.Clipboard.GetTextAsync();
                 }
                 catch (Exception)
                 {
+                    textArea.Document.EndUpdate();
                     return;
                 }
 
@@ -501,6 +502,8 @@ namespace AvaloniaEdit.Editing
 
                 textArea.Caret.BringCaretToView();
                 args.Handled = true;
+
+                textArea.Document.EndUpdate();
             }
         }
 

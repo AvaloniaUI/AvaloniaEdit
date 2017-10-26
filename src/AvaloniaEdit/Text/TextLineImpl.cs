@@ -31,7 +31,7 @@ namespace AvaloniaEdit.Text
         {
             var index = firstIndex;
             var visibleLength = 0;
-            var widthLeft = paragraphLength > 0 ? paragraphLength : int.MaxValue;
+            var widthLeft = paragraphLength > 0 ? paragraphLength : double.MaxValue;
             TextLineRun prevRun = null;
             var run = TextLineRun.Create(textSource, index, firstIndex, widthLeft);
             if (!run.IsEnd && run.Width <= widthLeft)
@@ -54,12 +54,12 @@ namespace AvaloniaEdit.Text
                 throw new NotSupportedException("Too many characters per line");
             }
 
-            while (run.IsEnd || run.Width <= widthLeft)
+            while (true)
             {
                 visibleLength += AddRunReturnVisibleLength(runs, run);
                 index += run.Length;
                 widthLeft -= run.Width;
-                if (run.IsEnd)
+                if (run.IsEnd || widthLeft <= 0)
                 {
                     trailing.SpaceWidth = 0;
                     UpdateTrailingInfo(runs, trailing);
@@ -68,8 +68,6 @@ namespace AvaloniaEdit.Text
 
                 run = TextLineRun.Create(textSource, index, firstIndex, widthLeft);
             }
-
-            return null;
         }
 
         private TextLineImpl(TextParagraphProperties paragraphProperties, int firstIndex, List<TextLineRun> runs, TrailingInfo trailing)
@@ -151,7 +149,7 @@ namespace AvaloniaEdit.Text
                 return;
             }
 
-            var width = 0;
+            double width = 0;
             var y = origin.Y;
 
             foreach (var run in _runs)
@@ -163,7 +161,7 @@ namespace AvaloniaEdit.Text
 
         public override double GetDistanceFromCharacter(int firstIndex, int trailingLength)
         {
-            var distance = 0;
+            double distance = 0;
             var index = firstIndex + (trailingLength != 0 ? 1 : 0) - FirstIndex;
             var runs = _runs;
             foreach (var run in runs)
@@ -182,9 +180,8 @@ namespace AvaloniaEdit.Text
 
         public override (int firstIndex, int trailingLength) GetCharacterFromDistance(double distance)
         {
-            var distanceInt = (int)distance;
             var firstIndex = FirstIndex;
-            if (distanceInt < 0)
+            if (distance < 0)
             {
                 return (FirstIndex, 0);
             }
@@ -196,16 +193,16 @@ namespace AvaloniaEdit.Text
                 if (!run.IsEnd)
                 {
                     firstIndex += result.trailingLength;
-                    result = run.GetCharacterFromDistance(distanceInt);
+                    result = run.GetCharacterFromDistance(distance);
                     firstIndex += result.firstIndex;
                 }
 
-                if (distanceInt <= run.Width)
+                if (distance <= run.Width)
                 {
                     break;
                 }
 
-                distanceInt -= run.Width;
+                distance -= run.Width;
             }
 
             return (firstIndex, result.trailingLength);

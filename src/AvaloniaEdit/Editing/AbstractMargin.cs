@@ -34,16 +34,22 @@ namespace AvaloniaEdit.Editing
     /// </summary>
     public abstract class AbstractMargin : Control, ITextViewConnect
     {
-        static AbstractMargin()
+        private TextArea _textArea;
+
+        public AbstractMargin()
         {
-            TextViewProperty.Changed.Subscribe(OnTextViewChanged);
+            this.GetObservableWithHistory(TextViewProperty).Subscribe(o =>
+            {
+                _wasAutoAddedToTextView = false;
+                OnTextViewChanged(o.Item1, o.Item2);
+            });
         }
 
         /// <summary>
         /// TextView property.
         /// </summary>
         public static readonly AvaloniaProperty<TextView> TextViewProperty =
-            AvaloniaProperty.Register<AbstractMargin, TextView>("TextView");
+            AvaloniaProperty.Register<AbstractMargin, TextView>(nameof(TextView));
 
         /// <summary>
         /// Gets/sets the text view for which line numbers are displayed.
@@ -53,13 +59,6 @@ namespace AvaloniaEdit.Editing
         {
             get => GetValue(TextViewProperty);
             set => SetValue(TextViewProperty, value);
-        }
-
-        private static void OnTextViewChanged(AvaloniaPropertyChangedEventArgs e)
-        {
-            var margin = (AbstractMargin)e.Sender;
-            margin._wasAutoAddedToTextView = false;
-            margin.OnTextViewChanged((TextView)e.OldValue, (TextView)e.NewValue);
         }
 
         // automatically set/unset TextView property using ITextViewConnect
@@ -110,6 +109,37 @@ namespace AvaloniaEdit.Editing
             }
 
             TextViewDocumentChanged(null, null);
+
+            if (oldTextView != null)
+            {
+                oldTextView.VisualLinesChanged -= TextViewVisualLinesChanged;
+            }
+
+            if (newTextView != null)
+            {
+                newTextView.VisualLinesChanged += TextViewVisualLinesChanged;
+
+                // find the text area belonging to the new text view
+                _textArea = newTextView.GetService(typeof(TextArea)) as TextArea;
+            }
+            else
+            {
+                _textArea = null;
+            }
+        }
+
+        /// <summary>
+        /// Called when the attached textviews visual lines change.
+        /// Default behavior is to Invalidate Margins Visual.
+        /// </summary>
+        protected virtual void OnTextViewVisualLinesChanged()
+        {
+            InvalidateVisual();
+        }
+
+        private void TextViewVisualLinesChanged(object sender, EventArgs e)
+        {
+            OnTextViewVisualLinesChanged();
         }
 
         private void TextViewDocumentChanged(object sender, EventArgs e)
