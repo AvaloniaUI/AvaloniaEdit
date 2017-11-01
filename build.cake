@@ -38,9 +38,6 @@ var MainRepo = "AvaloniaUI/AvaloniaEdit";
 var MasterBranch = "master";
 var ReleasePlatform = "Any CPU";
 var ReleaseConfiguration = "Release";
-//var MSBuildSolution = "./Mabiavalon.DockNC.sln";
-//var XBuildSolution = "./Mabiavalon.DockNC.sln";
-//var NetCoreProject = "./src/Mabiavalon.DockNC/Mabiavalon.DockNC.csproj";
 
 ///////////////////////////////////////////////////////////////////////////////
 // PARAMETERS
