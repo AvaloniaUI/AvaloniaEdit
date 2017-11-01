@@ -182,7 +182,7 @@ var nuspecNuGetBehaviors = new NuGetPackSettings()
     },
     Files = new []
     {
-        new NuSpecContent { Source = "src/AvaloniaEdit/bin/" + configuration + "/netstandard1.3/AvaloniaEdit.dll", Target = "lib/netstandard1.3" },
+        new NuSpecContent { Source = "src/AvaloniaEdit/bin/" + configuration + "/netstandard2.0/AvaloniaEdit.dll", Target = "lib/netstandard2.0" },
     },
     BasePath = Directory("./"),
     OutputDirectory = nugetRoot
