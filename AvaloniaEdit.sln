@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit", "AvaloniaEdit\AvaloniaEdit.csproj", "{4B04026F-BA96-4721-AE28-0970CB5806A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit", "src\AvaloniaEdit\AvaloniaEdit.csproj", "{4B04026F-BA96-4721-AE28-0970CB5806A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaEdit.Demo", "AvaloniaEdit.Demo\AvaloniaEdit.Demo.csproj", "{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaEdit.Demo", "src\AvaloniaEdit.Demo\AvaloniaEdit.Demo.csproj", "{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
