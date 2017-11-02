@@ -1369,6 +1369,8 @@ namespace AvaloniaEdit.Rendering
             {
                 _scrollViewport = viewport;
                 _scrollExtent = extent;
+
+                Redraw();
                 return true;
             }
             return false;
