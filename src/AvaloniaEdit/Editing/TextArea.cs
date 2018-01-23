@@ -1092,6 +1092,10 @@ namespace AvaloniaEdit.Editing
         }
 
         Size IScrollable.Viewport => _viewPort;
+
+        public bool CanHorizontallyScroll { get; set; } = false;
+
+        public bool CanVerticallyScroll { get; set; } = true;
     }
 
     /// <summary>
