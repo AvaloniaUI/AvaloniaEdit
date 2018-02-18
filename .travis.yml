@@ -3,7 +3,7 @@ language: csharp
 os:
   - linux
 dist: trusty
-dotnet: 1.0.1
+dotnet: 2.0.0
 script:
   - dotnet --info
   - ./build.sh --configuration "Release"

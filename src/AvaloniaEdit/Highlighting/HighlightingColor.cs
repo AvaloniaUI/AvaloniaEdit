@@ -28,7 +28,7 @@ namespace AvaloniaEdit.Highlighting
     /// <summary>
     /// A highlighting color is a set of font properties and foreground and background color.
     /// </summary>
-    public class HighlightingColor : IFreezable, ICloneable, IEquatable<HighlightingColor>
+    public class HighlightingColor : IFreezable, AvaloniaEdit.Utils.ICloneable, IEquatable<HighlightingColor>
     {
         internal static readonly HighlightingColor Empty = FreezableHelper.FreezeAndReturn(new HighlightingColor());
 
@@ -207,7 +207,7 @@ namespace AvaloniaEdit.Highlighting
             return c;
         }
 
-        object ICloneable.Clone()
+        object AvaloniaEdit.Utils.ICloneable.Clone()
         {
             return Clone();
         }
