@@ -178,8 +178,7 @@ namespace AvaloniaEdit.Utils
         #region System.Drawing <-> Avalonia conversions
         public static System.Drawing.Point ToSystemDrawing(this Point p)
         {
-            return new System.Drawing.Point((int)p.X, (int)p.Y);
-            
+            return new System.Drawing.Point((int)p.X, (int)p.Y);            
         }
 
         public static Point ToAvalonia(this System.Drawing.Point p)
