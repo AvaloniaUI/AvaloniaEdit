@@ -80,7 +80,7 @@ if (isRunningOnAppVeyor)
     }
 }
 
-var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\editbin.exe";
+var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\bin\HostX86\x86\editbin.exe";
 
 ///////////////////////////////////////////////////////////////////////////////
 // DIRECTORIES

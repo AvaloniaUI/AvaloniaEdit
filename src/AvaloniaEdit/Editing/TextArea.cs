@@ -1024,11 +1024,12 @@ namespace AvaloniaEdit.Editing
                 _viewPort = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
                 _extent = new Size(finalSize.Width, LogicalScrollSize);
 
-                TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent);
+                if(TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent))
+                {
+                    TextView.Redraw();
+                }
 
                 (this as ILogicalScrollable).InvalidateScroll?.Invoke();
-                
-                TextView.Redraw();
             }
 
             return base.ArrangeOverride(finalSize);
@@ -1091,6 +1092,10 @@ namespace AvaloniaEdit.Editing
         }
 
         Size IScrollable.Viewport => _viewPort;
+
+        public bool CanHorizontallyScroll { get; set; } = false;
+
+        public bool CanVerticallyScroll { get; set; } = true;
     }
 
     /// <summary>
