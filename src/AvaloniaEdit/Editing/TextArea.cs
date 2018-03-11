@@ -113,6 +113,7 @@ namespace AvaloniaEdit.Editing
             if (e.NameScope.Find("PART_CP") is ContentPresenter contentPresenter)
             {
                 contentPresenter.Content = TextView;
+                ((ISetLogicalParent)TextView).SetParent(this);
             }
         }
 
