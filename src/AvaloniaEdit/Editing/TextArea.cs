@@ -49,9 +49,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         private const int AdditionalVerticalScrollAmount = 2;
 
-        private Size _viewPort;
-        private Size _extent;
-        private Vector _offset;
+        private ILogicalScrollable _logicalScrollable;
 
         #region Constructor
         static TextArea()
@@ -81,6 +79,7 @@ namespace AvaloniaEdit.Editing
         protected TextArea(TextView textView)
         {
             TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+            _logicalScrollable = textView;
             Options = textView.Options;
 
             _selection = EmptySelection = new EmptySelection(this);
@@ -100,10 +99,11 @@ namespace AvaloniaEdit.Editing
             DefaultInputHandler = new TextAreaDefaultInputHandler(this);
             ActiveInputHandler = DefaultInputHandler;
 
-            textView.GetObservableWithHistory(TextBlock.FontSizeProperty).Subscribe(fontSizeChange =>
-            {
-                TextView.SetScrollOffset(new Vector(_offset.X, _offset.Y * TextView.DefaultLineHeight));
-            });
+            // TODO
+            //textView.GetObservableWithHistory(TextBlock.FontSizeProperty).Subscribe(fontSizeChange =>
+            //{
+            //    TextView.SetScrollOffset(new Vector(_offset.X, _offset.Y * TextView.DefaultLineHeight));
+            //});
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
@@ -991,112 +991,74 @@ namespace AvaloniaEdit.Editing
             TextCopied?.Invoke(this, e);
         }
 
-        private int LogicalScrollSize
+        public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+
+        bool ILogicalScrollable.IsLogicalScrollEnabled => _logicalScrollable?.IsLogicalScrollEnabled ?? default(bool);
+
+        Action ILogicalScrollable.InvalidateScroll
         {
-            get
+            get => _logicalScrollable?.InvalidateScroll;
+            set
             {
-                if (TextView?.Document != null)
+                if (_logicalScrollable != null)
                 {
-                    return TextView.Document.LineCount + AdditionalVerticalScrollAmount;
+                    _logicalScrollable.InvalidateScroll = value;
                 }
-
-                return AdditionalVerticalScrollAmount;
             }
         }
 
-        protected override Size MeasureOverride(Size availableSize)
+        Size ILogicalScrollable.ScrollSize => _logicalScrollable?.ScrollSize ?? default(Size);
+
+        Size ILogicalScrollable.PageScrollSize => _logicalScrollable?.PageScrollSize ?? default(Size);
+
+        Size IScrollable.Extent => _logicalScrollable?.Extent ?? default(Size);
+
+        Vector IScrollable.Offset
         {
-            var result = availableSize;
-
-            if (TextView?.Document != null)
+            get => _logicalScrollable?.Offset ?? default(Vector);
+            set
             {
-                result = new Size(availableSize.Width, LogicalScrollSize * TextView.DefaultLineHeight);
-
-                base.MeasureOverride(result);
-            }
-
-            return result;
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (TextView?.Document != null)
-            {
-                _viewPort = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
-                _extent = new Size(finalSize.Width, LogicalScrollSize);
-
-                if(TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent))
+                if (_logicalScrollable != null)
                 {
-                    TextView.Redraw();
+                    _logicalScrollable.Offset = value;
                 }
-
-                (this as ILogicalScrollable).InvalidateScroll?.Invoke();
             }
-
-            return base.ArrangeOverride(finalSize);
         }
 
-        public bool BringIntoView(IControl target, Rect targetRect)
+        Size IScrollable.Viewport => _logicalScrollable?.Viewport ?? default(Size);
+
+        bool ILogicalScrollable.CanHorizontallyScroll
         {
-            var result = false;
-
-            var offset = _offset;
-            if (_offset.Y > targetRect.Y)
+            get => _logicalScrollable?.CanHorizontallyScroll ?? default(bool);
+            set
             {
-                offset = _offset.WithY(targetRect.Y);
-                result = true;
+                if (_logicalScrollable != null)
+                {
+                    _logicalScrollable.CanHorizontallyScroll = value;
+                }
             }
-
-            if (_offset.Y + _viewPort.Height < targetRect.Y)
-            {
-                offset = _offset.WithY(targetRect.Y - _viewPort.Height);
-                result = true;
-            }
-
-            if (result)
-            {
-                (this as IScrollable).Offset = offset;
-            }
-
-            return result;
         }
+
+        bool ILogicalScrollable.CanVerticallyScroll
+        {
+            get => _logicalScrollable?.CanVerticallyScroll ?? default(bool);
+            set
+            {
+                if (_logicalScrollable != null)
+                {
+                    _logicalScrollable.CanVerticallyScroll = value;
+                }
+            }
+        }
+
+
+        public bool BringIntoView(IControl target, Rect targetRect) =>
+            _logicalScrollable?.BringIntoView(target, targetRect) ?? default(bool);
 
         public IControl GetControlInDirection(NavigationDirection direction, IControl from)
         {
             return null;
         }
-
-        public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
-
-        bool ILogicalScrollable.IsLogicalScrollEnabled => true;
-
-        Action ILogicalScrollable.InvalidateScroll { get; set; }
-
-        Size ILogicalScrollable.ScrollSize => new Size(Bounds.Width, 2);
-
-        Size ILogicalScrollable.PageScrollSize => throw new NotImplementedException();
-
-        Size IScrollable.Extent => _extent;
-
-        Vector IScrollable.Offset
-        {
-            get
-            {
-                return _offset;
-            }
-            set
-            {
-                TextView.SetScrollOffset(new Vector(value.X, value.Y * TextView.DefaultLineHeight));
-
-                _offset = value;
-            }
-        }
-
-        Size IScrollable.Viewport => _viewPort;
-
-        public bool CanHorizontallyScroll { get; set; } = false;
-
-        public bool CanVerticallyScroll { get; set; } = true;
     }
 
     /// <summary>
