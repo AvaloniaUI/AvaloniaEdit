@@ -1051,14 +1051,11 @@ namespace AvaloniaEdit.Editing
             }
         }
 
-
         public bool BringIntoView(IControl target, Rect targetRect) =>
             _logicalScrollable?.BringIntoView(target, targetRect) ?? default(bool);
 
-        public IControl GetControlInDirection(NavigationDirection direction, IControl from)
-        {
-            return null;
-        }
+        IControl ILogicalScrollable.GetControlInDirection(NavigationDirection direction, IControl from)
+            => _logicalScrollable?.GetControlInDirection(direction, from);
     }
 
     /// <summary>
