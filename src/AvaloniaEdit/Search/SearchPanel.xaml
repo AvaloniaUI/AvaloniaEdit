@@ -28,6 +28,7 @@
             Value="DarkGray" />
     <Setter Property="Background"
             Value="#eeeeee" />
+    <Setter Property="Focusable" Value="True" />
     <Setter Property="Template">
       <ControlTemplate>
         <Border BorderThickness="{TemplateBinding BorderThickness}"

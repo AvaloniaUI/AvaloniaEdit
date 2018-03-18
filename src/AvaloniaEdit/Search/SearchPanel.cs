@@ -23,6 +23,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
@@ -467,17 +468,16 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public void Close()
         {
-            var hasFocus = IsFocused;
-
             _textArea.RemoveChild(this);
             _messageView.IsOpen = false;
             _textArea.TextView.BackgroundRenderers.Remove(_renderer);
-            if (hasFocus)
-                _textArea.Focus();
+            
             IsClosed = true;
 
             // Clear existing search results so that the segments don't have to be maintained
             _renderer.CurrentResults.Clear();
+
+            _textArea.Focus();
         }
 
         /// <summary>
@@ -503,6 +503,20 @@ namespace AvaloniaEdit.Search
             _textArea.TextView.BackgroundRenderers.Add(_renderer);
             IsClosed = false;
             DoSearch(false);
+        }
+
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        {
+            e.Handled = true;
+
+            base.OnPointerPressed(e);
+        }
+
+        protected override void OnGotFocus(GotFocusEventArgs e)
+        {
+            e.Handled = true;
+
+            base.OnGotFocus(e);
         }
 
         /// <summary>
