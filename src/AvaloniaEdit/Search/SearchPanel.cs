@@ -217,6 +217,8 @@ namespace AvaloniaEdit.Search
             panel.AttachInternal(textArea);
             panel._handler = new SearchInputHandler(textArea, panel);
             textArea.DefaultInputHandler.NestedInputHandlers.Add(panel._handler);
+            ((ISetLogicalParent)panel).SetParent(textArea);
+
             return panel;
         }
 
