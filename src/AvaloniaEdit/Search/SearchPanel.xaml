@@ -41,7 +41,7 @@
                                       Width="16"
                                       Margin="2">
                             <ToolTip.Tip>
-                                <TextBlock Text="{Static ae:SR.SearchToggleReplace}" />
+                                <TextBlock Text="{x:Static ae:SR.SearchToggleReplace}" />
                             </ToolTip.Tip>
                         </ToggleButton>
 
@@ -71,13 +71,13 @@
                                         <Border BorderThickness="1">
                                             <StackPanel Orientation="Vertical">
                                                 <CheckBox IsChecked="{TemplateBinding MatchCase}"
-                                                          Content="{Static ae:SR.SearchMatchCaseText}"
+                                                          Content="{x:Static ae:SR.SearchMatchCaseText}"
                                                           Margin="3" />
                                                 <CheckBox IsChecked="{TemplateBinding WholeWords}"
-                                                          Content="{Static ae:SR.SearchMatchWholeWordsText}"
+                                                          Content="{x:Static ae:SR.SearchMatchWholeWordsText}"
                                                           Margin="3" />
                                                 <CheckBox IsChecked="{TemplateBinding UseRegex}"
-                                                          Content="{Static ae:SR.SearchUseRegexText}"
+                                                          Content="{x:Static ae:SR.SearchUseRegexText}"
                                                           Margin="3" />
                                             </StackPanel>
                                         </Border>
@@ -87,9 +87,9 @@
                             <Button Margin="3"
                                     Height="24"
                                     Width="24"
-                                    Command="{Static search:SearchCommands.FindPrevious}">
+                                    Command="{x:Static search:SearchCommands.FindPrevious}">
                                 <ToolTip.Tip>
-                                    <TextBlock Text="{Static ae:SR.SearchFindPreviousText}" />
+                                    <TextBlock Text="{x:Static ae:SR.SearchFindPreviousText}" />
                                 </ToolTip.Tip>
                                 <Image Width="16"
                                        Height="16"
@@ -99,9 +99,9 @@
                             <Button Margin="3"
                                     Height="24"
                                     Width="24"
-                                    Command="{Static search:SearchCommands.FindNext}">
+                                    Command="{x:Static search:SearchCommands.FindNext}">
                                 <ToolTip.Tip>
-                                    <TextBlock Text="{Static ae:SR.SearchFindNextText}" />
+                                    <TextBlock Text="{x:Static ae:SR.SearchFindNextText}" />
                                 </ToolTip.Tip>
                                 <Image Width="16"
                                        Height="16"
@@ -112,7 +112,7 @@
                                     Width="16"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
-                                    Command="{Static search:SearchCommands.CloseSearchPanel}"
+                                    Command="{x:Static search:SearchCommands.CloseSearchPanel}"
                                     VerticalContentAlignment="Center"
                                     HorizontalContentAlignment="Center"
                                     Focusable="False">
@@ -130,9 +130,9 @@
                             <Button Margin="3"
                                     Height="24"
                                     Width="24"
-                                    Command="{Static search:SearchCommands.ReplaceNext}">
+                                    Command="{x:Static search:SearchCommands.ReplaceNext}">
                                 <ToolTip.Tip>
-                                    <TextBlock Text="{Static ae:SR.SearchReplaceNext}" />
+                                    <TextBlock Text="{x:Static ae:SR.SearchReplaceNext}" />
                                 </ToolTip.Tip>
                                 <Image Width="16"
                                        Height="16"
@@ -142,9 +142,9 @@
                             <Button Margin="3"
                                     Height="24"
                                     Width="24"
-                                    Command="{Static search:SearchCommands.ReplaceAll}">
+                                    Command="{x:Static search:SearchCommands.ReplaceAll}">
                                 <ToolTip.Tip>
-                                    <TextBlock Text="{Static ae:SR.SearchReplaceAll}" />
+                                    <TextBlock Text="{x:Static ae:SR.SearchReplaceAll}" />
                                 </ToolTip.Tip>
                                 <Image Width="16"
                                        Height="16"
