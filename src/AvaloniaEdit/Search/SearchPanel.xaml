@@ -15,9 +15,9 @@
   </Style>
 
   <Style Selector="ToggleButton.ExpanderToggle:checked /template/ Path">
-    
+
     <Setter Property="RenderTransform">
-      <RotateTransform Angle="90" />      
+      <RotateTransform Angle="90" />
     </Setter>
   </Style>
 
@@ -47,10 +47,10 @@
                 <TextBlock Text="{x:Static ae:SR.SearchToggleReplace}" />
               </ToolTip.Tip>
             </ToggleButton>
-            <StackPanel Grid.Column="1">              
+            <StackPanel Grid.Column="1">
               <StackPanel Orientation="Horizontal"
                                 Grid.Column="2"
-                                Grid.Row="0">                
+                                Grid.Row="0">
                 <TextBox Name="PART_searchTextBox"
                Grid.Column="1"
                Grid.Row="0"
@@ -96,7 +96,7 @@
                 </Button>
               </StackPanel>
 
-              <StackPanel Name="ReplaceButtons" IsVisible="{Binding #Expander.IsChecked}"                            
+              <StackPanel Name="ReplaceButtons" IsVisible="{Binding #Expander.IsChecked}"
                             Orientation="Horizontal"
                             Grid.Column="2"
                             Grid.Row="1">
@@ -134,15 +134,30 @@
                 </Button>
               </StackPanel>
               <StackPanel Orientation="Horizontal">
-                <CheckBox IsChecked="{TemplateBinding MatchCase}"
-                          Content="{x:Static ae:SR.SearchMatchCaseText}"
-                          Margin="3" />
-                <CheckBox IsChecked="{TemplateBinding WholeWords}"
-                          Content="{x:Static ae:SR.SearchMatchWholeWordsText}"
-                          Margin="3" />
-                <CheckBox IsChecked="{TemplateBinding UseRegex}"
-                          Content="{x:Static ae:SR.SearchUseRegexText}"
-                          Margin="3" />
+                <ToggleButton IsChecked="{TemplateBinding MatchCase}" ToolTip.Tip="{x:Static ae:SR.SearchMatchCaseText}" Margin="3"
+                        Height="24"
+                        Width="24">
+                  <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.CaseSensitive.png?assembly=AvaloniaEdit" />
+                </ToggleButton>
+                <ToggleButton IsChecked="{TemplateBinding WholeWords}" ToolTip.Tip="{x:Static ae:SR.SearchMatchWholeWordsText}" Margin="3"
+                        Height="24"
+                        Width="24">
+                  <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.CompleteWord.png?assembly=AvaloniaEdit" />
+                </ToggleButton>
+                <ToggleButton IsChecked="{TemplateBinding UseRegex}" ToolTip.Tip="{x:Static ae:SR.SearchUseRegexText}" Margin="3"
+                        Height="24"
+                        Width="24">
+                  <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.RegularExpression.png?assembly=AvaloniaEdit" />
+                </ToggleButton>
               </StackPanel>
             </StackPanel>
           </Grid>
