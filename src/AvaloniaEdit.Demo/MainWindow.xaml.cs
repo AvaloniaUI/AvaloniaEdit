@@ -13,7 +13,6 @@ using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Highlighting;
-using AvaloniaEdit.Search;
 
 namespace AvaloniaEdit.Demo
 {
@@ -33,13 +32,7 @@ namespace AvaloniaEdit.Demo
             _textEditor.ShowLineNumbers = true;
             _textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
-            _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
-            var lineNumberMargin = new LineNumberMargin { Margin = new Thickness(0, 0, 10, 0) };
-            TextBlock.SetForeground(lineNumberMargin, Brushes.Gray);
-            _textEditor.TextArea.LeftMargins.Add(lineNumberMargin);
-            _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy( );
-            SearchPanel.Install(_textEditor);
         }
 
         private void InitializeComponent()
