@@ -10,7 +10,6 @@
 
 namespace AvaloniaEdit {
     using System;
-    using System.Reflection;
     
     
     /// <summary>
@@ -20,10 +19,10 @@ namespace AvaloniaEdit {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class SR {
+    public class SR {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -37,10 +36,10 @@ namespace AvaloniaEdit {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AvaloniaEdit.SR", typeof(SR).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AvaloniaEdit.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -52,7 +51,7 @@ namespace AvaloniaEdit {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -64,7 +63,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to Error: .
         /// </summary>
-        internal static string SearchErrorText {
+        public static string SearchErrorText {
             get {
                 return ResourceManager.GetString("SearchErrorText", resourceCulture);
             }
@@ -73,7 +72,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to Find next (F3).
         /// </summary>
-        internal static string SearchFindNextText {
+        public static string SearchFindNextText {
             get {
                 return ResourceManager.GetString("SearchFindNextText", resourceCulture);
             }
@@ -82,7 +81,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to Find previous (Shift+F3).
         /// </summary>
-        internal static string SearchFindPreviousText {
+        public static string SearchFindPreviousText {
             get {
                 return ResourceManager.GetString("SearchFindPreviousText", resourceCulture);
             }
@@ -91,7 +90,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to Match case.
         /// </summary>
-        internal static string SearchMatchCaseText {
+        public static string SearchMatchCaseText {
             get {
                 return ResourceManager.GetString("SearchMatchCaseText", resourceCulture);
             }
@@ -100,7 +99,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to Match whole words.
         /// </summary>
-        internal static string SearchMatchWholeWordsText {
+        public static string SearchMatchWholeWordsText {
             get {
                 return ResourceManager.GetString("SearchMatchWholeWordsText", resourceCulture);
             }
@@ -109,7 +108,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to No matches found!.
         /// </summary>
-        internal static string SearchNoMatchesFoundText {
+        public static string SearchNoMatchesFoundText {
             get {
                 return ResourceManager.GetString("SearchNoMatchesFoundText", resourceCulture);
             }
@@ -118,7 +117,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to Replace all (Alt+A).
         /// </summary>
-        internal static string SearchReplaceAll {
+        public static string SearchReplaceAll {
             get {
                 return ResourceManager.GetString("SearchReplaceAll", resourceCulture);
             }
@@ -127,7 +126,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to Replace next (Alt+R).
         /// </summary>
-        internal static string SearchReplaceNext {
+        public static string SearchReplaceNext {
             get {
                 return ResourceManager.GetString("SearchReplaceNext", resourceCulture);
             }
@@ -136,7 +135,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to Toggle between find and replace modes.
         /// </summary>
-        internal static string SearchToggleReplace {
+        public static string SearchToggleReplace {
             get {
                 return ResourceManager.GetString("SearchToggleReplace", resourceCulture);
             }
@@ -145,7 +144,7 @@ namespace AvaloniaEdit {
         /// <summary>
         ///   Looks up a localized string similar to Use regular expressions.
         /// </summary>
-        internal static string SearchUseRegexText {
+        public static string SearchUseRegexText {
             get {
                 return ResourceManager.GetString("SearchUseRegexText", resourceCulture);
             }
