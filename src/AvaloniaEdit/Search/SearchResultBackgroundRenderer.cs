@@ -28,7 +28,7 @@ namespace AvaloniaEdit.Search
     {
         public TextSegmentCollection<SearchResult> CurrentResults { get; } = new TextSegmentCollection<SearchResult>();
 
-        public KnownLayer Layer => KnownLayer.Selection;
+        public KnownLayer Layer => KnownLayer.Background;
 
         public SearchResultBackgroundRenderer()
         {
