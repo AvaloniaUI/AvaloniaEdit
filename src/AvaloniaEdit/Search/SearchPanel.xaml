@@ -31,7 +31,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         Background="{TemplateBinding Background}"
                         HorizontalAlignment="Right"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Top" TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="10">
                     <Grid ColumnDefinitions="Auto,Auto,Auto"
                           RowDefinitions="Auto,Auto">
                         <ToggleButton Classes="ExpanderToggle"
