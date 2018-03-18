@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit", "src\AvaloniaEdit\AvaloniaEdit.csproj", "{4B04026F-BA96-4721-AE28-0970CB5806A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaEdit.Demo", "src\AvaloniaEdit.Demo\AvaloniaEdit.Demo.csproj", "{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit.Demo", "src\AvaloniaEdit.Demo\AvaloniaEdit.Demo.csproj", "{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaEdit.Tests", "AvaloniaEdit.Tests\AvaloniaEdit.Tests.csproj", "{150816C9-5909-49BE-81ED-87670BE689BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,8 +33,19 @@ Global
 		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|x64.ActiveCfg = Release|Any CPU
 		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|x64.Build.0 = Release|Any CPU
+		{150816C9-5909-49BE-81ED-87670BE689BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{150816C9-5909-49BE-81ED-87670BE689BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{150816C9-5909-49BE-81ED-87670BE689BE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{150816C9-5909-49BE-81ED-87670BE689BE}.Debug|x64.Build.0 = Debug|Any CPU
+		{150816C9-5909-49BE-81ED-87670BE689BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{150816C9-5909-49BE-81ED-87670BE689BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{150816C9-5909-49BE-81ED-87670BE689BE}.Release|x64.ActiveCfg = Release|Any CPU
+		{150816C9-5909-49BE-81ED-87670BE689BE}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0A1B0C22-0F0B-4EE9-A048-EC2F32194CB8}
 	EndGlobalSection
 EndGlobal
