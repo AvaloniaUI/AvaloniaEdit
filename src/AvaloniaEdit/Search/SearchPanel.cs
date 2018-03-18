@@ -24,6 +24,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
@@ -102,7 +103,7 @@ namespace AvaloniaEdit.Search
             set => SetValue(SearchPatternProperty, value);
         }
 
-        public static readonly AvaloniaProperty<bool> IsReplaceModeProperty = 
+        public static readonly AvaloniaProperty<bool> IsReplaceModeProperty =
             AvaloniaProperty.Register<SearchPanel, bool>(nameof(IsReplaceMode));
 
         public bool IsReplaceMode
@@ -111,7 +112,7 @@ namespace AvaloniaEdit.Search
             set => SetValue(IsReplaceModeProperty, value);
         }
 
-        public static readonly AvaloniaProperty<string> ReplacePatternProperty = 
+        public static readonly AvaloniaProperty<string> ReplacePatternProperty =
             AvaloniaProperty.Register<SearchPanel, string>(nameof(ReplacePattern));
 
         public string ReplacePattern
@@ -242,7 +243,6 @@ namespace AvaloniaEdit.Search
         private void AttachInternal(TextArea textArea)
         {
             _textArea = textArea;
-            this[AdornerLayer.AdornedElementProperty] = textArea;
 
             _renderer = new SearchResultBackgroundRenderer();
             _currentDocument = textArea.Document;
@@ -453,6 +453,8 @@ namespace AvaloniaEdit.Search
                     Close();
                     break;
             }
+
+            e.Handled = true;
         }
 
         /// <summary>
@@ -467,7 +469,7 @@ namespace AvaloniaEdit.Search
         {
             var hasFocus = IsFocused;
 
-            AdornerLayer.GetAdornerLayer(_textArea)?.Children.Remove(this);
+            _textArea.RemoveChild(this);
             _messageView.IsOpen = false;
             _textArea.TextView.BackgroundRenderers.Remove(_renderer);
             if (hasFocus)
@@ -496,7 +498,7 @@ namespace AvaloniaEdit.Search
         {
             if (!IsClosed) return;
 
-            AdornerLayer.GetAdornerLayer(_textArea)?.Children.Add(this);
+            _textArea.AddChild(this);
 
             _textArea.TextView.BackgroundRenderers.Add(_renderer);
             IsClosed = false;

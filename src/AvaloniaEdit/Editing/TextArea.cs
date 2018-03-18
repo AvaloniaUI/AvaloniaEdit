@@ -24,6 +24,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
@@ -118,6 +119,17 @@ namespace AvaloniaEdit.Editing
 
                 SearchPanel.Install(this);
             }
+        }
+
+        internal void AddChild(IVisual visual)
+        {
+            VisualChildren.Add(visual);
+            InvalidateArrange();
+        }
+
+        internal void RemoveChild(IVisual visual)
+        {
+            VisualChildren.Remove(visual);
         }
 
         #endregion
