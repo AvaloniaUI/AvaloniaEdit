@@ -357,6 +357,8 @@ namespace AvaloniaEdit.Search
             {
                 _textArea.Selection.ReplaceSelectionWithText(ReplacePattern ?? string.Empty);
             }
+
+            UpdateSearch();
         }
 
         public void ReplaceAll()
