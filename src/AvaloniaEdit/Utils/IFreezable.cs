@@ -34,7 +34,7 @@ namespace AvaloniaEdit.Utils
 		/// Freezes this instance.
 		/// </summary>
 		void Freeze();
-	}
+	}    
 
     internal static class FreezableHelper
 	{

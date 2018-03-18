@@ -2,14 +2,14 @@
 // ADDINS
 /////////////////////////////////////////////////////////////////////
 
-#addin "nuget:?package=Polly&version=5.0.6"
+#addin "nuget:?package=Polly&version=5.3.1"
 #addin "nuget:?package=NuGet.Core&version=2.14.0"
 
 //////////////////////////////////////////////////////////////////////
 // TOOLS
 //////////////////////////////////////////////////////////////////////
 
-#tool "nuget:https://dotnet.myget.org/F/nuget-build/?package=NuGet.CommandLine&version=4.3.0-beta1-2361&prerelease"
+#tool "nuget:?package=NuGet.CommandLine&version=4.3.0"
 
 ///////////////////////////////////////////////////////////////////////////////
 // USINGS
@@ -38,9 +38,6 @@ var MainRepo = "AvaloniaUI/AvaloniaEdit";
 var MasterBranch = "master";
 var ReleasePlatform = "Any CPU";
 var ReleaseConfiguration = "Release";
-//var MSBuildSolution = "./Mabiavalon.DockNC.sln";
-//var XBuildSolution = "./Mabiavalon.DockNC.sln";
-//var NetCoreProject = "./src/Mabiavalon.DockNC/Mabiavalon.DockNC.csproj";
 
 ///////////////////////////////////////////////////////////////////////////////
 // PARAMETERS
@@ -83,7 +80,7 @@ if (isRunningOnAppVeyor)
     }
 }
 
-var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX86\x86\editbin.exe";
+var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\bin\HostX86\x86\editbin.exe";
 
 ///////////////////////////////////////////////////////////////////////////////
 // DIRECTORIES
@@ -182,7 +179,7 @@ var nuspecNuGetBehaviors = new NuGetPackSettings()
     },
     Files = new []
     {
-        new NuSpecContent { Source = "src/AvaloniaEdit/bin/" + configuration + "/netstandard1.3/AvaloniaEdit.dll", Target = "lib/netstandard1.3" },
+        new NuSpecContent { Source = "src/AvaloniaEdit/bin/" + configuration + "/netstandard2.0/AvaloniaEdit.dll", Target = "lib/netstandard2.0" },
     },
     BasePath = Directory("./"),
     OutputDirectory = nugetRoot
@@ -264,7 +261,7 @@ Task("Build-NetCore")
 
         if (!IsRunningOnWindows())
         {
-            settings.Framework = "netcoreapp1.1";
+            settings.Framework = "netcoreapp2.0";
         }
 
         DotNetCoreBuild(project.Path, settings);
@@ -329,7 +326,7 @@ Task("Publish-NetCore")
 
             Information("Publishing: {0}, runtime: {1}", project.Name, runtime);
             DotNetCorePublish(project.Path, new DotNetCorePublishSettings {
-                Framework = "netcoreapp1.1",
+                Framework = "netcoreapp2.0",
                 Configuration = configuration,
                 Runtime = runtime,
                 OutputDirectory = outputDir.FullPath

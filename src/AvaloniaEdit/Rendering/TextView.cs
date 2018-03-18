@@ -745,7 +745,7 @@ namespace AvaloniaEdit.Rendering
             {
                 if (_invalidateMeasureOperation == null)
                 {
-                    _invalidateMeasureOperation = Dispatcher.UIThread.InvokeTaskAsync(
+                    _invalidateMeasureOperation = Dispatcher.UIThread.InvokeAsync(
                         delegate
                         {
                             _invalidateMeasureOperation = null;

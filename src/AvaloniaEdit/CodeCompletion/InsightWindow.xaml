@@ -24,7 +24,7 @@
                                     Grid.Column="0"
                                     Margin="0,0,4,0"
                                     Orientation="Horizontal"
-                                    IsVisible="{TemplateBinding Path=Provider.Count, Converter={Static cc:CollapseIfSingleOverloadConverter.Instance}}">
+                                    IsVisible="{TemplateBinding Path=Provider.Count, Converter={x:Static cc:CollapseIfSingleOverloadConverter.Instance}}">
                             <Button Name="PART_UP">
                                 <Path Stroke="Black"
                                       Fill="Black"
