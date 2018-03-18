@@ -27,6 +27,7 @@ using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Search;
 using AvaloniaEdit.Utils;
 using System;
 using System.Collections.Generic;
@@ -114,6 +115,8 @@ namespace AvaloniaEdit.Editing
             {
                 contentPresenter.Content = TextView;
                 ((ISetLogicalParent)TextView).SetParent(this);
+
+                SearchPanel.Install(this);
             }
         }
 
@@ -1025,7 +1028,7 @@ namespace AvaloniaEdit.Editing
                 _viewPort = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
                 _extent = new Size(finalSize.Width, LogicalScrollSize);
 
-                if(TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent))
+                if (TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent))
                 {
                     TextView.Redraw();
                 }
