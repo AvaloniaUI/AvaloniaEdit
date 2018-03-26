@@ -26,6 +26,7 @@ using System.Globalization;
 using System.IO;
 using AvaloniaEdit.Utils;
 using Avalonia.Threading;
+using System.Threading;
 
 namespace AvaloniaEdit.Document
 {
@@ -129,9 +130,14 @@ namespace AvaloniaEdit.Document
             return _rope.ToString(offset, length);
         }
 
+        private Thread ownerThread = Thread.CurrentThread;
+
         private void VerifyAccess()
         {
-            Dispatcher.UIThread.VerifyAccess();
+            if(Thread.CurrentThread != ownerThread)
+            {
+                throw new InvalidOperationException("Call from invalid thread.");
+            }
         }
 
         /// <summary>
