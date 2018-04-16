@@ -1739,7 +1739,7 @@ namespace AvaloniaEdit.Rendering
         /// <summary>
         /// Gets a service container used to associate services with the text view.
         /// </summary>
-        internal IServiceContainer Services { get; } = new ServiceContainer();
+        public IServiceContainer Services { get; } = new ServiceContainer();
 
         /// <summary>
         /// Retrieves a service from the text view.

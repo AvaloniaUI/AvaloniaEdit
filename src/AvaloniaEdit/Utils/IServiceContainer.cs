@@ -32,7 +32,7 @@ namespace AvaloniaEdit.Utils
         }
     }
 
-    internal class ServiceContainer : IServiceContainer
+    public class ServiceContainer : IServiceContainer
     {
         private readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
