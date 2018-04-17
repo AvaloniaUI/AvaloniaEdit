@@ -65,9 +65,7 @@ namespace AvaloniaEdit.Editing
         }
 
         static EditingCommandHandler()
-        {
-            // TODO ApplicationCommands.Delete gets called, but never editing commands.Delete (since porting to avalonia.)
-            AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.CharRight), CanDelete);
+        {            
             AddBinding(EditingCommands.Delete, InputModifiers.None, Key.Delete, OnDelete(CaretMovementType.CharRight));
             AddBinding(EditingCommands.DeleteNextWord, InputModifiers.Control, Key.Delete,
                 OnDelete(CaretMovementType.WordRight));
