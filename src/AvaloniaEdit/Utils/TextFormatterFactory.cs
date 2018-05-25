@@ -43,7 +43,7 @@ namespace AvaloniaEdit.Utils
 		/// <param name="emSize">The font size. If this parameter is null, the font size of the <paramref name="element"/> will be used.</param>
 		/// <param name="foreground">The foreground color. If this parameter is null, the foreground of the <paramref name="element"/> will be used.</param>
 		/// <returns>A FormattedText object using the specified settings.</returns>
-		public static FormattedText CreateFormattedText(Control element, string text, string typeface, double? emSize, IBrush foreground)
+		public static FormattedText CreateFormattedText(Control element, string text, Avalonia.Media.FontFamily typeface, double? emSize, IBrush foreground)
 	    {
 	        if (element == null)
 	            throw new ArgumentNullException(nameof(element));
