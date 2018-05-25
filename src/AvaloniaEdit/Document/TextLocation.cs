@@ -245,11 +245,6 @@ namespace AvaloniaEdit.Document
             return segment.Offset <= offset && offset + length <= segment.EndOffset;
         }
 
-        public static bool Contains (this ISegment segment, int offset)
-        {
-            return segment.Offset <= offset && offset <= segment.EndOffset;
-        }
-
         /// <summary>
         /// Gets whether <paramref name="thisSegment"/> fully contains the specified segment.
         /// </summary>
