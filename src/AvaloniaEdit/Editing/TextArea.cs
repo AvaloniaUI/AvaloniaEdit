@@ -24,9 +24,11 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Search;
 using AvaloniaEdit.Utils;
 using System;
 using System.Collections.Generic;
@@ -114,13 +116,26 @@ namespace AvaloniaEdit.Editing
             {
                 contentPresenter.Content = TextView;
                 ((ISetLogicalParent)TextView).SetParent(this);
+
+                SearchPanel.Install(this);
             }
+        }
+
+        internal void AddChild(IVisual visual)
+        {
+            VisualChildren.Add(visual);
+            InvalidateArrange();
+        }
+
+        internal void RemoveChild(IVisual visual)
+        {
+            VisualChildren.Remove(visual);
         }
 
         #endregion
 
         /// <summary>
-        ///     Defines the <see cref="Offset" /> property.
+        ///     Defines the <see cref="IScrollable.Offset" /> property.
         /// </summary>
         public static readonly DirectProperty<TextArea, Vector> OffsetProperty =
             AvaloniaProperty.RegisterDirect<TextArea, Vector>(
@@ -133,7 +148,7 @@ namespace AvaloniaEdit.Editing
         /// Gets the default input handler.
         /// </summary>
         /// <remarks><inheritdoc cref="ITextAreaInputHandler"/></remarks>
-        public ITextAreaInputHandler DefaultInputHandler { get; }
+        public TextAreaDefaultInputHandler DefaultInputHandler { get; }
 
         private ITextAreaInputHandler _activeInputHandler;
         private bool _isChangingInputHandler;
@@ -1025,7 +1040,7 @@ namespace AvaloniaEdit.Editing
                 _viewPort = new Size(finalSize.Width, finalSize.Height / TextView.DefaultLineHeight);
                 _extent = new Size(finalSize.Width, LogicalScrollSize);
 
-                if(TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent))
+                if (TextView.SetScrollData(new Size(_viewPort.Width, _viewPort.Height * TextView.DefaultLineHeight), _extent))
                 {
                     TextView.Redraw();
                 }

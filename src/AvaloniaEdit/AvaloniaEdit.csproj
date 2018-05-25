@@ -9,9 +9,44 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Search\Assets\CaseSensitive.png" />
+    <None Remove="Search\Assets\CompleteWord.png" />
+    <None Remove="Search\Assets\FindNext.png" />
+    <None Remove="Search\Assets\FindPrevious.png" />
+    <None Remove="Search\Assets\RegularExpression.png" />
+    <None Remove="Search\Assets\ReplaceAll.png" />
+    <None Remove="Search\Assets\ReplaceNext.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Search\Assets\CaseSensitive.png" />
+    <EmbeddedResource Include="Search\Assets\CompleteWord.png" />
+    <EmbeddedResource Include="Search\Assets\FindNext.png" />
+    <EmbeddedResource Include="Search\Assets\FindPrevious.png" />
+    <EmbeddedResource Include="Search\Assets\RegularExpression.png" />
+    <EmbeddedResource Include="Search\Assets\ReplaceAll.png" />
+    <EmbeddedResource Include="Search\Assets\ReplaceNext.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.6.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="SR.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="SR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <Target Name="ChangeAliasesOfSystemDrawing" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">

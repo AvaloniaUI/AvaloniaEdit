@@ -22,9 +22,9 @@
 //using System.Net;
 //using System.Text;
 //using System.Windows;
-//using ICSharpCode.AvalonEdit.Utils;
+//using AvaloniaEdit.Utils;
 
-//namespace ICSharpCode.AvalonEdit.Highlighting
+//namespace AvaloniaEdit.Highlighting
 //{
 //	/// <summary>
 //	/// RichTextWriter implementation that produces HTML.

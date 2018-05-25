@@ -106,6 +106,8 @@ namespace AvaloniaEdit
         public static RoutedCommand SelectAll { get; } = new RoutedCommand(nameof(SelectAll));
         public static RoutedCommand Undo { get; } = new RoutedCommand(nameof(Undo), new KeyGesture { Modifiers = InputModifiers.Control, Key = Key.Z });
         public static RoutedCommand Redo { get; } = new RoutedCommand(nameof(Redo), new KeyGesture { Modifiers = InputModifiers.Control, Key = Key.Y });
+        public static RoutedCommand Find { get; } = new RoutedCommand(nameof(Find), new KeyGesture { Modifiers = InputModifiers.Control, Key = Key.F });
+        public static RoutedCommand Replace { get; } = new RoutedCommand(nameof(Replace), new KeyGesture { Modifiers = InputModifiers.Control, Key = Key.H });
     }
 
     public static class EditingCommands
