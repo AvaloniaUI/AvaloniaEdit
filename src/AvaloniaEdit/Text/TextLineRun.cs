@@ -32,7 +32,7 @@ namespace AvaloniaEdit.Text
 
         public double Height => IsEnd ? 0.0 : FontSize * HeightFactor;
 
-        public string Typeface => TextRun.Properties.Typeface;
+        public FontFamily Typeface => TextRun.Properties.Typeface;
 
         public double FontSize => TextRun.Properties.FontSize;
 
