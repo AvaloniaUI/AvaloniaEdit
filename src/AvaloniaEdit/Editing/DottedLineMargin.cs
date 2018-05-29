@@ -20,8 +20,8 @@ using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
-using Avalonia.Markup.Xaml.Data;
 using Avalonia.Media;
+using Avalonia.Data;
 
 namespace AvaloniaEdit.Editing
 {
