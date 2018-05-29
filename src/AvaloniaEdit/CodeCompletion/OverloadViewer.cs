@@ -22,6 +22,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Markup;
+using Avalonia.Data.Converters;
 
 namespace AvaloniaEdit.CodeCompletion
 {

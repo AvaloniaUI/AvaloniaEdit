@@ -32,8 +32,8 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml.Data;
 using Avalonia.Media;
+using Avalonia.Data;
 
 namespace AvaloniaEdit
 {
