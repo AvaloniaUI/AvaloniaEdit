@@ -128,7 +128,7 @@ namespace AvaloniaEdit
             if (oldValue != null)
             {
                 TextDocumentWeakEventManager.TextChanged.RemoveHandler(oldValue, OnTextChanged);
-                PropertyChangedWeakEventManager.RemoveHandler(newValue.UndoStack, OnUndoStackPropertyChangedHandler);
+                PropertyChangedWeakEventManager.RemoveHandler(oldValue.UndoStack, OnUndoStackPropertyChangedHandler);
             }
             TextArea.Document = newValue;
             if (newValue != null)
