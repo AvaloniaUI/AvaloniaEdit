@@ -627,6 +627,25 @@ namespace AvaloniaEdit.Editing
             }
         }
 
+        public void ScrollToLine(int line, int linesAbove, int linesBelow)
+        {
+            var offset = line - linesAbove;
+
+            if (offset < 0)
+            {
+                offset = 0;
+            }
+
+            this.BringIntoView(new Rect(1, offset, 0, 1));
+
+            offset = line + linesBelow;
+
+            if (offset >= 0)
+            {
+                this.BringIntoView(new Rect(1, offset, 0, 1));
+            }
+        }
+
         private void CaretPositionChanged(object sender, EventArgs e)
         {
             if (TextView == null)
