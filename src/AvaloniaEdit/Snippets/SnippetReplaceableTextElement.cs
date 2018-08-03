@@ -19,6 +19,7 @@
 using System;
 using System.Linq;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 
@@ -174,7 +175,7 @@ namespace AvaloniaEdit.Snippets
 
             private static IBrush CreateBackgroundBrush()
             {
-                var b = new SolidColorBrush(Colors.LimeGreen) { Opacity = 0.4 };
+				var b = new ImmutableSolidColorBrush(Colors.LimeGreen, 0.4);
                 return b;
             }
 
