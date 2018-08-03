@@ -67,14 +67,19 @@ namespace AvaloniaEdit
         /// <summary>
         /// Creates a new TextEditor instance.
         /// </summary>
-        protected TextEditor(TextArea textArea)
+        protected TextEditor(TextArea textArea) : this(textArea, new TextDocument())
+        {
+            
+        }
+
+        protected TextEditor(TextArea textArea, TextDocument document)
         {
             TextArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
 
             textArea.TextView.Services.AddService(this);
 
             SetValue(OptionsProperty, textArea.Options);
-            SetValue(DocumentProperty, new TextDocument());
+            SetValue(DocumentProperty, document);
 
             textArea[!BackgroundProperty] = this[!BackgroundProperty];
         }
@@ -128,7 +133,7 @@ namespace AvaloniaEdit
             if (oldValue != null)
             {
                 TextDocumentWeakEventManager.TextChanged.RemoveHandler(oldValue, OnTextChanged);
-                PropertyChangedWeakEventManager.RemoveHandler(newValue.UndoStack, OnUndoStackPropertyChangedHandler);
+                PropertyChangedWeakEventManager.RemoveHandler(oldValue.UndoStack, OnUndoStackPropertyChangedHandler);
             }
             TextArea.Document = newValue;
             if (newValue != null)

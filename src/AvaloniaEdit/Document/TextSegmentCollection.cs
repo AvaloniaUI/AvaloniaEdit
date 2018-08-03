@@ -97,6 +97,14 @@ namespace AvaloniaEdit.Document
         }
         #endregion
 
+        public void Disconnect (TextDocument textDocument)
+        {
+            if (_isConnectedToDocument)
+            {
+                TextDocumentWeakEventManager.Changed.RemoveHandler(textDocument, OnDocumentChanged);
+            }
+        }
+
         #region OnDocumentChanged / UpdateOffsets
         /// <summary>
         /// Updates the start and end offsets of all segments stored in this collection.

@@ -102,7 +102,7 @@ namespace AvaloniaEdit.Editing
             DefaultInputHandler = new TextAreaDefaultInputHandler(this);
             ActiveInputHandler = DefaultInputHandler;
 
-            textView.GetObservableWithHistory(TextBlock.FontSizeProperty).Subscribe(fontSizeChange =>
+            textView.GetObservable(TextBlock.FontSizeProperty).Subscribe(_ =>
             {
                 TextView.SetScrollOffset(new Vector(_offset.X, _offset.Y * TextView.DefaultLineHeight));
             });
@@ -608,9 +608,40 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public Caret Caret { get; }
 
+        /// <summary>
+        /// Scrolls the text view so that the requested line is in the middle.
+        /// If the textview can be scrolled.
+        /// </summary>
+        /// <param name="line">The line to scroll to.</param>
+        public void ScrollToLine (int line)
+        {
+            var viewPortLines = (int)(this as IScrollable).Viewport.Height;
+
+            if (viewPortLines < Document.LineCount)
+            {
+                ScrollToLine(line, 2, viewPortLines / 2);
+            }
+        }
+
+        /// <summary>
+        /// Scrolls the textview to a position with n lines above and below it.
+        /// </summary>
+        /// <param name="line">the requested line number.</param>
+        /// <param name="linesEitherSide">The number of lines above and below.</param>
         public void ScrollToLine(int line, int linesEitherSide)
         {
-            var offset = line - linesEitherSide;
+            ScrollToLine(line, linesEitherSide, linesEitherSide);
+        }
+
+        /// <summary>
+        /// Scrolls the textview to a position with n lines above and below it.
+        /// </summary>
+        /// <param name="line">the requested line number.</param>
+        /// <param name="linesAbove">The number of lines above.</param>
+        /// <param name="linesBelow">The number of lines below.</param>
+        public void ScrollToLine(int line, int linesAbove, int linesBelow)
+        {
+            var offset = line - linesAbove;
 
             if (offset < 0)
             {
@@ -619,7 +650,7 @@ namespace AvaloniaEdit.Editing
 
             this.BringIntoView(new Rect(1, offset, 0, 1));
 
-            offset = line + linesEitherSide;
+            offset = line + linesBelow;
 
             if (offset >= 0)
             {
