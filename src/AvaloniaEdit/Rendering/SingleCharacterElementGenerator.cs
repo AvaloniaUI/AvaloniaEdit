@@ -20,6 +20,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
@@ -219,11 +220,11 @@ namespace AvaloniaEdit.Rendering
 
         private sealed class SpecialCharacterTextRun : FormattedTextRun
         {
-            private static readonly SolidColorBrush DarkGrayBrush;
+            private static readonly ISolidColorBrush DarkGrayBrush;
 
             static SpecialCharacterTextRun()
             {
-                DarkGrayBrush = new SolidColorBrush(Color.FromArgb(200, 128, 128, 128));
+				DarkGrayBrush = new ImmutableSolidColorBrush(Color.FromArgb(200, 128, 128, 128));
             }
 
             public SpecialCharacterTextRun(FormattedTextElement element, TextRunProperties properties)

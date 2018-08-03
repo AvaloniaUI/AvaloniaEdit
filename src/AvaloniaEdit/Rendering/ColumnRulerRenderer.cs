@@ -19,6 +19,7 @@
 using System;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Rendering
@@ -36,7 +37,7 @@ namespace AvaloniaEdit.Rendering
 		
 		public ColumnRulerRenderer(TextView textView)
 		{
-            _pen = new Pen(new SolidColorBrush(DefaultForeground));
+			_pen = new Pen(new ImmutableSolidColorBrush(DefaultForeground));
 			_textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			_textView.BackgroundRenderers.Add(this);
 		}
