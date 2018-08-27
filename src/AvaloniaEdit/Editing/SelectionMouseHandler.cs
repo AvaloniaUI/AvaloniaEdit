@@ -484,9 +484,9 @@ namespace AvaloniaEdit.Editing
                         }
                     }
                 }
-            }
-            e.Handled = true;
-        }
+				e.Handled = true;
+			}
+		}
         #endregion
 
         #region Mouse Position <-> Text coordinates
