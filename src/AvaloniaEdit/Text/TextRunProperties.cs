@@ -20,7 +20,7 @@ namespace AvaloniaEdit.Text
 
         public IBrush ForegroundBrush { get; set; }
 
-        public FontFamily Typeface { get; set; }
+        public Typeface Typeface { get; set; }
 
         public double FontSize { get; set; }
     }
