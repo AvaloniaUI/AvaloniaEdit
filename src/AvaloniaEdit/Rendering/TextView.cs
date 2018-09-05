@@ -2098,6 +2098,7 @@ namespace AvaloniaEdit.Rendering
                     {
                         InvalidateVisual();
                         TextLayer.InvalidateVisual();
+                        InvalidateMeasure(DispatcherPriority.Normal);
                     }
 
                     if (isY)
