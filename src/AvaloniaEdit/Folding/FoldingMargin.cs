@@ -157,7 +157,7 @@ namespace AvaloniaEdit.Folding
                 var xPos = (finalSize.Width - m.DesiredSize.Width) / 2;
                 m.Arrange(new Rect(PixelSnapHelpers.Round(new Point(xPos, yPos), pixelSize), m.DesiredSize));
             }
-            return base.ArrangeOverride(finalSize);
+            return finalSize;
         }
 
         private readonly List<FoldingMarginMarker> _markers = new List<FoldingMarginMarker>();
@@ -184,6 +184,7 @@ namespace AvaloniaEdit.Folding
                             VisualLine = line,
                             FoldingSection = fs
                         };
+                        ((ISetLogicalParent)m).SetParent(this);
 
                         _markers.Add(m);
                         VisualChildren.Add(m);

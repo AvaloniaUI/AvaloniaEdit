@@ -32,7 +32,7 @@ namespace AvaloniaEdit.Text
 
         public double Height => IsEnd ? 0.0 : FontSize * HeightFactor;
 
-        public string Typeface => TextRun.Properties.Typeface;
+        public Typeface Typeface => TextRun.Properties.Typeface;
 
         public double FontSize => TextRun.Properties.FontSize;
 
@@ -125,10 +125,11 @@ namespace AvaloniaEdit.Text
                 Length = textRun.Length
             };
 
+            var tf = run.Typeface;
             var formattedText = new FormattedText
             {
                 Text = stringRange.ToString(),
-                Typeface = new Typeface(run.Typeface, run.FontSize)
+                Typeface = new Typeface(tf.FontFamily, run.FontSize, tf.Style, tf.Weight),
             };
        
 
@@ -157,10 +158,11 @@ namespace AvaloniaEdit.Text
             for (var i = 0; i < StringRange.Length; i++)
             {
                 // TODO: is there a better way of getting glyph metrics?
+                var tf = Typeface;
                 var size = new FormattedText
                 {
                     Text = StringRange[i].ToString(),
-                    Typeface = new Typeface(Typeface, FontSize)
+                    Typeface = new Typeface(tf.FontFamily, FontSize, tf.Style, tf.Weight)
                 }.Measure();
                 
                 result[i] = size.Width;

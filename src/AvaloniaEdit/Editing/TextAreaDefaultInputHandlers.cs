@@ -59,10 +59,6 @@ namespace AvaloniaEdit.Editing
         private void AddBinding(RoutedCommand command, EventHandler<ExecutedRoutedEventArgs> handler, EventHandler<CanExecuteRoutedEventArgs> canExecuteHandler = null)
         {
             CommandBindings.Add(new RoutedCommandBinding(command, handler, canExecuteHandler));
-            if (command.Gesture != null)
-            {
-                KeyBindings.Add(new KeyBinding { Command = command, Gesture = command.Gesture });
-            }
         }
 
         internal static KeyBinding CreateKeyBinding(ICommand command, InputModifiers modifiers, Key key)

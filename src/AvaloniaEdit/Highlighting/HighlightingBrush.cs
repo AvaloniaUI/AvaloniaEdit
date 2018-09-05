@@ -18,6 +18,7 @@
 
 using AvaloniaEdit.Rendering;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 
 namespace AvaloniaEdit.Highlighting
 {
@@ -49,9 +50,9 @@ namespace AvaloniaEdit.Highlighting
 	/// </summary>
 	public sealed class SimpleHighlightingBrush : HighlightingBrush
 	{
-	    private readonly SolidColorBrush _brush;
+	    private readonly ISolidColorBrush _brush;
 		
-		internal SimpleHighlightingBrush(SolidColorBrush brush)
+		internal SimpleHighlightingBrush(ISolidColorBrush brush)
 		{
 			_brush = brush;
 		}
@@ -59,7 +60,7 @@ namespace AvaloniaEdit.Highlighting
 		/// <summary>
 		/// Creates a new HighlightingBrush with the specified color.
 		/// </summary>
-		public SimpleHighlightingBrush(Color color) : this(new SolidColorBrush(color)) {}
+		public SimpleHighlightingBrush(Color color) : this(new ImmutableSolidColorBrush(color)) {}
 		
 		/// <inheritdoc/>
 		public override IBrush GetBrush(ITextRunConstructionContext context)

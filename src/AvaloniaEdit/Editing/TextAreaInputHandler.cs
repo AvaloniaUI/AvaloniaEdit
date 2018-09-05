@@ -215,6 +215,16 @@ namespace AvaloniaEdit.Editing
 
                 keyBinding.TryHandle(keyEventArgs);
             }
+
+            foreach (var commandBinding in CommandBindings)
+            {
+                if (commandBinding.Command.Gesture?.Matches(keyEventArgs) == true)
+                {
+                    commandBinding.Command.Execute(null, (IInputElement)sender);
+                    keyEventArgs.Handled = true;
+                    break;
+                }
+            }
         }
 
         #endregion

@@ -261,7 +261,7 @@ Task("Build-NetCore")
 
         if (!IsRunningOnWindows())
         {
-            settings.Framework = "netcoreapp2.0";
+            settings.Framework = "netcoreapp2.1";
         }
 
         DotNetCoreBuild(project.Path, settings);
@@ -315,7 +315,7 @@ Task("Publish-MyGet")
 
 Task("Publish-NetCore")
     .IsDependentOn("Restore-NetCore")
-    .WithCriteria(()=>isMainRepo && isMasterBranch)
+    .WithCriteria(()=>isMainRepo && isMasterBranch && isTagged)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -326,7 +326,7 @@ Task("Publish-NetCore")
 
             Information("Publishing: {0}, runtime: {1}", project.Name, runtime);
             DotNetCorePublish(project.Path, new DotNetCorePublishSettings {
-                Framework = "netcoreapp2.0",
+                Framework = "netcoreapp2.1",
                 Configuration = configuration,
                 Runtime = runtime,
                 OutputDirectory = outputDir.FullPath

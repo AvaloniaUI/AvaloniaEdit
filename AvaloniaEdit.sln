@@ -5,7 +5,14 @@ VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit", "src\AvaloniaEdit\AvaloniaEdit.csproj", "{4B04026F-BA96-4721-AE28-0970CB5806A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaEdit.Demo", "src\AvaloniaEdit.Demo\AvaloniaEdit.Demo.csproj", "{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit.Demo", "src\AvaloniaEdit.Demo\AvaloniaEdit.Demo.csproj", "{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{F1B274B0-4FF5-4748-94E2-C71498612622}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "props", "props", "{60029D01-4748-4344-B380-9EDB42CB560A}"
+	ProjectSection(SolutionItems) = preProject
+		src\build\AvaloniaEdit.props = src\build\AvaloniaEdit.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,5 +41,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{60029D01-4748-4344-B380-9EDB42CB560A} = {F1B274B0-4FF5-4748-94E2-C71498612622}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DCA3703C-8F8E-4AC5-81D7-65131FEBA631}
 	EndGlobalSection
 EndGlobal

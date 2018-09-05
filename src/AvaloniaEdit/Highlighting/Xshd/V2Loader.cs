@@ -321,15 +321,13 @@ namespace AvaloniaEdit.Highlighting.Xshd
             color.FontStyle = ParseFontStyle(reader.GetAttribute("fontStyle"));
             color.Underline = reader.GetBoolAttribute("underline");
             return color;
-        }
-
-        internal static readonly ColorTypeConverter ColorConverter = new ColorTypeConverter();
+        }        
 
         private static HighlightingBrush ParseColor(string color)
         {
             if (string.IsNullOrEmpty(color))
                 return null;
-            return FixedColorHighlightingBrush((Color?)ColorConverter.ConvertFrom(null, null, color));
+            return FixedColorHighlightingBrush(Color.Parse(color));
         }
 
         private static HighlightingBrush FixedColorHighlightingBrush(Color? color)
