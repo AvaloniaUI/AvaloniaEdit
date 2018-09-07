@@ -60,9 +60,16 @@ namespace AvaloniaEdit.Text
                 return new TextLineRun(textRun.Length, textRun) { IsEnd = true };
             }
 
-            if (textRun is TextEmbeddedObject)
+            if (textRun is TextEmbeddedObject embeddedObject)
             {
-                return new TextLineRun(textRun.Length, textRun) { IsEmbedded = true, _glyphWidths = new double[textRun.Length] };
+                double width = embeddedObject.GetSize(double.PositiveInfinity).Width;
+                return new TextLineRun(textRun.Length, textRun) {
+                    IsEmbedded = true,
+                    _glyphWidths = new double[] { width },
+                    // Embedded objects must propagate their width to the container.
+                    // Otherwise text runs after the embedded object are drawn at the same x position.
+                    Width = width
+                };
             }
 
             throw new NotSupportedException("Unsupported run type");
