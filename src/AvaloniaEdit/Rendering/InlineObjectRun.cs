@@ -101,6 +101,16 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         public override TextRunProperties Properties { get; }
 
+        public override Size GetSize(double remainingParagraphWidth)
+        {
+            if (Element.IsArrangeValid)
+            {
+                return DesiredSize;
+            }
+
+            return Size.Empty;
+        }
+
         public override Rect ComputeBoundingBox()
         {
             if (Element.IsArrangeValid)

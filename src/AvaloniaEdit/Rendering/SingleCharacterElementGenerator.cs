@@ -193,10 +193,15 @@ namespace AvaloniaEdit.Rendering
 
             public override TextRunProperties Properties { get; }
 
-            public override Rect ComputeBoundingBox()
+            public override Size GetSize(double remainingParagraphWidth)
             {
                 var width = Math.Min(0, _element.Text.WidthIncludingTrailingWhitespace - 1);
-                return new Rect(0, 0, width, _element.Text.Height);
+                return new Size(width, _element.Text.Height);
+            }
+
+            public override Rect ComputeBoundingBox()
+            {
+                return new Rect(GetSize(double.PositiveInfinity));
             }
 
             public override void Draw(DrawingContext drawingContext, Point origin)
