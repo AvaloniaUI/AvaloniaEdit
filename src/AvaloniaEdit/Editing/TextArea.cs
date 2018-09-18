@@ -548,7 +548,7 @@ namespace AvaloniaEdit.Editing
             if (!_ensureSelectionValidRequested && _allowCaretOutsideSelection == 0)
             {
                 _ensureSelectionValidRequested = true;
-                Dispatcher.UIThread.InvokeAsync(EnsureSelectionValid);
+                Dispatcher.UIThread.Post(EnsureSelectionValid);
             }
         }
 

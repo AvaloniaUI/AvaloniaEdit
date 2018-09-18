@@ -254,7 +254,7 @@ namespace AvaloniaEdit.CodeCompletion
 
         private void TextAreaLostFocus(object sender, RoutedEventArgs e)
         {
-            Dispatcher.UIThread.InvokeAsync(CloseIfFocusLost, DispatcherPriority.Background);
+            Dispatcher.UIThread.Post(CloseIfFocusLost, DispatcherPriority.Background);
         }
 
         private void ParentWindow_Deactivated(object sender, EventArgs e)
@@ -270,7 +270,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <inheritdoc/>
         private void OnDeactivated(object sender, EventArgs e)
         {
-            Dispatcher.UIThread.InvokeAsync(CloseIfFocusLost, DispatcherPriority.Background);
+            Dispatcher.UIThread.Post(CloseIfFocusLost, DispatcherPriority.Background);
         }
 
         #endregion
