@@ -445,6 +445,7 @@ namespace AvaloniaEdit.Rendering
             if (!alreadyAdded)
             {
                 VisualChildren.Add(inlineObject.Element);
+                ((ISetLogicalParent)inlineObject.Element).SetParent(this);
             }
             inlineObject.Element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
             inlineObject.DesiredSize = inlineObject.Element.DesiredSize;
