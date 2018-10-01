@@ -104,7 +104,7 @@ namespace AvaloniaEdit.Search
             _panel.Open();
             if (!(TextArea.Selection.IsEmpty || TextArea.Selection.IsMultiline))
                 _panel.SearchPattern = TextArea.Selection.GetText();
-            Dispatcher.UIThread.InvokeAsync(_panel.Reactivate, DispatcherPriority.Input);
+            Dispatcher.UIThread.Post(_panel.Reactivate, DispatcherPriority.Input);
         }
 
         private void CanExecuteWithOpenSearchPanel(object sender, CanExecuteRoutedEventArgs e)

@@ -99,7 +99,7 @@ namespace AvaloniaEdit.Text
                 WidthIncludingTrailingWhitespace += run.Width;
             }
 
-            Height = height.IsClose(Baseline + top) ? height : Baseline;
+            Height = Math.Max(height, Baseline + top);
 
             if (Height <= 0)
             {

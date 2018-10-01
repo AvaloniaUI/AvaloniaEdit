@@ -28,9 +28,39 @@ namespace AvaloniaEdit.Text
 
         public bool IsEmbedded { get; private set; }
 
-        public double Baseline => IsEnd ? 0.0 : FontSize * BaselineFactor;
+        public double Baseline
+        {
+            get
+            {
+                if (IsEnd)
+                {
+                    return 0.0;
+                }
+                if (IsEmbedded && TextRun is TextEmbeddedObject embeddedObject)
+                {
+                    var box = embeddedObject.ComputeBoundingBox();
+                    return box.Y;
+                }
+                return FontSize * BaselineFactor;
+            }
+        }
 
-        public double Height => IsEnd ? 0.0 : FontSize * HeightFactor;
+        public double Height
+        {
+            get
+            {
+                if(IsEnd)
+                {
+                    return 0.0;
+                }
+                if(IsEmbedded && TextRun is TextEmbeddedObject embeddedObject)
+                {
+                    var box = embeddedObject.ComputeBoundingBox();
+                    return box.Height;
+                }
+                return FontSize * HeightFactor;
+            }
+        }
 
         public Typeface Typeface => TextRun.Properties.Typeface;
 
@@ -60,9 +90,16 @@ namespace AvaloniaEdit.Text
                 return new TextLineRun(textRun.Length, textRun) { IsEnd = true };
             }
 
-            if (textRun is TextEmbeddedObject)
+            if (textRun is TextEmbeddedObject embeddedObject)
             {
-                return new TextLineRun(textRun.Length, textRun) { IsEmbedded = true, _glyphWidths = new double[textRun.Length] };
+                double width = embeddedObject.GetSize(double.PositiveInfinity).Width;
+                return new TextLineRun(textRun.Length, textRun) {
+                    IsEmbedded = true,
+                    _glyphWidths = new double[] { width },
+                    // Embedded objects must propagate their width to the container.
+                    // Otherwise text runs after the embedded object are drawn at the same x position.
+                    Width = width
+                };
             }
 
             throw new NotSupportedException("Unsupported run type");

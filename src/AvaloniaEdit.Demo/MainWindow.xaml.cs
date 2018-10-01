@@ -13,14 +13,56 @@ using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Highlighting;
+using AvaloniaEdit.Rendering;
 
 namespace AvaloniaEdit.Demo
 {
+    using Pair = System.Collections.Generic.KeyValuePair<int, IControl>;
+
     public class MainWindow : Window
     {
+
+        class ElementGenerator : VisualLineElementGenerator, IComparer<Pair>
+        {
+            public List<Pair> controls = new List<Pair>();
+
+            /// <summary>
+            /// Gets the first interested offset using binary search
+            /// </summary>
+            /// <returns>The first interested offset.</returns>
+            /// <param name="startOffset">Start offset.</param>
+            public override int GetFirstInterestedOffset(int startOffset)
+            {
+                int pos = controls.BinarySearch(new Pair(startOffset, null), this);
+                if (pos < 0)
+                    pos = ~pos;
+                if (pos < controls.Count)
+                    return controls[pos].Key;
+                else
+                    return -1;
+            }
+
+            public override VisualLineElement ConstructElement(int offset)
+            {
+                int pos = controls.BinarySearch(new Pair(offset, null), this);
+                if (pos >= 0)
+                    return new InlineObjectElement(0, controls[pos].Value);
+                else
+                    return null;
+            }
+
+            int IComparer<Pair>.Compare(Pair x, Pair y)
+            {
+                return x.Key.CompareTo(y.Key);
+            }
+        }
+
         private readonly TextEditor _textEditor;
         private CompletionWindow _completionWindow;
         private OverloadInsightWindow _insightWindow;
+        private Button _addControlBtn;
+        private Button _clearControlBtn;
+        private ElementGenerator _generator = new ElementGenerator();
 
         public MainWindow()
         {
@@ -33,6 +75,15 @@ namespace AvaloniaEdit.Demo
             _textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
+
+            _addControlBtn = this.FindControl<Button>("addControlBtn");
+            _addControlBtn.Click += _addControlBtn_Click;
+
+            _clearControlBtn = this.FindControl<Button>("clearControlBtn");
+            _clearControlBtn.Click += _clearControlBtn_Click; ;
+
+            _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
+
         }
 
         private void InitializeComponent()
@@ -44,6 +95,20 @@ namespace AvaloniaEdit.Demo
             theme.FindResource("Button");
             AvaloniaXamlLoader.Load(this);
         }
+
+        void _addControlBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me" }));
+            _textEditor.TextArea.TextView.Redraw();
+        }
+
+        void _clearControlBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            //TODO: delete elements using back key
+            _generator.controls.Clear();
+            _textEditor.TextArea.TextView.Redraw();
+        }
+
 
 
         void textEditor_TextArea_TextEntering(object sender, TextInputEventArgs e)
