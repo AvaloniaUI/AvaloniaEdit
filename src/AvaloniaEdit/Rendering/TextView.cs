@@ -1566,6 +1566,7 @@ namespace AvaloniaEdit.Rendering
         #region Visual element pointer handling
 
         [ThreadStatic] private static bool _invalidCursor;
+        private VisualLineElement _currentHoveredElement;
 
         /// <summary>
         /// Updates the pointe cursor, but with background priority.
@@ -1602,6 +1603,13 @@ namespace AvaloniaEdit.Rendering
             base.OnPointerMoved(e);
 
             var element = GetVisualLineElementFromPosition(e.GetPosition(this) + _scrollOffset);
+
+            // Change back to default if hover on a different element
+            if (_currentHoveredElement != element)
+            {
+                Cursor = Cursor.Default;
+                _currentHoveredElement = element;
+            }
             element?.OnQueryCursor(e);
         }
 

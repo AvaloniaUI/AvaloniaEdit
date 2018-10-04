@@ -82,7 +82,10 @@ namespace AvaloniaEdit.Rendering
             if (LinkIsClickable(e.InputModifiers))
             {
                 e.Handled = true;
-                //e.Cursor = Cursors.Hand;
+                if(e.Source is InputElement inputElement)
+                {
+                    inputElement.Cursor = new Cursor(StandardCursorType.Hand);
+                }
             }
         }
 
