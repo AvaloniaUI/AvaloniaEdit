@@ -81,8 +81,11 @@ namespace AvaloniaEdit.Rendering
         {
             if (LinkIsClickable(e.InputModifiers))
             {
+                if(e.Source is InputElement inputElement)
+                {
+                    inputElement.Cursor = new Cursor(StandardCursorType.Hand);
+                }
                 e.Handled = true;
-                //e.Cursor = Cursors.Hand;
             }
         }
 
@@ -102,8 +105,8 @@ namespace AvaloniaEdit.Rendering
                 {
                     // ignore all kinds of errors during web browser start
                 }
+                e.Handled = true;
             }
-            e.Handled = true;
         }
 
         /// <inheritdoc/>
