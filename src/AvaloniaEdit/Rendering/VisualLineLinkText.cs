@@ -17,9 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using AvaloniaEdit.Text;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -28,6 +28,12 @@ namespace AvaloniaEdit.Rendering
     /// </summary>
     public class VisualLineLinkText : VisualLineText
     {
+
+        /// <summary>
+        /// Routed event that should navigate to uri when the link is clicked.
+        /// </summary>
+        public static RoutedEvent<OpenUriRoutedEventArgs> OpenUriEvent { get; } = RoutedEvent.Register<VisualLineText,OpenUriRoutedEventArgs>(nameof(OpenUriEvent), RoutingStrategies.Bubble);
+
         /// <summary>
         /// Gets/Sets the URL that is navigated to when the link is clicked.
         /// </summary>
@@ -90,21 +96,12 @@ namespace AvaloniaEdit.Rendering
         }
 
         /// <inheritdoc/>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
-                                                         Justification = "I've seen Process.Start throw undocumented exceptions when the mail client / web browser is installed incorrectly")]
         protected internal override void OnPointerPressed(PointerPressedEventArgs e)
         {
             if (e.MouseButton == MouseButton.Left && !e.Handled && LinkIsClickable(e.InputModifiers))
             {
-                try
-                {
-                    // TODO: start proc
-                    //Process.Start(this.NavigateUri.ToString());
-                }
-                catch
-                {
-                    // ignore all kinds of errors during web browser start
-                }
+                OpenUriRoutedEventArgs eventArgs = new OpenUriRoutedEventArgs(NavigateUri) { RoutedEvent = OpenUriEvent };
+                e.Source.RaiseEvent(eventArgs);
                 e.Handled = true;
             }
         }
@@ -118,6 +115,50 @@ namespace AvaloniaEdit.Rendering
                 TargetName = TargetName,
                 RequireControlModifierForClick = RequireControlModifierForClick
             };
+        }
+    }
+
+    /// <summary>
+    /// Holds arguments for a <see cref="VisualLineLinkText.OpenUriEvent"/>.
+    /// </summary>
+    /// <example>
+    /// This sample shows how to open link using system's web brower
+    /// <code>
+    /// VisualLineLinkText.OpenUriEvent.AddClassHandler<Window>(args => {
+    ///     var link = args.Uri.ToString();
+    ///     try
+    ///     {
+    ///         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    ///         {
+    ///             Process.Start(link);
+    ///         }
+    ///         else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    ///         {
+    ///             Process.Start("open", link);
+    ///         }
+    ///         else
+    ///         {
+    ///             Process.Start("xdg-open", link);
+    ///         }
+    /// #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+    ///         }
+    ///         catch (Exception)
+    ///         {
+    /// #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+    ///             // Process.Start can throw several errors (not all of them documented),
+    ///             // just ignore all of them.
+    ///         }
+    ///     }
+    /// });
+    /// </code>
+    /// </example>
+    public sealed class OpenUriRoutedEventArgs : RoutedEventArgs
+    {
+        public Uri Uri { get; }
+
+        public OpenUriRoutedEventArgs(Uri uri)
+        {
+            Uri = uri ?? throw new ArgumentNullException(nameof(uri));
         }
     }
 }
