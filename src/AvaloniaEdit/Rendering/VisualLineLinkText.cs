@@ -143,7 +143,6 @@ namespace AvaloniaEdit.Rendering
     ///         }
     ///         catch (Exception)
     ///         {
-    /// #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
     ///             // Process.Start can throw several errors (not all of them documented),
     ///             // just ignore all of them.
     ///         }
