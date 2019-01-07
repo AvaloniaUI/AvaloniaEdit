@@ -100,7 +100,7 @@ namespace AvaloniaEdit.Rendering
         {
             if (e.MouseButton == MouseButton.Left && !e.Handled && LinkIsClickable(e.InputModifiers))
             {
-                OpenUriRoutedEventArgs eventArgs = new OpenUriRoutedEventArgs(NavigateUri) { RoutedEvent = OpenUriEvent };
+                var eventArgs = new OpenUriRoutedEventArgs(NavigateUri) { RoutedEvent = OpenUriEvent };
                 e.Source.RaiseEvent(eventArgs);
                 e.Handled = true;
             }
