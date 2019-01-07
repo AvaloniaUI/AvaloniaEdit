@@ -44,8 +44,8 @@
                                Focusable="False"
                                IsOpen="False"
                                ObeyScreenEdges="True">
-                            <ContentControl>Message Here</ContentControl>
-                            </Popup>
+                            <ContentPresenter Name="PART_MessageContent" />
+                        </Popup>
                         <ToggleButton Classes="ExpanderToggle" Name="Expander" VerticalAlignment="Top"
                                       IsChecked="{Binding IsReplaceMode, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                       Grid.Column="0"
