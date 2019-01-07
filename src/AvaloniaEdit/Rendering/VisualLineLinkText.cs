@@ -140,7 +140,6 @@ namespace AvaloniaEdit.Rendering
     ///         {
     ///             Process.Start("xdg-open", link);
     ///         }
-    /// #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
     ///         }
     ///         catch (Exception)
     ///         {
