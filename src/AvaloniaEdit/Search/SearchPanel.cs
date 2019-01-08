@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -186,15 +187,6 @@ namespace AvaloniaEdit.Search
         /// </summary>
         private SearchPanel()
         {
-            _messageViewContent = new ContentControl();
-            _messageViewContent.Classes.Add("ToolTip");
-            _messageView = new Popup
-            {
-                PlacementMode = PlacementMode.Bottom,
-                StaysOpen = true,
-                Focusable = false,
-                Child = _messageViewContent
-            };
         }
 
         /// <summary>
@@ -289,6 +281,8 @@ namespace AvaloniaEdit.Search
         {
             base.OnTemplateApplied(e);
             _searchTextBox = e.NameScope.Find<TextBox>("PART_searchTextBox");
+            _messageView = e.NameScope.Find<Popup>("PART_MessageView");
+            _messageViewContent = _messageView.FindControl<ContentPresenter>("PART_MessageContent");
         }
 
         private void ValidateSearchText()
@@ -378,8 +372,8 @@ namespace AvaloniaEdit.Search
             }
         }
 
-        private readonly Popup _messageView;
-        private readonly ContentControl _messageViewContent;
+        private Popup _messageView;
+        private ContentPresenter _messageViewContent;
         private string _validationError;
 
         private void DoSearch(bool changeSelection)
@@ -406,15 +400,20 @@ namespace AvaloniaEdit.Search
                     }
                     _renderer.CurrentResults.Add(result);
                 }
+            }
+
+            if (_messageView != null)
+            {
                 if (!_renderer.CurrentResults.Any())
                 {
-                    _messageView.IsOpen = true;
                     _messageViewContent.Content = SR.SearchNoMatchesFoundText;
                     _messageView.PlacementTarget = _searchTextBox;
+                    _messageView.IsOpen = true;
                 }
                 else
                     _messageView.IsOpen = false;
             }
+
             _textArea.TextView.InvalidateLayer(KnownLayer.Selection);
         }
 
@@ -456,8 +455,6 @@ namespace AvaloniaEdit.Search
                     Close();
                     break;
             }
-
-            e.Handled = true;
         }
 
         /// <summary>
