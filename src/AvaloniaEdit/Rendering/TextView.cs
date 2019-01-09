@@ -1198,13 +1198,13 @@ namespace AvaloniaEdit.Rendering
             // validate scroll position
             var newScrollOffsetX = _scrollOffset.X;
             var newScrollOffsetY = _scrollOffset.Y;
-            if (_scrollOffset.X + finalSize.Width > _scrollExtent.Width)
+            if (_scrollOffset.X + finalSize.Width > _documentSize.Width)
             {
-                newScrollOffsetX = Math.Max(0, _scrollExtent.Width - finalSize.Width);
+                newScrollOffsetX = Math.Max(0, _documentSize.Width - finalSize.Width);
             }
-            if (_scrollOffset.Y + finalSize.Height > _scrollExtent.Height)
+            if (_scrollOffset.Y + finalSize.Height > _documentSize.Height)
             {
-                newScrollOffsetY = Math.Max(0, _scrollExtent.Height - finalSize.Height);
+                newScrollOffsetY = Math.Max(0, _documentSize.Height - finalSize.Height);
             }
 
             // Apply final view port and offset
