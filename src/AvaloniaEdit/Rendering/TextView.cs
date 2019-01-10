@@ -32,6 +32,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Text;
@@ -48,7 +49,7 @@ namespace AvaloniaEdit.Rendering
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
                                                      Justification = "The user usually doesn't work with TextView but with TextEditor; and nulling the Document property is sufficient to dispose everything.")]
-    public class TextView : Control, ITextEditorComponent
+    public class TextView : Control, ITextEditorComponent, ILogicalScrollable
     {
         #region Constructor
         static TextView()
@@ -725,7 +726,7 @@ namespace AvaloniaEdit.Rendering
             {
                 throw new ArgumentException("Cannot dispose visual line because it is in construction!");
             }
-            
+
             visualLine.Dispose();
             RemoveInlineObjects(visualLine);
         }
@@ -920,7 +921,8 @@ namespace AvaloniaEdit.Rendering
             }
             MeasureInlineObjects();
 
-            InvalidateVisual(); // = InvalidateArrange+InvalidateRender
+            // TODO: is this needed?
+            //InvalidateVisual(); // = InvalidateArrange+InvalidateRender
 
             double maxWidth;
             if (_document == null)
@@ -935,7 +937,7 @@ namespace AvaloniaEdit.Rendering
                 _inMeasure = true;
                 try
                 {
-                    maxWidth = CreateAndMeasureVisualLines(_scrollViewport);
+                    maxWidth = CreateAndMeasureVisualLines(availableSize);
                 }
                 finally
                 {
@@ -964,6 +966,9 @@ namespace AvaloniaEdit.Rendering
             }
 
             TextLayer.SetVisualLines(_visibleVisualLines);
+
+            // Size of control (scorll viewport) might be changed during ArrageOverride. We only need document size for now.
+            _documentSize = new Size(maxWidth, heightTreeHeight);
 
             VisualLinesChanged?.Invoke(this, EventArgs.Empty);
 
@@ -1077,7 +1082,7 @@ namespace AvaloniaEdit.Rendering
         {
             if (_heightTree.GetIsCollapsed(documentLine.LineNumber))
                 throw new InvalidOperationException("Trying to build visual line from collapsed line");
-            
+
             var visualLine = new VisualLine(this, documentLine);
             var textSource = new VisualLineTextSource(visualLine)
             {
@@ -1193,16 +1198,17 @@ namespace AvaloniaEdit.Rendering
             // validate scroll position
             var newScrollOffsetX = _scrollOffset.X;
             var newScrollOffsetY = _scrollOffset.Y;
-            if (_scrollOffset.X + finalSize.Width > _scrollExtent.Width)
+            if (_scrollOffset.X + finalSize.Width > _documentSize.Width)
             {
-                newScrollOffsetX = Math.Max(0, _scrollExtent.Width - finalSize.Width);
+                newScrollOffsetX = Math.Max(0, _documentSize.Width - finalSize.Width);
             }
-            if (_scrollOffset.Y + finalSize.Height > _scrollExtent.Height)
+            if (_scrollOffset.Y + finalSize.Height > _documentSize.Height)
             {
-                newScrollOffsetY = Math.Max(0, _scrollExtent.Height - finalSize.Height);
+                newScrollOffsetY = Math.Max(0, _documentSize.Height - finalSize.Height);
             }
 
-           // Debug.WriteLine("Arrange finalSize=" + finalSize + ", scrollOffset=" + _scrollOffset);
+            // Apply final view port and offset
+            SetScrollData(finalSize, _documentSize, new Vector(newScrollOffsetX, newScrollOffsetY));
 
             if (_visibleVisualLines != null)
             {
@@ -1227,6 +1233,7 @@ namespace AvaloniaEdit.Rendering
                     }
                 }
             }
+
             InvalidateCursorIfPointerWithinTextView();
 
             return finalSize;
@@ -1257,7 +1264,7 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         public override void Render(DrawingContext drawingContext)
         {
-            if(!VisualLinesValid)
+            if (!VisualLinesValid)
             {
                 return;
             }
@@ -1345,9 +1352,14 @@ namespace AvaloniaEdit.Rendering
 
         #region IScrollInfo implementation
         /// <summary>
-        /// Size of the document, in pixels.
+        /// Size of the scroll, in pixels.
         /// </summary>
         private Size _scrollExtent;
+
+        /// <summary>
+        /// Size of the document, in pixels.
+        /// </summary>
+        private Size _documentSize;
 
         /// <summary>
         /// Offset of the scroll position.
@@ -1361,25 +1373,33 @@ namespace AvaloniaEdit.Rendering
 
         private void ClearScrollData()
         {
-            SetScrollData(new Size(), new Size());
-            _scrollOffset = new Vector();
+            SetScrollData(new Size(), new Size(), new Vector());
         }
 
-        public bool SetScrollData(Size viewport, Size extent)
+        private bool SetScrollData(Size viewport, Size extent, Vector offset)
         {
             if (!(viewport.IsClose(_scrollViewport)
-                  && extent.IsClose(_scrollExtent)))
+                  && extent.IsClose(_scrollExtent)
+                  && offset.IsClose(_scrollOffset)))
             {
                 _scrollViewport = viewport;
                 _scrollExtent = extent;
+                SetScrollOffset(offset);
+                OnScrollChange();
                 return true;
             }
+
             return false;
+        }
+
+        private void OnScrollChange()
+        {
+            ((ILogicalScrollable)this).InvalidateScroll?.Invoke();
         }
 
         private bool _canVerticallyScroll = true;
 
-        private bool _canHorizontallyScroll;
+        private bool _canHorizontallyScroll = true;
 
         /// <summary>
         /// Gets the horizontal scroll offset.
@@ -1401,19 +1421,22 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public event EventHandler ScrollOffsetChanged;
 
-        internal void SetScrollOffset(Vector vector)
+        private void SetScrollOffset(Vector vector)
         {
             if (!_canHorizontallyScroll)
+            {
                 vector = new Vector(0, vector.Y);
+            }
+
             if (!_canVerticallyScroll)
+            {
                 vector = new Vector(vector.X, 0);
+            }
 
             if (!_scrollOffset.IsClose(vector))
             {
                 _scrollOffset = vector;
                 ScrollOffsetChanged?.Invoke(this, EventArgs.Empty);
-
-                InvalidateMeasure();
             }
         }
 
@@ -1558,6 +1581,7 @@ namespace AvaloniaEdit.Rendering
             if (!_scrollOffset.IsClose(newScrollOffset))
             {
                 SetScrollOffset(newScrollOffset);
+                OnScrollChange();
                 InvalidateMeasure(DispatcherPriority.Normal);
             }
         }
@@ -1676,7 +1700,7 @@ namespace AvaloniaEdit.Rendering
             if (vl != null)
             {
                 var column = vl.GetVisualColumnFloor(visualPosition);
-                
+
                 foreach (var element in vl.Elements)
                 {
                     if (element.VisualColumn + element.VisualLength <= column)
@@ -1957,6 +1981,28 @@ namespace AvaloniaEdit.Rendering
             return pen;
         }
 
+        bool ILogicalScrollable.BringIntoView(IControl target, Rect rectangle)
+        {
+            if (rectangle.IsEmpty || target == null || target == this || !this.IsVisualAncestorOf(target))
+            {
+                return false;
+            }
+
+            // TODO:
+            // Convert rectangle into our coordinate space.
+            //var childTransform = target.TransformToVisual(this);
+            //rectangle = childTransform.Value(rectangle);
+
+            MakeVisible(rectangle.WithX(rectangle.X + _scrollOffset.X).WithY(rectangle.Y + _scrollOffset.Y));
+
+            return true;
+        }
+
+        IControl ILogicalScrollable.GetControlInDirection(NavigationDirection direction, IControl from)
+        {
+            return null;
+        }
+
         /// <summary>
         /// Gets/Sets the pen used to draw the column ruler.
         /// <seealso cref="TextEditorOptions.ShowColumnRuler"/>
@@ -2010,5 +2056,72 @@ namespace AvaloniaEdit.Rendering
         /// Empty line selection width.
         /// </summary>
         public virtual double EmptyLineSelectionWidth => 1;
+
+        bool ILogicalScrollable.CanHorizontallyScroll
+        {
+            get => _canHorizontallyScroll;
+            set
+            {
+                if (_canHorizontallyScroll != value)
+                {
+                    _canHorizontallyScroll = value;
+                    ClearVisualLines();
+                    InvalidateMeasure(DispatcherPriority.Normal);
+                }
+            }
+        }
+
+        bool ILogicalScrollable.CanVerticallyScroll
+        {
+            get => _canVerticallyScroll;
+            set
+            {
+                if (_canVerticallyScroll != value)
+                {
+                    _canVerticallyScroll = value;
+                    ClearVisualLines();
+                    InvalidateMeasure(DispatcherPriority.Normal);
+                }
+            }
+        }
+
+        bool ILogicalScrollable.IsLogicalScrollEnabled => true;
+
+        Action ILogicalScrollable.InvalidateScroll { get; set; }
+
+        Size ILogicalScrollable.ScrollSize => new Size(10, 10);
+
+        Size ILogicalScrollable.PageScrollSize => new Size(10, 10);
+
+        Size IScrollable.Extent => _scrollExtent;
+
+        Vector IScrollable.Offset
+        {
+            get => _scrollOffset;
+            set
+            {
+                value = new Vector(ValidateVisualOffset(value.X), ValidateVisualOffset(value.Y));
+                var isX = !_scrollOffset.X.IsClose(value.X);
+                var isY = !_scrollOffset.Y.IsClose(value.Y);
+                if (isX || isY)
+                {
+                    SetScrollOffset(value);
+
+                    if (isX)
+                    {
+                        InvalidateVisual();
+                        TextLayer.InvalidateVisual();
+                        InvalidateMeasure(DispatcherPriority.Normal);
+                    }
+
+                    if (isY)
+                    {
+                        InvalidateMeasure(DispatcherPriority.Normal);
+                    }
+                }
+            }
+        }
+
+        Size IScrollable.Viewport => _scrollViewport;
     }
 }

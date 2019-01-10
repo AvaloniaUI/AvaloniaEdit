@@ -47,6 +47,8 @@ namespace AvaloniaEdit
         static TextEditor()
         {
             FocusableProperty.OverrideDefaultValue<TextEditor>(true);
+            HorizontalScrollBarVisibilityProperty.OverrideDefaultValue<TextEditor>(ScrollBarVisibility.Auto);
+            VerticalScrollBarVisibilityProperty.OverrideDefaultValue<TextEditor>(ScrollBarVisibility.Auto);
 
             OptionsProperty.Changed.Subscribe(OnOptionsChanged);
             DocumentProperty.Changed.Subscribe(OnDocumentChanged);
@@ -1049,28 +1051,28 @@ namespace AvaloniaEdit
         /// <summary>
         /// Dependency property for <see cref="HorizontalScrollBarVisibility"/>
         /// </summary>
-        public static readonly AvaloniaProperty HorizontalScrollBarVisibilityProperty = ScrollViewer.HorizontalScrollBarVisibilityProperty.AddOwner<TextEditor>();
+        public static readonly AttachedProperty<ScrollBarVisibility> HorizontalScrollBarVisibilityProperty = ScrollViewer.HorizontalScrollBarVisibilityProperty.AddOwner<TextEditor>();
 
         /// <summary>
         /// Gets/Sets the horizontal scroll bar visibility.
         /// </summary>
         public ScrollBarVisibility HorizontalScrollBarVisibility
         {
-            get => (ScrollBarVisibility)GetValue(HorizontalScrollBarVisibilityProperty);
+            get => GetValue(HorizontalScrollBarVisibilityProperty);
             set => SetValue(HorizontalScrollBarVisibilityProperty, value);
         }
 
         /// <summary>
         /// Dependency property for <see cref="VerticalScrollBarVisibility"/>
         /// </summary>
-        public static readonly AvaloniaProperty VerticalScrollBarVisibilityProperty = ScrollViewer.VerticalScrollBarVisibilityProperty.AddOwner<TextEditor>();
+        public static readonly AttachedProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = ScrollViewer.VerticalScrollBarVisibilityProperty.AddOwner<TextEditor>();
 
         /// <summary>
         /// Gets/Sets the vertical scroll bar visibility.
         /// </summary>
         public ScrollBarVisibility VerticalScrollBarVisibility
         {
-            get => (ScrollBarVisibility)GetValue(VerticalScrollBarVisibilityProperty);
+            get => GetValue(VerticalScrollBarVisibilityProperty);
             set => SetValue(VerticalScrollBarVisibilityProperty, value);
         }
         #endregion

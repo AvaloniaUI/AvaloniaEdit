@@ -14,6 +14,8 @@
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
                                Margin="30"
+                               HorizontalScrollBarVisibility="Auto"
+                               VerticalScrollBarVisibility="Visible"
                                TextBlock.FontSize="30" />
     </DockPanel>
 </Window>
