@@ -8,9 +8,9 @@ namespace AvaloniaEdit.CodeCompletion
         public static readonly AvaloniaProperty<Point> PositionProperty =
             AvaloniaProperty.Register<PopupWithCustomPosition, Point>(nameof(Position));
 
-        public Point Position { get; set; }
+        public PixelPoint Position { get; set; }
 
-        protected override Point GetPosition()
+        protected override PixelPoint GetPosition()
         {
             return Position;
         }
