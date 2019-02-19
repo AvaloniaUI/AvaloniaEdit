@@ -2089,9 +2089,9 @@ namespace AvaloniaEdit.Rendering
 
         Action ILogicalScrollable.InvalidateScroll { get; set; }
 
-        Size ILogicalScrollable.ScrollSize => new Size(10, 10);
+        Size ILogicalScrollable.ScrollSize => new Size(10, 50);
 
-        Size ILogicalScrollable.PageScrollSize => new Size(10, 10);
+        Size ILogicalScrollable.PageScrollSize => new Size(10, 100);
 
         Size IScrollable.Extent => _scrollExtent;
 
