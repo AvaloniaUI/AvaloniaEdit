@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit", "src\Avaloni
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit.Demo", "src\AvaloniaEdit.Demo\AvaloniaEdit.Demo.csproj", "{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit.Tests", "test\AvaloniaEdit.Tests\AvaloniaEdit.Tests.csproj", "{9E5D4372-D362-44A2-984D-578288870AB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|x64.ActiveCfg = Release|Any CPU
 		{03763F37-9BD9-4D1D-ADC9-1050F6F8C062}.Release|x64.Build.0 = Release|Any CPU
+		{9E5D4372-D362-44A2-984D-578288870AB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E5D4372-D362-44A2-984D-578288870AB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E5D4372-D362-44A2-984D-578288870AB8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9E5D4372-D362-44A2-984D-578288870AB8}.Debug|x64.Build.0 = Debug|Any CPU
+		{9E5D4372-D362-44A2-984D-578288870AB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E5D4372-D362-44A2-984D-578288870AB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E5D4372-D362-44A2-984D-578288870AB8}.Release|x64.ActiveCfg = Release|Any CPU
+		{9E5D4372-D362-44A2-984D-578288870AB8}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
