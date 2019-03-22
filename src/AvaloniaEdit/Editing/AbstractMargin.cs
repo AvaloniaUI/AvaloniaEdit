@@ -34,8 +34,6 @@ namespace AvaloniaEdit.Editing
     /// </summary>
     public abstract class AbstractMargin : Control, ITextViewConnect
     {
-        private TextArea _textArea;
-
         public AbstractMargin()
         {
             this.GetPropertyChangedObservable(TextViewProperty).Subscribe(o =>
@@ -86,17 +84,17 @@ namespace AvaloniaEdit.Editing
             }
         }
 
-        private TextDocument _document;
-
         /// <summary>
         /// Gets the document associated with the margin.
         /// </summary>
-        public TextDocument Document => _document;
+        public TextDocument Document { get; private set; }
+
+        protected TextArea TextArea { get; set; }
 
         /// <summary>
-		/// Called when the <see cref="TextView"/> is changing.
-		/// </summary>
-		protected virtual void OnTextViewChanged(TextView oldTextView, TextView newTextView)
+        /// Called when the <see cref="TextView"/> is changing.
+        /// </summary>
+        protected virtual void OnTextViewChanged(TextView oldTextView, TextView newTextView)
         {
             if (oldTextView != null)
             {
@@ -120,11 +118,11 @@ namespace AvaloniaEdit.Editing
                 newTextView.VisualLinesChanged += TextViewVisualLinesChanged;
 
                 // find the text area belonging to the new text view
-                _textArea = newTextView.GetService(typeof(TextArea)) as TextArea;
+                TextArea = newTextView.GetService(typeof(TextArea)) as TextArea;
             }
             else
             {
-                _textArea = null;
+                TextArea = null;
             }
         }
 
@@ -144,7 +142,7 @@ namespace AvaloniaEdit.Editing
 
         private void TextViewDocumentChanged(object sender, EventArgs e)
         {
-            OnDocumentChanged(_document, TextView?.Document);
+            OnDocumentChanged(Document, TextView?.Document);
         }
 
         /// <summary>
@@ -152,7 +150,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         protected virtual void OnDocumentChanged(TextDocument oldDocument, TextDocument newDocument)
         {
-            _document = newDocument;
+            Document = newDocument;
         }
     }
 }
