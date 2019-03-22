@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -17,7 +16,7 @@ using AvaloniaEdit.Rendering;
 
 namespace AvaloniaEdit.Demo
 {
-    using Pair = System.Collections.Generic.KeyValuePair<int, IControl>;
+    using Pair = KeyValuePair<int, IControl>;
 
     public class MainWindow : Window
     {
@@ -73,6 +72,7 @@ namespace AvaloniaEdit.Demo
             _textEditor.Background = Brushes.Transparent;
             _textEditor.ShowLineNumbers = true;
             _textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
+            _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
 
