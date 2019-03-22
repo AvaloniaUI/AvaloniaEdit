@@ -62,8 +62,8 @@ namespace AvaloniaEdit.Editing
             DocumentProperty.Changed.Subscribe(OnDocumentChanged);
             OptionsProperty.Changed.Subscribe(OnOptionsChanged);
 
-            AffectsArrange(OffsetProperty);
-            AffectsRender(OffsetProperty);
+            AffectsArrange<TextArea>(OffsetProperty);
+            AffectsRender<TextArea>(OffsetProperty);
         }
 
         /// <summary>
