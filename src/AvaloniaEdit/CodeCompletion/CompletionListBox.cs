@@ -64,9 +64,6 @@ namespace AvaloniaEdit.CodeCompletion
             }
         }
 
-        // TODO: perf
-        internal int ItemCount => Items.Cast<object>().Count();
-
         /// <summary>
         /// Gets the number of visible items.
         /// </summary>
