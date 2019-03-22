@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#if !DEBUG
 using System;
 using System.Runtime.CompilerServices;
 using AvaloniaEdit.AvaloniaMocks;
@@ -114,3 +115,4 @@ namespace AvaloniaEdit
         }
     }
 }
+#endif
