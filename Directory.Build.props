@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>7.1</LangVersion>
+    <AvaloniaVersion>0.7.1-cibuild0001689-beta</AvaloniaVersion>
+  </PropertyGroup>
+</Project>

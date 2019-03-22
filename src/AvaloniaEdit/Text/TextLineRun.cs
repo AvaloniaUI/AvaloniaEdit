@@ -172,7 +172,7 @@ namespace AvaloniaEdit.Text
 
             run._formattedText = formattedText;
 
-            var size = formattedText.Measure();
+            var size = formattedText.Bounds.Size;
             run._formattedTextSize = size;
 
             run.Width = size.Width;
@@ -200,7 +200,7 @@ namespace AvaloniaEdit.Text
                 {
                     Text = StringRange[i].ToString(),
                     Typeface = new Typeface(tf.FontFamily, FontSize, tf.Style, tf.Weight)
-                }.Measure();
+                }.Bounds.Size;
                 
                 result[i] = size.Width;
             }

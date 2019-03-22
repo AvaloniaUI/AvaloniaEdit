@@ -134,7 +134,7 @@ namespace AvaloniaEdit.Rendering
             var formattedText = Element.FormattedText;
             if (formattedText != null)
             {
-                return formattedText.Measure();
+                return formattedText.Bounds.Size;
             }
             var text = Element.TextLine;
             return new Size(text.WidthIncludingTrailingWhitespace,
