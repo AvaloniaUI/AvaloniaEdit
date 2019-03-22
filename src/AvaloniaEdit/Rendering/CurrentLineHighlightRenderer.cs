@@ -19,6 +19,7 @@
 using System;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -59,9 +60,9 @@ namespace AvaloniaEdit.Rendering
 
         public CurrentLineHighlightRenderer(TextView textView)
         {
-            BorderPen = new Pen(new SolidColorBrush(DefaultBorder));
+			BorderPen = new Pen(new ImmutableSolidColorBrush(DefaultBorder));
 
-            BackgroundBrush = new SolidColorBrush(DefaultBackground);
+			BackgroundBrush = new ImmutableSolidColorBrush(DefaultBackground);
 
             _textView = textView ?? throw new ArgumentNullException(nameof(textView));
             _textView.BackgroundRenderers.Add(this);

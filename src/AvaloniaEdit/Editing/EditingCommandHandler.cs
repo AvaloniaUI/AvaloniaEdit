@@ -58,16 +58,10 @@ namespace AvaloniaEdit.Editing
         private static void AddBinding(RoutedCommand command, EventHandler<ExecutedRoutedEventArgs> handler, EventHandler<CanExecuteRoutedEventArgs> canExecuteHandler = null)
         {
             CommandBindings.Add(new RoutedCommandBinding(command, handler, canExecuteHandler));
-            if (command.Gesture != null)
-            {
-                KeyBindings.Add(new KeyBinding { Command = command, Gesture = command.Gesture });
-            }
         }
 
         static EditingCommandHandler()
-        {
-            // TODO ApplicationCommands.Delete gets called, but never editing commands.Delete (since porting to avalonia.)
-            AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.CharRight), CanDelete);
+        {            
             AddBinding(EditingCommands.Delete, InputModifiers.None, Key.Delete, OnDelete(CaretMovementType.CharRight));
             AddBinding(EditingCommands.DeleteNextWord, InputModifiers.Control, Key.Delete,
                 OnDelete(CaretMovementType.WordRight));

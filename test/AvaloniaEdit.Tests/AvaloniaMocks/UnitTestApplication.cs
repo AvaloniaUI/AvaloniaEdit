@@ -14,29 +14,26 @@ namespace AvaloniaEdit.AvaloniaMocks
 {
     public class UnitTestApplication : Application
     {
-        private readonly TestServices _services;
-
         public UnitTestApplication(TestServices services)
         {
-            _services = services ?? new TestServices();
+            Services = services ?? new TestServices();
             RegisterServices();
         }
 
-        public static new UnitTestApplication Current => (UnitTestApplication)Application.Current;
-
-        public TestServices Services => _services;
+        public TestServices Services { get; }
 
         public static IDisposable Start(TestServices services = null)
         {
-            var scope = AvaloniaLocator.EnterScope();
+            AvaloniaLocator.Current = (AvaloniaLocator.CurrentMutable = new AvaloniaLocator());
             var app = new UnitTestApplication(services);
             AvaloniaLocator.CurrentMutable.BindToSelf<Application>(app);
             var updateServices = Dispatcher.UIThread.GetType().GetMethod("UpdateServices", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             updateServices?.Invoke(Dispatcher.UIThread, null);
             return Disposable.Create(() =>
             {
-                scope.Dispose();
                 updateServices?.Invoke(Dispatcher.UIThread, null);
+                AvaloniaLocator.CurrentMutable = null;
+                AvaloniaLocator.Current = null;
             });
         }
 

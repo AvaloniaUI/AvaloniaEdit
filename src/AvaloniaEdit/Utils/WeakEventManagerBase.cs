@@ -255,10 +255,9 @@ namespace AvaloniaEdit.Utils
                        ReferenceEquals(_source.Target, o) &&
                        _originalHandler != null &&
                        (ReferenceEquals(_originalHandler.Target, handler) ||
-                        _originalHandler.Target is PropertyChangedEventHandler &&
-                        handler is PropertyChangedEventHandler &&
-                        Equals(((PropertyChangedEventHandler)_originalHandler.Target).Target,
-                            (handler as PropertyChangedEventHandler).Target));
+                        _originalHandler.Target is TEventHandler &&
+                        handler is TEventHandler &&
+                        handler is Delegate del && _originalHandler.Target is Delegate origDel && Equals(del.Target, origDel.Target));
             }
         }
 

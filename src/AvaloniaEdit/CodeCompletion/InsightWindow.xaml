@@ -24,7 +24,7 @@
                                     Grid.Column="0"
                                     Margin="0,0,4,0"
                                     Orientation="Horizontal"
-                                    IsVisible="{TemplateBinding Path=Provider.Count, Converter={x:Static cc:CollapseIfSingleOverloadConverter.Instance}}">
+                                    IsVisible="{Binding Provider.Count, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cc:CollapseIfSingleOverloadConverter.Instance}}">
                             <Button Name="PART_UP">
                                 <Path Stroke="Black"
                                       Fill="Black"
@@ -32,7 +32,7 @@
                                       Stretch="UniformToFill" />
                             </Button>
                             <TextBlock Margin="2,0,2,0"
-                                       Text="{TemplateBinding Path=Provider.CurrentIndexText}" />
+                                       Text="{Binding Provider.CurrentIndexText, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Button Name="PART_DOWN">
                                 <Path Stroke="Black"
                                       Fill="Black"
@@ -42,11 +42,11 @@
                         </StackPanel>
                         <ContentPresenter Grid.Row="0"
                                           Grid.Column="1"
-                                          Content="{TemplateBinding Path=Provider.CurrentHeader}" />
+                                          Content="{Binding Provider.CurrentHeader, RelativeSource={RelativeSource TemplatedParent}}" />
                         <ContentPresenter Grid.Row="1"
                                           Grid.Column="0"
                                           Grid.ColumnSpan="2"
-                                          Content="{TemplateBinding Path=Provider.CurrentContent}" />
+                                          Content="{Binding Provider.CurrentContent, RelativeSource={RelativeSource TemplatedParent}}" />
                     </Grid>
                 </Border>
             </ControlTemplate>

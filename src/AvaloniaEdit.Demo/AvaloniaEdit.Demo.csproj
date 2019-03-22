@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <OutputType>exe</OutputType>
-    <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
-    <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;osx.10.12-x64</RuntimeIdentifiers>
+    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
     <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
@@ -21,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="0.6.0" />    
+    <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
   </ItemGroup>
 
   <ItemGroup>

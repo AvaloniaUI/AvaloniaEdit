@@ -26,6 +26,7 @@ using System.Globalization;
 using System.IO;
 using AvaloniaEdit.Utils;
 using Avalonia.Threading;
+using System.Threading;
 
 namespace AvaloniaEdit.Document
 {
@@ -129,9 +130,35 @@ namespace AvaloniaEdit.Document
             return _rope.ToString(offset, length);
         }
 
+        private Thread ownerThread = Thread.CurrentThread;
+
+		/// <summary>
+		/// Transfers ownership of the document to another thread. 
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The owner can be set to null, which means that no thread can access the document. But, if the document
+		/// has no owner thread, any thread may take ownership by calling <see cref="SetOwnerThread"/>.
+		/// </para>
+		/// </remarks>
+		public void SetOwnerThread(Thread newOwner)
+		{
+            // We need to lock here to ensure that in the null owner case,
+			// only one thread succeeds in taking ownership.
+			lock (_lockObject) {
+				if (ownerThread != null) {
+					VerifyAccess();
+				}
+				ownerThread = newOwner;
+			}
+		}	
+
         private void VerifyAccess()
         {
-            Dispatcher.UIThread.VerifyAccess();
+            if(Thread.CurrentThread != ownerThread)
+            {
+                throw new InvalidOperationException("Call from invalid thread.");
+            }
         }
 
         /// <summary>

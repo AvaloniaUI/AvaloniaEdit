@@ -129,12 +129,12 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         public override TextRunProperties Properties { get; }
 
-        protected Size GetSize(double remainingParagraphWidth)
+        public override Size GetSize(double remainingParagraphWidth)
         {
             var formattedText = Element.FormattedText;
             if (formattedText != null)
             {
-                return formattedText.Measure();
+                return formattedText.Bounds.Size;
             }
             var text = Element.TextLine;
             return new Size(text.WidthIncludingTrailingWhitespace,
@@ -144,15 +144,7 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         public override Rect ComputeBoundingBox()
         {
-            var formattedText = Element.FormattedText;
-            if (formattedText != null)
-            {
-                var size = formattedText.Measure();
-                return new Rect(0, 0, size.Width, size.Height);
-            }
-
-            var text = Element.TextLine;
-            return new Rect(0, 0, text.WidthIncludingTrailingWhitespace, text.Height);
+            return new Rect(GetSize(double.PositiveInfinity));
         }
 
         /// <inheritdoc/>

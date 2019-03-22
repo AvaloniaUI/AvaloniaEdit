@@ -20,6 +20,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
@@ -192,10 +193,15 @@ namespace AvaloniaEdit.Rendering
 
             public override TextRunProperties Properties { get; }
 
-            public override Rect ComputeBoundingBox()
+            public override Size GetSize(double remainingParagraphWidth)
             {
                 var width = Math.Min(0, _element.Text.WidthIncludingTrailingWhitespace - 1);
-                return new Rect(0, 0, width, _element.Text.Height);
+                return new Size(width, _element.Text.Height);
+            }
+
+            public override Rect ComputeBoundingBox()
+            {
+                return new Rect(GetSize(double.PositiveInfinity));
             }
 
             public override void Draw(DrawingContext drawingContext, Point origin)
@@ -219,11 +225,11 @@ namespace AvaloniaEdit.Rendering
 
         private sealed class SpecialCharacterTextRun : FormattedTextRun
         {
-            private static readonly SolidColorBrush DarkGrayBrush;
+            private static readonly ISolidColorBrush DarkGrayBrush;
 
             static SpecialCharacterTextRun()
             {
-                DarkGrayBrush = new SolidColorBrush(Color.FromArgb(200, 128, 128, 128));
+				DarkGrayBrush = new ImmutableSolidColorBrush(Color.FromArgb(200, 128, 128, 128));
             }
 
             public SpecialCharacterTextRun(FormattedTextElement element, TextRunProperties properties)

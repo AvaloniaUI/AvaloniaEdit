@@ -271,7 +271,12 @@ namespace AvaloniaEdit.Highlighting
             if (color.FontStyle != null || color.FontWeight != null)
             {
                 var tf = element.TextRunProperties.Typeface;
-                element.TextRunProperties.Typeface = tf;
+                element.TextRunProperties.Typeface = new Avalonia.Media.Typeface(
+                    tf.FontFamily,
+                    tf.FontSize,
+                    color.FontStyle ?? tf.Style,
+                    color.FontWeight ?? tf.Weight
+                );
             }
             //if(color.Underline ?? false)
             //	element.TextRunProperties.SetTextDecorations(TextDecorations.Underline);

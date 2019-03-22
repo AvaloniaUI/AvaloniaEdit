@@ -31,7 +31,7 @@ namespace AvaloniaEdit.Text
         {
             var index = firstIndex;
             var visibleLength = 0;
-            var widthLeft = paragraphLength > 0 ? paragraphLength : double.MaxValue;
+            var widthLeft = paragraphProperties.TextWrapping == TextWrapping.Wrap && paragraphLength > 0 ? paragraphLength : double.MaxValue;
             TextLineRun prevRun = null;
             var run = TextLineRun.Create(textSource, index, firstIndex, widthLeft);
             if (!run.IsEnd && run.Width <= widthLeft)
@@ -99,7 +99,7 @@ namespace AvaloniaEdit.Text
                 WidthIncludingTrailingWhitespace += run.Width;
             }
 
-            Height = height.IsClose(Baseline + top) ? height : Baseline;
+            Height = Math.Max(height, Baseline + top);
 
             if (Height <= 0)
             {

@@ -22,9 +22,9 @@
 //using System.Text.RegularExpressions;
 //using System.Xml;
 //using Avalonia.Media;
-//using ICSharpCode.AvalonEdit.Utils;
+//using AvaloniaEdit.Utils;
 
-//namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
+//namespace AvaloniaEdit.Highlighting.Xshd
 //{
 //	/// <summary>
 //	/// Loads .xshd files, version 1.0.

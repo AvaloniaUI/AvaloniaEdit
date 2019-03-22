@@ -28,11 +28,41 @@ namespace AvaloniaEdit.Text
 
         public bool IsEmbedded { get; private set; }
 
-        public double Baseline => IsEnd ? 0.0 : FontSize * BaselineFactor;
+        public double Baseline
+        {
+            get
+            {
+                if (IsEnd)
+                {
+                    return 0.0;
+                }
+                if (IsEmbedded && TextRun is TextEmbeddedObject embeddedObject)
+                {
+                    var box = embeddedObject.ComputeBoundingBox();
+                    return box.Y;
+                }
+                return FontSize * BaselineFactor;
+            }
+        }
 
-        public double Height => IsEnd ? 0.0 : FontSize * HeightFactor;
+        public double Height
+        {
+            get
+            {
+                if(IsEnd)
+                {
+                    return 0.0;
+                }
+                if(IsEmbedded && TextRun is TextEmbeddedObject embeddedObject)
+                {
+                    var box = embeddedObject.ComputeBoundingBox();
+                    return box.Height;
+                }
+                return FontSize * HeightFactor;
+            }
+        }
 
-        public string Typeface => TextRun.Properties.Typeface;
+        public Typeface Typeface => TextRun.Properties.Typeface;
 
         public double FontSize => TextRun.Properties.FontSize;
 
@@ -60,9 +90,16 @@ namespace AvaloniaEdit.Text
                 return new TextLineRun(textRun.Length, textRun) { IsEnd = true };
             }
 
-            if (textRun is TextEmbeddedObject)
+            if (textRun is TextEmbeddedObject embeddedObject)
             {
-                return new TextLineRun(textRun.Length, textRun) { IsEmbedded = true, _glyphWidths = new double[textRun.Length] };
+                double width = embeddedObject.GetSize(double.PositiveInfinity).Width;
+                return new TextLineRun(textRun.Length, textRun) {
+                    IsEmbedded = true,
+                    _glyphWidths = new double[] { width },
+                    // Embedded objects must propagate their width to the container.
+                    // Otherwise text runs after the embedded object are drawn at the same x position.
+                    Width = width
+                };
             }
 
             throw new NotSupportedException("Unsupported run type");
@@ -125,16 +162,17 @@ namespace AvaloniaEdit.Text
                 Length = textRun.Length
             };
 
+            var tf = run.Typeface;
             var formattedText = new FormattedText
             {
                 Text = stringRange.ToString(),
-                Typeface = new Typeface(run.Typeface, run.FontSize)
+                Typeface = new Typeface(tf.FontFamily, run.FontSize, tf.Style, tf.Weight),
             };
        
 
             run._formattedText = formattedText;
 
-            var size = formattedText.Measure();
+            var size = formattedText.Bounds.Size;
             run._formattedTextSize = size;
 
             run.Width = size.Width;
@@ -157,11 +195,12 @@ namespace AvaloniaEdit.Text
             for (var i = 0; i < StringRange.Length; i++)
             {
                 // TODO: is there a better way of getting glyph metrics?
+                var tf = Typeface;
                 var size = new FormattedText
                 {
                     Text = StringRange[i].ToString(),
-                    Typeface = new Typeface(Typeface, FontSize)
-                }.Measure();
+                    Typeface = new Typeface(tf.FontFamily, FontSize, tf.Style, tf.Weight)
+                }.Bounds.Size;
                 
                 result[i] = size.Width;
             }

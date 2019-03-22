@@ -1,0 +1,177 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:search="clr-namespace:AvaloniaEdit.Search;assembly=AvaloniaEdit">
+    <Style Selector="ToggleButton.ExpanderToggle">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Path Fill="Black"
+              VerticalAlignment="Center"
+              HorizontalAlignment="Center"
+              Data="M 0 2 L 4 6 L 0 10 Z" />
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="ToggleButton.ExpanderToggle:checked /template/ Path">
+
+        <Setter Property="RenderTransform">
+            <RotateTransform Angle="90" />
+        </Setter>
+    </Style>
+
+    <Style Selector="search|SearchPanel">
+        <Setter Property="BorderThickness"
+            Value="1" />
+        <Setter Property="BorderBrush"
+            Value="DarkGray" />
+        <Setter Property="Background"
+            Value="#eeeeee" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border BorderThickness="{TemplateBinding BorderThickness}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                Background="{TemplateBinding Background}"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top" TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="10">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto"
+                RowDefinitions="Auto,Auto">
+                        <Popup Name="PART_MessageView"
+                               Classes="ToolTip"
+                               PlacementMode="Bottom"
+                               StaysOpen="True"
+                               Focusable="False"
+                               IsOpen="False"
+                               ObeyScreenEdges="True">
+                            <ContentPresenter Name="PART_MessageContent" />
+                        </Popup>
+                        <ToggleButton Classes="ExpanderToggle" Name="Expander" VerticalAlignment="Top"
+                                      IsChecked="{Binding IsReplaceMode, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Grid.Column="0"
+                                      Grid.Row="0"
+                                      Width="16"
+                                      Margin="2">
+                            <ToolTip.Tip>
+                                <TextBlock Text="{x:Static ae:SR.SearchToggleReplace}" />
+                            </ToolTip.Tip>
+                        </ToggleButton>
+                        <StackPanel Grid.Column="1">
+                            <StackPanel Orientation="Horizontal"
+                                Grid.Column="2"
+                                Grid.Row="0">
+                                <TextBox Name="PART_searchTextBox"
+               Grid.Column="1"
+               Grid.Row="0"
+               Width="150"
+               Height="24"
+               Margin="3,3,3,0"
+               Text="{Binding SearchPattern, RelativeSource={RelativeSource TemplatedParent}}" />
+                                <Button Margin="3"
+                        Height="24"
+                        Width="24"
+                        Command="{x:Static search:SearchCommands.FindPrevious}">
+                                    <ToolTip.Tip>
+                                        <TextBlock Text="{x:Static ae:SR.SearchFindPreviousText}" />
+                                    </ToolTip.Tip>
+                                    <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.FindPrevious.png?assembly=AvaloniaEdit" />
+                                </Button>
+                                <Button Margin="3"
+                        Height="24"
+                        Width="24"
+                        Command="{x:Static search:SearchCommands.FindNext}">
+                                    <ToolTip.Tip>
+                                        <TextBlock Text="{x:Static ae:SR.SearchFindNextText}" />
+                                    </ToolTip.Tip>
+                                    <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.FindNext.png?assembly=AvaloniaEdit" />
+                                </Button>
+                                <Button Height="16"
+                        Width="16"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Command="{x:Static search:SearchCommands.CloseSearchPanel}"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Focusable="False">
+                                    <Path Data="M 0,0 L 8,8 M 8,0 L 0,8"
+                        Stroke="Black"
+                        StrokeThickness="1" />
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Name="ReplaceButtons" IsVisible="{Binding #Expander.IsChecked}"
+                            Orientation="Horizontal"
+                            Grid.Column="2"
+                            Grid.Row="1">
+                                <TextBox Name="ReplaceBox"
+                       IsVisible="{Binding IsReplaceMode, RelativeSource={RelativeSource TemplatedParent}}"
+                       Grid.Column="1"
+                       Grid.Row="1"
+                       Width="150"
+                       Height="24"
+                       Margin="3 3 3 0"
+                       Text="{Binding ReplacePattern, RelativeSource={RelativeSource TemplatedParent}}" />
+                                <Button Margin="3"
+                        Height="24"
+                        Width="24"
+                        Command="{x:Static search:SearchCommands.ReplaceNext}">
+                                    <ToolTip.Tip>
+                                        <TextBlock Text="{x:Static ae:SR.SearchReplaceNext}" />
+                                    </ToolTip.Tip>
+                                    <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.ReplaceNext.png?assembly=AvaloniaEdit" />
+                                </Button>
+                                <Button Margin="3"
+                        Height="24"
+                        Width="24"
+                        Command="{x:Static search:SearchCommands.ReplaceAll}">
+                                    <ToolTip.Tip>
+                                        <TextBlock Text="{x:Static ae:SR.SearchReplaceAll}" />
+                                    </ToolTip.Tip>
+                                    <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.ReplaceAll.png?assembly=AvaloniaEdit" />
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <ToggleButton IsChecked="{Binding MatchCase, RelativeSource={RelativeSource TemplatedParent}}" ToolTip.Tip="{x:Static ae:SR.SearchMatchCaseText}" Margin="3"
+                        Height="24"
+                        Width="24">
+                                    <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.CaseSensitive.png?assembly=AvaloniaEdit" />
+                                </ToggleButton>
+                                <ToggleButton IsChecked="{Binding WholeWords, RelativeSource={RelativeSource TemplatedParent}}" ToolTip.Tip="{x:Static ae:SR.SearchMatchWholeWordsText}" Margin="3"
+                        Height="24"
+                        Width="24">
+                                    <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.CompleteWord.png?assembly=AvaloniaEdit" />
+                                </ToggleButton>
+                                <ToggleButton IsChecked="{Binding UseRegex, RelativeSource={RelativeSource TemplatedParent}}" ToolTip.Tip="{x:Static ae:SR.SearchUseRegexText}" Margin="3"
+                        Height="24"
+                        Width="24">
+                                    <Image Width="16"
+                         Height="16"
+                         Stretch="Fill"
+                         Source="resm:AvaloniaEdit.Search.Assets.RegularExpression.png?assembly=AvaloniaEdit" />
+                                </ToggleButton>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

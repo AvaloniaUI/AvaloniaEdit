@@ -484,7 +484,7 @@ namespace AvaloniaEdit.Editing
             if (!_showScheduled)
             {
                 _showScheduled = true;
-                Dispatcher.UIThread.InvokeAsync(ShowInternal);
+                Dispatcher.UIThread.Post(ShowInternal);
             }
         }
 

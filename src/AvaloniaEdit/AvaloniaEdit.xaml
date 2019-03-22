@@ -4,5 +4,7 @@
     <StyleInclude Source="resm:AvaloniaEdit.Editing.TextArea.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvaloniaEdit.CodeCompletion.CompletionList.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvaloniaEdit.CodeCompletion.InsightWindow.xaml?assembly=AvaloniaEdit" />
+    <StyleInclude Source="resm:AvaloniaEdit.Search.DropDownButton.xaml?assembly=AvaloniaEdit" />
+    <StyleInclude Source="resm:AvaloniaEdit.Search.SearchPanel.xaml?assembly=AvaloniaEdit" />
 
 </Styles>

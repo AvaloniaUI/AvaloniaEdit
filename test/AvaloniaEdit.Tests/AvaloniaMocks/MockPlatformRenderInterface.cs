@@ -10,6 +10,8 @@ namespace AvaloniaEdit.AvaloniaMocks
 {
     public class MockPlatformRenderInterface : IPlatformRenderInterface
     {
+        public IEnumerable<string> InstalledFontNames => throw new NotImplementedException();
+
         public IFormattedTextImpl CreateFormattedText(
             string text,
             Typeface typeface,
@@ -35,12 +37,17 @@ namespace AvaloniaEdit.AvaloniaMocks
             return Mock.Of<IRenderTargetBitmapImpl>();
         }
 
+        public IRenderTargetBitmapImpl CreateRenderTargetBitmap(PixelSize size, Vector dpi)
+        {
+            throw new NotImplementedException();
+        }
+
         public IStreamGeometryImpl CreateStreamGeometry()
         {
             return new MockStreamGeometryImpl();
         }
 
-        public IWritableBitmapImpl CreateWritableBitmap(int width, int height, PixelFormat? format = null)
+        public IWriteableBitmapImpl CreateWriteableBitmap(PixelSize size, Vector dpi, PixelFormat? format = null)
         {
             throw new NotImplementedException();
         }
@@ -55,7 +62,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             return Mock.Of<IBitmapImpl>();
         }
 
-        public IBitmapImpl LoadBitmap(PixelFormat format, IntPtr data, int width, int height, int stride)
+        public IBitmapImpl LoadBitmap(PixelFormat format, IntPtr data, PixelSize size, Vector dpi, int stride)
         {
             throw new NotImplementedException();
         }

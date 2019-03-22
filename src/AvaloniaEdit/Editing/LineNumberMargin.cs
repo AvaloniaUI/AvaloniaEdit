@@ -34,19 +34,20 @@ namespace AvaloniaEdit.Editing
     /// </summary>
     public class LineNumberMargin : AbstractMargin
     {
-        private TextArea _textArea;
+        private AnchorSegment _selectionStart;
+        private bool _selecting;
 
         /// <summary>
         /// The typeface used for rendering the line number margin.
         /// This field is calculated in MeasureOverride() based on the FontFamily etc. properties.
         /// </summary>
-        protected string Typeface;
+        protected FontFamily Typeface { get; set; }
 
         /// <summary>
         /// The font size used for rendering the line number margin.
         /// This field is calculated in MeasureOverride() based on the FontFamily etc. properties.
         /// </summary>
-        protected double EmSize;
+        protected double EmSize { get; set; }
 
         /// <inheritdoc/>
         protected override Size MeasureOverride(Size availableSize)
@@ -61,7 +62,7 @@ namespace AvaloniaEdit.Editing
                 EmSize,
                 GetValue(TemplatedControl.ForegroundProperty)
             );
-            return new Size(text.Measure().Width, 0);
+            return new Size(text.Bounds.Width, 0);
         }
 
         /// <inheritdoc/>
@@ -81,7 +82,7 @@ namespace AvaloniaEdit.Editing
                         Typeface, EmSize, foreground
                     );
                     var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                    drawingContext.DrawText(foreground, new Point(renderSize.Width - text.Measure().Width, y - textView.VerticalOffset),
+                    drawingContext.DrawText(foreground, new Point(renderSize.Width - text.Bounds.Width, y - textView.VerticalOffset),
                         text);
                 }
             }
@@ -129,22 +130,19 @@ namespace AvaloniaEdit.Editing
             }
         }
 
-        private AnchorSegment _selectionStart;
-        private bool _selecting;
-
         protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             base.OnPointerPressed(e);
 
-            if (!e.Handled && e.MouseButton == MouseButton.Left && TextView != null && _textArea != null)
+            if (!e.Handled && e.MouseButton == MouseButton.Left && TextView != null && TextArea != null)
             {
                 e.Handled = true;
-                _textArea.Focus();
+                TextArea.Focus();
 
                 var currentSeg = GetTextLineSegment(e);
                 if (currentSeg == SimpleSegment.Invalid)
                     return;
-                _textArea.Caret.Offset = currentSeg.Offset + currentSeg.Length;
+                TextArea.Caret.Offset = currentSeg.Offset + currentSeg.Length;
                 e.Device.Capture(this);
                 if (e.Device.Captured == this)
                 {
@@ -152,15 +150,15 @@ namespace AvaloniaEdit.Editing
                     _selectionStart = new AnchorSegment(Document, currentSeg.Offset, currentSeg.Length);
                     if (e.InputModifiers.HasFlag(InputModifiers.Shift))
                     {
-                        if (_textArea.Selection is SimpleSelection simpleSelection)
+                        if (TextArea.Selection is SimpleSelection simpleSelection)
                             _selectionStart = new AnchorSegment(Document, simpleSelection.SurroundingSegment);
                     }
-                    _textArea.Selection = Selection.Create(_textArea, _selectionStart);
+                    TextArea.Selection = Selection.Create(TextArea, _selectionStart);
                     if (e.InputModifiers.HasFlag(InputModifiers.Shift))
                     {
                         ExtendSelection(currentSeg);
                     }
-                    _textArea.Caret.BringCaretToView(5.0);
+                    TextArea.Caret.BringCaretToView(5.0);
                 }
             }
         }
@@ -187,26 +185,26 @@ namespace AvaloniaEdit.Editing
         {
             if (currentSeg.Offset < _selectionStart.Offset)
             {
-                _textArea.Caret.Offset = currentSeg.Offset;
-                _textArea.Selection = Selection.Create(_textArea, currentSeg.Offset, _selectionStart.Offset + _selectionStart.Length);
+                TextArea.Caret.Offset = currentSeg.Offset;
+                TextArea.Selection = Selection.Create(TextArea, currentSeg.Offset, _selectionStart.Offset + _selectionStart.Length);
             }
             else
             {
-                _textArea.Caret.Offset = currentSeg.Offset + currentSeg.Length;
-                _textArea.Selection = Selection.Create(_textArea, _selectionStart.Offset, currentSeg.Offset + currentSeg.Length);
+                TextArea.Caret.Offset = currentSeg.Offset + currentSeg.Length;
+                TextArea.Selection = Selection.Create(TextArea, _selectionStart.Offset, currentSeg.Offset + currentSeg.Length);
             }
         }
 
         protected override void OnPointerMoved(PointerEventArgs e)
         {
-            if (_selecting && _textArea != null && TextView != null)
+            if (_selecting && TextArea != null && TextView != null)
             {
                 e.Handled = true;
                 var currentSeg = GetTextLineSegment(e);
                 if (currentSeg == SimpleSegment.Invalid)
                     return;
                 ExtendSelection(currentSeg);
-                _textArea.Caret.BringCaretToView(5.0);
+                TextArea.Caret.BringCaretToView(5.0);
             }
             base.OnPointerMoved(e);
         }

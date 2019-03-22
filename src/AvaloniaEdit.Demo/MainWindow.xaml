@@ -6,11 +6,17 @@
     <DockPanel>
         <StackPanel Orientation="Horizontal"
                     DockPanel.Dock="Top"
+                    Spacing="5"
                     Margin="3">
             <Button Content="Copy" />
+            <Button Name="addControlBtn" Content="Add Button" />
+            <Button Name="clearControlBtn" Content="Clear Buttons" />
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
                                Margin="30"
+                               SyntaxHighlighting="XML"
+                               HorizontalScrollBarVisibility="Auto"
+                               VerticalScrollBarVisibility="Visible"
                                TextBlock.FontSize="30" />
     </DockPanel>
 </Window>
