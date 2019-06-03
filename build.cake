@@ -155,7 +155,7 @@ packageVersions.ToList().ForEach(package =>
 
 Information("Setting NuGet package dependencies versions:");
 
-var AvaloniaVersion = packageVersions["Avalonia"].FirstOrDefault().Item1;
+var AvaloniaVersion = "0.8.0";
 
 Information("Package: Avalonia, version: {0}", AvaloniaVersion);
 
@@ -171,7 +171,7 @@ var nuspecNuGetBehaviors = new NuGetPackSettings()
     Symbols = false,
     NoPackageAnalysis = true,
     Description = "A port of AvalonEdit to the AvaloniaUI Framework.",
-    Copyright = "Copyright 2017",
+    Copyright = "Copyright 2019",
     Tags = new [] { "Avalonia", "AvalonEdit", "TextEditor", "AvaloniaEdit", "Control" },
     Dependencies = new []
     {
@@ -365,6 +365,7 @@ Task("Zip-NetCore")
 Task("Default")
     .IsDependentOn("Restore-NetCore")
     .IsDependentOn("Build-NetCore")    
+    .IsDependentOn("Create-NuGet-Packages")
     .IsDependentOn("Publish-MyGet")    
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Zip-NetCore");
