@@ -657,11 +657,11 @@ namespace AvaloniaEdit
         /// <returns>True is the redo operation was successful, false is the redo stack is empty.</returns>
         public bool Redo()
         {
-            //if (CanExecute(ApplicationCommands.Redo))
-            //{
-            //    Execute(ApplicationCommands.Redo);
-            //    return true;
-            //}
+            if (ApplicationCommands.Redo.CanExecute(null, Application.Current.FocusManager.Current))
+            {
+                ApplicationCommands.Redo.Execute(null, Application.Current.FocusManager.Current);
+                return true;
+            }
             return false;
         }
 
@@ -710,7 +710,10 @@ namespace AvaloniaEdit
         /// </summary>
         public void SelectAll()
         {
-            //Execute(ApplicationCommands.SelectAll);
+            if (ApplicationCommands.SelectAll.CanExecute(null, Application.Current.FocusManager.Current))
+            {
+                ApplicationCommands.SelectAll.Execute(null, Application.Current.FocusManager.Current);
+            }
         }
 
         /// <summary>
@@ -719,29 +722,31 @@ namespace AvaloniaEdit
         /// <returns>True is the undo operation was successful, false is the undo stack is empty.</returns>
         public bool Undo()
         {
-            //if (CanExecute(ApplicationCommands.Undo))
-            //{
-            //    Execute(ApplicationCommands.Undo);
-            //    return true;
-            //}
+            Console.WriteLine("Execute?");
+            if (ApplicationCommands.Undo.CanExecute(null, Application.Current.FocusManager.Current))
+            {
+                ApplicationCommands.Undo.Execute(null, Application.Current.FocusManager.Current);
+                Console.WriteLine("ExecuteME");
+                return true;
+            }
             return false;
         }
 
         /// <summary>
         /// Gets if the most recent undone command can be redone.
         /// </summary>
-        public bool CanRedo => false;
-        //{
-        //    get { return CanExecute(ApplicationCommands.Redo); }
-        //}
+        public bool CanRedo
+        {
+           get { return ApplicationCommands.Redo.CanExecute(null, Application.Current.FocusManager.Current); }
+        }
 
         /// <summary>
         /// Gets if the most recent command can be undone.
         /// </summary>
-        public bool CanUndo => false;
-        //{
-        //    get { return CanExecute(ApplicationCommands.Undo); }
-        //}
+        public bool CanUndo
+        {
+            get { return ApplicationCommands.Undo.CanExecute(null, Application.Current.FocusManager.Current); }
+        }
 
         /// <summary>
         /// Gets the vertical size of the document.
@@ -1093,7 +1098,8 @@ namespace AvaloniaEdit
             if (Document == null)
                 return null;
             var textView = TextArea.TextView;
-            return textView.GetPosition(this.TranslatePoint(point + new Point(textView.ScrollOffset.X, Math.Floor(textView.ScrollOffset.Y)), textView));
+            Point tpoint = (Point)this.TranslatePoint(point + new Point(textView.ScrollOffset.X, Math.Floor(textView.ScrollOffset.Y)), textView);
+            return textView.GetPosition(tpoint);
         }
 
         /// <summary>

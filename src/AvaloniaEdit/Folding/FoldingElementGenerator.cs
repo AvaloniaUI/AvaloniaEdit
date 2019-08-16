@@ -181,17 +181,11 @@ namespace AvaloniaEdit.Folding
                 return new FoldingLineTextRun(this, TextRunProperties, _textBrush);
             }
 
+            //DOUBLETAP
             protected internal override void OnPointerPressed(PointerPressedEventArgs e)
             {
-                if (e.ClickCount == 2 && e.MouseButton == MouseButton.Left)
-                {
-                    _fs.IsFolded = false;
-                    e.Handled = true;
-                }
-                else
-                {
-                    base.OnPointerPressed(e);
-                }
+                _fs.IsFolded = false;
+                e.Handled = true;
             }
         }
 

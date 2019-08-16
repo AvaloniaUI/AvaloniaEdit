@@ -98,7 +98,7 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         protected internal override void OnPointerPressed(PointerPressedEventArgs e)
         {
-            if (e.MouseButton == MouseButton.Left && !e.Handled && LinkIsClickable(e.InputModifiers))
+            if (!e.Handled && LinkIsClickable(e.InputModifiers))
             {
                 var eventArgs = new OpenUriRoutedEventArgs(NavigateUri) { RoutedEvent = OpenUriEvent };
                 e.Source.RaiseEvent(eventArgs);

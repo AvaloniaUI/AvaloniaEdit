@@ -33,6 +33,9 @@ using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform;
+using Avalonia.Controls.Platform;
 
 namespace AvaloniaEdit.CodeCompletion
 {
@@ -73,14 +76,17 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         protected bool IsUp { get; private set; }
 
+        protected IPopupImpl PopupImpl;
         /// <summary>
         /// Creates a new CompletionWindowBase.
         /// </summary>
-        public CompletionWindowBase(TextArea textArea)
+        public CompletionWindowBase(TextArea textArea, IPopupImpl impl) : base(textArea.GetVisualRoot() as Window, impl)
         {
+            PopupImpl = impl;
+          
             TextArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
             _parentWindow = textArea.GetVisualRoot() as Window;
-            
+           
             // TODO: owner
             //this.Owner = parentWindow;
 
@@ -375,9 +381,23 @@ namespace AvaloniaEdit.CodeCompletion
         protected void UpdatePosition()
         {
             var textView = TextArea.TextView;
-            var position = textView.PointToScreen(_visualLocation - textView.ScrollOffset);
 
-            Position = position;
+            var position = _visualLocation - textView.ScrollOffset;       
+            
+            ConfigurePosition(textView, PlacementMode.AnchorAndGravity, new Point(position.X, position.Y), Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.TopLeft, Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.BottomRight);
+               
+            
+            /*
+        PopupImpl.PopupPositioner.Update(new Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerParameters
+        {
+            Anchor = Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.TopLeft,
+            Offset = new Point(0, 0),
+            Gravity = Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.BottomRight,
+            Size = new Size(100, 30),
+            ConstraintAdjustment = Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment.None,                         
+        });
+        */
+
         }
 
         // TODO: check if needed

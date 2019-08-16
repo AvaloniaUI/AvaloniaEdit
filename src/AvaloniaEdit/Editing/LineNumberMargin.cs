@@ -134,7 +134,7 @@ namespace AvaloniaEdit.Editing
         {
             base.OnPointerPressed(e);
 
-            if (!e.Handled && e.MouseButton == MouseButton.Left && TextView != null && TextArea != null)
+            if (!e.Handled && TextView != null && TextArea != null)
             {
                 e.Handled = true;
                 TextArea.Focus();
@@ -143,8 +143,8 @@ namespace AvaloniaEdit.Editing
                 if (currentSeg == SimpleSegment.Invalid)
                     return;
                 TextArea.Caret.Offset = currentSeg.Offset + currentSeg.Length;
-                e.Device.Capture(this);
-                if (e.Device.Captured == this)
+                e.Pointer.Capture(this);
+                if (e.Pointer.Captured == this)
                 {
                     _selecting = true;
                     _selectionStart = new AnchorSegment(Document, currentSeg.Offset, currentSeg.Length);
@@ -215,7 +215,7 @@ namespace AvaloniaEdit.Editing
             {
                 _selecting = false;
                 _selectionStart = null;
-                e.Device.Capture(null);
+                e.Pointer.Capture(null);
                 e.Handled = true;
             }
             base.OnPointerReleased(e);

@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using Avalonia.Controls.Platform;
 using AvaloniaEdit.Editing;
 
 namespace AvaloniaEdit.CodeCompletion
@@ -29,7 +30,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// Creates a new InsightWindow.
         /// </summary>
-        public InsightWindow(TextArea textArea) : base(textArea)
+        public InsightWindow(TextArea textArea) : base(textArea, PlatformManager.CreateWindow().CreatePopup())
         {
             CloseAutomatically = true;
             AttachEvents();

@@ -1568,12 +1568,12 @@ namespace AvaloniaEdit.Rendering
                 }
                 else
                 {
-                    newScrollOffsetY = rectangle.Y;
+                    newScrollOffsetY = rectangle.Y - 1; // -1 is temp fix
                 }
             }
             else if (rectangle.Bottom > visibleRectangle.Bottom)
             {
-                newScrollOffsetY = rectangle.Bottom - _scrollViewport.Height;
+                newScrollOffsetY = rectangle.Bottom - _scrollViewport.Height + 1; // +1 is temp fix
             }
             newScrollOffsetX = ValidateVisualOffset(newScrollOffsetX);
             newScrollOffsetY = ValidateVisualOffset(newScrollOffsetY);
@@ -1631,7 +1631,7 @@ namespace AvaloniaEdit.Rendering
             // Change back to default if hover on a different element
             if (_currentHoveredElement != element)
             {
-                Cursor = Cursor.Default;
+                //Cursor = Cursor.Default; ISSUE : Cursor gets set to Default but not back to IBeam
                 _currentHoveredElement = element;
             }
             element?.OnQueryCursor(e);
@@ -1872,19 +1872,10 @@ namespace AvaloniaEdit.Rendering
 
         private void RaiseHoverEventPair(PointerEventArgs e, RoutedEvent tunnelingEvent, RoutedEvent bubblingEvent)
         {
-            var args1 = new PointerEventArgs(tunnelingEvent)
-            {
-                Device = e.Device,
-                Source = this
-            };
-            RaiseEvent(args1);
-            var args2 = new PointerEventArgs(bubblingEvent)
-            {
-                Source = this,
-                Device = e.Device,
-                Handled = args1.Handled
-            };
-            RaiseEvent(args2);
+            e.RoutedEvent = tunnelingEvent;
+            RaiseEvent(e);
+            e.RoutedEvent = bubblingEvent;
+            RaiseEvent(e);
         }
         #endregion
 

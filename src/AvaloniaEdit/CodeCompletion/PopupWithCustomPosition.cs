@@ -10,9 +10,10 @@ namespace AvaloniaEdit.CodeCompletion
 
         public PixelPoint Position { get; set; }
 
-        protected override PixelPoint GetPosition()
+        protected PixelPoint GetPosition()
         {
-            return Position;
+            return new PixelPoint((int)HorizontalOffset, (int)VerticalOffset);
         }
+       
     }
 }

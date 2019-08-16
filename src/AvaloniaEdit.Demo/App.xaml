@@ -1,24 +1,48 @@
-<Application xmlns="https://github.com/avaloniaui">
-    <Application.Styles>
-        <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default" />
-        <StyleInclude Source="resm:Avalonia.Themes.Default.Accents.BaseLight.xaml?assembly=Avalonia.Themes.Default" />
-        <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit"
+             x:Class="AvaloniaEdit.Demo.App">
+  <Application.Styles>
+    <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default"/>
+    <StyleInclude Source="resm:Avalonia.Themes.Default.Accents.BaseDark.xaml?assembly=Avalonia.Themes.Default"/>
+    <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
 
-        <Style Selector="TextBlock.h1">
-            <Setter Property="Foreground"
-                    Value="#212121" />
-            <Setter Property="FontSize"
-                    Value="20" />
-            <Setter Property="FontWeight"
-                    Value="Medium" />
-        </Style>
+    <!--Code completion-->
+    <Style Selector="cc|CompletionList">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <cc:CompletionListBox Name="PART_ListBox" Background="Gray" BorderThickness="1" BorderBrush="LightGray" >
+            <cc:CompletionListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="18">
+                  <Image Source="{Binding Image}"
+                         Width="15"
+                         Height="15"                          />
+                  <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Content}" FontSize="15" FontFamily="Consolas" Foreground="#eeeeee"/>
+                </StackPanel>
+              </DataTemplate>
+            </cc:CompletionListBox.ItemTemplate>
+          </cc:CompletionListBox>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <!--
+    <Style Selector="TextBlock.h1">
+      <Setter Property="Foreground"
+              Value="#212121" />
+      <Setter Property="FontSize"
+              Value="20" />
+      <Setter Property="FontWeight"
+              Value="Medium" />
+    </Style>
 
-        <Style Selector="TextBlock.h2">
-            <Setter Property="Foreground"
-                    Value="#727272" />
-            <Setter Property="FontSize"
-                    Value="13" />
-        </Style>
+    <Style Selector="TextBlock.h2">
+      <Setter Property="Foreground"
+              Value="#727272" />
+      <Setter Property="FontSize"
+              Value="13" />
+    </Style>
+    -->
 
-    </Application.Styles>
+  </Application.Styles>
 </Application>

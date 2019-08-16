@@ -24,6 +24,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Platform;
+using Avalonia.Controls.Platform;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace AvaloniaEdit.CodeCompletion
 {
@@ -43,7 +46,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// Creates a new code completion window.
         /// </summary>
-        public CompletionWindow(TextArea textArea) : base(textArea)
+        public CompletionWindow(TextArea textArea) : base(textArea, (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime).MainWindow.PlatformImpl.CreatePopup())
         {
             CompletionList = new CompletionList();
             // keep height automatic
@@ -53,8 +56,8 @@ namespace AvaloniaEdit.CodeCompletion
             Content = CompletionList;
             // prevent user from resizing window to 0x0
             MinHeight = 15;
-            MinWidth = 30;
-            
+            MinWidth = 30;                      
+
             _toolTipContent = new ContentControl();
             _toolTipContent.Classes.Add("ToolTip");
 
@@ -167,8 +170,7 @@ namespace AvaloniaEdit.CodeCompletion
         private void TextArea_MouseWheel(object sender, PointerWheelEventArgs e)
         {
             e.Handled = RaiseEventPair(GetScrollEventTarget(),
-                                       null, PointerWheelChangedEvent,
-                                       new PointerWheelEventArgs { Device = e.Device, Delta = e.Delta, InputModifiers = e.InputModifiers });
+                                       null, PointerWheelChangedEvent, e);
         }
 
         private Control GetScrollEventTarget()

@@ -24,6 +24,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
 using AvaloniaEdit.Utils;
 
@@ -34,6 +35,12 @@ namespace AvaloniaEdit.CodeCompletion
     /// </summary>
     public class CompletionList : TemplatedControl
     {
+        public CompletionList()
+        {
+            DoubleTapped += OnDoubleTapped;
+        }
+
+
         /// <summary>
         /// If true, the CompletionList is filtered to show only matching items. Also enables search by substring.
         /// If false, enables the old behavior: no filtering, search by string.StartsWith.
@@ -164,18 +171,14 @@ namespace AvaloniaEdit.CodeCompletion
             }
         }
 
-        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        protected void OnDoubleTapped(object sender, RoutedEventArgs e)
         {
-            base.OnPointerPressed(e);
-            if (e.ClickCount > 1 && e.MouseButton == MouseButton.Left)
-            {
-                // only process double clicks on the ListBoxItems, not on the scroll bar
-                if (((AvaloniaObject)e.Source).VisualAncestorsAndSelf()
+            //TODO TEST
+            if (((AvaloniaObject)e.Source).VisualAncestorsAndSelf()
                     .TakeWhile(obj => obj != this).Any(obj => obj is ListBoxItem))
-                {
-                    e.Handled = true;
-                    RequestInsertion(e);
-                }
+            {
+                e.Handled = true;
+                RequestInsertion(e);
             }
         }
 

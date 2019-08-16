@@ -19,8 +19,9 @@
                 </cc:CompletionListBox>
             </ControlTemplate>
         </Setter>
-    </Style>
+    </Style>  
 
+  
     <Style Selector="ContentControl.ToolTip">
         <Setter Property="BorderThickness"
                 Value="1" />
