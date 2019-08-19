@@ -114,10 +114,13 @@ namespace AvaloniaEdit.Demo
                 data.Add(new MyCompletionData("Item7"));
                 data.Add(new MyCompletionData("Item8"));
                 data.Add(new MyCompletionData("Item9"));
+                data.Add(new MyCompletionData("Item10"));
+                data.Add(new MyCompletionData("Item11"));
+                data.Add(new MyCompletionData("Item12"));
+                data.Add(new MyCompletionData("Item13"));
+
 
                 _completionWindow.Show();
-                _completionWindow.Height = double.NaN;
-                _completionWindow.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
             }
             else if (e.Text == "(")
             {

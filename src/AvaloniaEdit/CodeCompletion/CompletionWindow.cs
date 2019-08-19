@@ -51,12 +51,12 @@ namespace AvaloniaEdit.CodeCompletion
             CompletionList = new CompletionList();
             // keep height automatic
             CloseAutomatically = true;
-            MaxHeight = 300;
+            MaxHeight = 225;
             Width = 175;
             Content = CompletionList;
             // prevent user from resizing window to 0x0
             MinHeight = 15;
-            MinWidth = 30;
+            MinWidth = 30;          
 
             _toolTipContent = new ContentControl();
             _toolTipContent.Classes.Add("ToolTip");
@@ -120,9 +120,10 @@ namespace AvaloniaEdit.CodeCompletion
                     int scrollIndex = (int)CompletionList.ListBox.Scroll.Offset.Y;
                     int yoffset = index - scrollIndex;
                     if (yoffset < 0) yoffset = 0;
+                    if ((yoffset+1) * 20 > MaxHeight) yoffset--;
                     _toolTip.Offset = new PixelPoint(2, yoffset * 20); //Todo find way to measure item height
 
-                    Console.WriteLine(scrollIndex + " " + index);
+                    Console.WriteLine(CompletionList.ListBox.ScrollViewer.Offset.Y + " " + index);
                 }
                 _toolTip.IsOpen = true;                
             }

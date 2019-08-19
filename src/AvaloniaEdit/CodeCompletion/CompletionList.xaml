@@ -21,18 +21,18 @@
         </Setter>
     </Style>
 
-  <Style Selector="ListBoxItem">
-    <Setter Property="Height" Value="20"/>
-    <Setter Property="Margin" Value="0"/>
+  <Style Selector="cc|CompletionList > ListBox">
     <Setter Property="Padding" Value="0"/>
+    
   </Style>
 
-  <Style Selector="ListBox">
-    <Setter Property="Padding" Value="0"/>
+  <Style Selector="cc|CompletionList > ListBox > ListBoxItem">
+    <Setter Property="Padding" Value="4, 0, 0, 0"/>
+    <Setter Property="Height" Value="20"/>
   </Style>
   
     <Style Selector="ContentControl.ToolTip">
-      <Setter Property="Height" Value="22"/>
+      <Setter Property="MinHeight" Value="22"/>
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="BorderBrush"
