@@ -117,7 +117,12 @@ namespace AvaloniaEdit.CodeCompletion
                 if (CompletionList.CurrentList != null)
                 {
                     int index = CompletionList.CurrentList.IndexOf(item);
-                    _toolTip.Offset = new PixelPoint(2, index * 20); //Todo find way to measure item height
+                    int scrollIndex = (int)CompletionList.ListBox.Scroll.Offset.Y;
+                    int yoffset = index - scrollIndex;
+                    if (yoffset < 0) yoffset = 0;
+                    _toolTip.Offset = new PixelPoint(2, yoffset * 20); //Todo find way to measure item height
+
+                    Console.WriteLine(scrollIndex + " " + index);
                 }
                 _toolTip.IsOpen = true;                
             }
