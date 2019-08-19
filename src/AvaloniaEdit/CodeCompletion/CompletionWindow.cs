@@ -225,6 +225,9 @@ namespace AvaloniaEdit.CodeCompletion
                 if (document != null)
                 {
                     CompletionList.SelectItem(document.GetText(StartOffset, offset - StartOffset));
+
+                    if (CompletionList.ListBox.ItemCount == 0) IsVisible = false;
+                    else IsVisible = true;
                 }
             }
         }
