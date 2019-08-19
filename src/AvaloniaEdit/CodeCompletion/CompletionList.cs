@@ -285,7 +285,7 @@ namespace AvaloniaEdit.CodeCompletion
             }
 
             _currentList = listBoxItems;
-            _listBox.Items = null;
+            //_listBox.Items = null; Makes no sense? Tooltip disappeared because of this
             _listBox.Items = listBoxItems;
             SelectIndexCentered(bestIndex);
         }
