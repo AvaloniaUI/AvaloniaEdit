@@ -56,7 +56,7 @@ namespace AvaloniaEdit.CodeCompletion
             Content = CompletionList;
             // prevent user from resizing window to 0x0
             MinHeight = 15;
-            MinWidth = 30;                      
+            MinWidth = 30;
 
             _toolTipContent = new ContentControl();
             _toolTipContent.Classes.Add("ToolTip");
@@ -71,7 +71,7 @@ namespace AvaloniaEdit.CodeCompletion
 
             LogicalChildren.Add(_toolTip);
 
-            _toolTip.Closed += (o, e) => ((Popup)o).Child = null;
+            //_toolTip.Closed += (o, e) => ((Popup)o).Child = null;
 
             AttachEvents();
         }
@@ -209,6 +209,9 @@ namespace AvaloniaEdit.CodeCompletion
                 else
                 {
                     CompletionList.SelectItem(string.Empty);
+
+                    if (CompletionList.ListBox.ItemCount == 0) IsVisible = false;
+                    else IsVisible = true;
                 }
                 return;
             }

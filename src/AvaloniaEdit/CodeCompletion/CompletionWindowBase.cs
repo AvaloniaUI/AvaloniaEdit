@@ -126,6 +126,8 @@ namespace AvaloniaEdit.CodeCompletion
             {
                 base.Show();
             }
+            Height = double.NaN;
+            MinHeight = 0;
         }
 
         public new void Hide()
