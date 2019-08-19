@@ -107,7 +107,7 @@ namespace AvaloniaEdit.CodeCompletion
                     };
                 }
                 else
-                {
+                {                   
                     _toolTipContent.Content = description;
                 }
 
@@ -117,7 +117,7 @@ namespace AvaloniaEdit.CodeCompletion
                 if (CompletionList.CurrentList != null)
                 {
                     int index = CompletionList.CurrentList.IndexOf(item);
-                    _toolTip.Offset = new PixelPoint(2, index * 20);
+                    _toolTip.Offset = new PixelPoint(2, index * 20); //Todo find way to measure item height
                 }
                 _toolTip.IsOpen = true;                
             }

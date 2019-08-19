@@ -108,8 +108,13 @@ namespace AvaloniaEdit.Demo
                 data.Add(new MyCompletionData("Item1"));
                 data.Add(new MyCompletionData("Item2"));
                 data.Add(new MyCompletionData("Item3"));
+                data.Add(new MyCompletionData("Item4"));
+                data.Add(new MyCompletionData("Item5"));
+                data.Add(new MyCompletionData("Item6"));
+                data.Add(new MyCompletionData("Item7"));
+                data.Add(new MyCompletionData("Item8"));
+                data.Add(new MyCompletionData("Item9"));
 
-               
                 _completionWindow.Show();
                 _completionWindow.Height = double.NaN;
                 _completionWindow.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;

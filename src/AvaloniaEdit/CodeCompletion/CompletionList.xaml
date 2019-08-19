@@ -4,7 +4,7 @@
     <Style Selector="cc|CompletionList">
         <Setter Property="Template">
             <ControlTemplate>
-                <cc:CompletionListBox Name="PART_ListBox" FontSize="12">
+                <cc:CompletionListBox Name="PART_ListBox" FontSize="11">
                     <cc:CompletionListBox.ItemTemplate>                       
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="0">
@@ -22,12 +22,17 @@
     </Style>
 
   <Style Selector="ListBoxItem">
-    <Setter Property="Height" Value="18"/>
+    <Setter Property="Height" Value="20"/>
     <Setter Property="Margin" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+  </Style>
+
+  <Style Selector="ListBox">
+    <Setter Property="Padding" Value="0"/>
   </Style>
   
     <Style Selector="ContentControl.ToolTip">
-      <Setter Property="Height" Value="25"/>
+      <Setter Property="Height" Value="22"/>
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="BorderBrush"
