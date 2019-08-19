@@ -4,10 +4,10 @@
     <Style Selector="cc|CompletionList">
         <Setter Property="Template">
             <ControlTemplate>
-                <cc:CompletionListBox Name="PART_ListBox">
-                    <cc:CompletionListBox.ItemTemplate>
+                <cc:CompletionListBox Name="PART_ListBox" FontSize="12">
+                    <cc:CompletionListBox.ItemTemplate>                       
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Margin="0">
                                 <Image Source="{Binding Image}"
                                        Width="16"
                                        Height="16"
@@ -19,10 +19,15 @@
                 </cc:CompletionListBox>
             </ControlTemplate>
         </Setter>
-    </Style>  
+    </Style>
 
+  <Style Selector="ListBoxItem">
+    <Setter Property="Height" Value="18"/>
+    <Setter Property="Margin" Value="0"/>
+  </Style>
   
     <Style Selector="ContentControl.ToolTip">
+      <Setter Property="Height" Value="25"/>
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="BorderBrush"

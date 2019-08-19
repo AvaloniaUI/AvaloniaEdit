@@ -111,8 +111,15 @@ namespace AvaloniaEdit.CodeCompletion
                     _toolTipContent.Content = description;
                 }
 
-                _toolTip.Position = this.PointToScreen(Bounds.TopRight.WithX(Bounds.Right + 10));
-                _toolTip.IsOpen = true;
+                _toolTip.IsOpen = false; //Popup needs to be closed to change position
+
+                //Calculate offset for tooltip
+                if (CompletionList.CurrentList != null)
+                {
+                    int index = CompletionList.CurrentList.IndexOf(item);
+                    _toolTip.Offset = new PixelPoint(2, index * 20);
+                }
+                _toolTip.IsOpen = true;                
             }
             else
             {

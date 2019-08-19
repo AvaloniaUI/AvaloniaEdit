@@ -225,6 +225,11 @@ namespace AvaloniaEdit.CodeCompletion
 
         private ObservableCollection<ICompletionData> _currentList;
 
+        public List<ICompletionData> CurrentList
+        {
+            get => ListBox.Items.Cast<ICompletionData>().ToList();
+        }
+
         /// <summary>
         /// Selects the best match, and filter the items if turned on using <see cref="IsFiltering" />.
         /// </summary>
