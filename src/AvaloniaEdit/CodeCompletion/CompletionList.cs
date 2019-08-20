@@ -165,8 +165,11 @@ namespace AvaloniaEdit.CodeCompletion
                     break;
                 case Key.Tab:
                 case Key.Enter:
-                    e.Handled = true;
-                    RequestInsertion(e);
+                    if(CurrentList.Count > 0)
+                    {
+                        e.Handled = true;
+                        RequestInsertion(e);
+                    }                    
                     break;
             }
         }

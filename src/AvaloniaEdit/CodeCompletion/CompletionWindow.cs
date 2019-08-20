@@ -122,8 +122,6 @@ namespace AvaloniaEdit.CodeCompletion
                     if (yoffset < 0) yoffset = 0;
                     if ((yoffset+1) * 20 > MaxHeight) yoffset--;
                     _toolTip.Offset = new PixelPoint(2, yoffset * 20); //Todo find way to measure item height
-
-                    Console.WriteLine(CompletionList.ListBox.ScrollViewer.Offset.Y + " " + index);
                 }
                 _toolTip.IsOpen = true;                
             }
