@@ -50,7 +50,7 @@ namespace AvaloniaEdit.Folding
         protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             base.OnPointerPressed(e);
-            if (!e.Handled && e.MouseButton == MouseButton.Left)
+            if (!e.Handled)
             {
                 IsExpanded = !IsExpanded;
                 e.Handled = true;
@@ -70,11 +70,9 @@ namespace AvaloniaEdit.Folding
         {
             var margin = (FoldingMargin)Parent;
             var activePen = new Pen(margin.SelectedFoldingMarkerBrush,
-                startLineCap: PenLineCap.Square,
-                endLineCap: PenLineCap.Square);
+                lineCap: PenLineCap.Square);
             var inactivePen = new Pen(margin.FoldingMarkerBrush,
-                startLineCap: PenLineCap.Square,
-                endLineCap: PenLineCap.Square);
+                lineCap: PenLineCap.Square);
             var pixelSize = PixelSnapHelpers.GetPixelSize(this);
             var rect = new Rect(pixelSize.Width / 2,
                                  pixelSize.Height / 2,

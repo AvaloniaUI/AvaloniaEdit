@@ -1026,7 +1026,7 @@ namespace AvaloniaEdit.Document
 
         #region UndoStack
 
-        private UndoStack _undoStack;
+        public UndoStack _undoStack;
 
         /// <summary>
         /// Gets the <see cref="UndoStack"/> of the document.

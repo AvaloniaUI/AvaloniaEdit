@@ -19,7 +19,6 @@
 using System;
 using System.Globalization;
 using System.ComponentModel;
-using Portable.Xaml.ComponentModel;
 
 namespace AvaloniaEdit.Document
 {

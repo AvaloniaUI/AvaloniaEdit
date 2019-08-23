@@ -1,8 +1,11 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         MinWidth="500"
         MinHeight="300"
-        Title="AvaloniaEdit Demo">
+        Title="AvaloniaEdit Demo"
+        x:Class="AvaloniaEdit.Demo.MainWindow"
+        Foreground="Black">
     <DockPanel>
         <StackPanel Orientation="Horizontal"
                     DockPanel.Dock="Top"
@@ -13,7 +16,9 @@
             <Button Name="clearControlBtn" Content="Clear Buttons" />
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
+                               Background="Gray"
                                Margin="30"
+                               Foreground="White"
                                SyntaxHighlighting="XML"
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"

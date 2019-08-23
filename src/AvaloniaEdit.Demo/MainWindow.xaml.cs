@@ -4,10 +4,13 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Platform;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Native;
+using Avalonia.Platform;
 using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
@@ -26,6 +29,7 @@ namespace AvaloniaEdit.Demo
         private Button _addControlBtn;
         private Button _clearControlBtn;
         private ElementGenerator _generator = new ElementGenerator();
+        private IPopupImpl impl;
 
         public MainWindow()
         {
@@ -48,6 +52,7 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
+            impl = PlatformManager.CreateWindow().CreatePopup();
         }
 
         private void InitializeComponent()
@@ -95,7 +100,7 @@ namespace AvaloniaEdit.Demo
         {
             if (e.Text == ".")
             {
-                // Open code completion after the user has pressed dot:
+
                 _completionWindow = new CompletionWindow(_textEditor.TextArea);
                 _completionWindow.Closed += (o, args) => _completionWindow = null;
 
@@ -103,6 +108,17 @@ namespace AvaloniaEdit.Demo
                 data.Add(new MyCompletionData("Item1"));
                 data.Add(new MyCompletionData("Item2"));
                 data.Add(new MyCompletionData("Item3"));
+                data.Add(new MyCompletionData("Item4"));
+                data.Add(new MyCompletionData("Item5"));
+                data.Add(new MyCompletionData("Item6"));
+                data.Add(new MyCompletionData("Item7"));
+                data.Add(new MyCompletionData("Item8"));
+                data.Add(new MyCompletionData("Item9"));
+                data.Add(new MyCompletionData("Item10"));
+                data.Add(new MyCompletionData("Item11"));
+                data.Add(new MyCompletionData("Item12"));
+                data.Add(new MyCompletionData("Item13"));
+
 
                 _completionWindow.Show();
             }

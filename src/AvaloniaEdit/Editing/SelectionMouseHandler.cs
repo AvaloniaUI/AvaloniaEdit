@@ -392,17 +392,21 @@ namespace AvaloniaEdit.Editing
 
         private void TextArea_MouseLeftButtonDown(object sender, PointerPressedEventArgs e)
         {
+            TextArea.Cursor = Cursor.Parse("IBeam");           
+
+            var pointer = e.GetPointerPoint(TextArea);
+
             _mode = SelectionMode.None;
-            if (!e.Handled && e.MouseButton == MouseButton.Left)
+            if (!e.Handled)
             {
-                var modifiers = e.InputModifiers;
-                var shift = modifiers.HasFlag(InputModifiers.Shift);
-                if (_enableTextDragDrop && e.ClickCount == 1 && !shift)
+                var modifiers = e.KeyModifiers;
+                var shift = modifiers.HasFlag(KeyModifiers.Shift);
+                if (_enableTextDragDrop && !shift)
                 {
                     var offset = GetOffsetFromMousePosition(e, out _, out _);
                     if (TextArea.Selection.Contains(offset))
                     {
-                        if (TextArea.CapturePointer(e.Device))
+                        if (TextArea.CapturePointer(e.Pointer))
                         {
                             _mode = SelectionMode.PossibleDragStart;
                             _possibleDragStartMousePos = e.GetPosition(TextArea);
@@ -420,9 +424,10 @@ namespace AvaloniaEdit.Editing
                 {
                     TextArea.ClearSelection();
                 }
-                if (TextArea.CapturePointer(e.Device))
+
+                if (TextArea.CapturePointer(e.Pointer))
                 {
-                    if (modifiers.HasFlag(InputModifiers.Alt) && TextArea.Options.EnableRectangularSelection)
+                    if (modifiers.HasFlag(KeyModifiers.Alt) && TextArea.Options.EnableRectangularSelection)
                     {
                         _mode = SelectionMode.Rectangular;
                         if (shift && TextArea.Selection is RectangleSelection)
@@ -430,7 +435,7 @@ namespace AvaloniaEdit.Editing
                             TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
                         }
                     }
-                    else if (e.ClickCount == 1 && modifiers.HasFlag(InputModifiers.Control))
+                    else if (modifiers.HasFlag(KeyModifiers.Control) && e.ClickCount == 1) // e.ClickCount == 1
                     {
                         _mode = SelectionMode.WholeWord;
                         if (shift && !(TextArea.Selection is RectangleSelection))
@@ -438,7 +443,7 @@ namespace AvaloniaEdit.Editing
                             TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
                         }
                     }
-                    else if(e.ClickCount == 1 && modifiers == InputModifiers.LeftMouseButton)
+                    else if(pointer.Properties.IsLeftButtonPressed && e.ClickCount == 1) // e.ClickCount == 1
                     {
                         _mode = SelectionMode.Normal;
                         if (shift && !(TextArea.Selection is RectangleSelection))
@@ -449,6 +454,10 @@ namespace AvaloniaEdit.Editing
                     else
                     {
                         SimpleSegment startWord;
+
+                        _mode = SelectionMode.WholeWord;
+                        startWord = GetWordAtMousePosition(e);
+                         
                         if (e.ClickCount == 3)
                         {
                             _mode = SelectionMode.WholeLine;
@@ -456,13 +465,14 @@ namespace AvaloniaEdit.Editing
                         }
                         else
                         {
-                            _mode = SelectionMode.WholeWord;
-                            startWord = GetWordAtMousePosition(e);
+                           _mode = SelectionMode.WholeWord;
+                            startWord = GetWordAtMousePosition(e);                           
                         }
+                        
                         if (startWord == SimpleSegment.Invalid)
                         {
                             _mode = SelectionMode.None;
-                            TextArea.ReleasePointerCapture(e.Device);
+                            TextArea.ReleasePointerCapture(e.Pointer);
                             return;
                         }
                         if (shift && !TextArea.Selection.IsEmpty)
@@ -487,6 +497,14 @@ namespace AvaloniaEdit.Editing
 				e.Handled = true;
 			}
 		}
+        #endregion
+
+        #region LeftButtonClick
+
+        #endregion
+
+        #region LeftButtonDoubleTap
+
         #endregion
 
         #region Mouse Position <-> Text coordinates
@@ -701,7 +719,7 @@ namespace AvaloniaEdit.Editing
                     break;
             }
             _mode = SelectionMode.None;
-            TextArea.ReleasePointerCapture(e.Device);
+            TextArea.ReleasePointerCapture(e.Pointer);
         }
         #endregion
     }

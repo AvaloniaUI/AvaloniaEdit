@@ -240,13 +240,13 @@ namespace AvaloniaEdit.Utils
             }
         }
 
-        public static bool CapturePointer(this IInputElement element, IPointerDevice device)
+        public static bool CapturePointer(this IInputElement element, IPointer device)
         {
             device.Capture(element);
             return device.Captured == element;
         }
 
-        public static void ReleasePointerCapture(this IInputElement element, IPointerDevice device)
+        public static void ReleasePointerCapture(this IInputElement element, IPointer device)
         {
             if (element == device.Captured)
             {

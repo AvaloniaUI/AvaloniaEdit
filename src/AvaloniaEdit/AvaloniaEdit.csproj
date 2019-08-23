@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <WarningsNotAsErrors>612,618</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia" Version="0.8.999-cibuild0003548-beta" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
   </ItemGroup>

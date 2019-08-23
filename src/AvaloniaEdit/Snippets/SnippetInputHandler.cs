@@ -61,7 +61,7 @@ namespace AvaloniaEdit.Snippets
             }
             else if (e.Key == Key.Tab)
             {
-                var backwards = e.Modifiers == InputModifiers.Shift;
+                var backwards = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
                 SelectElement(FindNextEditableElement(TextArea.Caret.Offset, backwards));
                 e.Handled = true;
             }
