@@ -73,19 +73,19 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         /// <remarks>Returns true when control is pressed; or when
         /// <see cref="RequireControlModifierForClick"/> is disabled.</remarks>
-        protected virtual bool LinkIsClickable(InputModifiers modifiers)
+        protected virtual bool LinkIsClickable(KeyModifiers modifiers)
         {
             if (NavigateUri == null)
                 return false;
             if (RequireControlModifierForClick)
-                return modifiers.HasFlag(InputModifiers.Control);
+                return modifiers.HasFlag(KeyModifiers.Control);
             return true;
         }
 
         /// <inheritdoc/>
         protected internal override void OnQueryCursor(PointerEventArgs e)
         {
-            if (LinkIsClickable(e.InputModifiers))
+            if (LinkIsClickable(e.KeyModifiers))
             {
                 if(e.Source is InputElement inputElement)
                 {
@@ -98,7 +98,7 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         protected internal override void OnPointerPressed(PointerPressedEventArgs e)
         {
-            if (!e.Handled && LinkIsClickable(e.InputModifiers))
+            if (!e.Handled && LinkIsClickable(e.KeyModifiers))
             {
                 var eventArgs = new OpenUriRoutedEventArgs(NavigateUri) { RoutedEvent = OpenUriEvent };
                 e.Source.RaiseEvent(eventArgs);

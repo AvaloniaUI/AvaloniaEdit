@@ -37,7 +37,7 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Finds the previous occurrence in the file.
         /// </summary>
-        public static readonly RoutedCommand FindPrevious = new RoutedCommand(nameof(FindPrevious), new KeyGesture { Key = Key.F3, Modifiers = InputModifiers.Shift });
+        public static readonly RoutedCommand FindPrevious = new RoutedCommand(nameof(FindPrevious), new KeyGesture { Key = Key.F3, KeyModifiers = KeyModifiers.Shift });
 
         /// <summary>
         /// Closes the SearchPanel.
@@ -47,12 +47,12 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Replaces the next occurrence in the document.
         /// </summary>
-        public static readonly RoutedCommand ReplaceNext = new RoutedCommand(nameof(ReplaceNext), new KeyGesture { Key = Key.R, Modifiers = InputModifiers.Alt });
+        public static readonly RoutedCommand ReplaceNext = new RoutedCommand(nameof(ReplaceNext), new KeyGesture { Key = Key.R, KeyModifiers = KeyModifiers.Alt });
 
         /// <summary>
         /// Replaces all the occurrences in the document.
         /// </summary>
-        public static readonly RoutedCommand ReplaceAll = new RoutedCommand(nameof(ReplaceAll), new KeyGesture { Key = Key.A, Modifiers = InputModifiers.Alt });
+        public static readonly RoutedCommand ReplaceAll = new RoutedCommand(nameof(ReplaceAll), new KeyGesture { Key = Key.A, KeyModifiers = KeyModifiers.Alt });
     }
 
     /// <summary>

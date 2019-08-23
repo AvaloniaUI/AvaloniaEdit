@@ -62,7 +62,7 @@ namespace AvaloniaEdit.Editing
         static readonly List<RoutedCommandBinding> CommandBindings = new List<RoutedCommandBinding>();
         static readonly List<KeyBinding> KeyBindings = new List<KeyBinding>();
 
-        private static void AddBinding(RoutedCommand command, InputModifiers modifiers, Key key, EventHandler<ExecutedRoutedEventArgs> handler)
+        private static void AddBinding(RoutedCommand command, KeyModifiers modifiers, Key key, EventHandler<ExecutedRoutedEventArgs> handler)
         {
             CommandBindings.Add(new RoutedCommandBinding(command, handler));
             KeyBindings.Add(TextAreaDefaultInputHandler.CreateKeyBinding(command, modifiers, key));
@@ -70,45 +70,45 @@ namespace AvaloniaEdit.Editing
 
         static CaretNavigationCommandHandler()
         {
-            AddBinding(EditingCommands.MoveLeftByCharacter, InputModifiers.None, Key.Left, OnMoveCaret(CaretMovementType.CharLeft));
-            AddBinding(EditingCommands.SelectLeftByCharacter, InputModifiers.Shift, Key.Left, OnMoveCaretExtendSelection(CaretMovementType.CharLeft));
-            AddBinding(RectangleSelection.BoxSelectLeftByCharacter, InputModifiers.Alt | InputModifiers.Shift, Key.Left, OnMoveCaretBoxSelection(CaretMovementType.CharLeft));
-            AddBinding(EditingCommands.MoveRightByCharacter, InputModifiers.None, Key.Right, OnMoveCaret(CaretMovementType.CharRight));
-            AddBinding(EditingCommands.SelectRightByCharacter, InputModifiers.Shift, Key.Right, OnMoveCaretExtendSelection(CaretMovementType.CharRight));
-            AddBinding(RectangleSelection.BoxSelectRightByCharacter, InputModifiers.Alt | InputModifiers.Shift, Key.Right, OnMoveCaretBoxSelection(CaretMovementType.CharRight));
+            AddBinding(EditingCommands.MoveLeftByCharacter, KeyModifiers.None, Key.Left, OnMoveCaret(CaretMovementType.CharLeft));
+            AddBinding(EditingCommands.SelectLeftByCharacter, KeyModifiers.Shift, Key.Left, OnMoveCaretExtendSelection(CaretMovementType.CharLeft));
+            AddBinding(RectangleSelection.BoxSelectLeftByCharacter, KeyModifiers.Alt | KeyModifiers.Shift, Key.Left, OnMoveCaretBoxSelection(CaretMovementType.CharLeft));
+            AddBinding(EditingCommands.MoveRightByCharacter, KeyModifiers.None, Key.Right, OnMoveCaret(CaretMovementType.CharRight));
+            AddBinding(EditingCommands.SelectRightByCharacter, KeyModifiers.Shift, Key.Right, OnMoveCaretExtendSelection(CaretMovementType.CharRight));
+            AddBinding(RectangleSelection.BoxSelectRightByCharacter, KeyModifiers.Alt | KeyModifiers.Shift, Key.Right, OnMoveCaretBoxSelection(CaretMovementType.CharRight));
 
-            AddBinding(EditingCommands.MoveLeftByWord, InputModifiers.Control, Key.Left, OnMoveCaret(CaretMovementType.WordLeft));
-            AddBinding(EditingCommands.SelectLeftByWord, InputModifiers.Control | InputModifiers.Shift, Key.Left, OnMoveCaretExtendSelection(CaretMovementType.WordLeft));
-            AddBinding(RectangleSelection.BoxSelectLeftByWord, InputModifiers.Control | InputModifiers.Alt | InputModifiers.Shift, Key.Left, OnMoveCaretBoxSelection(CaretMovementType.WordLeft));
-            AddBinding(EditingCommands.MoveRightByWord, InputModifiers.Control, Key.Right, OnMoveCaret(CaretMovementType.WordRight));
-            AddBinding(EditingCommands.SelectRightByWord, InputModifiers.Control | InputModifiers.Shift, Key.Right, OnMoveCaretExtendSelection(CaretMovementType.WordRight));
-            AddBinding(RectangleSelection.BoxSelectRightByWord, InputModifiers.Control | InputModifiers.Alt | InputModifiers.Shift, Key.Right, OnMoveCaretBoxSelection(CaretMovementType.WordRight));
+            AddBinding(EditingCommands.MoveLeftByWord, KeyModifiers.Control, Key.Left, OnMoveCaret(CaretMovementType.WordLeft));
+            AddBinding(EditingCommands.SelectLeftByWord, KeyModifiers.Control | KeyModifiers.Shift, Key.Left, OnMoveCaretExtendSelection(CaretMovementType.WordLeft));
+            AddBinding(RectangleSelection.BoxSelectLeftByWord, KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Shift, Key.Left, OnMoveCaretBoxSelection(CaretMovementType.WordLeft));
+            AddBinding(EditingCommands.MoveRightByWord, KeyModifiers.Control, Key.Right, OnMoveCaret(CaretMovementType.WordRight));
+            AddBinding(EditingCommands.SelectRightByWord, KeyModifiers.Control | KeyModifiers.Shift, Key.Right, OnMoveCaretExtendSelection(CaretMovementType.WordRight));
+            AddBinding(RectangleSelection.BoxSelectRightByWord, KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Shift, Key.Right, OnMoveCaretBoxSelection(CaretMovementType.WordRight));
 
-            AddBinding(EditingCommands.MoveUpByLine, InputModifiers.None, Key.Up, OnMoveCaret(CaretMovementType.LineUp));
-            AddBinding(EditingCommands.SelectUpByLine, InputModifiers.Shift, Key.Up, OnMoveCaretExtendSelection(CaretMovementType.LineUp));
-            AddBinding(RectangleSelection.BoxSelectUpByLine, InputModifiers.Alt | InputModifiers.Shift, Key.Up, OnMoveCaretBoxSelection(CaretMovementType.LineUp));
-            AddBinding(EditingCommands.MoveDownByLine, InputModifiers.None, Key.Down, OnMoveCaret(CaretMovementType.LineDown));
-            AddBinding(EditingCommands.SelectDownByLine, InputModifiers.Shift, Key.Down, OnMoveCaretExtendSelection(CaretMovementType.LineDown));
-            AddBinding(RectangleSelection.BoxSelectDownByLine, InputModifiers.Alt | InputModifiers.Shift, Key.Down, OnMoveCaretBoxSelection(CaretMovementType.LineDown));
+            AddBinding(EditingCommands.MoveUpByLine, KeyModifiers.None, Key.Up, OnMoveCaret(CaretMovementType.LineUp));
+            AddBinding(EditingCommands.SelectUpByLine, KeyModifiers.Shift, Key.Up, OnMoveCaretExtendSelection(CaretMovementType.LineUp));
+            AddBinding(RectangleSelection.BoxSelectUpByLine, KeyModifiers.Alt | KeyModifiers.Shift, Key.Up, OnMoveCaretBoxSelection(CaretMovementType.LineUp));
+            AddBinding(EditingCommands.MoveDownByLine, KeyModifiers.None, Key.Down, OnMoveCaret(CaretMovementType.LineDown));
+            AddBinding(EditingCommands.SelectDownByLine, KeyModifiers.Shift, Key.Down, OnMoveCaretExtendSelection(CaretMovementType.LineDown));
+            AddBinding(RectangleSelection.BoxSelectDownByLine, KeyModifiers.Alt | KeyModifiers.Shift, Key.Down, OnMoveCaretBoxSelection(CaretMovementType.LineDown));
 
-            AddBinding(EditingCommands.MoveDownByPage, InputModifiers.None, Key.PageDown, OnMoveCaret(CaretMovementType.PageDown));
-            AddBinding(EditingCommands.SelectDownByPage, InputModifiers.Shift, Key.PageDown, OnMoveCaretExtendSelection(CaretMovementType.PageDown));
-            AddBinding(EditingCommands.MoveUpByPage, InputModifiers.None, Key.PageUp, OnMoveCaret(CaretMovementType.PageUp));
-            AddBinding(EditingCommands.SelectUpByPage, InputModifiers.Shift, Key.PageUp, OnMoveCaretExtendSelection(CaretMovementType.PageUp));
+            AddBinding(EditingCommands.MoveDownByPage, KeyModifiers.None, Key.PageDown, OnMoveCaret(CaretMovementType.PageDown));
+            AddBinding(EditingCommands.SelectDownByPage, KeyModifiers.Shift, Key.PageDown, OnMoveCaretExtendSelection(CaretMovementType.PageDown));
+            AddBinding(EditingCommands.MoveUpByPage, KeyModifiers.None, Key.PageUp, OnMoveCaret(CaretMovementType.PageUp));
+            AddBinding(EditingCommands.SelectUpByPage, KeyModifiers.Shift, Key.PageUp, OnMoveCaretExtendSelection(CaretMovementType.PageUp));
 
-            AddBinding(EditingCommands.MoveToLineStart, InputModifiers.None, Key.Home, OnMoveCaret(CaretMovementType.LineStart));
-            AddBinding(EditingCommands.SelectToLineStart, InputModifiers.Shift, Key.Home, OnMoveCaretExtendSelection(CaretMovementType.LineStart));
-            AddBinding(RectangleSelection.BoxSelectToLineStart, InputModifiers.Alt | InputModifiers.Shift, Key.Home, OnMoveCaretBoxSelection(CaretMovementType.LineStart));
-            AddBinding(EditingCommands.MoveToLineEnd, InputModifiers.None, Key.End, OnMoveCaret(CaretMovementType.LineEnd));
-            AddBinding(EditingCommands.SelectToLineEnd, InputModifiers.Shift, Key.End, OnMoveCaretExtendSelection(CaretMovementType.LineEnd));
-            AddBinding(RectangleSelection.BoxSelectToLineEnd, InputModifiers.Alt | InputModifiers.Shift, Key.End, OnMoveCaretBoxSelection(CaretMovementType.LineEnd));
+            AddBinding(EditingCommands.MoveToLineStart, KeyModifiers.None, Key.Home, OnMoveCaret(CaretMovementType.LineStart));
+            AddBinding(EditingCommands.SelectToLineStart, KeyModifiers.Shift, Key.Home, OnMoveCaretExtendSelection(CaretMovementType.LineStart));
+            AddBinding(RectangleSelection.BoxSelectToLineStart, KeyModifiers.Alt | KeyModifiers.Shift, Key.Home, OnMoveCaretBoxSelection(CaretMovementType.LineStart));
+            AddBinding(EditingCommands.MoveToLineEnd, KeyModifiers.None, Key.End, OnMoveCaret(CaretMovementType.LineEnd));
+            AddBinding(EditingCommands.SelectToLineEnd, KeyModifiers.Shift, Key.End, OnMoveCaretExtendSelection(CaretMovementType.LineEnd));
+            AddBinding(RectangleSelection.BoxSelectToLineEnd, KeyModifiers.Alt | KeyModifiers.Shift, Key.End, OnMoveCaretBoxSelection(CaretMovementType.LineEnd));
 
-            AddBinding(EditingCommands.MoveToDocumentStart, InputModifiers.Control, Key.Home, OnMoveCaret(CaretMovementType.DocumentStart));
-            AddBinding(EditingCommands.SelectToDocumentStart, InputModifiers.Control | InputModifiers.Shift, Key.Home, OnMoveCaretExtendSelection(CaretMovementType.DocumentStart));
-            AddBinding(EditingCommands.MoveToDocumentEnd, InputModifiers.Control, Key.End, OnMoveCaret(CaretMovementType.DocumentEnd));
-            AddBinding(EditingCommands.SelectToDocumentEnd, InputModifiers.Control | InputModifiers.Shift, Key.End, OnMoveCaretExtendSelection(CaretMovementType.DocumentEnd));
+            AddBinding(EditingCommands.MoveToDocumentStart, KeyModifiers.Control, Key.Home, OnMoveCaret(CaretMovementType.DocumentStart));
+            AddBinding(EditingCommands.SelectToDocumentStart, KeyModifiers.Control | KeyModifiers.Shift, Key.Home, OnMoveCaretExtendSelection(CaretMovementType.DocumentStart));
+            AddBinding(EditingCommands.MoveToDocumentEnd, KeyModifiers.Control, Key.End, OnMoveCaret(CaretMovementType.DocumentEnd));
+            AddBinding(EditingCommands.SelectToDocumentEnd, KeyModifiers.Control | KeyModifiers.Shift, Key.End, OnMoveCaretExtendSelection(CaretMovementType.DocumentEnd));
 
-            AddBinding(ApplicationCommands.SelectAll, InputModifiers.Control, Key.A, OnSelectAll);
+            AddBinding(ApplicationCommands.SelectAll, KeyModifiers.Control, Key.A, OnSelectAll);
         }
 
         private static void OnSelectAll(object target, ExecutedRoutedEventArgs args)

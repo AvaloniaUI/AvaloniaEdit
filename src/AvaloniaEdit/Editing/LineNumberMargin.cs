@@ -148,13 +148,13 @@ namespace AvaloniaEdit.Editing
                 {
                     _selecting = true;
                     _selectionStart = new AnchorSegment(Document, currentSeg.Offset, currentSeg.Length);
-                    if (e.InputModifiers.HasFlag(InputModifiers.Shift))
+                    if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
                     {
                         if (TextArea.Selection is SimpleSelection simpleSelection)
                             _selectionStart = new AnchorSegment(Document, simpleSelection.SurroundingSegment);
                     }
                     TextArea.Selection = Selection.Create(TextArea, _selectionStart);
-                    if (e.InputModifiers.HasFlag(InputModifiers.Shift))
+                    if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
                     {
                         ExtendSelection(currentSeg);
                     }

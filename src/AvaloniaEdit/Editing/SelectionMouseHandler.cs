@@ -392,13 +392,15 @@ namespace AvaloniaEdit.Editing
 
         private void TextArea_MouseLeftButtonDown(object sender, PointerPressedEventArgs e)
         {
-            TextArea.Cursor = Cursor.Parse("IBeam");
+            TextArea.Cursor = Cursor.Parse("IBeam");           
+
+            var pointer = e.GetPointerPoint(TextArea);
 
             _mode = SelectionMode.None;
             if (!e.Handled)
             {
-                var modifiers = e.InputModifiers;
-                var shift = modifiers.HasFlag(InputModifiers.Shift);
+                var modifiers = e.KeyModifiers;
+                var shift = modifiers.HasFlag(KeyModifiers.Shift);
                 if (_enableTextDragDrop && !shift)
                 {
                     var offset = GetOffsetFromMousePosition(e, out _, out _);
@@ -422,9 +424,10 @@ namespace AvaloniaEdit.Editing
                 {
                     TextArea.ClearSelection();
                 }
+
                 if (TextArea.CapturePointer(e.Pointer))
                 {
-                    if (modifiers.HasFlag(InputModifiers.Alt) && TextArea.Options.EnableRectangularSelection)
+                    if (modifiers.HasFlag(KeyModifiers.Alt) && TextArea.Options.EnableRectangularSelection)
                     {
                         _mode = SelectionMode.Rectangular;
                         if (shift && TextArea.Selection is RectangleSelection)
@@ -432,7 +435,7 @@ namespace AvaloniaEdit.Editing
                             TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
                         }
                     }
-                    else if (modifiers.HasFlag(InputModifiers.Control)) // e.ClickCount == 1
+                    else if (modifiers.HasFlag(KeyModifiers.Control) && e.ClickCount == 1) // e.ClickCount == 1
                     {
                         _mode = SelectionMode.WholeWord;
                         if (shift && !(TextArea.Selection is RectangleSelection))
@@ -440,7 +443,7 @@ namespace AvaloniaEdit.Editing
                             TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
                         }
                     }
-                    else if(modifiers == InputModifiers.LeftMouseButton) // e.ClickCount == 1
+                    else if(pointer.Properties.IsLeftButtonPressed && e.ClickCount == 1) // e.ClickCount == 1
                     {
                         _mode = SelectionMode.Normal;
                         if (shift && !(TextArea.Selection is RectangleSelection))
@@ -454,10 +457,9 @@ namespace AvaloniaEdit.Editing
 
                         _mode = SelectionMode.WholeWord;
                         startWord = GetWordAtMousePosition(e);
-                        /* 
+                         
                         if (e.ClickCount == 3)
                         {
-                        TODO MODE TO DOUBLETAPPED
                             _mode = SelectionMode.WholeLine;
                             startWord = GetLineAtMousePosition(e);
                         }
@@ -466,7 +468,7 @@ namespace AvaloniaEdit.Editing
                            _mode = SelectionMode.WholeWord;
                             startWord = GetWordAtMousePosition(e);                           
                         }
-                        */
+                        
                         if (startWord == SimpleSegment.Invalid)
                         {
                             _mode = SelectionMode.None;

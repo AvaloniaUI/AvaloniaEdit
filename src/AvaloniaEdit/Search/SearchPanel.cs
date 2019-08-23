@@ -432,7 +432,7 @@ namespace AvaloniaEdit.Search
             {
                 case Key.Enter:
                     e.Handled = true;
-                    if ((e.Modifiers & InputModifiers.Shift) == InputModifiers.Shift)
+                    if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
                     {
                         FindPrevious();
                     }

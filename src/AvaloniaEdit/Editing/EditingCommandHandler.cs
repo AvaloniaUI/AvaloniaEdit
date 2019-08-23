@@ -48,7 +48,7 @@ namespace AvaloniaEdit.Editing
         private static readonly List<RoutedCommandBinding> CommandBindings = new List<RoutedCommandBinding>();
         private static readonly List<KeyBinding> KeyBindings = new List<KeyBinding>();
 
-        private static void AddBinding(RoutedCommand command, InputModifiers modifiers, Key key,
+        private static void AddBinding(RoutedCommand command, KeyModifiers modifiers, Key key,
             EventHandler<ExecutedRoutedEventArgs> handler)
         {
             CommandBindings.Add(new RoutedCommandBinding(command, handler));
@@ -62,19 +62,19 @@ namespace AvaloniaEdit.Editing
 
         static EditingCommandHandler()
         {            
-            AddBinding(EditingCommands.Delete, InputModifiers.None, Key.Delete, OnDelete(CaretMovementType.CharRight));
-            AddBinding(EditingCommands.DeleteNextWord, InputModifiers.Control, Key.Delete,
+            AddBinding(EditingCommands.Delete, KeyModifiers.None, Key.Delete, OnDelete(CaretMovementType.CharRight));
+            AddBinding(EditingCommands.DeleteNextWord, KeyModifiers.Control, Key.Delete,
                 OnDelete(CaretMovementType.WordRight));
-            AddBinding(EditingCommands.Backspace, InputModifiers.None, Key.Back, OnDelete(CaretMovementType.Backspace));
+            AddBinding(EditingCommands.Backspace, KeyModifiers.None, Key.Back, OnDelete(CaretMovementType.Backspace));
             KeyBindings.Add(
-                TextAreaDefaultInputHandler.CreateKeyBinding(EditingCommands.Backspace, InputModifiers.Shift,
+                TextAreaDefaultInputHandler.CreateKeyBinding(EditingCommands.Backspace, KeyModifiers.Shift,
                     Key.Back)); // make Shift-Backspace do the same as plain backspace
-            AddBinding(EditingCommands.DeletePreviousWord, InputModifiers.Control, Key.Back,
+            AddBinding(EditingCommands.DeletePreviousWord, KeyModifiers.Control, Key.Back,
                 OnDelete(CaretMovementType.WordLeft));
-            AddBinding(EditingCommands.EnterParagraphBreak, InputModifiers.None, Key.Enter, OnEnter);
-            AddBinding(EditingCommands.EnterLineBreak, InputModifiers.Shift, Key.Enter, OnEnter);
-            AddBinding(EditingCommands.TabForward, InputModifiers.None, Key.Tab, OnTab);
-            AddBinding(EditingCommands.TabBackward, InputModifiers.Shift, Key.Tab, OnShiftTab);
+            AddBinding(EditingCommands.EnterParagraphBreak, KeyModifiers.None, Key.Enter, OnEnter);
+            AddBinding(EditingCommands.EnterLineBreak, KeyModifiers.Shift, Key.Enter, OnEnter);
+            AddBinding(EditingCommands.TabForward, KeyModifiers.None, Key.Tab, OnTab);
+            AddBinding(EditingCommands.TabBackward, KeyModifiers.Shift, Key.Tab, OnShiftTab);
 
             AddBinding(ApplicationCommands.Copy, OnCopy, CanCutOrCopy);
             AddBinding(ApplicationCommands.Cut, OnCut, CanCutOrCopy);

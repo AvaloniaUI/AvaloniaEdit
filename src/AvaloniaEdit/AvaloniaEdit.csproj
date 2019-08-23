@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <WarningsNotAsErrors>612,618</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
