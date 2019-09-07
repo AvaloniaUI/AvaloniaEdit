@@ -282,7 +282,7 @@ namespace AvaloniaEdit.Search
             base.OnTemplateApplied(e);
             _searchTextBox = e.NameScope.Find<TextBox>("PART_searchTextBox");
             _messageView = e.NameScope.Find<Popup>("PART_MessageView");
-            _messageViewContent = _messageView.FindControl<ContentPresenter>("PART_MessageContent");
+            _messageViewContent = e.NameScope.Find<ContentPresenter>("PART_MessageContent");
         }
 
         private void ValidateSearchText()
@@ -509,6 +509,12 @@ namespace AvaloniaEdit.Search
             e.Handled = true;
 
             base.OnPointerPressed(e);
+        }
+
+        protected override void OnPointerMoved(PointerEventArgs e)
+        {
+            Cursor = Cursor.Default;
+            base.OnPointerMoved(e);
         }
 
         protected override void OnGotFocus(GotFocusEventArgs e)
