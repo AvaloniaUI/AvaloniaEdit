@@ -535,7 +535,10 @@ namespace AvaloniaEdit
         /// </summary>
         public void Copy()
         {
-            //Execute(ApplicationCommands.Copy);
+            if (ApplicationCommands.Copy.CanExecute(null, TextArea))
+            {
+                ApplicationCommands.Copy.Execute(null, TextArea);
+            }
         }
 
         /// <summary>
@@ -543,7 +546,10 @@ namespace AvaloniaEdit
         /// </summary>
         public void Cut()
         {
-            //Execute(ApplicationCommands.Cut);
+            if (ApplicationCommands.Cut.CanExecute(null, TextArea))
+            {
+                ApplicationCommands.Cut.Execute(null, TextArea);
+            }
         }
 
         /// <summary>
@@ -560,7 +566,10 @@ namespace AvaloniaEdit
         /// </summary>
         public void Delete()
         {
-            //Execute(ApplicationCommands.Delete);
+            if(ApplicationCommands.Delete.CanExecute(null, TextArea))
+            {
+                ApplicationCommands.Delete.Execute(null, TextArea);
+            }
         }
 
         /// <summary>
@@ -648,7 +657,10 @@ namespace AvaloniaEdit
         /// </summary>
         public void Paste()
         {
-            //Execute(ApplicationCommands.Paste);
+            if (ApplicationCommands.Paste.CanExecute(null, TextArea))
+            {
+                ApplicationCommands.Paste.Execute(null, TextArea);
+            }
         }
 
         /// <summary>
@@ -657,9 +669,9 @@ namespace AvaloniaEdit
         /// <returns>True is the redo operation was successful, false is the redo stack is empty.</returns>
         public bool Redo()
         {
-            if (ApplicationCommands.Redo.CanExecute(null, Application.Current.FocusManager.Current))
+            if (CanRedo)
             {
-                ApplicationCommands.Redo.Execute(null, Application.Current.FocusManager.Current);
+                ApplicationCommands.Redo.Execute(null, TextArea);
                 return true;
             }
             return false;
@@ -710,9 +722,9 @@ namespace AvaloniaEdit
         /// </summary>
         public void SelectAll()
         {
-            if (ApplicationCommands.SelectAll.CanExecute(null, Application.Current.FocusManager.Current))
+            if (ApplicationCommands.SelectAll.CanExecute(null, TextArea))
             {
-                ApplicationCommands.SelectAll.Execute(null, Application.Current.FocusManager.Current);
+                ApplicationCommands.SelectAll.Execute(null, TextArea);
             }
         }
 
@@ -722,11 +734,9 @@ namespace AvaloniaEdit
         /// <returns>True is the undo operation was successful, false is the undo stack is empty.</returns>
         public bool Undo()
         {
-            Console.WriteLine("Execute?");
-            if (ApplicationCommands.Undo.CanExecute(null, Application.Current.FocusManager.Current))
+            if (CanUndo)
             {
-                ApplicationCommands.Undo.Execute(null, Application.Current.FocusManager.Current);
-                Console.WriteLine("ExecuteME");
+                ApplicationCommands.Undo.Execute(null, TextArea);
                 return true;
             }
             return false;
@@ -737,7 +747,7 @@ namespace AvaloniaEdit
         /// </summary>
         public bool CanRedo
         {
-           get { return ApplicationCommands.Redo.CanExecute(null, Application.Current.FocusManager.Current); }
+           get { return ApplicationCommands.Redo.CanExecute(null, TextArea); }
         }
 
         /// <summary>
@@ -745,7 +755,7 @@ namespace AvaloniaEdit
         /// </summary>
         public bool CanUndo
         {
-            get { return ApplicationCommands.Undo.CanExecute(null, Application.Current.FocusManager.Current); }
+            get { return ApplicationCommands.Undo.CanExecute(null, TextArea); }
         }
 
         /// <summary>
