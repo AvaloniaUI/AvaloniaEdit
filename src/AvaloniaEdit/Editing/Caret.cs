@@ -469,7 +469,7 @@ namespace AvaloniaEdit.Editing
             var caretRectangle = CalculateCaretRectangle();
             if (!caretRectangle.IsEmpty)
             {
-                caretRectangle.Inflate(border);
+                caretRectangle = caretRectangle.Inflate(border);
                 _textView.MakeVisible(caretRectangle);
             }
         }
