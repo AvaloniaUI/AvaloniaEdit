@@ -57,6 +57,12 @@ namespace AvaloniaEdit.Folding
             }
         }
 
+        protected override void OnPointerMoved(PointerEventArgs e)
+        {
+            base.OnPointerMoved(e);
+            Cursor = Cursor.Default;
+        }
+
         private const double MarginSizeFactor = 0.7;
 
         protected override Size MeasureCore(Size availableSize)
