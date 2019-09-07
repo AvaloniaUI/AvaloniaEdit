@@ -46,7 +46,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// Creates a new code completion window.
         /// </summary>
-        public CompletionWindow(TextArea textArea) : base(textArea, (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime).MainWindow.PlatformImpl.CreatePopup())
+        public CompletionWindow(TextArea textArea) : base(textArea, (textArea.Parent.VisualRoot as Window).PlatformImpl.CreatePopup())
         {
             CompletionList = new CompletionList();
             // keep height automatic
