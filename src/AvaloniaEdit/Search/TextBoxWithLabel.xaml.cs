@@ -44,7 +44,7 @@ namespace AvaloniaEdit.Search
         protected override void OnLostFocus(RoutedEventArgs e)
         {
             base.OnLostFocus(e);
-            if (Text.Length == 0) presenterLabel.IsVisible = true;
+            if (Text == null || Text.Length == 0) presenterLabel.IsVisible = true;
         }
     }
 }
