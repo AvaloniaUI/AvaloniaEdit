@@ -176,7 +176,7 @@ namespace AvaloniaEdit.Editing
         public void AddBinding(RoutedCommand command, KeyModifiers modifiers, Key key, EventHandler<ExecutedRoutedEventArgs> handler)
         {
             CommandBindings.Add(new RoutedCommandBinding(command, handler));
-            KeyBindings.Add(new KeyBinding { Command = command, Gesture = new KeyGesture { Key = key, KeyModifiers = modifiers } });
+            KeyBindings.Add(new KeyBinding { Command = command, Gesture = new KeyGesture (key, modifiers) });
         }
         #endregion
 

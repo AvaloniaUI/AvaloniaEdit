@@ -30,13 +30,13 @@ namespace AvaloniaEdit
         /// Toggles Overstrike mode
         /// The default shortcut is Ins.
         /// </summary>
-        public static RoutedCommand ToggleOverstrike { get; } = new RoutedCommand(nameof(ToggleOverstrike), new KeyGesture { Key = Key.Insert });
+        public static RoutedCommand ToggleOverstrike { get; } = new RoutedCommand(nameof(ToggleOverstrike), new KeyGesture(Key.Insert));
 
         /// <summary>
         /// Deletes the current line.
         /// The default shortcut is Ctrl+D.
         /// </summary>
-        public static RoutedCommand DeleteLine { get; } = new RoutedCommand(nameof(DeleteLine), new KeyGesture { Key = Key.D, KeyModifiers = KeyModifiers.Control });
+        public static RoutedCommand DeleteLine { get; } = new RoutedCommand(nameof(DeleteLine), new KeyGesture(Key.D, KeyModifiers.Control));
 
         /// <summary>
         /// Removes leading whitespace from the selected lines (or the whole document if the selection is empty).
@@ -93,21 +93,21 @@ namespace AvaloniaEdit
         /// <summary>InputModifiers
         /// Runs the IIndentationStrategy on the selected lines (or the whole document if the selection is empty).
         /// </summary>
-        public static RoutedCommand IndentSelection { get; } = new RoutedCommand(nameof(IndentSelection), new KeyGesture { Key = Key.I, KeyModifiers = KeyModifiers.Control });
+        public static RoutedCommand IndentSelection { get; } = new RoutedCommand(nameof(IndentSelection), new KeyGesture(Key.I, KeyModifiers.Control));
     }
 
 
     public static class ApplicationCommands
     {
-        public static RoutedCommand Delete { get; } = new RoutedCommand(nameof(Delete), new KeyGesture { Key = Key.Delete });
-        public static RoutedCommand Copy { get; } = new RoutedCommand(nameof(Copy), new KeyGesture { KeyModifiers = KeyModifiers.Control, Key = Key.C });
-        public static RoutedCommand Cut { get; } = new RoutedCommand(nameof(Cut), new KeyGesture { KeyModifiers = KeyModifiers.Control, Key = Key.X });
-        public static RoutedCommand Paste { get; } = new RoutedCommand(nameof(Paste), new KeyGesture { KeyModifiers = KeyModifiers.Control, Key = Key.V });
+        public static RoutedCommand Delete { get; } = new RoutedCommand(nameof(Delete), new KeyGesture(Key.Delete));
+        public static RoutedCommand Copy { get; } = new RoutedCommand(nameof(Copy), new KeyGesture(Key.C, KeyModifiers.Control));
+        public static RoutedCommand Cut { get; } = new RoutedCommand(nameof(Cut), new KeyGesture(Key.X, KeyModifiers.Control));
+        public static RoutedCommand Paste { get; } = new RoutedCommand(nameof(Paste), new KeyGesture(Key.V, KeyModifiers.Control));
         public static RoutedCommand SelectAll { get; } = new RoutedCommand(nameof(SelectAll));
-        public static RoutedCommand Undo { get; } = new RoutedCommand(nameof(Undo), new KeyGesture { KeyModifiers = KeyModifiers.Control, Key = Key.Z });
-        public static RoutedCommand Redo { get; } = new RoutedCommand(nameof(Redo), new KeyGesture { KeyModifiers = KeyModifiers.Control, Key = Key.Y });
-        public static RoutedCommand Find { get; } = new RoutedCommand(nameof(Find), new KeyGesture { KeyModifiers = KeyModifiers.Control, Key = Key.F });
-        public static RoutedCommand Replace { get; } = new RoutedCommand(nameof(Replace), new KeyGesture { KeyModifiers = KeyModifiers.Control, Key = Key.H });
+        public static RoutedCommand Undo { get; } = new RoutedCommand(nameof(Undo), new KeyGesture(Key.Z, KeyModifiers.Control));
+        public static RoutedCommand Redo { get; } = new RoutedCommand(nameof(Redo), new KeyGesture(Key.Y, KeyModifiers.Control));
+        public static RoutedCommand Find { get; } = new RoutedCommand(nameof(Find), new KeyGesture(Key.F, KeyModifiers.Control));
+        public static RoutedCommand Replace { get; } = new RoutedCommand(nameof(Replace), new KeyGesture(Key.H, KeyModifiers.Control));
     }
 
     public static class EditingCommands
