@@ -3,7 +3,7 @@
         xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
         xmlns:search="clr-namespace:AvaloniaEdit.Search;assembly=AvaloniaEdit">
   
-    <Style Selector="ToggleButton.ExpanderToggle">
+    <Style Selector="search|SearchPanel ToggleButton.ExpanderToggle">
         <Setter Property="Template">
             <ControlTemplate>
                 <Path Fill="{DynamicResource ThemeForegroundBrush}"
@@ -14,14 +14,23 @@
         </Setter>
     </Style>
 
-    <Style Selector="ToggleButton.ExpanderToggle:checked /template/ Path">
-
+    <Style Selector="search|SearchPanel ToggleButton.ExpanderToggle:checked /template/ Path">
         <Setter Property="RenderTransform">
             <RotateTransform Angle="90" />
         </Setter>
     </Style>
 
+  <Style Selector="search|SearchPanel Button">
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Background" Value="Transparent"/>
+  </Style>
+
+  <Style Selector="search|SearchPanel Button:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}"/>
+  </Style>
+
     <Style Selector="search|SearchPanel">
+      
         <Setter Property="BorderThickness"
             Value="1" />
         <Setter Property="BorderBrush"
@@ -100,7 +109,7 @@
                         Command="{x:Static search:SearchCommands.CloseSearchPanel}"
                         VerticalContentAlignment="Center"
                         HorizontalContentAlignment="Center"
-                        Focusable="False">
+                        Focusable="True">
                                     <Path Data="M 0,0 L 8,8 M 8,0 L 0,8"
                         Stroke="{DynamicResource ThemeForegroundBrush}"
                         StrokeThickness="1" />
@@ -175,10 +184,5 @@
                 </Border>
             </ControlTemplate>
         </Setter>
-    </Style>
-
-  <Style Selector="Button">
-    <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="Background" Value="Transparent"/>
-  </Style>
+    </Style>  
 </Styles>
