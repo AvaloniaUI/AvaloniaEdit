@@ -62,9 +62,14 @@ namespace AvaloniaEdit.Editing
         static readonly List<RoutedCommandBinding> CommandBindings = new List<RoutedCommandBinding>();
         static readonly List<KeyBinding> KeyBindings = new List<KeyBinding>();
 
-        private static void AddBinding(RoutedCommand command, KeyModifiers modifiers, Key key, EventHandler<ExecutedRoutedEventArgs> handler)
+        private static void AddBinding(RoutedCommand command, EventHandler<ExecutedRoutedEventArgs> handler)
         {
             CommandBindings.Add(new RoutedCommandBinding(command, handler));
+        }
+
+        private static void AddBinding(RoutedCommand command, KeyModifiers modifiers, Key key, EventHandler<ExecutedRoutedEventArgs> handler)
+        {
+            AddBinding(command, handler);
             KeyBindings.Add(TextAreaDefaultInputHandler.CreateKeyBinding(command, modifiers, key));
         }
 
@@ -108,7 +113,7 @@ namespace AvaloniaEdit.Editing
             AddBinding(EditingCommands.MoveToDocumentEnd, KeyModifiers.Control, Key.End, OnMoveCaret(CaretMovementType.DocumentEnd));
             AddBinding(EditingCommands.SelectToDocumentEnd, KeyModifiers.Control | KeyModifiers.Shift, Key.End, OnMoveCaretExtendSelection(CaretMovementType.DocumentEnd));
 
-            AddBinding(ApplicationCommands.SelectAll, KeyModifiers.Control, Key.A, OnSelectAll);
+            AddBinding(ApplicationCommands.SelectAll, OnSelectAll);
         }
 
         private static void OnSelectAll(object target, ExecutedRoutedEventArgs args)

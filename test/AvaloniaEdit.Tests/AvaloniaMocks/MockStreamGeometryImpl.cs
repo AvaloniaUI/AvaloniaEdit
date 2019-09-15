@@ -48,12 +48,12 @@ namespace AvaloniaEdit.AvaloniaMocks
             return _context.FillContains(point);
         }
 
-        public bool StrokeContains(Pen pen, Point point)
+        public bool StrokeContains(IPen pen, Point point)
         {
             return false;
         }
 
-        public Rect GetRenderBounds(Pen pen) => Bounds;
+        public Rect GetRenderBounds(IPen pen) => Bounds;
 
         public IGeometryImpl Intersect(IGeometryImpl geometry)
         {

@@ -6,30 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Highlighting\Resources\ASPX.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Boo.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Coco-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\CPP-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\CSharp-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\CSS-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\HTML-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Java-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\JavaScript-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\MarkDown-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Patch-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\PHP-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\PowerShell.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\Tex-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\VB-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\XML-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\XmlDoc.xshd" />
-    <EmbeddedResource Include="AvaloniaEdit.xaml" />
-    <EmbeddedResource Include="CodeCompletion\CompletionList.xaml" />
-    <EmbeddedResource Include="CodeCompletion\InsightWindow.xaml" />
-    <EmbeddedResource Include="Editing\TextArea.xaml" />
-    <EmbeddedResource Include="Search\DropDownButton.xaml" />
-    <EmbeddedResource Include="Search\SearchPanel.xaml" />
-    <EmbeddedResource Include="TextEditor.xaml" />
+    <EmbeddedResource Include="**\*.xshd;**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.8.999-cibuild0004042-beta" />
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
   </ItemGroup>
