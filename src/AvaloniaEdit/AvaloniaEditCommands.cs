@@ -102,15 +102,15 @@ namespace AvaloniaEdit
     public static class ApplicationCommands
     {
         private static readonly KeyModifiers PlatformCommandKey = GetPlatformCommandKey();
-        
-        public static RoutedCommand Delete { get; } = new RoutedCommand(nameof(Delete), new KeyGesture { Key = Key.Delete });
-        public static RoutedCommand Copy { get; } = new RoutedCommand(nameof(Copy), new KeyGesture { KeyModifiers = PlatformCommandKey, Key = Key.C });
-        public static RoutedCommand Cut { get; } = new RoutedCommand(nameof(Cut), new KeyGesture { KeyModifiers = PlatformCommandKey, Key = Key.X });
-        public static RoutedCommand Paste { get; } = new RoutedCommand(nameof(Paste), new KeyGesture { KeyModifiers = PlatformCommandKey, Key = Key.V });
-        public static RoutedCommand SelectAll { get; } = new RoutedCommand(nameof(SelectAll), new KeyGesture { KeyModifiers = PlatformCommandKey, Key = Key.A });
-        public static RoutedCommand Undo { get; } = new RoutedCommand(nameof(Undo), new KeyGesture { KeyModifiers = PlatformCommandKey, Key = Key.Z });
-        public static RoutedCommand Redo { get; } = new RoutedCommand(nameof(Redo), new KeyGesture { KeyModifiers = PlatformCommandKey, Key = Key.Y });
-        public static RoutedCommand Find { get; } = new RoutedCommand(nameof(Find), new KeyGesture { KeyModifiers = PlatformCommandKey, Key = Key.F });
+
+        public static RoutedCommand Delete { get; } = new RoutedCommand(nameof(Delete), new KeyGesture(Key.Delete));
+        public static RoutedCommand Copy { get; } = new RoutedCommand(nameof(Copy), new KeyGesture(Key.C, KeyModifiers.Control));
+        public static RoutedCommand Cut { get; } = new RoutedCommand(nameof(Cut), new KeyGesture(Key.X, KeyModifiers.Control));
+        public static RoutedCommand Paste { get; } = new RoutedCommand(nameof(Paste), new KeyGesture(Key.V, KeyModifiers.Control));
+        public static RoutedCommand SelectAll { get; } = new RoutedCommand(nameof(SelectAll), new KeyGesture(Key.A, PlatformCommandKey));
+        public static RoutedCommand Undo { get; } = new RoutedCommand(nameof(Undo), new KeyGesture(Key.Z, KeyModifiers.Control));
+        public static RoutedCommand Redo { get; } = new RoutedCommand(nameof(Redo), new KeyGesture(Key.Y, KeyModifiers.Control));
+        public static RoutedCommand Find { get; } = new RoutedCommand(nameof(Find), new KeyGesture(Key.F, KeyModifiers.Control));
         public static RoutedCommand Replace { get; } = new RoutedCommand(nameof(Replace), GetReplaceKeyGesture());
 
         private static OperatingSystemType GetOperatingSystemType()
@@ -136,10 +136,10 @@ namespace AvaloniaEdit
 
             if (os == OperatingSystemType.OSX)
             {
-                return new KeyGesture { KeyModifiers = KeyModifiers.Meta | KeyModifiers.Alt, Key = Key.F };
+                return new KeyGesture(Key.F, KeyModifiers.Meta | KeyModifiers.Alt);
             }
 
-            return new KeyGesture { KeyModifiers = PlatformCommandKey, Key = Key.H };
+            return new KeyGesture(Key.H, PlatformCommandKey);
         }
     }
 
