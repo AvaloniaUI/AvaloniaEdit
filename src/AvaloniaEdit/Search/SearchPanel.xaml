@@ -61,7 +61,7 @@
                             <StackPanel Orientation="Horizontal"
                                 Grid.Column="2"
                                 Grid.Row="0">
-                                <search:TextBoxWithLabel Label="{x:Static ae:SR.SearchLabel}"
+                                <TextBox Watermark="{x:Static ae:SR.SearchLabel}"
                                   Name="PART_searchTextBox"
                Grid.Column="1"
                Grid.Row="0"
@@ -111,7 +111,7 @@
                             Orientation="Horizontal"
                             Grid.Column="2"
                             Grid.Row="1">
-                                <search:TextBoxWithLabel Name="ReplaceBox" Label="{x:Static ae:SR.ReplaceLabel}"
+                                <TextBox Name="ReplaceBox" Watermark="{x:Static ae:SR.ReplaceLabel}"
                        IsVisible="{Binding IsReplaceMode, RelativeSource={RelativeSource TemplatedParent}}"
                        Grid.Column="1"
                        Grid.Row="1"

@@ -6,6 +6,5 @@
     <StyleInclude Source="resm:AvaloniaEdit.CodeCompletion.InsightWindow.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvaloniaEdit.Search.DropDownButton.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvaloniaEdit.Search.SearchPanel.xaml?assembly=AvaloniaEdit" />
-    <StyleInclude Source="resm:AvaloniaEdit.Search.TextBoxWithLabel.xaml?assembly=AvaloniaEdit" />
 
 </Styles>
