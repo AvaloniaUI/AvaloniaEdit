@@ -63,7 +63,7 @@ namespace AvaloniaEdit.Editing
 
         internal static KeyBinding CreateKeyBinding(ICommand command, KeyModifiers modifiers, Key key)
         {
-            return new KeyBinding { Command = command, Gesture = new KeyGesture { Key = key, KeyModifiers = modifiers } };
+            return new KeyBinding { Command = command, Gesture = new KeyGesture(key, modifiers) };
         }
 
         #region Undo / Redo

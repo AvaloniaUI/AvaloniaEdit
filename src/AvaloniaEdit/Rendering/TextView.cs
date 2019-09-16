@@ -1568,12 +1568,12 @@ namespace AvaloniaEdit.Rendering
                 }
                 else
                 {
-                    newScrollOffsetY = rectangle.Y - 1; // -1 is temp fix
+                    newScrollOffsetY = rectangle.Y;
                 }
             }
             else if (rectangle.Bottom > visibleRectangle.Bottom)
             {
-                newScrollOffsetY = rectangle.Bottom - _scrollViewport.Height + 1; // +1 is temp fix
+                newScrollOffsetY = rectangle.Bottom - _scrollViewport.Height;
             }
             newScrollOffsetX = ValidateVisualOffset(newScrollOffsetX);
             newScrollOffsetY = ValidateVisualOffset(newScrollOffsetY);

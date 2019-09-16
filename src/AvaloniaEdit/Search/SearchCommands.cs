@@ -32,27 +32,27 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Finds the next occurrence in the file.
         /// </summary>
-        public static readonly RoutedCommand FindNext = new RoutedCommand(nameof(FindNext), new KeyGesture { Key = Key.F3 });
+        public static readonly RoutedCommand FindNext = new RoutedCommand(nameof(FindNext), new KeyGesture(Key.F3));
 
         /// <summary>
         /// Finds the previous occurrence in the file.
         /// </summary>
-        public static readonly RoutedCommand FindPrevious = new RoutedCommand(nameof(FindPrevious), new KeyGesture { Key = Key.F3, KeyModifiers = KeyModifiers.Shift });
+        public static readonly RoutedCommand FindPrevious = new RoutedCommand(nameof(FindPrevious), new KeyGesture(Key.F3, KeyModifiers.Shift));
 
         /// <summary>
         /// Closes the SearchPanel.
         /// </summary>
-        public static readonly RoutedCommand CloseSearchPanel = new RoutedCommand(nameof(CloseSearchPanel), new KeyGesture { Key = Key.Escape });
+        public static readonly RoutedCommand CloseSearchPanel = new RoutedCommand(nameof(CloseSearchPanel), new KeyGesture(Key.Escape));
 
         /// <summary>
         /// Replaces the next occurrence in the document.
         /// </summary>
-        public static readonly RoutedCommand ReplaceNext = new RoutedCommand(nameof(ReplaceNext), new KeyGesture { Key = Key.R, KeyModifiers = KeyModifiers.Alt });
+        public static readonly RoutedCommand ReplaceNext = new RoutedCommand(nameof(ReplaceNext), new KeyGesture(Key.R, KeyModifiers.Alt));
 
         /// <summary>
         /// Replaces all the occurrences in the document.
         /// </summary>
-        public static readonly RoutedCommand ReplaceAll = new RoutedCommand(nameof(ReplaceAll), new KeyGesture { Key = Key.A, KeyModifiers = KeyModifiers.Alt });
+        public static readonly RoutedCommand ReplaceAll = new RoutedCommand(nameof(ReplaceAll), new KeyGesture(Key.A, KeyModifiers.Alt));
     }
 
     /// <summary>

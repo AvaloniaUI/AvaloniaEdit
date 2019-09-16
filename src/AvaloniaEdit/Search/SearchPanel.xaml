@@ -2,10 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
         xmlns:search="clr-namespace:AvaloniaEdit.Search;assembly=AvaloniaEdit">
-    <Style Selector="ToggleButton.ExpanderToggle">
+  
+    <Style Selector="search|SearchPanel ToggleButton.ExpanderToggle">
         <Setter Property="Template">
             <ControlTemplate>
-                <Path Fill="Black"
+                <Path Fill="{DynamicResource ThemeForegroundBrush}"
               VerticalAlignment="Center"
               HorizontalAlignment="Center"
               Data="M 0 2 L 4 6 L 0 10 Z" />
@@ -13,20 +14,29 @@
         </Setter>
     </Style>
 
-    <Style Selector="ToggleButton.ExpanderToggle:checked /template/ Path">
-
+    <Style Selector="search|SearchPanel ToggleButton.ExpanderToggle:checked /template/ Path">
         <Setter Property="RenderTransform">
             <RotateTransform Angle="90" />
         </Setter>
     </Style>
 
+  <Style Selector="search|SearchPanel Button">
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Background" Value="Transparent"/>
+  </Style>
+
+  <Style Selector="search|SearchPanel Button:pointerover">
+    <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}"/>
+  </Style>
+
     <Style Selector="search|SearchPanel">
+      
         <Setter Property="BorderThickness"
             Value="1" />
         <Setter Property="BorderBrush"
-            Value="DarkGray" />
+            Value="{DynamicResource ThemeBorderLowBrush}" />
         <Setter Property="Background"
-            Value="#eeeeee" />
+            Value="{DynamicResource ThemeControlLowBrush}" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="Template">
             <ControlTemplate>
@@ -60,7 +70,8 @@
                             <StackPanel Orientation="Horizontal"
                                 Grid.Column="2"
                                 Grid.Row="0">
-                                <TextBox Name="PART_searchTextBox"
+                                <TextBox Watermark="{x:Static ae:SR.SearchLabel}"
+                                  Name="PART_searchTextBox"
                Grid.Column="1"
                Grid.Row="0"
                Width="150"
@@ -81,7 +92,7 @@
                                 </Button>
                                 <Button Margin="3"
                         Height="24"
-                        Width="24"
+                        Width="24"                                       
                         Command="{x:Static search:SearchCommands.FindNext}">
                                     <ToolTip.Tip>
                                         <TextBlock Text="{x:Static ae:SR.SearchFindNextText}" />
@@ -91,16 +102,16 @@
                          Stretch="Fill"
                          Source="resm:AvaloniaEdit.Search.Assets.FindNext.png?assembly=AvaloniaEdit" />
                                 </Button>
-                                <Button Height="16"
+                                <Button Height="16" Background="Transparent" BorderThickness="0"
                         Width="16"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Command="{x:Static search:SearchCommands.CloseSearchPanel}"
                         VerticalContentAlignment="Center"
                         HorizontalContentAlignment="Center"
-                        Focusable="False">
+                        Focusable="True">
                                     <Path Data="M 0,0 L 8,8 M 8,0 L 0,8"
-                        Stroke="Black"
+                        Stroke="{DynamicResource ThemeForegroundBrush}"
                         StrokeThickness="1" />
                                 </Button>
                             </StackPanel>
@@ -109,7 +120,7 @@
                             Orientation="Horizontal"
                             Grid.Column="2"
                             Grid.Row="1">
-                                <TextBox Name="ReplaceBox"
+                                <TextBox Name="ReplaceBox" Watermark="{x:Static ae:SR.ReplaceLabel}"
                        IsVisible="{Binding IsReplaceMode, RelativeSource={RelativeSource TemplatedParent}}"
                        Grid.Column="1"
                        Grid.Row="1"
@@ -173,5 +184,5 @@
                 </Border>
             </ControlTemplate>
         </Setter>
-    </Style>
+    </Style>  
 </Styles>
