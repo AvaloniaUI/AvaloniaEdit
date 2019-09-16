@@ -279,7 +279,7 @@ namespace AvaloniaEdit
         /// Gets the scroll viewer used by the text editor.
         /// This property can return null if the template has not been applied / does not contain a scroll viewer.
         /// </summary>
-        public ScrollViewer ScrollViewer { get; private set; }
+        internal ScrollViewer ScrollViewer { get; private set; }
 
         #endregion
 
