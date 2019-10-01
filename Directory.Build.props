@@ -2,6 +2,6 @@
   <PropertyGroup>
     <LangVersion>7.1</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AvaloniaVersion>0.8.999-cibuild0004313-beta</AvaloniaVersion>
+    <AvaloniaVersion>0.8.999-cibuild0004376-beta</AvaloniaVersion>
   </PropertyGroup>
 </Project>
