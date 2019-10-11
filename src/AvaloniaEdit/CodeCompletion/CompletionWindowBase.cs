@@ -89,9 +89,9 @@ namespace AvaloniaEdit.CodeCompletion
 
             StartOffset = EndOffset = TextArea.Caret.Offset;
             
-            // TODO: these events do not fire on PopupRoot
-            //Deactivated += OnDeactivated;
-            //Closed += (sender, args) => DetachEvents();
+            //Deactivated += OnDeactivated; //Not needed?
+
+            Closed += (sender, args) => DetachEvents();
 
             AttachEvents();
 
