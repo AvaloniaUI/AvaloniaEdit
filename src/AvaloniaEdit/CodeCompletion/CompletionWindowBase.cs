@@ -42,11 +42,11 @@ namespace AvaloniaEdit.CodeCompletion
     /// <summary>
     /// Base class for completion windows. Handles positioning the window at the caret.
     /// </summary>
-    public class CompletionWindowBase : PopupRoot, IStyleable
+    public class CompletionWindowBase : Popup, IStyleable
     {
         static CompletionWindowBase()
         {
-            BackgroundProperty.OverrideDefaultValue(typeof(CompletionWindowBase), Brushes.White);
+            //BackgroundProperty.OverrideDefaultValue(typeof(CompletionWindowBase), Brushes.White);           
         }
 
         Type IStyleable.StyleKey => typeof(PopupRoot);
@@ -76,26 +76,26 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         protected bool IsUp { get; private set; }
 
-        protected IPopupImpl PopupImpl;
         /// <summary>
         /// Creates a new CompletionWindowBase.
         /// </summary>
-        public CompletionWindowBase(TextArea textArea, IPopupImpl impl) : base(textArea.GetVisualRoot() as Window, impl)
-        {
-            PopupImpl = impl;
-          
+        public CompletionWindowBase(TextArea textArea) : base()
+        {     
             TextArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
             _parentWindow = textArea.GetVisualRoot() as Window;
-           
+
+            Console.WriteLine(textArea.GetVisualRoot());
             // TODO: owner
             //this.Owner = parentWindow;
+            PlacementTarget = textArea;
+            PlacementMode = PlacementMode.AnchorAndGravity;
 
             AddHandler(PointerReleasedEvent, OnMouseUp, handledEventsToo: true);
 
             StartOffset = EndOffset = TextArea.Caret.Offset;
             
             // TODO: these events do not fire on PopupRoot
-            Deactivated += OnDeactivated;
+            //Deactivated += OnDeactivated;
             //Closed += (sender, args) => DetachEvents();
 
             AttachEvents();
@@ -120,23 +120,18 @@ namespace AvaloniaEdit.CodeCompletion
             }
         }
 
-        public new void Show()
+        public void Show()
         {
-            using (BeginAutoSizing())
-            {
-                base.Show();
-            }
+            Open();
             Height = double.NaN;
             MinHeight = 0;
+
+            UpdatePosition();
         }
 
-        public new void Hide()
+        public void Hide()
         {
-            using (BeginAutoSizing())
-            {
-                base.Hide();
-            }
-
+            Close();
             OnClosed();
         }
 
@@ -326,8 +321,8 @@ namespace AvaloniaEdit.CodeCompletion
         {
             if (CloseOnFocusLost)
             {
-                Debug.WriteLine("CloseIfFocusLost: this.IsActive=" + IsActive + " IsTextAreaFocused=" + IsTextAreaFocused);
-                if (!IsActive && !IsTextAreaFocused)
+                //Debug.WriteLine("CloseIfFocusLost: this.IsActive=" + IsActive + " IsTextAreaFocused=" + IsTextAreaFocused);
+                if (!IsFocused && !IsTextAreaFocused)
                 {
                     Hide();
                 }
@@ -384,10 +379,12 @@ namespace AvaloniaEdit.CodeCompletion
         {
             var textView = TextArea.TextView;
 
-            var position = _visualLocation - textView.ScrollOffset;       
-            
-            ConfigurePosition(textView, PlacementMode.AnchorAndGravity, new Point(position.X, position.Y), Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.TopLeft, Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.BottomRight);
-               
+            var position = _visualLocation - textView.ScrollOffset;
+
+            Host?.ConfigurePosition(textView, PlacementMode.AnchorAndGravity, new Point(position.X, position.Y), Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.TopLeft, Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.BottomRight);
+
+            Console.WriteLine("PlacementTarget" + PlacementTarget + " " + Host);
+            //Console.WriteLine(Parent);
             
             /*
         PopupImpl.PopupPositioner.Update(new Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerParameters

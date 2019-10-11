@@ -30,11 +30,14 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// Creates a new InsightWindow.
         /// </summary>
-        public InsightWindow(TextArea textArea) : base(textArea, PlatformManager.CreateWindow().CreatePopup())
+        public InsightWindow(TextArea textArea) : base(textArea)
         {
             CloseAutomatically = true;
             AttachEvents();
             Initialize();
+
+            PlacementTarget = textArea;
+            PlacementMode = Avalonia.Controls.PlacementMode.AnchorAndGravity;
         }
 
         private void Initialize()
