@@ -24,12 +24,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.Platform;
-using Avalonia.Controls.Platform;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.LogicalTree;
-using Avalonia.VisualTree;
-using System.Linq;
 
 namespace AvaloniaEdit.CodeCompletion
 {

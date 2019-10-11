@@ -29,13 +29,9 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
-using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Platform;
-using Avalonia.Controls.Platform;
 
 namespace AvaloniaEdit.CodeCompletion
 {
