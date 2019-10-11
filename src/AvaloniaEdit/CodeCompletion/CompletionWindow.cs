@@ -24,9 +24,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.Platform;
-using Avalonia.Controls.Platform;
-using Avalonia.Controls.ApplicationLifetimes;
 
 namespace AvaloniaEdit.CodeCompletion
 {
@@ -46,14 +43,14 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// Creates a new code completion window.
         /// </summary>
-        public CompletionWindow(TextArea textArea) : base(textArea, (textArea.Parent.VisualRoot as Window).PlatformImpl.CreatePopup())
+        public CompletionWindow(TextArea textArea) : base(textArea)
         {
             CompletionList = new CompletionList();
             // keep height automatic
             CloseAutomatically = true;
             MaxHeight = 225;
             Width = 175;
-            Content = CompletionList;
+            Child = CompletionList;
             // prevent user from resizing window to 0x0
             MinHeight = 15;
             MinWidth = 30;          
@@ -123,7 +120,9 @@ namespace AvaloniaEdit.CodeCompletion
                     if ((yoffset+1) * 20 > MaxHeight) yoffset--;
                     _toolTip.Offset = new PixelPoint(2, yoffset * 20); //Todo find way to measure item height
                 }
-                _toolTip.IsOpen = true;                
+
+                _toolTip.PlacementTarget = this.Host as PopupRoot;
+                _toolTip.IsOpen = true;                    
             }
             else
             {
