@@ -64,8 +64,6 @@ namespace AvaloniaEdit.CodeCompletion
             _toolTipContent = new ContentControl();
             _toolTipContent.Classes.Add("ToolTip");
 
-            //Console.WriteLine(getV)
-
             _toolTip = new PopupWithCustomPosition
             {
                 StaysOpen = false,
@@ -129,11 +127,8 @@ namespace AvaloniaEdit.CodeCompletion
                     _toolTip.Offset = new PixelPoint(2, yoffset * 20); //Todo find way to measure item height
                 }
 
-                Console.WriteLine(_toolTip.GetLogicalAncestors().OfType<IVisual>().FirstOrDefault().GetVisualRoot() as TopLevel);
                 _toolTip.PlacementTarget = this.Host as PopupRoot;
-                _toolTip.IsOpen = true;      
-               // Console.WriteLine("ROOT" + this.Host?.HostedVisualTreeRoot);
-                //_toolTip.Open();
+                _toolTip.IsOpen = true;                    
             }
             else
             {

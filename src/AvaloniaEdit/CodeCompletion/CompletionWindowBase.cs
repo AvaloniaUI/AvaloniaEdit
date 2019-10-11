@@ -84,12 +84,7 @@ namespace AvaloniaEdit.CodeCompletion
             TextArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
             _parentWindow = textArea.GetVisualRoot() as Window;
 
-            Console.WriteLine(textArea.GetVisualRoot());
-            // TODO: owner
-            //this.Owner = parentWindow;
-            PlacementTarget = textArea;
-            PlacementMode = PlacementMode.AnchorAndGravity;
-
+           
             AddHandler(PointerReleasedEvent, OnMouseUp, handledEventsToo: true);
 
             StartOffset = EndOffset = TextArea.Caret.Offset;
@@ -321,7 +316,7 @@ namespace AvaloniaEdit.CodeCompletion
         {
             if (CloseOnFocusLost)
             {
-                //Debug.WriteLine("CloseIfFocusLost: this.IsActive=" + IsActive + " IsTextAreaFocused=" + IsTextAreaFocused);
+                Debug.WriteLine("CloseIfFocusLost: this.IsFocues=" + IsFocused + " IsTextAreaFocused=" + IsTextAreaFocused);
                 if (!IsFocused && !IsTextAreaFocused)
                 {
                     Hide();
@@ -381,21 +376,7 @@ namespace AvaloniaEdit.CodeCompletion
 
             var position = _visualLocation - textView.ScrollOffset;
 
-            Host?.ConfigurePosition(textView, PlacementMode.AnchorAndGravity, new Point(position.X, position.Y), Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.TopLeft, Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.BottomRight);
-
-            Console.WriteLine("PlacementTarget" + PlacementTarget + " " + Host);
-            //Console.WriteLine(Parent);
-            
-            /*
-        PopupImpl.PopupPositioner.Update(new Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerParameters
-        {
-            Anchor = Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.TopLeft,
-            Offset = new Point(0, 0),
-            Gravity = Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.BottomRight,
-            Size = new Size(100, 30),
-            ConstraintAdjustment = Avalonia.Controls.Primitives.PopupPositioning.PopupPositionerConstraintAdjustment.None,                         
-        });
-        */
+            Host?.ConfigurePosition(textView, PlacementMode.AnchorAndGravity, new Point(position.X, position.Y), Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.TopLeft, Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.BottomRight);           
 
         }
 

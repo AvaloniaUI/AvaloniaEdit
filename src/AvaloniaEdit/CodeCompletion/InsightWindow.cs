@@ -35,9 +35,6 @@ namespace AvaloniaEdit.CodeCompletion
             CloseAutomatically = true;
             AttachEvents();
             Initialize();
-
-            PlacementTarget = textArea;
-            PlacementMode = Avalonia.Controls.PlacementMode.AnchorAndGravity;
         }
 
         private void Initialize()
