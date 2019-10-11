@@ -372,8 +372,7 @@ namespace AvaloniaEdit.CodeCompletion
 
             var position = _visualLocation - textView.ScrollOffset;
 
-            Host?.ConfigurePosition(textView, PlacementMode.AnchorAndGravity, new Point(position.X, position.Y), Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.TopLeft, Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.BottomRight);           
-
+            Host?.ConfigurePosition(textView, PlacementMode.AnchorAndGravity, position, Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.TopLeft, Avalonia.Controls.Primitives.PopupPositioning.PopupPositioningEdge.BottomRight);           
         }
 
         // TODO: check if needed
