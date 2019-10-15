@@ -326,7 +326,7 @@ Task("Publish-NetCore")
 
             Information("Publishing: {0}, runtime: {1}", project.Name, runtime);
             DotNetCorePublish(project.Path, new DotNetCorePublishSettings {
-                Framework = "netcoreapp2.1",
+                Framework = "netcoreapp3.0",
                 Configuration = configuration,
                 Runtime = runtime,
                 OutputDirectory = outputDir.FullPath
