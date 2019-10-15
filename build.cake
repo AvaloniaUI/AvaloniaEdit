@@ -155,7 +155,7 @@ packageVersions.ToList().ForEach(package =>
 
 Information("Setting NuGet package dependencies versions:");
 
-var AvaloniaVersion = "0.8.0";
+var AvaloniaVersion = "0.9.0-preview1";
 
 Information("Package: Avalonia, version: {0}", AvaloniaVersion);
 
