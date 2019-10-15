@@ -1,5 +1,5 @@
 version: 0.2.0.{build}
-os: Visual Studio 2017
+os: Visual Studio 2019
 install:
 
 before_build:
