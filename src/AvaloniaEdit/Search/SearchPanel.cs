@@ -45,9 +45,9 @@ namespace AvaloniaEdit.Search
         private TextBox _searchTextBox;
 
         /// <summary>
-        /// Used to hide replace button if textEditor is in readonly mode
+        /// Don't allow replace if this is true
         /// </summary>
-        private IObservable<bool> TextEditorReadOnly { get; set; }
+        public bool TextEditorReadOnly { get; set; }
 
         #region DependencyProperties
         /// <summary>
@@ -202,10 +202,11 @@ namespace AvaloniaEdit.Search
             var textArea = editor.TextArea;
             if (textArea == null) throw new ArgumentNullException(nameof(textArea));
 
-            var panel = new SearchPanel
-            {
-                TextEditorReadOnly = editor.GetObservable(TextEditor.IsReadOnlyProperty)
-            };
+            var panel = new SearchPanel();
+
+            //Subscribe to readonly property
+            editor.GetObservable(TextEditor.IsReadOnlyProperty).Subscribe(x => panel.TextEditorReadOnly = x);
+
             panel.AttachInternal(textArea);
             panel._handler = new SearchInputHandler(textArea, panel);
             textArea.DefaultInputHandler.NestedInputHandlers.Add(panel._handler);
