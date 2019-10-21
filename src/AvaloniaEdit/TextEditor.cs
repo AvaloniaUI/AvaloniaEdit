@@ -34,6 +34,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Data;
+using AvaloniaEdit.Search;
 
 namespace AvaloniaEdit
 {
@@ -268,6 +269,8 @@ namespace AvaloniaEdit
             base.OnTemplateApplied(e);
             ScrollViewer = (ScrollViewer)e.NameScope.Find("PART_ScrollViewer");
             ScrollViewer.Content = TextArea;
+
+            SearchPanel.Install(this);
         }
 
         /// <summary>
