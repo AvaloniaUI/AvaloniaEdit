@@ -44,11 +44,6 @@ namespace AvaloniaEdit.Search
         private SearchResultBackgroundRenderer _renderer;
         private TextBox _searchTextBox;
 
-        /// <summary>
-        /// Don't allow replace if this is true
-        /// </summary>
-        public bool TextEditorReadOnly { get; set; }
-
         #region DependencyProperties
         /// <summary>
         /// Dependency property for <see cref="UseRegex"/>.
@@ -195,23 +190,29 @@ namespace AvaloniaEdit.Search
         }
 
         /// <summary>
-        /// Creates a SearchPanel and installs it to the TextArea.
+        /// Creates a SearchPanel and installs it to the TextEditor's TextArea.
         /// </summary>
+        /// <remarks>This is a convenience wrapper.</remarks>
         public static SearchPanel Install(TextEditor editor)
         {
-            var textArea = editor.TextArea;
-            if (textArea == null) throw new ArgumentNullException(nameof(textArea));
+            if (editor == null)
+                throw new ArgumentNullException(nameof(editor));
+            return Install(editor.TextArea);
+        }
 
+        /// <summary>
+        /// Creates a SearchPanel and installs it to the TextArea.
+        /// </summary>
+        public static SearchPanel Install(TextArea textArea)
+        {
+            if (textArea == null)
+                throw new ArgumentNullException(nameof(textArea));
             var panel = new SearchPanel();
-
-            //Subscribe to readonly property
-            editor.GetObservable(TextEditor.IsReadOnlyProperty).Subscribe(x => panel.TextEditorReadOnly = x);
-
             panel.AttachInternal(textArea);
             panel._handler = new SearchInputHandler(textArea, panel);
             textArea.DefaultInputHandler.NestedInputHandlers.Add(panel._handler);
             ((ISetLogicalParent)panel).SetParent(textArea);
-        
+
             return panel;
         }
 
@@ -322,7 +323,7 @@ namespace AvaloniaEdit.Search
             if (result != null)
             {
                 SelectResult(result);
-            }            
+            }
         }
 
         /// <summary>

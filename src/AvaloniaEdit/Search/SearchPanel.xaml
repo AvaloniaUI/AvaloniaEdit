@@ -56,7 +56,7 @@
                                ObeyScreenEdges="True">
                             <ContentPresenter Name="PART_MessageContent" />
                         </Popup>
-                        <ToggleButton Classes="ExpanderToggle" Name="Expander" VerticalAlignment="Top" IsVisible="{Binding !TextEditorReadOnly, RelativeSource={RelativeSource TemplatedParent}}"
+                        <ToggleButton Classes="ExpanderToggle" Name="Expander" VerticalAlignment="Top"
                                       IsChecked="{Binding IsReplaceMode, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                       Grid.Column="0"
                                       Grid.Row="0"
