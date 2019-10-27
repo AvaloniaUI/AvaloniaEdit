@@ -68,6 +68,8 @@ namespace AvaloniaEdit.Editing
         /// <inheritdoc/>
         public override void Render(DrawingContext drawingContext)
         {
+            EmSize = GetValue(TextBlock.FontSizeProperty);
+
             var textView = TextView;
             var renderSize = Bounds.Size;
             if (textView != null && textView.VisualLinesValid)
@@ -82,8 +84,7 @@ namespace AvaloniaEdit.Editing
                         Typeface, EmSize, foreground
                     );
                     var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                    drawingContext.DrawText(foreground, new Point(renderSize.Width - text.Bounds.Width, y - textView.VerticalOffset),
-                        text);
+                    drawingContext.DrawText(foreground, new Point(renderSize.Width - text.Bounds.Width, y - textView.VerticalOffset), text);
                 }
             }
         }

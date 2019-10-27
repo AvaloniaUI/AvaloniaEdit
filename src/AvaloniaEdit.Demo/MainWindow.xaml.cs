@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Platform;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -53,6 +54,13 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
             impl = PlatformManager.CreateWindow().CreatePopup();
+
+            this.AddHandler(PointerWheelChangedEvent, (o, i) =>
+            {
+                if (i.KeyModifiers != KeyModifiers.Control) return;
+                if (i.Delta.Y > 0) _textEditor.FontSize++;
+                else _textEditor.FontSize--;
+            }, RoutingStrategies.Bubble, true);
         }
 
         private void InitializeComponent()
