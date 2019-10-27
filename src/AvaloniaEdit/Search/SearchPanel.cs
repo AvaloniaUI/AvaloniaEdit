@@ -107,7 +107,17 @@ namespace AvaloniaEdit.Search
         }
 
         public static readonly AvaloniaProperty<bool> IsReplaceModeProperty =
-            AvaloniaProperty.Register<SearchPanel, bool>(nameof(IsReplaceMode));
+            AvaloniaProperty.Register<SearchPanel, bool>(nameof(IsReplaceMode), validate: ValidateReplaceMode);
+
+        /// <summary>
+        /// Checks if replacemode is allowed
+        /// </summary>
+        /// <returns>False if editor is not null and readonly</returns>
+        private static bool ValidateReplaceMode(SearchPanel panel, bool v1)
+        {
+            if (panel._textEditor == null || !v1) return v1;
+            return !panel._textEditor.IsReadOnly;
+        }
 
         public bool IsReplaceMode
         {
