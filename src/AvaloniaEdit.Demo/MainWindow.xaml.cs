@@ -53,8 +53,6 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
             impl = PlatformManager.CreateWindow().CreatePopup();
-
-            _textEditor.IsReadOnly = true;
         }
 
         private void InitializeComponent()
