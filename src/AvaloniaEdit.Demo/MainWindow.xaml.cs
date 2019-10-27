@@ -59,7 +59,7 @@ namespace AvaloniaEdit.Demo
             {
                 if (i.KeyModifiers != KeyModifiers.Control) return;
                 if (i.Delta.Y > 0) _textEditor.FontSize++;
-                else _textEditor.FontSize--;
+                else _textEditor.FontSize = _textEditor.FontSize > 1 ? _textEditor.FontSize - 1 : 1;
             }, RoutingStrategies.Bubble, true);
         }
 

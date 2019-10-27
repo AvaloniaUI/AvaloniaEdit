@@ -71,8 +71,7 @@ namespace AvaloniaEdit.Editing
             var textView = TextView;
             var renderSize = Bounds.Size;
             if (textView != null && textView.VisualLinesValid)
-            {
-                EmSize = GetValue(TextBlock.FontSizeProperty);
+            {            
                 var foreground = GetValue(TemplatedControl.ForegroundProperty);
                 foreach (var line in textView.VisualLines)
                 {
