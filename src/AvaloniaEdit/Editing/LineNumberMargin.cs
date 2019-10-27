@@ -68,12 +68,11 @@ namespace AvaloniaEdit.Editing
         /// <inheritdoc/>
         public override void Render(DrawingContext drawingContext)
         {
-            EmSize = GetValue(TextBlock.FontSizeProperty);
-
             var textView = TextView;
             var renderSize = Bounds.Size;
             if (textView != null && textView.VisualLinesValid)
             {
+                EmSize = GetValue(TextBlock.FontSizeProperty);
                 var foreground = GetValue(TemplatedControl.ForegroundProperty);
                 foreach (var line in textView.VisualLines)
                 {
