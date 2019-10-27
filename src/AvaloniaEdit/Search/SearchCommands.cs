@@ -95,7 +95,7 @@ namespace AvaloniaEdit.Search
 
         private void ExecuteReplace(object sender, ExecutedRoutedEventArgs e)
         {
-            if(!_panel.TextEditorReadOnly) FindOrReplace(isReplaceMode: true);
+            FindOrReplace(isReplaceMode: true);
         }
 
         private void FindOrReplace(bool isReplaceMode)
