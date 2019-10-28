@@ -125,7 +125,6 @@ namespace AvaloniaEdit.Editing
 
         void TextViewVisualLinesChanged(object sender, EventArgs e)
         {
-            InvalidateVisual();
             InvalidateMeasure();
         }
 
