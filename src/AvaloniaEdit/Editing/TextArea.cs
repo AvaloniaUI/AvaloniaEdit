@@ -106,8 +106,6 @@ namespace AvaloniaEdit.Editing
             //{
             //    TextView.SetScrollOffset(new Vector(_offset.X, _offset.Y * TextView.DefaultLineHeight));
             //});
-
-            //Set's correct font size to linenumber
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
