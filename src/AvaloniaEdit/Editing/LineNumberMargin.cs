@@ -89,6 +89,21 @@ namespace AvaloniaEdit.Editing
         }
 
         /// <inheritdoc/>
+		protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
+        {
+            if (oldTextView != null)
+            {
+                oldTextView.VisualLinesChanged -= TextViewVisualLinesChanged;
+            }
+            base.OnTextViewChanged(oldTextView, newTextView);
+            if (newTextView != null)
+            {
+                newTextView.VisualLinesChanged += TextViewVisualLinesChanged;
+            }
+            InvalidateVisual();
+        }
+
+        /// <inheritdoc/>
         protected override void OnDocumentChanged(TextDocument oldDocument, TextDocument newDocument)
         {
             if (oldDocument != null)
@@ -107,6 +122,12 @@ namespace AvaloniaEdit.Editing
         {
             OnDocumentLineCountChanged();
         }
+
+        void TextViewVisualLinesChanged(object sender, EventArgs e)
+        {
+            InvalidateMeasure();
+        }
+
 
         /// <summary>
         /// Maximum length of a line number, in characters
