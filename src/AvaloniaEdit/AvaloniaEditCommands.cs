@@ -104,13 +104,13 @@ namespace AvaloniaEdit
         private static readonly KeyModifiers PlatformCommandKey = GetPlatformCommandKey();
 
         public static RoutedCommand Delete { get; } = new RoutedCommand(nameof(Delete), new KeyGesture(Key.Delete));
-        public static RoutedCommand Copy { get; } = new RoutedCommand(nameof(Copy), new KeyGesture(Key.C, KeyModifiers.Control));
-        public static RoutedCommand Cut { get; } = new RoutedCommand(nameof(Cut), new KeyGesture(Key.X, KeyModifiers.Control));
-        public static RoutedCommand Paste { get; } = new RoutedCommand(nameof(Paste), new KeyGesture(Key.V, KeyModifiers.Control));
+        public static RoutedCommand Copy { get; } = new RoutedCommand(nameof(Copy), new KeyGesture(Key.C, PlatformCommandKey));
+        public static RoutedCommand Cut { get; } = new RoutedCommand(nameof(Cut), new KeyGesture(Key.X, PlatformCommandKey));
+        public static RoutedCommand Paste { get; } = new RoutedCommand(nameof(Paste), new KeyGesture(Key.V, PlatformCommandKey));
         public static RoutedCommand SelectAll { get; } = new RoutedCommand(nameof(SelectAll), new KeyGesture(Key.A, PlatformCommandKey));
-        public static RoutedCommand Undo { get; } = new RoutedCommand(nameof(Undo), new KeyGesture(Key.Z, KeyModifiers.Control));
-        public static RoutedCommand Redo { get; } = new RoutedCommand(nameof(Redo), new KeyGesture(Key.Y, KeyModifiers.Control));
-        public static RoutedCommand Find { get; } = new RoutedCommand(nameof(Find), new KeyGesture(Key.F, KeyModifiers.Control));
+        public static RoutedCommand Undo { get; } = new RoutedCommand(nameof(Undo), new KeyGesture(Key.Z, PlatformCommandKey));
+        public static RoutedCommand Redo { get; } = new RoutedCommand(nameof(Redo), new KeyGesture(Key.Y, PlatformCommandKey));
+        public static RoutedCommand Find { get; } = new RoutedCommand(nameof(Find), new KeyGesture(Key.F, PlatformCommandKey));
         public static RoutedCommand Replace { get; } = new RoutedCommand(nameof(Replace), GetReplaceKeyGesture());
 
         private static OperatingSystemType GetOperatingSystemType()
