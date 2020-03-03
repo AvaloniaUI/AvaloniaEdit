@@ -57,7 +57,7 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public bool UseRegex
         {
-            get => GetValue(UseRegexProperty);
+            get => (bool)GetValue(UseRegexProperty);
             set => SetValue(UseRegexProperty, value);
         }
 
@@ -72,7 +72,7 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public bool MatchCase
         {
-            get => GetValue(MatchCaseProperty);
+            get => (bool)GetValue(MatchCaseProperty);
             set => SetValue(MatchCaseProperty, value);
         }
 
@@ -87,7 +87,7 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public bool WholeWords
         {
-            get => GetValue(WholeWordsProperty);
+            get => (bool)GetValue(WholeWordsProperty);
             set => SetValue(WholeWordsProperty, value);
         }
 
@@ -102,12 +102,12 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public string SearchPattern
         {
-            get => GetValue(SearchPatternProperty);
+            get => GetValue(SearchPatternProperty) as string;
             set => SetValue(SearchPatternProperty, value);
         }
 
         public static readonly AvaloniaProperty<bool> IsReplaceModeProperty =
-            AvaloniaProperty.Register<SearchPanel, bool>(nameof(IsReplaceMode), validate: ValidateReplaceMode);
+            AvaloniaProperty.Register<SearchPanel, bool>(nameof(IsReplaceMode));
 
         /// <summary>
         /// Checks if replacemode is allowed
@@ -121,7 +121,7 @@ namespace AvaloniaEdit.Search
 
         public bool IsReplaceMode
         {
-            get => GetValue(IsReplaceModeProperty);
+            get => (bool)GetValue(IsReplaceModeProperty);
             set => SetValue(IsReplaceModeProperty, _textEditor?.IsReadOnly ?? false ? false : value);
         }
 
@@ -130,7 +130,7 @@ namespace AvaloniaEdit.Search
 
         public string ReplacePattern
         {
-            get => GetValue(ReplacePatternProperty);
+            get => GetValue(ReplacePatternProperty) as string;
             set => SetValue(ReplacePatternProperty, value);
         }
 
@@ -146,7 +146,7 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public IBrush MarkerBrush
         {
-            get => GetValue(MarkerBrushProperty);
+            get => GetValue(MarkerBrushProperty) as IBrush;
             set => SetValue(MarkerBrushProperty, value);
         }
 

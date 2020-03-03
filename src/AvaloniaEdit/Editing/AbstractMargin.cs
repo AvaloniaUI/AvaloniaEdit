@@ -55,7 +55,7 @@ namespace AvaloniaEdit.Editing
         /// <remarks>Adding a margin to <see cref="TextArea.LeftMargins"/> will automatically set this property to the text area's TextView.</remarks>
         public TextView TextView
         {
-            get => GetValue(TextViewProperty);
+            get => GetValue(TextViewProperty) as TextView;
             set => SetValue(TextViewProperty, value);
         }
 

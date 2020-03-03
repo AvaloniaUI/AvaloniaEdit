@@ -40,7 +40,7 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public Popup DropDownContent
         {
-            get => GetValue(DropDownContentProperty);
+            get => GetValue(DropDownContentProperty) as Popup;
             set => SetValue(DropDownContentProperty, value);
         }
 
@@ -55,7 +55,7 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public bool IsDropDownContentOpen
         {
-            get => GetValue(IsDropDownContentOpenProperty);
+            get => (bool)GetValue(IsDropDownContentOpenProperty);
             protected set => SetValue(IsDropDownContentOpenProperty, value);
         }
 

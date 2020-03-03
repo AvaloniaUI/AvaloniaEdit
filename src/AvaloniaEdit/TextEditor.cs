@@ -109,7 +109,7 @@ namespace AvaloniaEdit
         /// </summary>
         public TextDocument Document
         {
-            get => GetValue(DocumentProperty);
+            get => GetValue(DocumentProperty) as TextDocument;
             set => SetValue(DocumentProperty, value);
         }
 
@@ -162,7 +162,7 @@ namespace AvaloniaEdit
         /// </summary>
         public TextEditorOptions Options
         {
-            get => GetValue(OptionsProperty);
+            get => GetValue(OptionsProperty) as TextEditorOptions;
             set => SetValue(OptionsProperty, value);
         }
 
@@ -299,7 +299,7 @@ namespace AvaloniaEdit
         /// </summary>
         public IHighlightingDefinition SyntaxHighlighting
         {
-            get => GetValue(SyntaxHighlightingProperty);
+            get => GetValue(SyntaxHighlightingProperty) as IHighlightingDefinition;
             set => SetValue(SyntaxHighlightingProperty, value);
         }
 
@@ -357,7 +357,7 @@ namespace AvaloniaEdit
         /// </remarks>
         public bool WordWrap
         {
-            get => GetValue(WordWrapProperty);
+            get => (bool)GetValue(WordWrapProperty);
             set => SetValue(WordWrapProperty, value);
         }
         #endregion
@@ -376,7 +376,7 @@ namespace AvaloniaEdit
         /// </summary>
         public bool IsReadOnly
         {
-            get => GetValue(IsReadOnlyProperty);
+            get => (bool)GetValue(IsReadOnlyProperty);
             set => SetValue(IsReadOnlyProperty, value);
         }
 
@@ -404,7 +404,7 @@ namespace AvaloniaEdit
         /// </summary>
         public bool IsModified
         {
-            get => GetValue(IsModifiedProperty);
+            get => (bool)GetValue(IsModifiedProperty);
             set => SetValue(IsModifiedProperty, value);
         }
 
@@ -452,7 +452,7 @@ namespace AvaloniaEdit
         /// </summary>
         public bool ShowLineNumbers
         {
-            get => GetValue(ShowLineNumbersProperty);
+            get => (bool)GetValue(ShowLineNumbersProperty);
             set => SetValue(ShowLineNumbersProperty, value);
         }
 
@@ -502,7 +502,7 @@ namespace AvaloniaEdit
         /// </summary>
         public IBrush LineNumbersForeground
         {
-            get => GetValue(LineNumbersForegroundProperty);
+            get => GetValue(LineNumbersForegroundProperty) as IBrush;
             set => SetValue(LineNumbersForegroundProperty, value);
         }
 
@@ -962,7 +962,7 @@ namespace AvaloniaEdit
         /// </remarks>
         public Encoding Encoding
         {
-            get => GetValue(EncodingProperty);
+            get => GetValue(EncodingProperty) as Encoding;
             set => SetValue(EncodingProperty, value);
         }
 

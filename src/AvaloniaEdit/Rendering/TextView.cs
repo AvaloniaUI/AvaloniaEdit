@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -547,7 +548,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public IBrush NonPrintableCharacterBrush
         {
-            get => GetValue(NonPrintableCharacterBrushProperty);
+            get => GetValue(NonPrintableCharacterBrushProperty) as IBrush;
             set => SetValue(NonPrintableCharacterBrushProperty, value);
         }
 
@@ -562,7 +563,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public IBrush LinkTextForegroundBrush
         {
-            get => GetValue(LinkTextForegroundBrushProperty);
+            get => GetValue(LinkTextForegroundBrushProperty) as IBrush;
             set => SetValue(LinkTextForegroundBrushProperty, value);
         }
 
@@ -577,7 +578,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public IBrush LinkTextBackgroundBrush
         {
-            get => GetValue(LinkTextBackgroundBrushProperty);
+            get => GetValue(LinkTextBackgroundBrushProperty) as IBrush;
             set => SetValue(LinkTextBackgroundBrushProperty, value);
         }
         #endregion
@@ -597,7 +598,7 @@ namespace AvaloniaEdit.Rendering
         /// </remarks>
         public bool LinkTextUnderline
         {
-            get => GetValue(LinkTextUnderlineProperty);
+            get => (bool)GetValue(LinkTextUnderlineProperty);
             set => SetValue(LinkTextUnderlineProperty, value);
         }
 
@@ -1056,7 +1057,7 @@ namespace AvaloniaEdit.Rendering
             var properties = new TextRunProperties
             {
                 FontSize = FontSize,
-                Typeface = new Typeface(TextBlock.GetFontFamily(this), FontSize, TextBlock.GetFontStyle(this), TextBlock.GetFontWeight(this)),
+                Typeface = new Typeface(TextBlock.GetFontFamily(this), TextBlock.GetFontWeight(this), TextBlock.GetFontStyle(this)),
                 ForegroundBrush = TextBlock.GetForeground(this),
                 CultureInfo = CultureInfo.CurrentCulture
             };
@@ -1920,24 +1921,24 @@ namespace AvaloniaEdit.Rendering
         }
 
         /// <inheritdoc/>
-        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged<T>(AvaloniaProperty<T> property, Optional<T> oldValue, BindingValue<T> newValue, BindingPriority priority)
         {
-            base.OnPropertyChanged(e);
+            base.OnPropertyChanged(property, oldValue, newValue, priority);
 
-            if (e.Property == TemplatedControl.ForegroundProperty
-                     || e.Property == NonPrintableCharacterBrushProperty
-                     || e.Property == LinkTextBackgroundBrushProperty
-                     || e.Property == LinkTextForegroundBrushProperty
-                     || e.Property == LinkTextUnderlineProperty)
+            if (property == TemplatedControl.ForegroundProperty
+                     || property == NonPrintableCharacterBrushProperty
+                     || property == LinkTextBackgroundBrushProperty
+                     || property == LinkTextForegroundBrushProperty
+                     || property == LinkTextUnderlineProperty)
             {
                 // changing brushes requires recreating the cached elements
                 RecreateCachedElements();
                 Redraw();
             }
-            if (e.Property == TemplatedControl.FontFamilyProperty
-                || e.Property == TemplatedControl.FontSizeProperty
-                || e.Property == TemplatedControl.FontStyleProperty
-                || e.Property == TemplatedControl.FontWeightProperty)
+            if (property == TemplatedControl.FontFamilyProperty
+                || property == TemplatedControl.FontSizeProperty
+                || property == TemplatedControl.FontStyleProperty
+                || property == TemplatedControl.FontWeightProperty)
             {
                 // changing font properties requires recreating cached elements
                 RecreateCachedElements();
@@ -1945,15 +1946,15 @@ namespace AvaloniaEdit.Rendering
                 InvalidateDefaultTextMetrics();
                 Redraw();
             }
-            if (e.Property == ColumnRulerPenProperty)
+            if (property == ColumnRulerPenProperty)
             {
                 _columnRulerRenderer.SetRuler(Options.ColumnRulerPosition, ColumnRulerPen);
             }
-            if (e.Property == CurrentLineBorderProperty)
+            if (property == CurrentLineBorderProperty)
             {
                 _currentLineHighlighRenderer.BorderPen = CurrentLineBorder;
             }
-            if (e.Property == CurrentLineBackgroundProperty)
+            if (property == CurrentLineBackgroundProperty)
             {
                 _currentLineHighlighRenderer.BackgroundBrush = CurrentLineBackground;
             }
@@ -2000,7 +2001,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public Pen ColumnRulerPen
         {
-            get => GetValue(ColumnRulerPenProperty);
+            get => GetValue(ColumnRulerPenProperty) as Pen;
             set => SetValue(ColumnRulerPenProperty, value);
         }
 
@@ -2015,7 +2016,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public IBrush CurrentLineBackground
         {
-            get => GetValue(CurrentLineBackgroundProperty);
+            get => GetValue(CurrentLineBackgroundProperty) as IBrush;
             set => SetValue(CurrentLineBackgroundProperty, value);
         }
 
@@ -2030,7 +2031,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public Pen CurrentLineBorder
         {
-            get => GetValue(CurrentLineBorderProperty);
+            get => GetValue(CurrentLineBorderProperty) as Pen;
             set => SetValue(CurrentLineBorderProperty, value);
         }
 

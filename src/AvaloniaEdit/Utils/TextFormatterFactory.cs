@@ -59,7 +59,8 @@ namespace AvaloniaEdit.Utils
             var formattedText = new FormattedText
             {
                 Text = text,
-                Typeface = new Typeface(typeface, emSize.Value)
+                Typeface = new Typeface(typeface),
+				FontSize = emSize.Value
             };
 	        
 	        formattedText.SetTextStyle(0, text.Length, foreground);

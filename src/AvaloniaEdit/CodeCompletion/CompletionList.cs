@@ -59,7 +59,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         public ControlTemplate EmptyTemplate
         {
-            get => GetValue(EmptyTemplateProperty);
+            get => GetValue(EmptyTemplateProperty) as ControlTemplate;
             set => SetValue(EmptyTemplateProperty, value);
         }
 

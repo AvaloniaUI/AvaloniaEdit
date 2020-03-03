@@ -42,7 +42,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         public string Text
         {
-            get => GetValue(TextProperty);
+            get => GetValue(TextProperty) as string;
             set => SetValue(TextProperty, value);
         }
 
@@ -82,7 +82,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         public IOverloadProvider Provider
         {
-            get => GetValue(ProviderProperty);
+            get => GetValue(ProviderProperty) as IOverloadProvider;
             set => SetValue(ProviderProperty, value);
         }
 

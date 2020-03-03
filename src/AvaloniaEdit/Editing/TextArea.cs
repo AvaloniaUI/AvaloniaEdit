@@ -20,6 +20,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -242,7 +243,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public TextDocument Document
         {
-            get => GetValue(DocumentProperty);
+            get => GetValue(DocumentProperty) as TextDocument;
             set => SetValue(DocumentProperty, value);
         }
 
@@ -294,7 +295,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public TextEditorOptions Options
         {
-            get => GetValue(OptionsProperty);
+            get => GetValue(OptionsProperty) as TextEditorOptions;
             set => SetValue(OptionsProperty, value);
         }
 
@@ -485,7 +486,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public IBrush SelectionBrush
         {
-            get => GetValue(SelectionBrushProperty);
+            get => GetValue(SelectionBrushProperty) as IBrush;
             set => SetValue(SelectionBrushProperty, value);
         }
 
@@ -500,7 +501,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public IBrush SelectionForeground
         {
-            get => GetValue(SelectionForegroundProperty);
+            get => GetValue(SelectionForegroundProperty) as IBrush;
             set => SetValue(SelectionForegroundProperty, value);
         }
 
@@ -515,7 +516,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public Pen SelectionBorder
         {
-            get => GetValue(SelectionBorderProperty);
+            get => GetValue(SelectionBorderProperty) as Pen;
             set => SetValue(SelectionBorderProperty, value);
         }
 
@@ -530,7 +531,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public double SelectionCornerRadius
         {
-            get => GetValue(SelectionCornerRadiusProperty);
+            get => (double)GetValue(SelectionCornerRadiusProperty);
             set => SetValue(SelectionCornerRadiusProperty, value);
         }
         #endregion
@@ -904,7 +905,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public IIndentationStrategy IndentationStrategy
         {
-            get => GetValue(IndentationStrategyProperty);
+            get => GetValue(IndentationStrategyProperty) as IIndentationStrategy;
             set => SetValue(IndentationStrategyProperty, value);
         }
         #endregion
@@ -992,24 +993,24 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public bool OverstrikeMode
         {
-            get => GetValue(OverstrikeModeProperty);
+            get => (bool)GetValue(OverstrikeModeProperty);
             set => SetValue(OverstrikeModeProperty, value);
         }
 
         #endregion
 
         /// <inheritdoc/>
-        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged<T>(AvaloniaProperty<T> property, Optional<T> oldValue, BindingValue<T> newValue, BindingPriority priority)
         {
-            base.OnPropertyChanged(e);
-            if (e.Property == SelectionBrushProperty
-                || e.Property == SelectionBorderProperty
-                || e.Property == SelectionForegroundProperty
-                || e.Property == SelectionCornerRadiusProperty)
+            base.OnPropertyChanged(property, oldValue, newValue, priority);
+            if (property == SelectionBrushProperty
+                || property == SelectionBorderProperty
+                || property == SelectionForegroundProperty
+                || property == SelectionCornerRadiusProperty)
             {
                 TextView.Redraw();
             }
-            else if (e.Property == OverstrikeModeProperty)
+            else if (property == OverstrikeModeProperty)
             {
                 Caret.UpdateIfVisible();
             }
