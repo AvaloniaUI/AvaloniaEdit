@@ -50,7 +50,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// Dependency property for <see cref="EmptyTemplate" />.
         /// </summary>
-        public static readonly AvaloniaProperty<ControlTemplate> EmptyTemplateProperty =
+        public static readonly StyledProperty<ControlTemplate> EmptyTemplateProperty =
             AvaloniaProperty.Register<CompletionList, ControlTemplate>(nameof(EmptyTemplate));
 
         /// <summary>

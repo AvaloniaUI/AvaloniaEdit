@@ -49,7 +49,7 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Dependency property for <see cref="UseRegex"/>.
         /// </summary>
-        public static readonly AvaloniaProperty<bool> UseRegexProperty =
+        public static readonly StyledProperty<bool> UseRegexProperty =
             AvaloniaProperty.Register<SearchPanel, bool>(nameof(UseRegex));
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Dependency property for <see cref="MatchCase"/>.
         /// </summary>
-        public static readonly AvaloniaProperty<bool> MatchCaseProperty =
+        public static readonly StyledProperty<bool> MatchCaseProperty =
             AvaloniaProperty.Register<SearchPanel, bool>(nameof(MatchCase));
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Dependency property for <see cref="WholeWords"/>.
         /// </summary>
-        public static readonly AvaloniaProperty<bool> WholeWordsProperty =
+        public static readonly StyledProperty<bool> WholeWordsProperty =
             AvaloniaProperty.Register<SearchPanel, bool>(nameof(WholeWords));
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Dependency property for <see cref="SearchPattern"/>.
         /// </summary>
-        public static readonly AvaloniaProperty<string> SearchPatternProperty =
+        public static readonly StyledProperty<string> SearchPatternProperty =
             AvaloniaProperty.Register<SearchPanel, string>(nameof(SearchPattern), "");
 
         /// <summary>
@@ -106,8 +106,8 @@ namespace AvaloniaEdit.Search
             set => SetValue(SearchPatternProperty, value);
         }
 
-        public static readonly AvaloniaProperty<bool> IsReplaceModeProperty =
-            AvaloniaProperty.Register<SearchPanel, bool>(nameof(IsReplaceMode), validate: ValidateReplaceMode);
+        public static readonly StyledProperty<bool> IsReplaceModeProperty =
+            AvaloniaProperty.Register<SearchPanel, bool>(nameof(IsReplaceMode));
 
         /// <summary>
         /// Checks if replacemode is allowed
@@ -125,7 +125,7 @@ namespace AvaloniaEdit.Search
             set => SetValue(IsReplaceModeProperty, _textEditor?.IsReadOnly ?? false ? false : value);
         }
 
-        public static readonly AvaloniaProperty<string> ReplacePatternProperty =
+        public static readonly StyledProperty<string> ReplacePatternProperty =
             AvaloniaProperty.Register<SearchPanel, string>(nameof(ReplacePattern));
 
         public string ReplacePattern
@@ -138,7 +138,7 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Dependency property for <see cref="MarkerBrush"/>.
         /// </summary>
-        public static readonly AvaloniaProperty<IBrush> MarkerBrushProperty =
+        public static readonly StyledProperty<IBrush> MarkerBrushProperty =
             AvaloniaProperty.Register<SearchPanel, IBrush>(nameof(MarkerBrush), Brushes.LightGreen);
 
         /// <summary>

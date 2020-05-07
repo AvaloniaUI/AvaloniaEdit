@@ -34,7 +34,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// The text property.
         /// </summary>
-        public static readonly AvaloniaProperty<string> TextProperty =
+        public static readonly StyledProperty<string> TextProperty =
             AvaloniaProperty.Register<OverloadViewer, string>("Text");
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// The ItemProvider property.
         /// </summary>
-        public static readonly AvaloniaProperty<IOverloadProvider> ProviderProperty =
+        public static readonly StyledProperty<IOverloadProvider> ProviderProperty =
             AvaloniaProperty.Register<OverloadViewer, IOverloadProvider>("Provider");
 
         /// <summary>
