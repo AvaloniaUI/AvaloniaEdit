@@ -79,9 +79,9 @@ namespace AvaloniaEdit.CodeCompletion
 
         private CompletionListBox _listBox;
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnTemplateApplied(e);
+            base.OnApplyTemplate(e);
 
             _listBox = e.NameScope.Find("PART_ListBox") as CompletionListBox;
             if (_listBox != null)

@@ -288,9 +288,9 @@ namespace AvaloniaEdit.Search
             DoSearch(false);
         }
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnTemplateApplied(e);
+            base.OnApplyTemplate(e);
             _searchTextBox = e.NameScope.Find<TextBox>("PART_searchTextBox");
             _messageView = e.NameScope.Find<Popup>("PART_MessageView");
             _messageViewContent = e.NameScope.Find<ContentPresenter>("PART_MessageContent");

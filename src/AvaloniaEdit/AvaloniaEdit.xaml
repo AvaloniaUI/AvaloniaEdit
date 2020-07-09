@@ -1,10 +1,10 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui">
 
-    <StyleInclude Source="resm:AvaloniaEdit.TextEditor.xaml?assembly=AvaloniaEdit" />
-    <StyleInclude Source="resm:AvaloniaEdit.Editing.TextArea.xaml?assembly=AvaloniaEdit" />
-    <StyleInclude Source="resm:AvaloniaEdit.CodeCompletion.CompletionList.xaml?assembly=AvaloniaEdit" />
-    <StyleInclude Source="resm:AvaloniaEdit.CodeCompletion.InsightWindow.xaml?assembly=AvaloniaEdit" />
-    <StyleInclude Source="resm:AvaloniaEdit.Search.DropDownButton.xaml?assembly=AvaloniaEdit" />
-    <StyleInclude Source="resm:AvaloniaEdit.Search.SearchPanel.xaml?assembly=AvaloniaEdit" />
+    <StyleInclude Source="avares://AvaloniaEdit/TextEditor.xaml" />
+    <StyleInclude Source="avares://AvaloniaEdit/Editing/TextArea.xaml" />
+    <StyleInclude Source="avares://AvaloniaEdit/CodeCompletion/CompletionList.xaml" />
+    <StyleInclude Source="avares://AvaloniaEdit/CodeCompletion/InsightWindow.xaml" />
+    <StyleInclude Source="avares://AvaloniaEdit/Search/DropDownButton.xaml" />
+    <StyleInclude Source="avares://AvaloniaEdit/Search/SearchPanel.xaml" />
 
 </Styles>

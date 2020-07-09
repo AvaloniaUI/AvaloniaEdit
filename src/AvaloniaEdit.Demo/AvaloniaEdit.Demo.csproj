@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RuntimeIdentifiers>win7-x64;linux-x64;osx-x64</RuntimeIdentifiers>
     <EnableDefaultCompileItems>False</EnableDefaultCompileItems>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -17,7 +17,7 @@
       <DependentUpon>%(Filename)</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="**\*.xaml" />
+    <AvaloniaResource Include="**\*.xaml" />
   </ItemGroup>
 
   <ItemGroup>

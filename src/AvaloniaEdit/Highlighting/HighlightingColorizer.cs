@@ -272,9 +272,9 @@ namespace AvaloniaEdit.Highlighting
             {
                 var tf = element.TextRunProperties.Typeface;
                 element.TextRunProperties.Typeface = new Avalonia.Media.Typeface(
-                    tf.FontFamily,
-                    color.FontWeight ?? tf.Weight,
-                    color.FontStyle ?? tf.Style                    
+                    tf.FontFamily,                    
+                    color.FontStyle ?? tf.Style,
+                    color.FontWeight ?? tf.Weight
                 );
             }
             //if(color.Underline ?? false)

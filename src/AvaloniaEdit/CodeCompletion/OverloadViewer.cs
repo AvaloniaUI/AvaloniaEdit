@@ -46,9 +46,9 @@ namespace AvaloniaEdit.CodeCompletion
             set => SetValue(TextProperty, value);
         }
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs args)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs args)
         {
-            base.OnTemplateApplied(args);
+            base.OnApplyTemplate(args);
 
             var upButton = args.NameScope.Find<Button>("PART_UP");
             if (upButton != null)
