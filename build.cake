@@ -64,21 +64,8 @@ var isNuGetRelease = isTagged && isReleasable;
 // VERSION
 ///////////////////////////////////////////////////////////////////////////////
 
-var version = "0.2.0"; //XmlPeek("./src/AvaloniaEdit/AvaloniaEdit.csproj", "//*[local-name()='Version']/text()");
-
-if (isRunningOnAppVeyor)
-{
-    if (isTagged)
-    {
-        // Use Tag Name as version
-        version = BuildSystem.AppVeyor.Environment.Repository.Tag.Name;
-    }
-    else
-    {
-        // Use AssemblyVersion with Build as version
-        version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER") + "-alpha";
-    }
-}
+var AvaloniaVersion = "0.10.0-preview1";
+var version = XmlPeek("./src/AvaloniaEdit/AvaloniaEdit.csproj", "//*[local-name()='Version']/text()");
 
 var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\bin\HostX86\x86\editbin.exe";
 
@@ -155,8 +142,6 @@ packageVersions.ToList().ForEach(package =>
 
 Information("Setting NuGet package dependencies versions:");
 
-var AvaloniaVersion = "0.9.0-preview1";
-
 Information("Package: Avalonia, version: {0}", AvaloniaVersion);
 
 var nuspecNuGetBehaviors = new NuGetPackSettings()
@@ -171,7 +156,7 @@ var nuspecNuGetBehaviors = new NuGetPackSettings()
     Symbols = false,
     NoPackageAnalysis = true,
     Description = "A port of AvalonEdit to the AvaloniaUI Framework.",
-    Copyright = "Copyright 2019",
+    Copyright = "Copyright 2020",
     Tags = new [] { "Avalonia", "AvalonEdit", "TextEditor", "AvaloniaEdit", "Control" },
     Dependencies = new []
     {
@@ -278,96 +263,9 @@ Task("Create-NuGet-Packages")
     }
 });
 
-Task("Publish-MyGet")
-    .IsDependentOn("Create-NuGet-Packages")
-    .WithCriteria(() => !isLocalBuild)
-    .WithCriteria(() => !isPullRequest)
-    .WithCriteria(() => isMainRepo)
-    .WithCriteria(() => isMasterBranch)
-    .WithCriteria(()=> isRunningOnAppVeyor)
-    .WithCriteria(()=> isTagged)
-    .Does(() =>
-{
-    var apiKey = EnvironmentVariable("MYGET_API_KEY");
-    if(string.IsNullOrEmpty(apiKey)) 
-    {
-        throw new InvalidOperationException("Could not resolve MyGet API key.");
-    }
-
-    var apiUrl = EnvironmentVariable("MYGET_API_URL");
-    if(string.IsNullOrEmpty(apiUrl)) 
-    {
-        throw new InvalidOperationException("Could not resolve MyGet API url.");
-    }
-
-    foreach(var nupkg in nugetPackages)
-    {
-        NuGetPush(nupkg, new NuGetPushSettings {
-            Source = apiUrl,
-            ApiKey = apiKey
-        });
-    }
-})
-.OnError(exception =>
-{
-    Information("Publish-MyGet Task failed, but continuing with next Task...");
-});
-
-Task("Publish-NetCore")
-    .IsDependentOn("Restore-NetCore")
-    .WithCriteria(()=>isMainRepo && isMasterBranch && isTagged)
-    .Does(() =>
-{
-    foreach (var project in netCoreProjects)
-    {
-        foreach(var runtime in project.Runtimes)
-        {
-            var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
-
-            Information("Publishing: {0}, runtime: {1}", project.Name, runtime);
-            DotNetCorePublish(project.Path, new DotNetCorePublishSettings {
-                Framework = "netcoreapp3.0",
-                Configuration = configuration,
-                Runtime = runtime,
-                OutputDirectory = outputDir.FullPath
-            });
-
-            if (IsRunningOnWindows() && (runtime == "win7-x86" || runtime == "win7-x64"))
-            {
-                Information("Patching executable subsystem for: {0}, runtime: {1}", project.Name, runtime);
-                var targetExe = outputDir.CombineWithFilePath(project.Name + ".exe");
-                var exitCodeWithArgument = StartProcess(editbin, new ProcessSettings { 
-                    Arguments = "/subsystem:windows " + targetExe.FullPath
-                });
-                Information("The editbin command exit code: {0}", exitCodeWithArgument);
-            }
-        }
-    }
-});
-
-Task("Zip-NetCore")
-    .IsDependentOn("Publish-NetCore")
-    .WithCriteria(()=>isMainRepo && isMasterBranch)
-    .Does(() =>
-{
-    foreach (var project in netCoreProjects)
-    {
-        foreach(var runtime in project.Runtimes)
-        {
-            var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
-
-            Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix), 
-                GetFiles(outputDir.FullPath + "/*.*"));
-        }
-    }    
-});
-
 Task("Default")
     .IsDependentOn("Restore-NetCore")
     .IsDependentOn("Build-NetCore")    
-    .IsDependentOn("Create-NuGet-Packages")
-    .IsDependentOn("Publish-MyGet")    
-    .IsDependentOn("Publish-NetCore")
-    .IsDependentOn("Zip-NetCore");
+    .IsDependentOn("Create-NuGet-Packages");    
 
 RunTarget(target);
