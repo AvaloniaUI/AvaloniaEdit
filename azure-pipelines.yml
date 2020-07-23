@@ -7,7 +7,7 @@ jobs:
     displayName: 'Run Nuke'
     inputs:
       script: |
-        .\build.ps1 -Platform "AnyCPU" -Configuration "Release"
+        build.ps1 -Platform "AnyCPU" -Configuration "Release"
 
   - task: PublishBuildArtifacts@1
     inputs:
