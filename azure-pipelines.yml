@@ -4,10 +4,13 @@ jobs:
     vmImage: 'windows-2019'
   steps:
   - task: PowerShell@2
-    displayName: 'Run Nuke'
     inputs:
-      script: |
-        build.ps1 -Platform "AnyCPU" -Configuration "Release"
+      targetType: 'filePath'
+      filePath: $(System.DefaultWorkingDirectory)\build.ps1
+      arguments: > # Use this to avoid newline characters in multiline string
+        -Platform "AnyCPU"
+        -Configuration "Release"
+  displayName: 'Build and Package'
 
   - task: PublishBuildArtifacts@1
     inputs:
