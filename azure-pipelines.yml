@@ -3,7 +3,7 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   steps:
-  - task: PowerShell@2@2
+  - task: PowerShell@2
     displayName: 'Run Nuke'
     inputs:
       script: |
