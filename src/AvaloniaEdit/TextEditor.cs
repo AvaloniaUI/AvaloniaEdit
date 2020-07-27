@@ -686,8 +686,7 @@ namespace AvaloniaEdit
         public void ScrollToEnd()
         {
             ApplyTemplate(); // ensure scrollViewer is created
-            //if (scrollViewer != null)
-            //    scrollViewer.ScrollToEnd();
+            ScrollViewer?.ScrollToEnd();
         }
 
         /// <summary>
@@ -696,8 +695,7 @@ namespace AvaloniaEdit
         public void ScrollToHome()
         {
             ApplyTemplate(); // ensure scrollViewer is created
-            //if (scrollViewer != null)
-            //    scrollViewer.ScrollToHome();
+            ScrollViewer?.ScrollToHome();
         }
 
         /// <summary>
