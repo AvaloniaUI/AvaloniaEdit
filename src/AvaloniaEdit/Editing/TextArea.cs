@@ -53,7 +53,6 @@ namespace AvaloniaEdit.Editing
         private const int AdditionalVerticalScrollAmount = 2;
 
         private ILogicalScrollable _logicalScrollable;
-        private EventHandler _scrollInvalidated;
 
         #region Constructor
         static TextArea()
@@ -1035,8 +1034,8 @@ namespace AvaloniaEdit.Editing
 
         event EventHandler ILogicalScrollable.ScrollInvalidated
         {
-            add => _scrollInvalidated += value;
-            remove => _scrollInvalidated -= value;
+            add { if (_logicalScrollable != null) _logicalScrollable.ScrollInvalidated += value; }
+            remove { if (_logicalScrollable != null) _logicalScrollable.ScrollInvalidated -= value; }
         }
 
         internal void OnTextCopied(TextEventArgs e)
@@ -1100,7 +1099,7 @@ namespace AvaloniaEdit.Editing
 
         public void RaiseScrollInvalidated(EventArgs e)
         {
-            _scrollInvalidated?.Invoke(this, e);
+            _logicalScrollable?.RaiseScrollInvalidated(e);
         }
     }
 
