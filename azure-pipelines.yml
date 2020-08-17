@@ -1,0 +1,20 @@
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'windows-2019'
+  steps:
+  - task: PowerShell@2
+    inputs:
+      targetType: 'filePath'
+      filePath: $(System.DefaultWorkingDirectory)\build.ps1
+      arguments: > # Use this to avoid newline characters in multiline string
+        -Platform "AnyCPU"
+        -Configuration "Release"
+    displayName: 'Build and Package'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.SourcesDirectory)/artifacts/nuget'
+      artifactName: 'Nuget'
+    condition: succeeded()
+
