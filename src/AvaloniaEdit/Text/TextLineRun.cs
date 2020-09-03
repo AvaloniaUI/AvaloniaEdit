@@ -166,7 +166,7 @@ namespace AvaloniaEdit.Text
             var formattedText = new FormattedText
             {
                 Text = stringRange.ToString(),
-                Typeface = new Typeface(tf.FontFamily, tf.Style, tf.Weight),
+                Typeface = FontManager.Current.GetOrAddTypeface(tf.FontFamily, tf.Style, tf.Weight),
                 FontSize = run.FontSize
             };
        
@@ -200,7 +200,7 @@ namespace AvaloniaEdit.Text
                 var size = new FormattedText
                 {
                     Text = StringRange[i].ToString(),
-                    Typeface = new Typeface(tf.FontFamily, tf.Style, tf.Weight),
+                    Typeface = FontManager.Current.GetOrAddTypeface(tf.FontFamily, tf.Style, tf.Weight),
                     FontSize = FontSize
                 }.Bounds.Size;
                 
