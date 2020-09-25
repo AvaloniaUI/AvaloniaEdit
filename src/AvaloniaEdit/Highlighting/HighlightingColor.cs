@@ -21,6 +21,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using Avalonia.Media;
+using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Highlighting
@@ -33,6 +34,8 @@ namespace AvaloniaEdit.Highlighting
         internal static readonly HighlightingColor Empty = FreezableHelper.FreezeAndReturn(new HighlightingColor());
 
         private string _name;
+        private FontFamily _fontFamily;
+        private int? _fontSize;
         private FontWeight? _fontWeight;
         private FontStyle? _fontStyle;
         private bool? _underline;
@@ -50,6 +53,40 @@ namespace AvaloniaEdit.Highlighting
                 if (IsFrozen)
                     throw new InvalidOperationException();
                 _name = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets/sets the font family. Null if the highlighting color does not change the font style.
+        /// </summary>
+        public FontFamily FontFamily
+        {
+            get
+            {
+                return _fontFamily;
+            }
+            set
+            {
+                if (IsFrozen)
+                    throw new InvalidOperationException();
+                _fontFamily = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets/sets the font size. Null if the highlighting color does not change the font style.
+        /// </summary>
+        public int? FontSize
+        {
+            get
+            {
+                return _fontSize;
+            }
+            set
+            {
+                if (IsFrozen)
+                    throw new InvalidOperationException();
+                _fontSize = value;
             }
         }
 
@@ -156,6 +193,18 @@ namespace AvaloniaEdit.Highlighting
             {
                 b.AppendFormat(CultureInfo.InvariantCulture, "color: #{0:x2}{1:x2}{2:x2}; ", c.Value.R, c.Value.G, c.Value.B);
             }
+            if (FontFamily != null)
+            {
+                b.Append("font-family: ");
+                b.Append(FontFamily.Name.ToLowerInvariant());
+                b.Append("; ");
+            }
+            if (FontSize != null)
+            {
+                b.Append("font-size: ");
+                b.Append(FontSize.Value.ToString());
+                b.Append("; ");
+            }
             if (FontWeight != null)
             {
                 b.Append("font-weight: ");
@@ -225,7 +274,8 @@ namespace AvaloniaEdit.Highlighting
                 return false;
             return _name == other._name && _fontWeight == other._fontWeight
                 && _fontStyle == other._fontStyle && _underline == other._underline
-                && Equals(_foreground, other._foreground) && Equals(_background, other._background);
+                && Equals(_foreground, other._foreground) && Equals(_background, other._background)
+                && Equals(_fontFamily, other._fontFamily) && Equals(_fontSize, other._fontSize);
         }
 
         /// <inheritdoc/>
@@ -243,6 +293,10 @@ namespace AvaloniaEdit.Highlighting
                     hashCode += 1000000033 * _foreground.GetHashCode();
                 if (_background != null)
                     hashCode += 1000000087 * _background.GetHashCode();
+                if (_fontFamily != null)
+                    hashCode += 1000000123 * _fontFamily.GetHashCode();
+                if (_fontSize != null)
+                    hashCode += 1000000167 * _fontSize.GetHashCode();
             }
             return hashCode;
         }
@@ -254,6 +308,10 @@ namespace AvaloniaEdit.Highlighting
         public void MergeWith(HighlightingColor color)
         {
             FreezableHelper.ThrowIfFrozen(this);
+            if (color._fontFamily != null)
+                _fontFamily = color._fontFamily;
+            if (color._fontSize != null)
+                _fontSize = color._fontSize;
             if (color._fontWeight != null)
                 _fontWeight = color._fontWeight;
             if (color._fontStyle != null)
@@ -267,6 +325,7 @@ namespace AvaloniaEdit.Highlighting
         }
 
         internal bool IsEmptyForMerge => _fontWeight == null && _fontStyle == null && _underline == null
-                                         && _foreground == null && _background == null;
+                                         && _foreground == null && _background == null
+                                         && _fontFamily == null && _fontSize == null;
     }
 }

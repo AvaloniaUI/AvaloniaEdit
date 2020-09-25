@@ -268,15 +268,17 @@ namespace AvaloniaEdit.Highlighting
                 if (b != null)
                     element.BackgroundBrush = b;
             }
-            if (color.FontStyle != null || color.FontWeight != null)
+            if (color.FontStyle != null || color.FontWeight != null || color.FontFamily != null)
             {
                 var tf = element.TextRunProperties.Typeface;
                 element.TextRunProperties.Typeface = new Avalonia.Media.Typeface(
-                    tf.FontFamily,                    
+                    color.FontFamily ?? tf.FontFamily,                    
                     color.FontStyle ?? tf.Style,
                     color.FontWeight ?? tf.Weight
                 );
             }
+            if (color.FontSize.HasValue)
+                element.TextRunProperties.FontSize = color.FontSize.Value;
             //if(color.Underline ?? false)
             //	element.TextRunProperties.SetTextDecorations(TextDecorations.Underline);
         }
