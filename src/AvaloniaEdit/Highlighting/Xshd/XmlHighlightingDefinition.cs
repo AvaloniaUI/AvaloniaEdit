@@ -209,6 +209,8 @@ namespace AvaloniaEdit.Highlighting.Xshd
                 c.Underline = color.Underline;
                 c.FontStyle = color.FontStyle;
                 c.FontWeight = color.FontWeight;
+                c.FontFamily = color.FontFamily;
+                c.FontSize = color.FontSize;
                 return c;
             }
 

@@ -39,7 +39,17 @@ namespace AvaloniaEdit.Highlighting.Xshd
 		/// Gets/sets the background brush.
 		/// </summary>
 		public HighlightingBrush Background { get; set; }
-		
+
+		/// <summary>
+		/// Gets/sets the font family
+		/// </summary>
+		public FontFamily FontFamily { get; set; }
+
+		/// <summary>
+		/// Gets/sets the font size.
+		/// </summary>
+		public int? FontSize { get; set; }
+
 		/// <summary>
 		/// Gets/sets the font weight.
 		/// </summary>
