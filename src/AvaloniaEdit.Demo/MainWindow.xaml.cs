@@ -30,7 +30,6 @@ namespace AvaloniaEdit.Demo
         private Button _addControlBtn;
         private Button _clearControlBtn;
         private ElementGenerator _generator = new ElementGenerator();
-        private IPopupImpl impl;
 
         public MainWindow()
         {
@@ -51,9 +50,7 @@ namespace AvaloniaEdit.Demo
             _clearControlBtn.Click += _clearControlBtn_Click; ;
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
-
-            impl = PlatformManager.CreateWindow().CreatePopup();
-
+            
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
             {
                 if (i.KeyModifiers != KeyModifiers.Control) return;
