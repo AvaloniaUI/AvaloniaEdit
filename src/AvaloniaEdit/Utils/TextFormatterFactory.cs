@@ -59,7 +59,7 @@ namespace AvaloniaEdit.Utils
             var formattedText = new FormattedText
             {
                 Text = text,
-                Typeface = FontManager.Current.GetOrAddTypeface(typeface),
+                Typeface = new Typeface(typeface.Name),
 				FontSize = emSize.Value
             };
 	        
