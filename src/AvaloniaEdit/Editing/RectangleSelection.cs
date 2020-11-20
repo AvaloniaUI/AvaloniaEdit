@@ -51,7 +51,7 @@ namespace AvaloniaEdit.Editing
         public static readonly RoutedCommand BoxSelectLeftByWord = new RoutedCommand(nameof(BoxSelectLeftByWord));
 
         /// <summary>
-        /// Expands the selection left by one word, creating a rectangular selection.
+        /// Expands the selection right by one word, creating a rectangular selection.
         /// Key gesture: Ctrl+Alt+Shift+Right
         /// </summary>
         public static readonly RoutedCommand BoxSelectRightByWord = new RoutedCommand(nameof(BoxSelectRightByWord));
@@ -63,7 +63,7 @@ namespace AvaloniaEdit.Editing
         public static readonly RoutedCommand BoxSelectUpByLine = new RoutedCommand(nameof(BoxSelectUpByLine));
 
         /// <summary>
-        /// Expands the selection up by one line, creating a rectangular selection.
+        /// Expands the selection down by one line, creating a rectangular selection.
         /// Key gesture: Alt+Shift+Down
         /// </summary>
         public static readonly RoutedCommand BoxSelectDownByLine = new RoutedCommand(nameof(BoxSelectDownByLine));
