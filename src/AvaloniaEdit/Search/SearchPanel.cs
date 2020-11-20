@@ -240,7 +240,10 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public void Uninstall()
         {
-            CloseAndRemove();
+            Close();
+            _textArea.DocumentChanged -= TextArea_DocumentChanged;
+            if (_currentDocument != null)
+                _currentDocument.TextChanged -= TextArea_Document_TextChanged;
             _textArea.DefaultInputHandler.NestedInputHandlers.Remove(_handler);
         }
 
@@ -488,17 +491,6 @@ namespace AvaloniaEdit.Search
             _renderer.CurrentResults.Clear();
 
             _textArea.Focus();
-        }
-
-        /// <summary>
-        /// Closes the SearchPanel and removes it.
-        /// </summary>
-        private void CloseAndRemove()
-        {
-            Close();
-            _textArea.DocumentChanged -= TextArea_DocumentChanged;
-            if (_currentDocument != null)
-                _currentDocument.TextChanged -= TextArea_Document_TextChanged;
         }
 
         /// <summary>
