@@ -272,12 +272,12 @@ namespace AvaloniaEdit.Folding
                     if (_isFirstUpdate)
                     {
                         section.IsFolded = newFolding.DefaultClosed;
-                        _isFirstUpdate = false;
                     }
                     section.Tag = newFolding;
                 }
                 section.Title = newFolding.Name;
             }
+            _isFirstUpdate = false;
             // remove all outstanding old foldings:
             while (oldFoldingIndex < oldFoldings.Length)
             {
