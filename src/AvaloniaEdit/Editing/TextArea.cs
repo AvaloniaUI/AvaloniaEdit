@@ -442,7 +442,7 @@ namespace AvaloniaEdit.Editing
                             {
                                 TextView.Redraw(Math.Min(oldSegmentOffset, newSegmentOffset),
                                                 Math.Abs(oldSegmentOffset - newSegmentOffset),
-                                                DispatcherPriority.Background);
+                                                DispatcherPriority.Render);
                             }
                             var oldSegmentEndOffset = oldSegment.EndOffset;
                             var newSegmentEndOffset = newSegment.EndOffset;
@@ -450,13 +450,13 @@ namespace AvaloniaEdit.Editing
                             {
                                 TextView.Redraw(Math.Min(oldSegmentEndOffset, newSegmentEndOffset),
                                                 Math.Abs(oldSegmentEndOffset - newSegmentEndOffset),
-                                                DispatcherPriority.Background);
+                                                DispatcherPriority.Render);
                             }
                         }
                         else
                         {
-                            TextView.Redraw(oldSegment, DispatcherPriority.Background);
-                            TextView.Redraw(newSegment, DispatcherPriority.Background);
+                            TextView.Redraw(oldSegment, DispatcherPriority.Render);
+                            TextView.Redraw(newSegment, DispatcherPriority.Render);
                         }
                     }
                     _selection = value;
