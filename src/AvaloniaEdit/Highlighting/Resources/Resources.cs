@@ -52,6 +52,7 @@ namespace AvaloniaEdit.Highlighting
 			hlm.RegisterHighlighting("PowerShell", new[] { ".ps1", ".psm1", ".psd1" }, "PowerShell.xshd");
 			hlm.RegisterHighlighting("PHP", new[] { ".php" }, "PHP-Mode.xshd");
 			hlm.RegisterHighlighting("TeX", new[] { ".tex" }, "Tex-Mode.xshd");
+			hlm.RegisterHighlighting("TSQL", new[] { ".sql" }, "TSQL-Mode.xshd");
 			hlm.RegisterHighlighting("VB", new[] { ".vb" }, "VB-Mode.xshd");
 			hlm.RegisterHighlighting("XML", (".xml;.xsl;.xslt;.xsd;.manifest;.config;.addin;" +
 			                                 ".xshd;.wxs;.wxi;.wxl;.proj;.csproj;.vbproj;.ilproj;" +
