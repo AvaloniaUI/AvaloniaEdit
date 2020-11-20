@@ -729,7 +729,7 @@ namespace AvaloniaEdit.Editing
         private static void OnIndentSelection(object target, ExecutedRoutedEventArgs args)
         {
             var textArea = GetTextArea(target);
-            if (textArea?.Document != null)
+            if (textArea?.Document != null && textArea.IndentationStrategy != null)
             {
                 using (textArea.Document.RunUpdate())
                 {
