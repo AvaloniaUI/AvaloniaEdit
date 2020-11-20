@@ -77,7 +77,7 @@ namespace AvaloniaEdit
 
         protected TextEditor(TextArea textArea, TextDocument document)
         {
-            TextArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
+            this.textArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
 
             textArea.TextView.Services.AddService(this);
 
@@ -263,7 +263,8 @@ namespace AvaloniaEdit
         #endregion
 
         #region TextArea / ScrollViewer properties
-
+        private readonly TextArea textArea;
+        
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
@@ -276,7 +277,7 @@ namespace AvaloniaEdit
         /// <summary>
         /// Gets the text area.
         /// </summary>
-        public TextArea TextArea { get; }
+        public TextArea TextArea => textArea;
 
         /// <summary>
         /// Gets the scroll viewer used by the text editor.
@@ -314,7 +315,7 @@ namespace AvaloniaEdit
         {
             if (_colorizer != null)
             {
-                TextArea.TextView.LineTransformers.Remove(_colorizer);
+                textArea.TextView.LineTransformers.Remove(_colorizer);
                 _colorizer = null;
             }
 
@@ -323,7 +324,7 @@ namespace AvaloniaEdit
                 _colorizer = CreateColorizer(newValue);
                 if (_colorizer != null)
                 {
-                    TextArea.TextView.LineTransformers.Insert(0, _colorizer);
+                    textArea.TextView.LineTransformers.Insert(0, _colorizer);
                 }
             }
         }
@@ -799,10 +800,9 @@ namespace AvaloniaEdit
         {
             get
             {
-                var textArea = TextArea;
                 // We'll get the text from the whole surrounding segment.
                 // This is done to ensure that SelectedText.Length == SelectionLength.
-                if (textArea?.Document != null && !textArea.Selection.IsEmpty)
+                if (textArea.Document != null && !textArea.Selection.IsEmpty)
                     return textArea.Document.GetText(textArea.Selection.SurroundingSegment);
                 return string.Empty;
             }
@@ -811,7 +811,7 @@ namespace AvaloniaEdit
                 if (value == null)
                     throw new ArgumentNullException(nameof(value));
                 var textArea = TextArea;
-                if (textArea?.Document != null)
+                if (textArea.Document != null)
                 {
                     var offset = SelectionStart;
                     var length = SelectionLength;
@@ -829,16 +829,11 @@ namespace AvaloniaEdit
         {
             get
             {
-                var textArea = TextArea;
-                if (textArea != null)
-                    return textArea.Caret.Offset;
-                return 0;
+                return textArea.Caret.Offset;
             }
             set
             {
-                var textArea = TextArea;
-                if (textArea != null && textArea.Caret.Offset != value)
-                    textArea.Caret.Offset = value;
+                textArea.Caret.Offset = value;
             }
         }
 
@@ -849,14 +844,10 @@ namespace AvaloniaEdit
         {
             get
             {
-                var textArea = TextArea;
-                if (textArea != null)
-                {
-                    if (textArea.Selection.IsEmpty)
-                        return textArea.Caret.Offset;
+                if (textArea.Selection.IsEmpty)
+                    return textArea.Caret.Offset;
+                else
                     return textArea.Selection.SurroundingSegment.Offset;
-                }
-                return 0;
             }
             set => Select(value, SelectionLength);
         }
@@ -868,10 +859,10 @@ namespace AvaloniaEdit
         {
             get
             {
-                var textArea = TextArea;
-                if (textArea != null && !textArea.Selection.IsEmpty)
+                if (!textArea.Selection.IsEmpty)
                     return textArea.Selection.SurroundingSegment.Length;
-                return 0;
+                else
+                    return 0;
             }
             set => Select(SelectionStart, value);
         }
