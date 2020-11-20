@@ -149,7 +149,11 @@ namespace AvaloniaEdit.Rendering
 		
 		protected override Uri GetUriFromMatch(Match match)
 		{
-			return new Uri("mailto:" + match.Value);
+			var	targetUrl =	"mailto:" +	match.Value;
+			if (Uri.IsWellFormedUriString(targetUrl, UriKind.Absolute))
+				return new Uri(targetUrl);
+
+			return null;
 		}
 	}
 }
