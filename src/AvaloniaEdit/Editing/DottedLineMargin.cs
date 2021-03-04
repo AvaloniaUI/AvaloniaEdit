@@ -42,7 +42,6 @@ namespace AvaloniaEdit.Editing
             {
                 StartPoint = new Point(0, 0),
                 EndPoint = new Point(0, 1),
-                StrokeDashArray = new AvaloniaList<double> { 0, 2 },
                 Stretch = Stretch.Fill,
                 StrokeThickness = 1,
                 StrokeLineCap = PenLineCap.Round,

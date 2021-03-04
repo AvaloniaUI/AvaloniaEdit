@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Avalonia;
+using Avalonia.Collections;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Highlighting;
@@ -35,6 +36,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Data;
 using AvaloniaEdit.Search;
+using JetBrains.Annotations;
 
 namespace AvaloniaEdit
 {
@@ -470,7 +472,11 @@ namespace AvaloniaEdit
                 leftMargins.Insert(0, lineNumbers);
                 leftMargins.Insert(1, line);
                 var lineNumbersForeground = new Binding("LineNumbersForeground") { Source = editor };
+                var lineNumbersStroke = new Binding("LineNumbersStroke") { Source = editor };
+                var lineNumbersStrokeDashArray = new Binding("LineNumbersStrokeDashArray") { Source = editor };
                 line.Bind(Shape.StrokeProperty, lineNumbersForeground);
+                line.Bind(Shape.StrokeProperty, lineNumbersStroke);
+                line.Bind(Shape.StrokeDashArrayProperty, lineNumbersStrokeDashArray);
                 lineNumbers.Bind(ForegroundProperty, lineNumbersForeground);
             }
             else
@@ -506,7 +512,7 @@ namespace AvaloniaEdit
             get => GetValue(LineNumbersForegroundProperty);
             set => SetValue(LineNumbersForegroundProperty, value);
         }
-
+        
         private static void OnLineNumbersForegroundChanged(AvaloniaPropertyChangedEventArgs e)
         {
             var editor = e.Sender as TextEditor;
@@ -516,6 +522,41 @@ namespace AvaloniaEdit
         }
         #endregion
 
+        #region LineNumbersStroke
+        /// <summary>
+        /// LineNumbersStroke dependency property.
+        /// </summary>
+        public static readonly StyledProperty<IBrush> LineNumbersStrokeProperty =
+            AvaloniaProperty.Register<TextEditor, IBrush>("LineNumbersStroke", Brushes.Gray);
+        
+        /// <summary>
+        /// Gets/sets the Brush used for displaying the stroke color of line numbers.
+        /// </summary>
+        public IBrush LineNumbersStroke
+        {
+            get => GetValue(LineNumbersStrokeProperty);
+            set => SetValue(LineNumbersStrokeProperty, value);
+        }
+        #endregion
+        
+        #region LineNumbersStrokeDashArray   
+        /// <summary>
+        /// LineNumbersStrokeDashArray dependency property.
+        /// </summary>
+        public static readonly StyledProperty<AvaloniaList<double>> LineNumbersStrokeDashArrayProperty =
+            AvaloniaProperty.Register<TextEditor, AvaloniaList<double>>("LineNumbersStrokeDashArray", new AvaloniaList<double> { 0, 2 });
+        
+        /// <summary>
+        /// Gets or sets a collection of <see cref="double"/> values that indicate the pattern of dashes and gaps that is used to line numbers separator.
+        /// </summary>
+        [CanBeNull]
+        public AvaloniaList<double> LineNumbersStrokeDashArray
+        {
+            get => GetValue(LineNumbersStrokeDashArrayProperty);
+            set => SetValue(LineNumbersStrokeDashArrayProperty, value);
+        }
+        #endregion
+        
         #region TextBoxBase-like methods
         /// <summary>
         /// Appends text to the end of the document.
