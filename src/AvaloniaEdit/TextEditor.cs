@@ -471,12 +471,11 @@ namespace AvaloniaEdit
                 var line = (Line)DottedLineMargin.Create();
                 leftMargins.Insert(0, lineNumbers);
                 leftMargins.Insert(1, line);
-                var lineNumbersForeground = new Binding("LineNumbersForeground") { Source = editor };
                 var lineNumbersStroke = new Binding("LineNumbersStroke") { Source = editor };
                 var lineNumbersStrokeDashArray = new Binding("LineNumbersStrokeDashArray") { Source = editor };
-                line.Bind(Shape.StrokeProperty, lineNumbersForeground);
                 line.Bind(Shape.StrokeProperty, lineNumbersStroke);
                 line.Bind(Shape.StrokeDashArrayProperty, lineNumbersStrokeDashArray);
+                var lineNumbersForeground = new Binding("LineNumbersForeground") { Source = editor };
                 lineNumbers.Bind(ForegroundProperty, lineNumbersForeground);
             }
             else
