@@ -16,12 +16,15 @@
             <Button Name="clearControlBtn" Content="Clear Buttons" />
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
+                               FontFamily="Cascadia Code"
                                Background="Gray"
                                Margin="30"
                                Foreground="White"
-                               SyntaxHighlighting="XML"
+                               SyntaxHighlighting="C#"
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
-                               TextBlock.FontSize="30" />
+                               FontWeight="Light"
+                               
+                               FontSize="18" />
     </DockPanel>
 </Window>
