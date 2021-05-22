@@ -613,11 +613,18 @@ namespace AvaloniaEdit.Editing
         /// <param name="line">The line to scroll to.</param>
         public void ScrollToLine (int line)
         {
-            var viewPortLines = (int)(this as IScrollable).Viewport.Height;
-
-            if (viewPortLines < Document.LineCount)
+            try
             {
-                ScrollToLine(line, 2, viewPortLines / 2);
+                var viewPortLines = (int)(this as IScrollable).Viewport.Height;
+
+                if (viewPortLines < Document.LineCount)
+                {
+                    ScrollToLine(line, 2, viewPortLines / 2);
+                }
+            }
+            catch (Exception exec)
+            {
+                Console.WriteLine($"Error scrolling to line {line}: {exec}");
             }
         }
 
