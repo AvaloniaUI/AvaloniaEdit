@@ -54,12 +54,17 @@ namespace AvaloniaEdit.Highlighting.Xshd
 		/// Gets/sets the font weight.
 		/// </summary>
 		public FontWeight? FontWeight { get; set; }
-		
+
 		/// <summary>
 		/// Gets/sets the underline flag
 		/// </summary>
 		public bool? Underline { get; set; }
-		
+
+		/// <summary>
+		/// Gets/sets the strikethrough flag
+		/// </summary>
+		public bool? Strikethrough { get; set; }
+
 		/// <summary>
 		/// Gets/sets the font style.
 		/// </summary>
