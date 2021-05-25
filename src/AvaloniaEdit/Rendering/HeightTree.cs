@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Avalonia.Utilities;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Utils;
 
@@ -495,27 +496,27 @@ namespace AvaloniaEdit.Rendering
                 if (node.Left != null)
                 {
                     positionAfterLeft -= node.Left.TotalHeight;
-                    if (positionAfterLeft < 0)
+                    if (MathUtilities.LessThan(positionAfterLeft, 0))
                     {
                         // Descend into left
                         node = node.Left;
                         continue;
                     }
                 }
-                var positionBeforeRight = positionAfterLeft - node.LineNode.TotalHeight;
-                if (positionBeforeRight < 0)
+                var positionBeforeRight =  positionAfterLeft - node.LineNode.TotalHeight;
+                if (MathUtilities.LessThan(positionBeforeRight, 0))
                 {
                     // Found the correct node
                     return node;
                 }
-                if (node.Right == null || node.Right.TotalHeight == 0)
+                if (node.Right == null || MathUtilities.IsZero(node.Right.TotalHeight))
                 {
                     // Can happen when position>node.totalHeight,
                     // i.e. at the end of the document, or due to rounding errors in previous loop iterations.
 
                     // If node.lineNode isn't collapsed, return that.
                     // Also return node.lineNode if there is no previous node that we could return instead.
-                    if (node.LineNode.TotalHeight > 0 || node.Left == null)
+                    if (MathUtilities.GreaterThan(node.LineNode.TotalHeight, 0) || node.Left == null)
                         return node;
                     // Otherwise, descend into left (find the last non-collapsed node)
                     node = node.Left;
