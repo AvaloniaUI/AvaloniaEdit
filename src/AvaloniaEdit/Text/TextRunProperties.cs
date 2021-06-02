@@ -11,7 +11,9 @@ namespace AvaloniaEdit.Text
             CultureInfo = CultureInfo,
             ForegroundBrush = ForegroundBrush,
             Typeface = Typeface,
-            FontSize = FontSize
+            FontSize = FontSize,
+            Underline = Underline,
+            Strikethrough = Strikethrough,
         };
 
         public IBrush BackgroundBrush { get; set; }
@@ -23,5 +25,9 @@ namespace AvaloniaEdit.Text
         public Typeface Typeface { get; set; }
 
         public double FontSize { get; set; }
+
+        public bool Underline { get; set; }
+
+        public bool Strikethrough { get; set; }
     }
 }

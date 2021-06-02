@@ -59,7 +59,7 @@ namespace AvaloniaEdit.Highlighting.Xshd
         private static XshdSyntaxDefinition ParseDefinition(XmlReader reader)
         {
             Debug.Assert(reader.LocalName == "SyntaxDefinition");
-            var def = new XshdSyntaxDefinition {Name = reader.GetAttribute("name")};
+            var def = new XshdSyntaxDefinition { Name = reader.GetAttribute("name") };
             var extensions = reader.GetAttribute("extensions");
             if (extensions != null)
                 def.Extensions.AddRange(extensions.Split(';'));
@@ -320,10 +320,11 @@ namespace AvaloniaEdit.Highlighting.Xshd
             color.FontWeight = ParseFontWeight(reader.GetAttribute("fontWeight"));
             color.FontStyle = ParseFontStyle(reader.GetAttribute("fontStyle"));
             color.Underline = reader.GetBoolAttribute("underline");
+            color.Strikethrough = reader.GetBoolAttribute("strikethrough");
             color.FontFamily = ParseFontFamily(reader.GetAttribute("fontFamily"));
             color.FontSize = ParseFontSize(reader.GetAttribute("fontSize"));
             return color;
-        }        
+        }
 
         private static HighlightingBrush ParseColor(string color)
         {

@@ -39,6 +39,7 @@ namespace AvaloniaEdit.Highlighting
         private FontWeight? _fontWeight;
         private FontStyle? _fontStyle;
         private bool? _underline;
+        private bool? _strikethrough;
         private HighlightingBrush _foreground;
         private HighlightingBrush _background;
 
@@ -133,6 +134,20 @@ namespace AvaloniaEdit.Highlighting
         }
 
         /// <summary>
+        /// Gets/sets the strikethrough flag
+        /// </summary>
+        public bool? Strikethrough
+        {
+            get => _strikethrough;
+            set
+            {
+                if (IsFrozen)
+                    throw new InvalidOperationException();
+                _strikethrough = value;
+            }
+        }
+
+        /// <summary>
         /// Gets/sets the foreground color applied by the highlighting.
         /// </summary>
         public HighlightingBrush Foreground
@@ -223,6 +238,15 @@ namespace AvaloniaEdit.Highlighting
                 b.Append(Underline.Value ? "underline" : "none");
                 b.Append("; ");
             }
+            if (Strikethrough != null)
+            {
+                if (Underline == null)
+                    b.Append("text-decoration:  ");
+
+                b.Remove(b.Length - 1, 1);
+                b.Append(Strikethrough.Value ? " line-through" : " none");
+                b.Append("; ");
+            }
             return b.ToString();
         }
 
@@ -273,7 +297,7 @@ namespace AvaloniaEdit.Highlighting
             if (other == null)
                 return false;
             return _name == other._name && _fontWeight == other._fontWeight
-                && _fontStyle == other._fontStyle && _underline == other._underline
+                && _fontStyle == other._fontStyle && _underline == other._underline && this._strikethrough == other._strikethrough
                 && Equals(_foreground, other._foreground) && Equals(_background, other._background)
                 && Equals(_fontFamily, other._fontFamily) && Equals(_fontSize, other._fontSize);
         }
@@ -322,10 +346,12 @@ namespace AvaloniaEdit.Highlighting
                 _background = color._background;
             if (color._underline != null)
                 _underline = color._underline;
+            if (color._strikethrough != null)
+                this._strikethrough = color._strikethrough;
         }
 
         internal bool IsEmptyForMerge => _fontWeight == null && _fontStyle == null && _underline == null
-                                         && _foreground == null && _background == null
+                                         && _strikethrough == null && _foreground == null && _background == null
                                          && _fontFamily == null && _fontSize == null;
     }
 }

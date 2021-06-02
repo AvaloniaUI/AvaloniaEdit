@@ -207,6 +207,7 @@ namespace AvaloniaEdit.Highlighting.Xshd
                 c.Foreground = color.Foreground;
                 c.Background = color.Background;
                 c.Underline = color.Underline;
+                c.Strikethrough = color.Strikethrough;
                 c.FontStyle = color.FontStyle;
                 c.FontWeight = color.FontWeight;
                 c.FontFamily = color.FontFamily;
