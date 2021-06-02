@@ -719,7 +719,7 @@ namespace AvaloniaEdit.Rendering
                 }
                 _allVisualLines.Clear();
 
-                _visibleVisualLines = new ReadOnlyCollection<VisualLine>(_allVisualLines);
+                _visibleVisualLines = new ReadOnlyCollection<VisualLine>(_allVisualLines.ToArray());
             }
         }
 
@@ -932,7 +932,7 @@ namespace AvaloniaEdit.Rendering
             {
                 // no document -> create empty list of lines
                 _allVisualLines = new List<VisualLine>();
-                _visibleVisualLines = new ReadOnlyCollection<VisualLine>(_allVisualLines);
+                _visibleVisualLines = new ReadOnlyCollection<VisualLine>(_allVisualLines.ToArray());
                 maxWidth = 0;
             }
             else
@@ -1036,7 +1036,7 @@ namespace AvaloniaEdit.Rendering
 
             _allVisualLines = _newVisualLines;
             // visibleVisualLines = readonly copy of visual lines
-            _visibleVisualLines = new ReadOnlyCollection<VisualLine>(_newVisualLines);
+            _visibleVisualLines = new ReadOnlyCollection<VisualLine>(_newVisualLines.ToArray());
             _newVisualLines = null;
 
             if (_allVisualLines.Any(line => line.IsDisposed))
