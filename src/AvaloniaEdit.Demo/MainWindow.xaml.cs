@@ -9,19 +9,21 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Internal.Themes.Reader;
+using TextMateSharp.Model;
 using TextMateSharp.Registry;
 using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.Demo
 {
     using Pair = KeyValuePair<int, IControl>;
-    
+
     class DemoRegistryOptions : IRegistryOptions
     {
         private string _grammarFile;
@@ -98,9 +100,8 @@ namespace AvaloniaEdit.Demo
             IRegistryOptions options = new DemoRegistryOptions(grammarFile, themeFile);
 
             var registry = new Registry(options);
-            
+
             _textEditor.InstallTextMate(registry.GetTheme(), registry.LoadGrammar("source.cs"));
-            _textEditor.ConnectTextMate();
 
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
             {

@@ -1,8 +1,11 @@
+using System;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
+using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
 {
+    
     public abstract class TextTransformation : TextSegment
     {
         public TextTransformation(object tag, int startOffset, int endOffset)
