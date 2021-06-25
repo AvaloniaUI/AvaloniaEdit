@@ -1,26 +1,67 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Platform;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Native;
-using Avalonia.Platform;
 using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
-using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.TextMate;
+using TextMateSharp.Internal.Themes.Reader;
+using TextMateSharp.Registry;
+using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.Demo
 {
     using Pair = KeyValuePair<int, IControl>;
+    
+    class DemoRegistryOptions : IRegistryOptions
+    {
+        private string _grammarFile;
+        private string _themeFile;
+
+        internal DemoRegistryOptions(string grammarFile, string themeFile)
+        {
+            _grammarFile = grammarFile;
+            _themeFile = themeFile;
+        }
+
+        public string GetFilePath(string scopeName)
+        {
+            return _grammarFile;
+        }
+
+        public ICollection<string> GetInjections(string scopeName)
+        {
+            return null;
+        }
+
+        public StreamReader GetInputStream(string scopeName)
+        {
+            return new StreamReader(GetFilePath(scopeName));
+        }
+
+        public IRawTheme GetTheme()
+        {
+            int ini = Environment.TickCount;
+                
+            using (StreamReader reader = new StreamReader(_themeFile))
+            {
+                IRawTheme result = ThemeReader.ReadThemeSync(reader);
+                Console.WriteLine("Loaded {0} in {1}ms.",
+                    Path.GetFileName(_themeFile),
+                    Environment.TickCount - ini);
+                return result;
+            }
+        }
+    }
 
     public class MainWindow : Window
     {
@@ -50,7 +91,17 @@ namespace AvaloniaEdit.Demo
             _clearControlBtn.Click += _clearControlBtn_Click; ;
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
+
+            var grammarFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/grammars/csharp.tmLanguage.json").FullName;
+            var themeFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/themes/dark_vs.json").FullName;
             
+            IRegistryOptions options = new DemoRegistryOptions(grammarFile, themeFile);
+
+            var registry = new Registry(options);
+            
+            _textEditor.InstallTextMate(registry.GetTheme(), registry.LoadGrammar("source.cs"));
+            _textEditor.ConnectTextMate();
+
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
             {
                 if (i.KeyModifiers != KeyModifiers.Control) return;
@@ -63,7 +114,7 @@ namespace AvaloniaEdit.Demo
         {
             AvaloniaXamlLoader.Load(this);
         }
-
+        
         void _addControlBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me" }));
