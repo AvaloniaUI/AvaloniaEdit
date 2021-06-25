@@ -1,0 +1,3 @@
+[submodule "TextMateSharp"]
+	path = TextMateSharp
+	url = git@github.com:danipen/TextMateSharp.git
