@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TextMateSharp\src\TextMateSharp\TextMateSharp.csproj" />
+    <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
+  </ItemGroup>
+
+</Project>
