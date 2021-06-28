@@ -26,7 +26,7 @@ namespace AvaloniaEdit.TextMate
             
             transformer.SetTheme(theme);
 
-            editor.InvalidateVisual();
+            editor.TextArea.TextView.Redraw();
         }
 
         private static TextMateColoringTransformer GetOrCreateTransformer(this TextEditor editor)
