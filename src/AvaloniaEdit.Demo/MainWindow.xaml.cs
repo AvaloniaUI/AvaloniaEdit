@@ -17,6 +17,7 @@ using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Model;
 using TextMateSharp.Registry;
+using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.Demo
 {
@@ -29,7 +30,11 @@ namespace AvaloniaEdit.Demo
         private OverloadInsightWindow _insightWindow;
         private Button _addControlBtn;
         private Button _clearControlBtn;
+        private Button _changeThemeBtn;
         private ElementGenerator _generator = new ElementGenerator();
+        private int _currentTheme = (int)ThemeName.Monokai;
+        private Registry _registry;
+        private RegistryOptions _registryOptions;
 
         public MainWindow()
         {
@@ -49,20 +54,18 @@ namespace AvaloniaEdit.Demo
             _clearControlBtn = this.FindControl<Button>("clearControlBtn");
             _clearControlBtn.Click += _clearControlBtn_Click; ;
 
+            _changeThemeBtn = this.FindControl<Button>("changeThemeBtn");
+            _changeThemeBtn.Click += _changeThemeBtn_Click;
+
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
-            var csharpGrammarFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/grammars/csharp.tmLanguage.json").FullName;
-            var darkPlusThemeFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/themes/dark_plus.json").FullName;
-            var darkVsThemeFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/themes/dark_vs.json").FullName;
+            _registryOptions = new RegistryOptions((ThemeName)_currentTheme);
 
-            IRegistryOptions options = new CSharpDemoRegistryOptions(
-                csharpGrammarFile,
-                darkPlusThemeFile,
-                darkVsThemeFile);
+            _registry = new Registry(_registryOptions);
 
-            var registry = new Registry(options);
-
-            _textEditor.InstallTextMate(registry.GetTheme(), registry.LoadGrammar("source.cs"));
+            _textEditor.InstallTextMate(
+                _registry.GetTheme(),
+                _registry.LoadGrammar("source.cs"));
 
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
             {
@@ -70,6 +73,14 @@ namespace AvaloniaEdit.Demo
                 if (i.Delta.Y > 0) _textEditor.FontSize++;
                 else _textEditor.FontSize = _textEditor.FontSize > 1 ? _textEditor.FontSize - 1 : 1;
             }, RoutingStrategies.Bubble, true);
+        }
+
+        void _changeThemeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            _currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
+
+            _registry.SetTheme(_registryOptions.LoadTheme((ThemeName)_currentTheme));
+            _textEditor.InstallTheme(_registry.GetTheme());
         }
 
         private void InitializeComponent()

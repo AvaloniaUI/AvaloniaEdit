@@ -25,7 +25,7 @@ namespace AvaloniaEdit.TextMate
             var transformer = editor.GetOrCreateTransformer();
             
             transformer.SetTheme(theme);
-            
+
             editor.InvalidateVisual();
         }
 

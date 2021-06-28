@@ -14,6 +14,7 @@
             <Button Content="Copy" />
             <Button Name="addControlBtn" Content="Add Button" />
             <Button Name="clearControlBtn" Content="Clear Buttons" />
+            <Button Name="changeThemeBtn" Content="Change theme"/>
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
                                FontFamily="Consolas,Menlo"
