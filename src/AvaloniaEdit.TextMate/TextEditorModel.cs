@@ -16,7 +16,7 @@ namespace AvaloniaEdit.TextMate
         {
             _editor = editor;
             _editor.DocumentChanged += EditorOnDocumentChanged;
-            
+
             EditorOnDocumentChanged(editor, EventArgs.Empty);
         }
 
@@ -99,14 +99,22 @@ namespace AvaloniaEdit.TextMate
 
         public override string GetLineText(int lineIndex)
         {
-            return Dispatcher.UIThread.InvokeAsync(() =>
+            if (Dispatcher.UIThread.CheckAccess())
             {
                 return _document.GetText(_document.Lines[lineIndex]);
-            }).GetAwaiter().GetResult();
+            }
+
+            return Dispatcher.UIThread.InvokeAsync(() => { return _document.GetText(_document.Lines[lineIndex]); })
+                .GetAwaiter().GetResult();
         }
 
         public override int GetLineLength(int lineIndex)
         {
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                return _document.Lines[lineIndex].Length;
+            }
+            
             return Dispatcher.UIThread.InvokeAsync(() =>
             {
                 return _document.Lines[lineIndex].Length;
