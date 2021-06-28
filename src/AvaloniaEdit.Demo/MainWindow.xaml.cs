@@ -45,9 +45,9 @@ namespace AvaloniaEdit.Demo
             return null;
         }
 
-        public StreamReader GetInputStream(string scopeName)
+        public Stream GetInputStream(string scopeName)
         {
-            return new StreamReader(GetFilePath(scopeName));
+            return File.OpenRead(GetFilePath(scopeName));
         }
 
         public IRawTheme GetTheme()
