@@ -43,14 +43,6 @@ namespace AvaloniaEdit.TextMate
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            var lineModel = _model.GetLines().Get(line.LineNumber - 1);
-
-            if (lineModel.IsInvalid)
-            {
-                // manual token generation...
-                _model.ForceTokenization(line.LineNumber - 1);
-            }
-
             var tokens = _model.GetLineTokens(line.LineNumber - 1);
 
             if (tokens is { })
