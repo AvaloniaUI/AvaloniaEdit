@@ -130,12 +130,19 @@ namespace AvaloniaEdit.TextMate
         {
             Dispatcher.UIThread.Post(() =>
             {
-                foreach (var range in e.ranges)
+                try
                 {
-                    var startLine = _editor.Document.GetLineByNumber(range.fromLineNumber);
-                    var endLine = _editor.Document.GetLineByNumber(range.toLineNumber);
+                    foreach (var range in e.ranges)
+                    {
+                        var startLine = _editor.Document.GetLineByNumber(range.fromLineNumber);
+                        var endLine = _editor.Document.GetLineByNumber(range.toLineNumber);
 
-                    _editor.TextArea.TextView.Redraw(startLine.Offset, endLine.EndOffset - startLine.Offset);
+                        _editor.TextArea.TextView.Redraw(startLine.Offset, endLine.EndOffset - startLine.Offset);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _editor.TextArea.TextView.Redraw();
                 }
             });
         }
