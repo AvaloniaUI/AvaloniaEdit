@@ -23,7 +23,7 @@ namespace AvaloniaEdit.TextMate
         public void SetTheme(Theme theme)
         {
             _theme = theme;
-            
+
             _brushes.Clear();
 
             var map = _theme.GetColorMap();
@@ -31,7 +31,7 @@ namespace AvaloniaEdit.TextMate
             foreach (var color in map)
             {
                 var id = _theme.GetColorId(color);
-                
+
                 _brushes[id] = SolidColorBrush.Parse(color);
             }
         }
@@ -43,6 +43,14 @@ namespace AvaloniaEdit.TextMate
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
+            var lineModel = _model.GetLines().Get(line.LineNumber - 1);
+
+            if (lineModel.IsInvalid)
+            {
+                // manual token generation...
+                _model.ForceTokenization(line.LineNumber - 1);
+            }
+
             var tokens = _model.GetLineTokens(line.LineNumber - 1);
 
             if (tokens is { })
