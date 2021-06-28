@@ -12,15 +12,28 @@ namespace AvaloniaEdit.TextMate
     {
         private Theme _theme;
         private readonly TMModel _model;
+        private Dictionary<int, IBrush> _brushes;
 
         public TextMateColoringTransformer(TMModel model)
         {
+            _brushes = new Dictionary<int, IBrush>();
             _model = model;
         }
 
         public void SetTheme(Theme theme)
         {
             _theme = theme;
+            
+            _brushes.Clear();
+
+            var map = _theme.GetColorMap();
+
+            foreach (var color in map)
+            {
+                var id = _theme.GetColorId(color);
+                
+                _brushes[id] = SolidColorBrush.Parse(color);
+            }
         }
 
         public void SetGrammar(IGrammar grammar)
@@ -42,7 +55,7 @@ namespace AvaloniaEdit.TextMate
                     var startIndex = token.StartIndex;
                     var endIndex = nextToken?.StartIndex ?? line.Length;
 
-                    if (startIndex == endIndex)
+                    if (startIndex == endIndex || token.type == string.Empty)
                     {
                         continue;
                     }
@@ -51,11 +64,9 @@ namespace AvaloniaEdit.TextMate
 
                     foreach (var themeRule in themeRules)
                     {
-                        var foreground = _theme.GetColor(themeRule.foreground);
-
-                        if (foreground != null)
+                        if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
                         {
-                            SetTextStyle(line, startIndex, endIndex - startIndex, SolidColorBrush.Parse(foreground));
+                            SetTextStyle(line, startIndex, endIndex - startIndex, _brushes[themeRule.foreground]);
                         }
                     }
                 }
