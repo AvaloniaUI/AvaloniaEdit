@@ -51,10 +51,14 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
-            var grammarFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/grammars/csharp.tmLanguage.json").FullName;
-            var themeFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/themes/dark_vs.json").FullName;
-            
-            IRegistryOptions options = new DemoRegistryOptions(grammarFile, themeFile);
+            var csharpGrammarFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/grammars/csharp.tmLanguage.json").FullName;
+            var darkPlusThemeFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/themes/dark_plus.json").FullName;
+            var darkVsThemeFile = new DirectoryInfo("../../../../../TextMateSharp/src/TextMateSharp.Demo/testdata/themes/dark_vs.json").FullName;
+
+            IRegistryOptions options = new CSharpDemoRegistryOptions(
+                csharpGrammarFile,
+                darkPlusThemeFile,
+                darkVsThemeFile);
 
             var registry = new Registry(options);
 
