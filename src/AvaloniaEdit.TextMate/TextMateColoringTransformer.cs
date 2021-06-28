@@ -80,7 +80,7 @@ namespace AvaloniaEdit.TextMate
 
                 for (int i = startLine; i < endLine; i++)
                 {
-                    AddLine(i + 1);
+                    AddLine(i);
                 }
 
                 if (startLine == endLine)
