@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Avalonia.Media;
+using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using TextMateSharp.Grammars;
@@ -8,16 +10,21 @@ using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.TextMate
 {
-    public class TextMateColoringTransformer : GenericLineTransformer
+    public class TextMateColoringTransformer : GenericLineTransformer, IModelTokensChangedListener
     {
         private Theme _theme;
         private readonly TMModel _model;
         private Dictionary<int, IBrush> _brushes;
+        private TextSegmentCollection<TextTransformation> _transformations;
+        private TextDocument _document;
 
-        public TextMateColoringTransformer(TMModel model)
+        public TextMateColoringTransformer(TMModel model, TextDocument document)
         {
             _brushes = new Dictionary<int, IBrush>();
             _model = model;
+
+            _document = document;
+            _transformations = new TextSegmentCollection<TextTransformation>(document);
         }
 
         public void SetTheme(Theme theme)
@@ -43,34 +50,83 @@ namespace AvaloniaEdit.TextMate
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            var tokens = _model.GetLineTokens(line.LineNumber - 1);
+            var transformsInLine = _transformations.FindOverlappingSegments(line);
 
-            if (tokens is { })
+            foreach (var transform in transformsInLine)
             {
-                for (int i = 0; i < tokens.Count; i++)
+                transform.Transform(this, line);
+            }
+        }
+
+
+        private void RemoveLineTransformations(int lineNumber)
+        {
+            var line = _document.GetLineByNumber(lineNumber);
+            var transformsInLine = _transformations.FindOverlappingSegments(line);
+
+            foreach (var transform in transformsInLine)
+            {
+                _transformations.Remove(transform);
+            }
+        }
+
+        private void ProcessTokens(int lineNumber, List<TMToken> tokens)
+        {
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                var token = tokens[i];
+                var nextToken = (i + 1) < tokens.Count ? tokens[i + 1] : null;
+
+                var startIndex = token.StartIndex;
+                var endIndex = nextToken?.StartIndex ?? _model.GetLines().GetLineLength(lineNumber - 1);
+
+                if (startIndex == endIndex || token.type == string.Empty)
                 {
-                    var token = tokens[i];
-                    var nextToken = (i + 1) < tokens.Count ? tokens[i + 1] : null;
+                    continue;
+                }
 
-                    var startIndex = token.StartIndex;
-                    var endIndex = nextToken?.StartIndex ?? line.Length;
+                var themeRules = _theme.Match(token.type);
 
-                    if (startIndex == endIndex || token.type == string.Empty)
+                var lineOffset = _document.GetLineByNumber(lineNumber).Offset;
+
+                foreach (var themeRule in themeRules)
+                {
+                    if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
                     {
-                        continue;
-                    }
-
-                    var themeRules = _theme.Match(token.type);
-
-                    foreach (var themeRule in themeRules)
-                    {
-                        if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
-                        {
-                            SetTextStyle(line, startIndex, endIndex - startIndex, _brushes[themeRule.foreground]);
-                        }
+                        _transformations.Add(new ForegroundTextTransformation(_brushes, lineOffset + startIndex,
+                            lineOffset + endIndex, themeRule.foreground));
                     }
                 }
             }
+        }
+
+        private void ProcessRange(Range range)
+        {
+            Console.WriteLine(range.fromLineNumber);
+            
+            for (int i = range.fromLineNumber; i < range.toLineNumber; i++)
+            {
+                var tokens = _model.GetLineTokens(i - 1);
+
+                if (tokens is { })
+                {
+                    RemoveLineTransformations(i);
+                    ProcessTokens(i, tokens);
+                }
+            }
+        }
+
+        public void ModelTokensChanged(ModelTokensChangedEvent e)
+        {
+            var ranges = e.ranges.ToArray();
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                foreach (var range in ranges)
+                {
+                    ProcessRange(range);
+                }
+            });
         }
     }
 }

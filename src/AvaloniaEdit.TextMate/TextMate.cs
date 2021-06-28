@@ -38,7 +38,9 @@ namespace AvaloniaEdit.TextMate
                 var editorModel = new TextEditorModel(editor);
                 var model = new TMModel(editorModel);
                 
-                transformer = new TextMateColoringTransformer(model);
+                transformer = new TextMateColoringTransformer(model, editor.Document);
+                
+                model.AddModelTokensChangedListener(transformer);
                 model.AddModelTokensChangedListener(editorModel);
                 
                 editor.TextArea.TextView.LineTransformers.Add(transformer);
