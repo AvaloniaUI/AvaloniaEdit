@@ -18,9 +18,9 @@ namespace AvaloniaEdit.TextMate
             {
                 var editorModel = new TextEditorModel(editor, editor.Document);
                 var model = new TMModel(editorModel);
-
-
-                editor.GetOrCreateTransformer().SetModel(model);
+                
+                editor.GetOrCreateTransformer().SetModel(editor.Document, model);
+                model.AddModelTokensChangedListener(editor.GetOrCreateTransformer());
                 model.AddModelTokensChangedListener(editorModel);
             }
             
