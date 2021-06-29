@@ -18,6 +18,8 @@ namespace AvaloniaEdit.TextMate
             var transformer = editor.GetOrCreateTransformer();
             
             transformer.SetGrammar(grammar);
+
+            editor.TextArea.TextView.Redraw();
         }
 
         public static void InstallTheme(this TextEditor editor, Theme theme)

@@ -14,6 +14,7 @@
             <Button Content="Copy" />
             <Button Name="addControlBtn" Content="Add Button" />
             <Button Name="clearControlBtn" Content="Clear Buttons" />
+            <ComboBox Name="syntaxModeCombo" />
             <Button Name="changeThemeBtn" Content="Change theme"/>
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"

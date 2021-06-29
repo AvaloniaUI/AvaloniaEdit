@@ -23,7 +23,25 @@ namespace AvaloniaEdit.TextMate
             InitializeGrammars();
         }
 
-        public GrammarDefinition FindGrammarByExtension(string extension)
+        public List<Language> GetAvailableLanguages()
+        {
+            List<Language> result = new List<Language>();
+
+            foreach (GrammarDefinition definition in _availableGrammars.Values)
+            {
+                foreach (Language language in definition.Contributes.Languages)
+                {
+                    if (language.Aliases == null || language.Aliases.Count == 0)
+                        continue;
+
+                    result.Add(language);
+                }
+            }
+
+            return result;
+        }
+
+        public Language GetLanguageByExtension(string extension)
         {
             foreach (GrammarDefinition definition in _availableGrammars.Values)
             {
@@ -34,9 +52,46 @@ namespace AvaloniaEdit.TextMate
                         if (extension.Equals(languageExtension,
                             StringComparison.OrdinalIgnoreCase))
                         {
-                            return definition;
+                            return language;
                         }
                     }
+                }
+            }
+
+            return null;
+        }
+
+        public string GetScopeByExtension(string extension)
+        {
+            foreach (GrammarDefinition definition in _availableGrammars.Values)
+            {
+                foreach (var language in definition.Contributes.Languages)
+                {
+                    foreach (var languageExtension in language.Extensions)
+                    {
+                        if (extension.Equals(languageExtension,
+                            StringComparison.OrdinalIgnoreCase))
+                        {
+                            foreach (var grammar in definition.Contributes.Grammars)
+                            {
+                                return grammar.ScopeName;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public string GetScopeByLanguageId(string languageId)
+        {
+            foreach (GrammarDefinition definition in _availableGrammars.Values)
+            {
+                foreach (var grammar in definition.Contributes.Grammars)
+                {
+                    if (languageId.Equals(grammar.Language))
+                        return grammar.ScopeName;
                 }
             }
 
@@ -64,9 +119,9 @@ namespace AvaloniaEdit.TextMate
                 case ThemeName.Abbys:
                     return "abyss-color-theme.json";
                 case ThemeName.Dark:
-                    return "dark_plus.json";
-                case ThemeName.DarkPlus:
                     return "dark_vs.json";
+                case ThemeName.DarkPlus:
+                    return "dark_plus.json";
                 case ThemeName.DimmedMonokai:
                     return "dimmed-monokai-color-theme.json";
                 case ThemeName.KimbieDark:

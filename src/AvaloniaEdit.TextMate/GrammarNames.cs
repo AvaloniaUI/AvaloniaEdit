@@ -19,7 +19,6 @@
             "HLSL",
             "HTML",
             "Ini",
-            "Jake",
             "Java",
             "Javascript",
             "Json",

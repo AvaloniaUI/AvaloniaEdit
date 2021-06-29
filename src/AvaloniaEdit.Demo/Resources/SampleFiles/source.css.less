@@ -1,0 +1,18 @@
+// library.less
+#library() {
+  .mixin() {
+    prop: foo;
+  }
+}
+
+// customize.less
+@import "library";
+#library() {
+  .mixin() {
+    prop: bar;
+  }
+}
+
+.box {
+  my-value: #library.mixin[prop];
+}

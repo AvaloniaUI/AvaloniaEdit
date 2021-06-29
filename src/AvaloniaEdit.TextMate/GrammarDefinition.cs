@@ -28,6 +28,14 @@ namespace AvaloniaEdit.TextMate
         public List<string> Aliases { get; set; }
         [JsonProperty("configuration")]
         public string Configuration { get; set; }
+
+        public override string ToString()
+        {
+            if (Aliases != null && Aliases.Count > 0)
+                return string.Format("{0} ({1})", Aliases[0], Id);
+
+            return Id;
+        }
     }
 
     public class Grammar
