@@ -11,6 +11,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using AvaloniaEdit.CodeCompletion;
+using AvaloniaEdit.Demo.Resources;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
@@ -31,19 +32,21 @@ namespace AvaloniaEdit.Demo
         private Button _addControlBtn;
         private Button _clearControlBtn;
         private Button _changeThemeBtn;
+        private ComboBox _syntaxModeCombo;
         private ElementGenerator _generator = new ElementGenerator();
-        private int _currentTheme = (int)ThemeName.Monokai;
+        private int _currentTheme = (int)ThemeName.DarkPlus;
         private Registry _registry;
         private RegistryOptions _registryOptions;
 
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
 
             _textEditor = this.FindControl<TextEditor>("Editor");
             _textEditor.Background = Brushes.Transparent;
             _textEditor.ShowLineNumbers = true;
-            //_textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
+
+            _textEditor.TextArea.Background = this.Background;
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
@@ -63,9 +66,20 @@ namespace AvaloniaEdit.Demo
 
             _registry = new Registry(_registryOptions);
 
+            Language csharpLanguage = _registryOptions.GetLanguageByExtension(".cs");
+
+            _syntaxModeCombo = this.FindControl<ComboBox>("syntaxModeCombo");
+            _syntaxModeCombo.Items = _registryOptions.GetAvailableLanguages();
+            _syntaxModeCombo.SelectedItem = csharpLanguage;
+            _syntaxModeCombo.SelectionChanged += _syntaxModeCombo_SelectionChanged;
+
+            string scopeName = _registryOptions.GetScopeByLanguageId(csharpLanguage.Id);
+
+            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
+
             _textEditor.InstallTextMate(
                 _registry.GetTheme(),
-                _registry.LoadGrammar("source.cs"));
+                _registry.LoadGrammar(scopeName));
 
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
             {
@@ -73,6 +87,16 @@ namespace AvaloniaEdit.Demo
                 if (i.Delta.Y > 0) _textEditor.FontSize++;
                 else _textEditor.FontSize = _textEditor.FontSize > 1 ? _textEditor.FontSize - 1 : 1;
             }, RoutingStrategies.Bubble, true);
+        }
+
+        private void _syntaxModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Language language = (Language)_syntaxModeCombo.SelectedItem;
+
+            string scope = _registryOptions.GetScopeByLanguageId(language.Id);
+
+            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scope));
+            _textEditor.InstallGrammar(_registry.LoadGrammar(scope));
         }
 
         void _changeThemeBtn_Click(object sender, RoutedEventArgs e)

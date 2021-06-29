@@ -8,28 +8,15 @@ namespace AvaloniaEdit.TextMate
     class TextEditorModel : AbstractLineList, IModelTokensChangedListener
     {
         private object _lock = new object();
-        private TextEditor _editor;
-        private TextDocument _document;
+        private readonly TextDocument _document;
+        private readonly TextEditor _editor;
         private int _lineCount;
 
-        public TextEditorModel(TextEditor editor)
+        public TextEditorModel(TextEditor editor, TextDocument document)
         {
             _editor = editor;
-            _editor.DocumentChanged += EditorOnDocumentChanged;
-
-            EditorOnDocumentChanged(editor, EventArgs.Empty);
-        }
-
-        private void EditorOnDocumentChanged(object? sender, EventArgs e)
-        {
-            if (_document is { })
-            {
-                _document.Changing -= DocumentOnChanging;
-                _document.Changed -= DocumentOnChanged;
-                _document.LineCountChanged -= DocumentOnLineCountChanged;
-            }
+            _document = document;
             
-            _document = _editor.Document;
             _lineCount = _document.LineCount;
             
             _document.Changing +=  DocumentOnChanging;
@@ -39,9 +26,9 @@ namespace AvaloniaEdit.TextMate
             for (int i = 0; i < _document.LineCount; i++)
             {
                 AddLine(i);
-            }
+            }   
         }
-
+        
         private void DocumentOnLineCountChanged(object? sender, EventArgs e)
         {
             lock (_lock)
@@ -134,8 +121,8 @@ namespace AvaloniaEdit.TextMate
                 {
                     foreach (var range in e.ranges)
                     {
-                        var startLine = _editor.Document.GetLineByNumber(range.fromLineNumber);
-                        var endLine = _editor.Document.GetLineByNumber(range.toLineNumber);
+                        var startLine = _document.GetLineByNumber(range.fromLineNumber);
+                        var endLine = _document.GetLineByNumber(range.toLineNumber);
 
                         _editor.TextArea.TextView.Redraw(startLine.Offset, endLine.EndOffset - startLine.Offset);
                     }

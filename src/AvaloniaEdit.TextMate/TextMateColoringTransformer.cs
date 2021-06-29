@@ -13,18 +13,26 @@ namespace AvaloniaEdit.TextMate
     public class TextMateColoringTransformer : GenericLineTransformer, IModelTokensChangedListener
     {
         private Theme _theme;
-        private readonly TMModel _model;
+        private IGrammar _grammar;
+        private TMModel _model;
+
         private Dictionary<int, IBrush> _brushes;
         private TextSegmentCollection<TextTransformation> _transformations;
         private TextDocument _document;
 
-        public TextMateColoringTransformer(TMModel model, TextDocument document)
+        public TextMateColoringTransformer()
         {
             _brushes = new Dictionary<int, IBrush>();
+        }
+
+        public void SetModel(TMModel model)
+        {
             _model = model;
 
-            _document = document;
-            _transformations = new TextSegmentCollection<TextTransformation>(document);
+            if (_grammar != null)
+            {
+                _model.SetGrammar(_grammar);
+            }
         }
 
         public void SetTheme(Theme theme)
@@ -45,73 +53,45 @@ namespace AvaloniaEdit.TextMate
 
         public void SetGrammar(IGrammar grammar)
         {
-            _model.SetGrammar(grammar);
+            _grammar = grammar;
+
+            if (_model != null)
+            {
+                _model.SetGrammar(grammar);
+            }
         }
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            var transformsInLine = _transformations.FindOverlappingSegments(line);
-
-            foreach (var transform in transformsInLine)
+            if (_model is { })
             {
-                transform.Transform(this, line);
-            }
-        }
-
-
-        private void RemoveLineTransformations(int lineNumber)
-        {
-            var line = _document.GetLineByNumber(lineNumber);
-            var transformsInLine = _transformations.FindOverlappingSegments(line);
-
-            foreach (var transform in transformsInLine)
-            {
-                _transformations.Remove(transform);
-            }
-        }
-
-        private void ProcessTokens(int lineNumber, List<TMToken> tokens)
-        {
-            for (int i = 0; i < tokens.Count; i++)
-            {
-                var token = tokens[i];
-                var nextToken = (i + 1) < tokens.Count ? tokens[i + 1] : null;
-
-                var startIndex = token.StartIndex;
-                var endIndex = nextToken?.StartIndex ?? _model.GetLines().GetLineLength(lineNumber - 1);
-
-                if (startIndex == endIndex || token.type == string.Empty)
-                {
-                    continue;
-                }
-
-                var themeRules = _theme.Match(token.type);
-
-                var lineOffset = _document.GetLineByNumber(lineNumber).Offset;
-
-                foreach (var themeRule in themeRules)
-                {
-                    if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
-                    {
-                        _transformations.Add(new ForegroundTextTransformation(_brushes, lineOffset + startIndex,
-                            lineOffset + endIndex, themeRule.foreground));
-                    }
-                }
-            }
-        }
-
-        private void ProcessRange(Range range)
-        {
-            Console.WriteLine(range.fromLineNumber);
-            
-            for (int i = range.fromLineNumber; i < range.toLineNumber; i++)
-            {
-                var tokens = _model.GetLineTokens(i - 1);
+                var tokens = _model.GetLineTokens(line.LineNumber - 1);
 
                 if (tokens is { })
                 {
-                    RemoveLineTransformations(i);
-                    ProcessTokens(i, tokens);
+                    for (int i = 0; i < tokens.Count; i++)
+                    {
+                        var token = tokens[i];
+                        var nextToken = (i + 1) < tokens.Count ? tokens[i + 1] : null;
+
+                        var startIndex = token.StartIndex;
+                        var endIndex = nextToken?.StartIndex ?? line.Length;
+
+                        if (startIndex == endIndex || token.type == string.Empty)
+                        {
+                            continue;
+                        }
+
+                        var themeRules = _theme.Match(token.type);
+
+                        foreach (var themeRule in themeRules)
+                        {
+                            if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
+                            {
+                                SetTextStyle(line, startIndex, endIndex - startIndex, _brushes[themeRule.foreground]);
+                            }
+                        }
+                    }
                 }
             }
         }

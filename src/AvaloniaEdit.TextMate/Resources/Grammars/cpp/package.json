@@ -71,13 +71,13 @@
       },
       {
         "language": "cpp",
-        "scopeName": "source.cpp.embedded.macro",
-        "path": "./syntaxes/cpp.embedded.macro.tmLanguage.json"
+        "scopeName": "source.cpp",
+        "path": "./syntaxes/cpp.tmLanguage.json"
       },
       {
         "language": "cpp",
-        "scopeName": "source.cpp",
-        "path": "./syntaxes/cpp.tmLanguage.json"
+        "scopeName": "source.cpp.embedded.macro",
+        "path": "./syntaxes/cpp.embedded.macro.tmLanguage.json"
       },
       {
         "scopeName": "source.c.platform",

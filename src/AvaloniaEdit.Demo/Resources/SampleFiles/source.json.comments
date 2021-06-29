@@ -1,0 +1,7 @@
+// This is a comment
+/* This is a comment */
+{
+   "name": "Product 1",
+   "cost": "10USD",
+   "count": 100
+}

@@ -21,7 +21,8 @@
         ],
         "extensions": [
           ".mak",
-          ".mk"
+          ".mk",
+          ".am"
         ],
         "filenames": [
           "Makefile",
