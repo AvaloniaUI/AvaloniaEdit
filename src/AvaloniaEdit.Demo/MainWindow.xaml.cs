@@ -46,6 +46,7 @@ namespace AvaloniaEdit.Demo
             _textEditor.Background = Brushes.Transparent;
             _textEditor.ShowLineNumbers = true;
 
+            _textEditor.TextArea.Background = this.Background;
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
