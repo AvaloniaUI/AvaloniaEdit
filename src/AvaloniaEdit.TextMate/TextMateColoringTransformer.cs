@@ -11,13 +11,24 @@ namespace AvaloniaEdit.TextMate
     public class TextMateColoringTransformer : GenericLineTransformer
     {
         private Theme _theme;
-        private readonly TMModel _model;
+        private IGrammar _grammar;
+        private TMModel _model;
+
         private Dictionary<int, IBrush> _brushes;
 
-        public TextMateColoringTransformer(TMModel model)
+        public TextMateColoringTransformer()
         {
             _brushes = new Dictionary<int, IBrush>();
+        }
+
+        public void SetModel(TMModel model)
+        {
             _model = model;
+
+            if (_grammar != null)
+            {
+                _model.SetGrammar(_grammar);
+            }
         }
 
         public void SetTheme(Theme theme)
@@ -38,35 +49,43 @@ namespace AvaloniaEdit.TextMate
 
         public void SetGrammar(IGrammar grammar)
         {
-            _model.SetGrammar(grammar);
+            _grammar = grammar;
+
+            if (_model != null)
+            {
+                _model.SetGrammar(grammar);
+            }
         }
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            var tokens = _model.GetLineTokens(line.LineNumber - 1);
-
-            if (tokens is { })
+            if (_model is { })
             {
-                for (int i = 0; i < tokens.Count; i++)
+                var tokens = _model.GetLineTokens(line.LineNumber - 1);
+
+                if (tokens is { })
                 {
-                    var token = tokens[i];
-                    var nextToken = (i + 1) < tokens.Count ? tokens[i + 1] : null;
-
-                    var startIndex = token.StartIndex;
-                    var endIndex = nextToken?.StartIndex ?? line.Length;
-
-                    if (startIndex == endIndex || token.type == string.Empty)
+                    for (int i = 0; i < tokens.Count; i++)
                     {
-                        continue;
-                    }
+                        var token = tokens[i];
+                        var nextToken = (i + 1) < tokens.Count ? tokens[i + 1] : null;
 
-                    var themeRules = _theme.Match(token.type);
+                        var startIndex = token.StartIndex;
+                        var endIndex = nextToken?.StartIndex ?? line.Length;
 
-                    foreach (var themeRule in themeRules)
-                    {
-                        if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
+                        if (startIndex == endIndex || token.type == string.Empty)
                         {
-                            SetTextStyle(line, startIndex, endIndex - startIndex, _brushes[themeRule.foreground]);
+                            continue;
+                        }
+
+                        var themeRules = _theme.Match(token.type);
+
+                        foreach (var themeRule in themeRules)
+                        {
+                            if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
+                            {
+                                SetTextStyle(line, startIndex, endIndex - startIndex, _brushes[themeRule.foreground]);
+                            }
                         }
                     }
                 }
