@@ -25,6 +25,7 @@
             "Json",
             "Julia",
             "Less",
+            "Log",
             "Lua",
             "Make",
             "MarkdownBasics",
