@@ -1,34 +1,33 @@
 using System;
+using System.Collections.Generic;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
 {
-    
     public abstract class TextTransformation : TextSegment
     {
-        public TextTransformation(object tag, int startOffset, int endOffset)
+        public TextTransformation(int startOffset, int endOffset)
         {
-            Tag = tag;
             StartOffset = startOffset;
             EndOffset = endOffset;
         }
 
         public abstract void Transform(GenericLineTransformer transformer, DocumentLine line);
-
-        public object Tag { get; }
     }
 
     public class ForegroundTextTransformation : TextTransformation
     {
-        public ForegroundTextTransformation(object tag, int startOffset, int endOffset, IBrush foreground) : base(tag,
-            startOffset, endOffset)
+        private readonly Dictionary<int, IBrush> _brushCache;
+        
+        public ForegroundTextTransformation(Dictionary<int, IBrush> brushCache, int startOffset, int endOffset, int brushId) : base(startOffset, endOffset)
         {
-            Foreground = foreground;
+            _brushCache = brushCache;
+            Foreground = brushId;
         }
 
-        public IBrush Foreground { get; set; }
+        public int Foreground { get; set; }
 
         public override void Transform(GenericLineTransformer transformer, DocumentLine line)
         {
@@ -50,7 +49,7 @@ namespace AvaloniaEdit.TextMate
                 endOffset = EndOffset;
             }
 
-            transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset, Foreground);
+            transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset, _brushCache[Foreground]);
         }
     }
 }
