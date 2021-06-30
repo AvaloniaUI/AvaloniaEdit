@@ -36,6 +36,11 @@ namespace AvaloniaEdit.TextMate
                 return;
             }
 
+            if (!_brushCache.ContainsKey(Foreground))
+            {
+                return;
+            }
+
             var formattedOffset = 0;
             var endOffset = line.EndOffset;
 

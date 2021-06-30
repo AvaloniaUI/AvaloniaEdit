@@ -17,7 +17,7 @@ namespace AvaloniaEdit.TextMate
         private TMModel _model;
         private TextDocument _document;
 
-        private Dictionary<int, IBrush> _brushes;
+        private readonly Dictionary<int, IBrush> _brushes;
         private TextSegmentCollection<TextTransformation> _transformations;
 
         public TextMateColoringTransformer()
