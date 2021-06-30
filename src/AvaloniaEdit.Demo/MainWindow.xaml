@@ -18,7 +18,7 @@
             <Button Name="changeThemeBtn" Content="Change theme"/>
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
-                               FontFamily="Consolas,Menlo"
+                               FontFamily="Consolas,Menlo,Monospace"
                                Margin="30"
                                Foreground="#D4D4D4"
                                HorizontalScrollBarVisibility="Auto"
