@@ -2235,29 +2235,6 @@
     ],
     "languages": [
       {
-        "id": "git-commit",
-        "aliases": [
-          "Git Commit Message",
-          "git-commit"
-        ],
-        "filenames": [
-          "COMMIT_EDITMSG",
-          "MERGE_MSG"
-        ],
-        "configuration": "./languages/git-commit.language-configuration.json"
-      },
-      {
-        "id": "git-rebase",
-        "aliases": [
-          "Git Rebase Message",
-          "git-rebase"
-        ],
-        "filenames": [
-          "git-rebase-todo"
-        ],
-        "configuration": "./languages/git-rebase.language-configuration.json"
-      },
-      {
         "id": "diff",
         "aliases": [
           "Diff",
@@ -2284,16 +2261,6 @@
       }
     ],
     "grammars": [
-      {
-        "language": "git-commit",
-        "scopeName": "text.git-commit",
-        "path": "./syntaxes/git-commit.tmLanguage.json"
-      },
-      {
-        "language": "git-rebase",
-        "scopeName": "text.git-rebase",
-        "path": "./syntaxes/git-rebase.tmLanguage.json"
-      },
       {
         "language": "diff",
         "scopeName": "source.diff",
