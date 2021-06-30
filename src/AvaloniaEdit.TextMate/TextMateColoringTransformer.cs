@@ -92,21 +92,16 @@ namespace AvaloniaEdit.TextMate
                     continue;
                 }
 
-                var themeRules = new List<ThemeTrieElementRule>();
-
-                foreach (string scope in token.scopes)
-                {
-                    themeRules.AddRange(_theme.Match(scope));
-                }
-
                 var lineOffset = _document.GetLineByNumber(lineNumber).Offset;
 
-                foreach (var themeRule in themeRules)
+                foreach (var themeRule in _theme.Match(token.scopes))
                 {
                     if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
                     {
                         _transformations.Add(new ForegroundTextTransformation(_brushes, lineOffset + startIndex,
                             lineOffset + endIndex, themeRule.foreground));
+
+                        break;
                     }
                 }
             }
