@@ -87,12 +87,17 @@ namespace AvaloniaEdit.TextMate
                 var startIndex = token.StartIndex;
                 var endIndex = nextToken?.StartIndex ?? _model.GetLines().GetLineLength(lineNumber - 1);
 
-                if (startIndex == endIndex || token.type == string.Empty)
+                if (startIndex == endIndex || token.scopes == null || token.scopes.Length == 0)
                 {
                     continue;
                 }
 
-                var themeRules = _theme.Match(token.type);
+                var themeRules = new List<ThemeTrieElementRule>();
+
+                foreach (string scope in token.scopes)
+                {
+                    themeRules.AddRange(_theme.Match(scope));
+                }
 
                 var lineOffset = _document.GetLineByNumber(lineNumber).Offset;
 
