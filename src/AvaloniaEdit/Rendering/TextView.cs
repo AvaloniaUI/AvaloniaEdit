@@ -970,6 +970,10 @@ namespace AvaloniaEdit.Rendering
 
             TextLayer.SetVisualLines(_visibleVisualLines);
 
+            SetScrollData(availableSize,
+                          new Size(maxWidth, heightTreeHeight),
+                          _scrollOffset);
+
             // Size of control (scorll viewport) might be changed during ArrageOverride. We only need document size for now.
             _documentSize = new Size(maxWidth, heightTreeHeight);
 
