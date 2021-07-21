@@ -1215,7 +1215,8 @@ namespace AvaloniaEdit.Rendering
             }
 
             // Apply final view port and offset
-            SetScrollData(finalSize, _documentSize, new Vector(newScrollOffsetX, newScrollOffsetY));
+            if (SetScrollData(finalSize, _documentSize, new Vector(newScrollOffsetX, newScrollOffsetY)))
+                InvalidateMeasure(DispatcherPriority.Normal);
 
             if (_visibleVisualLines != null)
             {
