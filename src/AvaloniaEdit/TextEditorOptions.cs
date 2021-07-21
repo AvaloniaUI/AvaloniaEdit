@@ -325,7 +325,7 @@ namespace AvaloniaEdit
 
         /// <summary>
         /// Gets/Sets whether the user can scroll below the bottom of the document.
-        /// The default value is false; but it a good idea to set this property to true when using folding.
+        /// The default value is true; but it a good idea to set this property to true when using folding.
         /// </summary>
         [DefaultValue(true)]
         public virtual bool AllowScrollBelowDocument
