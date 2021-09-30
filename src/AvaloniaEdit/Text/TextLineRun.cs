@@ -172,12 +172,9 @@ namespace AvaloniaEdit.Text
                 FontSize = run.FontSize
             };
 
-
             run._formattedText = formattedText;
 
             var size = formattedText.Bounds.Size;
-            // slide height for underline
-            size = new Size(size.Width, size.Height + 1);
 
             run._formattedTextSize = size;
 
