@@ -240,11 +240,17 @@ namespace AvaloniaEdit.Text
                 drawingContext.DrawText(TextRun.Properties.ForegroundBrush,
                     new Point(x, y), _formattedText);
 
+                var glyphTypeface = TextRun.Properties.Typeface.GlyphTypeface;
+                
+                var scale =  TextRun.Properties.FontSize / glyphTypeface.DesignEmHeight;
+
+                var baseline = y + -glyphTypeface.Ascent * scale;
+                
                 if (TextRun.Properties.Underline)
                 {
-                    var pen = new Pen(TextRun.Properties.ForegroundBrush);
+                    var pen = new Pen(TextRun.Properties.ForegroundBrush, glyphTypeface.UnderlineThickness * scale);
 
-                    var posY = y + _formattedText.Bounds.Height;
+                    var posY = baseline + glyphTypeface.UnderlinePosition * scale;
 
                     drawingContext.DrawLine(pen,
                         new Point(x, posY),
@@ -253,9 +259,9 @@ namespace AvaloniaEdit.Text
 
                 if (TextRun.Properties.Strikethrough)
                 {
-                    var pen = new Pen(TextRun.Properties.ForegroundBrush);
+                    var pen = new Pen(TextRun.Properties.ForegroundBrush, glyphTypeface.StrikethroughThickness * scale);
 
-                    var posY = y + _formattedText.Bounds.Height / 2;
+                    var posY = baseline + glyphTypeface.StrikethroughPosition * scale;
 
                     drawingContext.DrawLine(pen,
                         new Point(x, posY),
