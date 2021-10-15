@@ -49,16 +49,17 @@ namespace AvaloniaEdit.Text
         {
             get
             {
-                if(IsEnd)
+                if (IsEnd)
                 {
                     return 0.0;
                 }
-                if(IsEmbedded && TextRun is TextEmbeddedObject embeddedObject)
+                if (IsEmbedded && TextRun is TextEmbeddedObject embeddedObject)
                 {
                     var box = embeddedObject.ComputeBoundingBox();
                     return box.Height;
                 }
-                return FontSize * HeightFactor;
+                // add 2pt for underline
+                return FontSize * HeightFactor + 2;
             }
         }
 
@@ -93,7 +94,8 @@ namespace AvaloniaEdit.Text
             if (textRun is TextEmbeddedObject embeddedObject)
             {
                 double width = embeddedObject.GetSize(double.PositiveInfinity).Width;
-                return new TextLineRun(textRun.Length, textRun) {
+                return new TextLineRun(textRun.Length, textRun)
+                {
                     IsEmbedded = true,
                     _glyphWidths = new double[] { width },
                     // Embedded objects must propagate their width to the container.
@@ -169,11 +171,11 @@ namespace AvaloniaEdit.Text
                 Typeface = new Typeface(tf.FontFamily, tf.Style, tf.Weight),
                 FontSize = run.FontSize
             };
-       
 
             run._formattedText = formattedText;
 
             var size = formattedText.Bounds.Size;
+
             run._formattedTextSize = size;
 
             run.Width = size.Width;
@@ -203,7 +205,7 @@ namespace AvaloniaEdit.Text
                     Typeface = new Typeface(tf.FontFamily, tf.Style, tf.Weight),
                     FontSize = FontSize
                 }.Bounds.Size;
-                
+
                 result[i] = size.Width;
             }
 
@@ -232,8 +234,36 @@ namespace AvaloniaEdit.Text
                     drawingContext.FillRectangle(TextRun.Properties.BackgroundBrush, bounds);
                 }
 
-                drawingContext.DrawText(TextRun.Properties.ForegroundBrush, 
+                drawingContext.DrawText(TextRun.Properties.ForegroundBrush,
                     new Point(x, y), _formattedText);
+
+                var glyphTypeface = TextRun.Properties.Typeface.GlyphTypeface;
+                
+                var scale =  TextRun.Properties.FontSize / glyphTypeface.DesignEmHeight;
+
+                var baseline = y + -glyphTypeface.Ascent * scale;
+                
+                if (TextRun.Properties.Underline)
+                {
+                    var pen = new Pen(TextRun.Properties.ForegroundBrush, glyphTypeface.UnderlineThickness * scale);
+
+                    var posY = baseline + glyphTypeface.UnderlinePosition * scale;
+
+                    drawingContext.DrawLine(pen,
+                        new Point(x, posY),
+                        new Point(x + _formattedTextSize.Width, posY));
+                }
+
+                if (TextRun.Properties.Strikethrough)
+                {
+                    var pen = new Pen(TextRun.Properties.ForegroundBrush, glyphTypeface.StrikethroughThickness * scale);
+
+                    var posY = baseline + glyphTypeface.StrikethroughPosition * scale;
+
+                    drawingContext.DrawLine(pen,
+                        new Point(x, posY),
+                        new Point(x + _formattedTextSize.Width, posY));
+                }
             }
         }
 
@@ -242,7 +272,7 @@ namespace AvaloniaEdit.Text
             if (IsEnd) return true;
 
             if (IsTab) return false;
-            
+
             var index = Length;
             if (index > 0 && IsSpace(StringRange[index - 1]))
             {
