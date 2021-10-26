@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <WarningsNotAsErrors>612,618</WarningsNotAsErrors>
-    <Version>0.10.4</Version>
+    <Version>0.10.9</Version>
   </PropertyGroup>
 
   <ItemGroup>
