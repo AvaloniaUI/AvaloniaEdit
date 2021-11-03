@@ -44,6 +44,7 @@ namespace AvaloniaEdit.Search
         private SearchResultBackgroundRenderer _renderer;
         private TextBox _searchTextBox;
         private TextEditor _textEditor { get; set; }
+        private Border _border;
 
         #region DependencyProperties
         /// <summary>
@@ -294,6 +295,7 @@ namespace AvaloniaEdit.Search
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
+            _border = e.NameScope.Find<Border>("PART_Border");
             _searchTextBox = e.NameScope.Find<TextBox>("PART_searchTextBox");
             _messageView = e.NameScope.Find<Popup>("PART_MessageView");
             _messageViewContent = e.NameScope.Find<ContentPresenter>("PART_MessageContent");
@@ -435,7 +437,7 @@ namespace AvaloniaEdit.Search
         {
             _textArea.Caret.Offset = result.StartOffset;
             _textArea.Selection = Selection.Create(_textArea, result.StartOffset, result.EndOffset);
-            _textArea.Caret.BringCaretToView();
+            _textArea.Caret.BringCaretToView(_border.Bounds.Height + _textArea.TextView.DefaultLineHeight);
             // show caret even if the editor does not have the Keyboard Focus
             _textArea.Caret.Show();
         }
