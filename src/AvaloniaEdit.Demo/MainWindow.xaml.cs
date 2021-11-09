@@ -89,6 +89,13 @@ namespace AvaloniaEdit.Demo
             }, RoutingStrategies.Bubble, true);
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            _textEditor.DisposeTextMate();
+        }
+
         private void _syntaxModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Language language = (Language)_syntaxModeCombo.SelectedItem;
