@@ -5,7 +5,7 @@ using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
 {
-    class TextEditorModel : AbstractLineList, IModelTokensChangedListener
+    class TextEditorModel : AbstractLineList
     {
         private object _lock = new object();
         private readonly TextDocument _document;
@@ -16,19 +16,39 @@ namespace AvaloniaEdit.TextMate
         {
             _editor = editor;
             _document = document;
-            
+
             _lineCount = _document.LineCount;
-            
-            _document.Changing +=  DocumentOnChanging;
+
+            for (int i = 0; i < _document.LineCount; i++)
+                AddLine(i);
+
+            _document.Changing += DocumentOnChanging;
             _document.Changed += DocumentOnChanged;
             _document.LineCountChanged += DocumentOnLineCountChanged;
-            
-            for (int i = 0; i < _document.LineCount; i++)
-            {
-                AddLine(i);
-            }   
+            _editor.TextArea.TextView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
         }
-        
+
+        public override void Dispose()
+        {
+            _document.Changing -= DocumentOnChanging;
+            _document.Changed -= DocumentOnChanged;
+            _document.LineCountChanged -= DocumentOnLineCountChanged;
+            _editor.TextArea.TextView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
+        }
+
+        private void TextView_ScrollOffsetChanged(object sender, EventArgs e)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (!_editor.TextArea.TextView.VisualLinesValid)
+                    return;
+
+                ForceTokenization(
+                    _editor.TextArea.TextView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
+                    _editor.TextArea.TextView.VisualLines[_editor.TextArea.TextView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
+            }, DispatcherPriority.Layout - 1);
+        }
+
         private void DocumentOnLineCountChanged(object? sender, EventArgs e)
         {
             lock (_lock)
@@ -73,7 +93,7 @@ namespace AvaloniaEdit.TextMate
             {
                 UpdateLine(startLine);
             }
-            
+
             InvalidateLine(startLine);
         }
 
@@ -106,32 +126,6 @@ namespace AvaloniaEdit.TextMate
             {
                 return _document.Lines[lineIndex].Length;
             }).GetAwaiter().GetResult();
-        }
-
-        public override void Dispose()
-        {
-            // todo implement dispose.
-        }
-
-        public void ModelTokensChanged(ModelTokensChangedEvent e)
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                try
-                {
-                    foreach (var range in e.ranges)
-                    {
-                        var startLine = _document.GetLineByNumber(range.fromLineNumber);
-                        var endLine = _document.GetLineByNumber(range.toLineNumber);
-
-                        _editor.TextArea.TextView.Redraw(startLine.Offset, endLine.EndOffset - startLine.Offset);
-                    }
-                }
-                catch (Exception e)
-                {
-                    _editor.TextArea.TextView.Redraw();
-                }
-            });
         }
     }
 }

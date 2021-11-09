@@ -16,6 +16,7 @@ namespace AvaloniaEdit.TextMate
         private IGrammar _grammar;
         private TMModel _model;
         private TextDocument _document;
+        private TextView _textView;
 
         private readonly Dictionary<int, IBrush> _brushes;
         private TextSegmentCollection<TextTransformation> _transformations;
@@ -25,10 +26,11 @@ namespace AvaloniaEdit.TextMate
             _brushes = new Dictionary<int, IBrush>();
         }
 
-        public void SetModel(TextDocument document, TMModel model)
+        public void SetModel(TextDocument document, TextView textView, TMModel model)
         {
             _document = document;
             _model = model;
+            _textView = textView;
 
             _transformations = new TextSegmentCollection<TextTransformation>(_document);
 
@@ -120,17 +122,15 @@ namespace AvaloniaEdit.TextMate
 
         private void ProcessRange(Range range)
         {
-            
-            
             for (int i = range.fromLineNumber; i <= range.toLineNumber; i++)
             {
                 var tokens = _model.GetLineTokens(i - 1);
 
-                if (tokens is { })
-                {
-                    RemoveLineTransformations(i);
-                    ProcessTokens(i, tokens);
-                }
+                if (tokens == null)
+                    continue;
+
+                RemoveLineTransformations(i);
+                ProcessTokens(i, tokens);
             }
         }
 
@@ -140,11 +140,33 @@ namespace AvaloniaEdit.TextMate
 
             Dispatcher.UIThread.Post(() =>
             {
+                if (_model.IsStopped)
+                    return;
+
                 foreach (var range in ranges)
                 {
+                    if (!IsValidRange(range, _document.LineCount))
+                        continue;
+
                     ProcessRange(range);
+
+                    var startLine = _document.GetLineByNumber(range.fromLineNumber);
+                    var endLine = _document.GetLineByNumber(range.toLineNumber);
+
+                    _textView.Redraw(startLine.Offset, endLine.EndOffset - startLine.Offset);
                 }
             });
+        }
+
+        static bool IsValidRange(Range range, int lineCount)
+        {
+            if (range.fromLineNumber < 0 || range.fromLineNumber > lineCount)
+                return false;
+
+            if (range.toLineNumber < 0 || range.toLineNumber > lineCount)
+                return false;
+
+            return true;
         }
     }
 }
