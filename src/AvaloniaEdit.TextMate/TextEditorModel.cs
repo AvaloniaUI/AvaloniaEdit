@@ -50,7 +50,7 @@ namespace AvaloniaEdit.TextMate
                 ForceTokenization(
                     _editor.TextArea.TextView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
                     _editor.TextArea.TextView.VisualLines[_editor.TextArea.TextView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
-            }, DispatcherPriority.Layout - 1);
+            }, DispatcherPriority.MinValue);
         }
 
         private void TextView_ScrollOffsetChanged(object sender, EventArgs e)
