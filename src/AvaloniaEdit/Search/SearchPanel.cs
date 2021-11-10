@@ -437,7 +437,12 @@ namespace AvaloniaEdit.Search
         {
             _textArea.Caret.Offset = result.StartOffset;
             _textArea.Selection = Selection.Create(_textArea, result.StartOffset, result.EndOffset);
-            _textArea.Caret.BringCaretToView(_border.Bounds.Height + _textArea.TextView.DefaultLineHeight);
+
+            double distanceToViewBorder = _border == null ?
+                Caret.MinimumDistanceToViewBorder :
+                _border.Bounds.Height + _textArea.TextView.DefaultLineHeight;
+            _textArea.Caret.BringCaretToView(distanceToViewBorder);
+
             // show caret even if the editor does not have the Keyboard Focus
             _textArea.Caret.Show();
         }
