@@ -54,15 +54,13 @@ namespace AvaloniaEdit.TextMate
 
             public void SetTheme(ThemeName themeName)
             {
-                //_textMateRegistry.SetTheme(_op);
-
                 IRawTheme rawTheme = _textMateRegistryOptions.LoadTheme(themeName);
 
                 _textMateRegistry.SetTheme(rawTheme);
 
                 GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
 
-                _editorModel?.TokenizeViewPort();
+                _editor.TextArea.TextView.Redraw();
             }
 
             public void Dispose()
