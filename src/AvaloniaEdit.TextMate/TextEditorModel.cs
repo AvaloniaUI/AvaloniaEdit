@@ -1,6 +1,9 @@
 using System;
+
 using Avalonia.Threading;
+
 using AvaloniaEdit.Document;
+
 using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
@@ -36,7 +39,7 @@ namespace AvaloniaEdit.TextMate
             _editor.TextArea.TextView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
         }
 
-        private void TextView_ScrollOffsetChanged(object sender, EventArgs e)
+        public void TokenizeViewPort()
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -48,6 +51,13 @@ namespace AvaloniaEdit.TextMate
                     _editor.TextArea.TextView.VisualLines[_editor.TextArea.TextView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
             }, DispatcherPriority.Layout - 1);
         }
+
+        private void TextView_ScrollOffsetChanged(object sender, EventArgs e)
+        {
+            TokenizeViewPort();
+        }
+
+
 
         private void DocumentOnLineCountChanged(object? sender, EventArgs e)
         {
@@ -63,8 +73,8 @@ namespace AvaloniaEdit.TextMate
             {
                 var startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
                 var endLine = _document.GetLineByOffset(e.Offset + e.RemovalLength).LineNumber - 1;
-                
-                for (int i = endLine; i > startLine; i--) 
+
+                for (int i = endLine; i > startLine; i--)
                 {
                     RemoveLine(i);
                 }
@@ -121,7 +131,7 @@ namespace AvaloniaEdit.TextMate
             {
                 return _document.Lines[lineIndex].Length;
             }
-            
+
             return Dispatcher.UIThread.InvokeAsync(() =>
             {
                 return _document.Lines[lineIndex].Length;

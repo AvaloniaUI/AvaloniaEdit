@@ -27,6 +27,7 @@ namespace AvaloniaEdit.Demo
     public class MainWindow : Window
     {
         private readonly TextEditor _textEditor;
+        private readonly TextMate.TextMate.Installation _textMateInstallation;
         private CompletionWindow _completionWindow;
         private OverloadInsightWindow _insightWindow;
         private Button _addControlBtn;
@@ -77,7 +78,7 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
 
-            _textEditor.InstallTextMate(
+            _textMateInstallation = _textEditor.InstallTextMate(
                 _registry.GetTheme(),
                 _registry.LoadGrammar(scopeName));
 
@@ -93,7 +94,7 @@ namespace AvaloniaEdit.Demo
         {
             base.OnClosed(e);
 
-            _textEditor.DisposeTextMate();
+            _textMateInstallation.Dispose();
         }
 
         private void _syntaxModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -103,7 +104,7 @@ namespace AvaloniaEdit.Demo
             string scope = _registryOptions.GetScopeByLanguageId(language.Id);
 
             _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scope));
-            _textEditor.InstallGrammar(_registry.LoadGrammar(scope));
+            _textMateInstallation.SetGrammar(_registry.LoadGrammar(scope));
         }
 
         void _changeThemeBtn_Click(object sender, RoutedEventArgs e)
@@ -111,7 +112,7 @@ namespace AvaloniaEdit.Demo
             _currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
 
             _registry.SetTheme(_registryOptions.LoadTheme((ThemeName)_currentTheme));
-            _textEditor.InstallTheme(_registry.GetTheme());
+            _textMateInstallation.SetTheme(_registry.GetTheme());
         }
 
         private void InitializeComponent()

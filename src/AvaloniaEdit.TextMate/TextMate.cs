@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 using TextMateSharp.Themes;
@@ -9,54 +9,14 @@ namespace AvaloniaEdit.TextMate
 {
     public static class TextMate
     {
-        public static void InstallTextMate(this TextEditor editor, Theme theme, IGrammar grammar)
+        public static Installation InstallTextMate(this TextEditor editor, Theme theme, IGrammar grammar = null)
         {
-            lock(_lock)
-            {
-                _installations.Add(editor, new TextMateInstallation(editor, theme, grammar));
-            }
+            return new Installation(editor, theme, grammar);
         }
 
-        public static void DisposeTextMate(this TextEditor editor)
+        public class Installation
         {
-            lock (_lock)
-            {
-                if (!_installations.ContainsKey(editor))
-                    return;
-
-                _installations[editor].Dispose();
-                _installations.Remove(editor);
-            }
-        }
-
-        public static void InstallGrammar(this TextEditor editor, IGrammar grammar)
-        {
-            lock (_lock)
-            {
-                if (!_installations.ContainsKey(editor))
-                    return;
-
-                _installations[editor].SetGrammar(grammar);
-            }
-        }
-
-        public static void InstallTheme(this TextEditor editor, Theme theme)
-        {
-            lock (_lock)
-            {
-                if (!_installations.ContainsKey(editor))
-                    return;
-
-                _installations[editor].SetTheme(theme);
-            }
-        }
-
-        static object _lock = new object();
-        static Dictionary<TextEditor, TextMateInstallation> _installations = new Dictionary<TextEditor, TextMateInstallation>();
-
-        class TextMateInstallation
-        {
-            internal TextMateInstallation(TextEditor editor, Theme theme, IGrammar grammar)
+            public Installation(TextEditor editor, Theme theme, IGrammar grammar)
             {
                 _editor = editor;
 
@@ -68,7 +28,7 @@ namespace AvaloniaEdit.TextMate
                 OnEditorOnDocumentChanged(editor, EventArgs.Empty);
             }
 
-            internal void SetGrammar(IGrammar grammar)
+            public void SetGrammar(IGrammar grammar)
             {
                 _grammar = grammar;
 
@@ -77,14 +37,14 @@ namespace AvaloniaEdit.TextMate
                 _editor.TextArea.TextView.Redraw();
             }
 
-            internal void SetTheme(Theme theme)
+            public void SetTheme(Theme theme)
             {
                 GetOrCreateTransformer().SetTheme(theme);
 
-                _editor.TextArea.TextView.Redraw();
+                _editorModel?.TokenizeViewPort();
             }
 
-            internal void Dispose()
+            public void Dispose()
             {
                 _editor.DocumentChanged -= OnEditorOnDocumentChanged;
 
@@ -95,8 +55,8 @@ namespace AvaloniaEdit.TextMate
             {
                 DisposeTMModel(_tmModel);
 
-                var editorModel = new TextEditorModel(_editor, _editor.Document);
-                _tmModel = new TMModel(editorModel);
+                _editorModel = new TextEditorModel(_editor, _editor.Document);
+                _tmModel = new TMModel(_editorModel);
                 _tmModel.SetGrammar(_grammar);
                 GetOrCreateTransformer().SetModel(_editor.Document, _editor.TextArea.TextView, _tmModel);
                 _tmModel.AddModelTokensChangedListener(GetOrCreateTransformer());
@@ -125,6 +85,7 @@ namespace AvaloniaEdit.TextMate
             }
 
             TextEditor _editor;
+            TextEditorModel _editorModel;
             IGrammar _grammar;
             TMModel _tmModel;
         }

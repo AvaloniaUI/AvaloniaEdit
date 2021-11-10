@@ -89,6 +89,9 @@ namespace AvaloniaEdit.TextMate
 
         public string GetScopeByLanguageId(string languageId)
         {
+            if (string.IsNullOrEmpty(languageId))
+                return null;
+
             foreach (GrammarDefinition definition in _availableGrammars.Values)
             {
                 foreach (var grammar in definition.Contributes.Grammars)
