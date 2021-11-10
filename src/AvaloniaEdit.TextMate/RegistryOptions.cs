@@ -130,9 +130,9 @@ namespace AvaloniaEdit.TextMate
                 case ThemeName.KimbieDark:
                     return "kimbie-dark-color-theme.json";
                 case ThemeName.Light:
-                    return "light_plus.json";
-                case ThemeName.LightPlus:
                     return "light_vs.json";
+                case ThemeName.LightPlus:
+                    return "light_plus.json";
                 case ThemeName.Monokai:
                     return "monokai-color-theme.json";
                 case ThemeName.QuietLight:
