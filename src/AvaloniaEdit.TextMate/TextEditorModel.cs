@@ -43,7 +43,8 @@ namespace AvaloniaEdit.TextMate
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (!_editor.TextArea.TextView.VisualLinesValid)
+                if (!_editor.TextArea.TextView.VisualLinesValid ||
+                    _editor.TextArea.TextView.VisualLines.Count == 0)
                     return;
 
                 ForceTokenization(
@@ -56,8 +57,6 @@ namespace AvaloniaEdit.TextMate
         {
             TokenizeViewPort();
         }
-
-
 
         private void DocumentOnLineCountChanged(object? sender, EventArgs e)
         {

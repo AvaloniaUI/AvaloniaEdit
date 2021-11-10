@@ -3,29 +3,44 @@ using System.Linq;
 
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
+using TextMateSharp.Registry;
 using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.TextMate
 {
     public static class TextMate
     {
-        public static Installation InstallTextMate(this TextEditor editor, Theme theme, IGrammar grammar = null)
+        public static Installation InstallTextMate(
+            this TextEditor editor,
+            ThemeName theme,
+            IGrammar grammar = null)
         {
             return new Installation(editor, theme, grammar);
         }
 
         public class Installation
         {
-            public Installation(TextEditor editor, Theme theme, IGrammar grammar)
+            public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
+
+            public Installation(TextEditor editor, ThemeName defaultTheme, IGrammar grammar)
             {
+                _textMateRegistryOptions = new RegistryOptions(defaultTheme);
+                _textMateRegistry = new Registry(_textMateRegistryOptions);
+
                 _editor = editor;
 
-                SetTheme(theme);
+                SetTheme(defaultTheme);
                 SetGrammar(grammar);
 
                 editor.DocumentChanged += OnEditorOnDocumentChanged;
 
                 OnEditorOnDocumentChanged(editor, EventArgs.Empty);
+            }
+
+            public void SetGrammarByLanguageId(string languageId)
+            {
+                string scopeName = _textMateRegistryOptions.GetScopeByLanguageId(languageId);
+                SetGrammar((scopeName == null) ? null : _textMateRegistry.LoadGrammar(scopeName));
             }
 
             public void SetGrammar(IGrammar grammar)
@@ -37,9 +52,15 @@ namespace AvaloniaEdit.TextMate
                 _editor.TextArea.TextView.Redraw();
             }
 
-            public void SetTheme(Theme theme)
+            public void SetTheme(ThemeName themeName)
             {
-                GetOrCreateTransformer().SetTheme(theme);
+                //_textMateRegistry.SetTheme(_op);
+
+                IRawTheme rawTheme = _textMateRegistryOptions.LoadTheme(themeName);
+
+                _textMateRegistry.SetTheme(rawTheme);
+
+                GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
 
                 _editorModel?.TokenizeViewPort();
             }
@@ -84,6 +105,8 @@ namespace AvaloniaEdit.TextMate
                 tmModel.Dispose();
             }
 
+            RegistryOptions _textMateRegistryOptions;
+            Registry _textMateRegistry;
             TextEditor _editor;
             TextEditorModel _editorModel;
             IGrammar _grammar;
