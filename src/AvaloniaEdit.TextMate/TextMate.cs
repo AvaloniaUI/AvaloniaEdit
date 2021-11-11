@@ -60,7 +60,7 @@ namespace AvaloniaEdit.TextMate
 
                 GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
 
-                _editor.TextArea.TextView.Redraw();
+                _tmModel?.InvalidateLine(0);
             }
 
             public void Dispose()

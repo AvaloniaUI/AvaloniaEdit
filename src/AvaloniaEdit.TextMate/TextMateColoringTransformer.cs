@@ -1,16 +1,22 @@
 using System;
 using System.Collections.Generic;
+
 using Avalonia.Media;
 using Avalonia.Threading;
+
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
+
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.TextMate
 {
-    public class TextMateColoringTransformer : GenericLineTransformer, IModelTokensChangedListener
+    public class TextMateColoringTransformer :
+        GenericLineTransformer,
+        IModelTokensChangedListener,
+        ForegroundTextTransformation.IColorMap
     {
         private Theme _theme;
         private IGrammar _grammar;
@@ -54,6 +60,8 @@ namespace AvaloniaEdit.TextMate
 
                 _brushes[id] = SolidColorBrush.Parse(color);
             }
+
+            _transformations?.Clear();
         }
 
         public void SetGrammar(IGrammar grammar)
@@ -65,6 +73,19 @@ namespace AvaloniaEdit.TextMate
             {
                 _model.SetGrammar(grammar);
             }
+        }
+
+        bool ForegroundTextTransformation.IColorMap.Contains(int foregroundColor)
+        {
+            if (_brushes == null)
+                return false;
+
+            return _brushes.ContainsKey(foregroundColor);
+        }
+
+        IBrush ForegroundTextTransformation.IColorMap.GetForegroundBrush(int foregroundColor)
+        {
+            return _brushes[foregroundColor];
         }
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
@@ -101,7 +122,7 @@ namespace AvaloniaEdit.TextMate
                 {
                     if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
                     {
-                        _transformations.Add(new ForegroundTextTransformation(_brushes, lineOffset + startIndex,
+                        _transformations.Add(new ForegroundTextTransformation(this, lineOffset + startIndex,
                             lineOffset + endIndex, themeRule.foreground));
 
                         break;

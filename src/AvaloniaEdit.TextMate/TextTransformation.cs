@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+
 using Avalonia.Media;
+
 using AvaloniaEdit.Document;
+
 using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
@@ -19,11 +22,15 @@ namespace AvaloniaEdit.TextMate
 
     public class ForegroundTextTransformation : TextTransformation
     {
-        private readonly Dictionary<int, IBrush> _brushCache;
-        
-        public ForegroundTextTransformation(Dictionary<int, IBrush> brushCache, int startOffset, int endOffset, int brushId) : base(startOffset, endOffset)
+        public interface IColorMap
         {
-            _brushCache = brushCache;
+            bool Contains(int foregroundColor);
+            IBrush GetForegroundBrush(int foregroundColor);
+        }
+
+        public ForegroundTextTransformation(IColorMap colorMap, int startOffset, int endOffset, int brushId) : base(startOffset, endOffset)
+        {
+            _colorMap = colorMap;
             Foreground = brushId;
         }
 
@@ -36,7 +43,7 @@ namespace AvaloniaEdit.TextMate
                 return;
             }
 
-            if (!_brushCache.ContainsKey(Foreground))
+            if (!_colorMap.Contains(Foreground))
             {
                 return;
             }
@@ -54,7 +61,9 @@ namespace AvaloniaEdit.TextMate
                 endOffset = EndOffset;
             }
 
-            transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset, _brushCache[Foreground]);
+            transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset, _colorMap.GetForegroundBrush(Foreground));
         }
+
+        IColorMap _colorMap;
     }
 }
