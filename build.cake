@@ -64,7 +64,7 @@ var isNuGetRelease = isTagged && isReleasable;
 // VERSION
 ///////////////////////////////////////////////////////////////////////////////
 
-var AvaloniaVersion = "0.10.0-preview1";
+var AvaloniaVersion = "0.10.10";
 var version = XmlPeek("./src/AvaloniaEdit/AvaloniaEdit.csproj", "//*[local-name()='Version']/text()");
 
 var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\bin\HostX86\x86\editbin.exe";
