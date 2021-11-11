@@ -74,9 +74,8 @@ namespace AvaloniaEdit.Demo
 
             string scopeName = _textMateInstallation.RegistryOptions.GetScopeByLanguageId(csharpLanguage.Id);
 
-            _textMateInstallation.SetGrammarByLanguageId(csharpLanguage.Id);
-
             _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
+            _textMateInstallation.SetGrammarByLanguageId(csharpLanguage.Id);
 
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
             {
