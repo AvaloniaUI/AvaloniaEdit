@@ -90,7 +90,7 @@ namespace AvaloniaEdit.TextMate
                 var startIndex = token.StartIndex;
                 var endIndex = nextToken?.StartIndex ?? _model.GetLines().GetLineLength(lineNumber - 1);
 
-                if (startIndex == endIndex || token.Scopes == null || token.Scopes.Count == 0)
+                if (endIndex <= startIndex || token.Scopes == null || token.Scopes.Count == 0)
                 {
                     continue;
                 }
