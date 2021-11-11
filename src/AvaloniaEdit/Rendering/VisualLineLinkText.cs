@@ -20,6 +20,8 @@ using System;
 using AvaloniaEdit.Text;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Controls;
+using System.Diagnostics;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -28,6 +30,10 @@ namespace AvaloniaEdit.Rendering
     /// </summary>
     public class VisualLineLinkText : VisualLineText
     {
+        static VisualLineLinkText()
+        {
+            OpenUriEvent.AddClassHandler<Window>(ExecuteOpenUriEventHandler);
+        }
 
         /// <summary>
         /// Routed event that should navigate to uri when the link is clicked.
@@ -116,40 +122,29 @@ namespace AvaloniaEdit.Rendering
                 RequireControlModifierForClick = RequireControlModifierForClick
             };
         }
+
+        static Action<OpenUriRoutedEventArgs> ExecuteOpenUriEventHandler(Window window)
+        {
+            return arg =>
+            {
+                var url = arg.Uri.ToString();
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception)
+                {
+                    // Process.Start can throw several errors (not all of them documented),
+                    // just ignore all of them.
+                }
+            };
+        }
     }
 
-    /// <summary>
-    /// Holds arguments for a <see cref="VisualLineLinkText.OpenUriEvent"/>.
-    /// </summary>
-    /// <example>
-    /// This sample shows how to open link using system's web brower
-    /// <code>
-    /// VisualLineLinkText.OpenUriEvent.AddClassHandler<Window>(args => {
-    ///     var link = args.Uri.ToString();
-    ///     try
-    ///     {
-    ///         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-    ///         {
-    ///             Process.Start(link);
-    ///         }
-    ///         else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-    ///         {
-    ///             Process.Start("open", link);
-    ///         }
-    ///         else
-    ///         {
-    ///             Process.Start("xdg-open", link);
-    ///         }
-    ///         }
-    ///         catch (Exception)
-    ///         {
-    ///             // Process.Start can throw several errors (not all of them documented),
-    ///             // just ignore all of them.
-    ///         }
-    ///     }
-    /// });
-    /// </code>
-    /// </example>
     public sealed class OpenUriRoutedEventArgs : RoutedEventArgs
     {
         public Uri Uri { get; }

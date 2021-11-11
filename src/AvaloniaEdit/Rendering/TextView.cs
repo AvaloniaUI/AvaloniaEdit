@@ -1634,7 +1634,7 @@ namespace AvaloniaEdit.Rendering
             // Change back to default if hover on a different element
             if (_currentHoveredElement != element)
             {
-                //Cursor = Cursor.Default; ISSUE : Cursor gets set to Default but not back to IBeam
+                Cursor = Parent.Cursor; // uses TextArea's ContentPresenter cursor
                 _currentHoveredElement = element;
             }
             element?.OnQueryCursor(e);
