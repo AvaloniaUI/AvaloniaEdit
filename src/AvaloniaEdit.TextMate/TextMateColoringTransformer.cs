@@ -59,6 +59,7 @@ namespace AvaloniaEdit.TextMate
         public void SetGrammar(IGrammar grammar)
         {
             _grammar = grammar;
+            _transformations?.Clear();
 
             if (_model != null)
             {
