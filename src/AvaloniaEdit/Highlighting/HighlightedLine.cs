@@ -19,6 +19,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Utils;
@@ -232,82 +234,82 @@ namespace AvaloniaEdit.Highlighting
         ///// <summary>
         ///// Writes the highlighted line to the RichTextWriter.
         ///// </summary>
-        //internal void WriteTo(RichTextWriter writer)
-        //{
-        //	int startOffset = this.DocumentLine.Offset;
-        //	WriteTo(writer, startOffset, startOffset + this.DocumentLine.Length);
-        //}
+        internal void WriteTo(RichTextWriter writer)
+        {
+            int startOffset = this.DocumentLine.Offset;
+            WriteTo(writer, startOffset, startOffset + this.DocumentLine.Length);
+        }
 
         ///// <summary>
         ///// Writes a part of the highlighted line to the RichTextWriter.
         ///// </summary>
-        //internal void WriteTo(RichTextWriter writer, int startOffset, int endOffset)
-        //{
-        //	if (writer == null)
-        //		throw new ArgumentNullException("writer");
-        //	int documentLineStartOffset = this.DocumentLine.Offset;
-        //	int documentLineEndOffset = documentLineStartOffset + this.DocumentLine.Length;
-        //	if (startOffset < documentLineStartOffset || startOffset > documentLineEndOffset)
-        //		throw new ArgumentOutOfRangeException("startOffset", startOffset, "Value must be between " + documentLineStartOffset + " and " + documentLineEndOffset);
-        //	if (endOffset < startOffset || endOffset > documentLineEndOffset)
-        //		throw new ArgumentOutOfRangeException("endOffset", endOffset, "Value must be between startOffset and " + documentLineEndOffset);
-        //	ISegment requestedSegment = new SimpleSegment(startOffset, endOffset - startOffset);
+        internal void WriteTo(RichTextWriter writer, int startOffset, int endOffset)
+        {
+        if (writer == null)
+        	throw new ArgumentNullException("writer");
+        int documentLineStartOffset = this.DocumentLine.Offset;
+        int documentLineEndOffset = documentLineStartOffset + this.DocumentLine.Length;
+        if (startOffset < documentLineStartOffset || startOffset > documentLineEndOffset)
+        		throw new ArgumentOutOfRangeException("startOffset", startOffset, "Value must be between " + documentLineStartOffset + " and " + documentLineEndOffset);
+        	if (endOffset < startOffset || endOffset > documentLineEndOffset)
+        		throw new ArgumentOutOfRangeException("endOffset", endOffset, "Value must be between startOffset and " + documentLineEndOffset);
+        	ISegment requestedSegment = new SimpleSegment(startOffset, endOffset - startOffset);
 
-        //	List<HtmlElement> elements = new List<HtmlElement>();
-        //	for (int i = 0; i < this.Sections.Count; i++) {
-        //		HighlightedSection s = this.Sections[i];
-        //		if (SimpleSegment.GetOverlap(s, requestedSegment).Length > 0) {
-        //			elements.Add(new HtmlElement(s.Offset, i, false, s.Color));
-        //			elements.Add(new HtmlElement(s.Offset + s.Length, i, true, s.Color));
-        //		}
-        //	}
-        //	elements.Sort();
+        	List<HtmlElement> elements = new List<HtmlElement>();
+        	for (int i = 0; i < this.Sections.Count; i++) {
+        		HighlightedSection s = this.Sections[i];
+        		if (SimpleSegment.GetOverlap(s, requestedSegment).Length > 0) {
+        			elements.Add(new HtmlElement(s.Offset, i, false, s.Color));
+        			elements.Add(new HtmlElement(s.Offset + s.Length, i, true, s.Color));
+        		}
+        	}
+        	elements.Sort();
 
-        //	IDocument document = this.Document;
-        //	int textOffset = startOffset;
-        //	foreach (HtmlElement e in elements) {
-        //		int newOffset = Math.Min(e.Offset, endOffset);
-        //		if (newOffset > startOffset) {
-        //			document.WriteTextTo(writer, textOffset, newOffset - textOffset);
-        //		}
-        //		textOffset = Math.Max(textOffset, newOffset);
-        //		if (e.IsEnd)
-        //			writer.EndSpan();
-        //		else
-        //			writer.BeginSpan(e.Color);
-        //	}
-        //	document.WriteTextTo(writer, textOffset, endOffset - textOffset);
-        //}
+        	IDocument document = this.Document;
+        	int textOffset = startOffset;
+        	foreach (HtmlElement e in elements) {
+        		int newOffset = Math.Min(e.Offset, endOffset);
+        		if (newOffset > startOffset) {
+        			document.WriteTextTo(writer, textOffset, newOffset - textOffset);
+        		}
+        		textOffset = Math.Max(textOffset, newOffset);
+        		if (e.IsEnd)
+        			writer.EndSpan();
+        		else
+        			writer.BeginSpan(e.Color);
+        	}
+        	document.WriteTextTo(writer, textOffset, endOffset - textOffset);
+        }
 
         ///// <summary>
         ///// Produces HTML code for the line, with &lt;span class="colorName"&gt; tags.
         ///// </summary>
-        //public string ToHtml(HtmlOptions options = null)
-        //{
-        //	StringWriter stringWriter = new StringWriter(CultureInfo.InvariantCulture);
-        //	using (var htmlWriter = new HtmlRichTextWriter(stringWriter, options)) {
-        //		WriteTo(htmlWriter);
-        //	}
-        //	return stringWriter.ToString();
-        //}
+        public string ToHtml(HtmlOptions options = null)
+        {
+        	StringWriter stringWriter = new StringWriter(CultureInfo.InvariantCulture);
+        	using (var htmlWriter = new HtmlRichTextWriter(stringWriter, options)) {
+        		WriteTo(htmlWriter);
+        	}
+        	return stringWriter.ToString();
+        }
 
-        ///// <summary>
-        ///// Produces HTML code for a section of the line, with &lt;span class="colorName"&gt; tags.
-        ///// </summary>
-        //public string ToHtml(int startOffset, int endOffset, HtmlOptions options = null)
-        //{
-        //	StringWriter stringWriter = new StringWriter(CultureInfo.InvariantCulture);
-        //	using (var htmlWriter = new HtmlRichTextWriter(stringWriter, options)) {
-        //		WriteTo(htmlWriter, startOffset, endOffset);
-        //	}
-        //	return stringWriter.ToString();
-        //}
+        /// <summary>
+        /// Produces HTML code for a section of the line, with &lt;span class="colorName"&gt; tags.
+        /// </summary>
+        public string ToHtml(int startOffset, int endOffset, HtmlOptions options = null)
+        {
+        	StringWriter stringWriter = new StringWriter(CultureInfo.InvariantCulture);
+        	using (var htmlWriter = new HtmlRichTextWriter(stringWriter, options)) {
+        		WriteTo(htmlWriter, startOffset, endOffset);
+        	}
+        	return stringWriter.ToString();
+        }
 
         ///// <inheritdoc/>
-        //public override string ToString()
-        //{
-        //	return "[" + GetType().Name + " " + ToHtml() + "]";
-        //}
+        public override string ToString()
+        {
+        	return "[" + GetType().Name + " " + ToHtml() + "]";
+        }
         #endregion
 
         /// <summary>
