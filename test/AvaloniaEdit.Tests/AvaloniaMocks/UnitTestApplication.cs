@@ -52,7 +52,7 @@ namespace AvaloniaEdit.AvaloniaMocks
                 .Bind<IPlatformRenderInterface>().ToConstant(Services.RenderInterface)
                 .Bind<IPlatformThreadingInterface>().ToConstant(Services.ThreadingInterface)
                 .Bind<IScheduler>().ToConstant(Services.Scheduler)
-                .Bind<IStandardCursorFactory>().ToConstant(Services.StandardCursorFactory)
+                .Bind<ICursorFactory>().ToConstant(Services.StandardCursorFactory)
                 .Bind<IStyler>().ToConstant(Services.Styler)
                 .Bind<IWindowingPlatform>().ToConstant(Services.WindowingPlatform);
             var styles = Services.Theme?.Invoke();

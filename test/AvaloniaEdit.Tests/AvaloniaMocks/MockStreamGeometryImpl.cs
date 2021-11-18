@@ -34,6 +34,8 @@ namespace AvaloniaEdit.AvaloniaMocks
 
         public Matrix Transform { get; }
 
+        public double ContourLength => throw new NotImplementedException();
+
         public IStreamGeometryImpl Clone()
         {
             return this;
@@ -68,6 +70,21 @@ namespace AvaloniaEdit.AvaloniaMocks
         public ITransformedGeometryImpl WithTransform(Matrix transform)
         {
             return new MockStreamGeometryImpl(transform, _context);
+        }
+
+        public bool TryGetPointAtDistance(double distance, out Point point)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryGetPointAndTangentAtDistance(double distance, out Point point, out Point tangent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryGetSegment(double startDistance, double stopDistance, bool startOnBeginFigure, out IGeometryImpl segmentGeometry)
+        {
+            throw new NotImplementedException();
         }
 
         class MockStreamGeometryContext : IStreamGeometryContextImpl

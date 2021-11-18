@@ -29,7 +29,9 @@ namespace AvaloniaEdit.Editing
         [Test]
         public void ClearCaretAndSelectionOnDocumentChange()
         {
-            using (UnitTestApplication.Start(new TestServices(renderInterface: new MockPlatformRenderInterface())))
+            using (UnitTestApplication.Start(new TestServices(
+                renderInterface: new MockPlatformRenderInterface(),
+                platform: new MockRuntimePlatform())))
             {
                 TextArea textArea = new TextArea();
                 textArea.Document = new TextDocument("1\n2\n3\n4th line");
@@ -45,7 +47,9 @@ namespace AvaloniaEdit.Editing
         [Test]
         public void SetDocumentToNull()
         {
-            using (UnitTestApplication.Start(new TestServices(renderInterface: new MockPlatformRenderInterface())))
+            using (UnitTestApplication.Start(new TestServices(
+                renderInterface: new MockPlatformRenderInterface(),
+                platform: new MockRuntimePlatform())))
             {
                 TextArea textArea = new TextArea();
                 textArea.Document = new TextDocument("1\n2\n3\n4th line");
@@ -61,7 +65,9 @@ namespace AvaloniaEdit.Editing
         [Test]
         public void CheckEventOrderOnDocumentChange()
         {
-            using (UnitTestApplication.Start(new TestServices(renderInterface: new MockPlatformRenderInterface())))
+            using (UnitTestApplication.Start(new TestServices(
+                renderInterface: new MockPlatformRenderInterface(),
+                platform: new MockRuntimePlatform())))
             {
                 TextArea textArea = new TextArea();
                 TextDocument newDocument = new TextDocument();
