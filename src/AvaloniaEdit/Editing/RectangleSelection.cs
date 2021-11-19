@@ -318,7 +318,7 @@ namespace AvaloniaEdit.Editing
                     pos = new TextViewPosition(_document.GetLocation(editOffset + firstInsertionLength));
                     TextArea.ClearSelection();
                 }
-                TextArea.Caret.Position = TextArea.TextView.GetPosition(new Point(GetXPos(TextArea, pos), TextArea.TextView.GetVisualTopByDocumentLine(Math.Max(_startLine, _endLine)))).GetValueOrDefault();
+                TextArea.Caret.Position = new TextViewPosition(Math.Max(_startLine, _endLine), pos.Column);
             }
         }
 
