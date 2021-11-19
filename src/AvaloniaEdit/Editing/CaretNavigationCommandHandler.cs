@@ -88,7 +88,7 @@ namespace AvaloniaEdit.Editing
             AddBinding(RectangleSelection.BoxSelectLeftByCharacter, KeyModifiers.Alt | keymap.SelectionModifiers, Key.Left, OnMoveCaretBoxSelection(CaretMovementType.CharLeft));
             AddBinding(EditingCommands.MoveRightByCharacter, KeyModifiers.None, Key.Right, OnMoveCaret(CaretMovementType.CharRight));
             AddBinding(EditingCommands.SelectRightByCharacter, keymap.SelectionModifiers, Key.Right, OnMoveCaretExtendSelection(CaretMovementType.CharRight));
-            AddBinding(RectangleSelection.BoxSelectRightByCharacter, keymap.SelectionModifiers | keymap.SelectionModifiers, Key.Right, OnMoveCaretBoxSelection(CaretMovementType.CharRight));
+            AddBinding(RectangleSelection.BoxSelectRightByCharacter, KeyModifiers.Alt | keymap.SelectionModifiers, Key.Right, OnMoveCaretBoxSelection(CaretMovementType.CharRight));
 
             AddBinding(EditingCommands.MoveLeftByWord, keymap.WholeWordTextActionModifiers, Key.Left, OnMoveCaret(CaretMovementType.WordLeft));
             AddBinding(EditingCommands.SelectLeftByWord, keymap.WholeWordTextActionModifiers | keymap.SelectionModifiers, Key.Left, OnMoveCaretExtendSelection(CaretMovementType.WordLeft));
