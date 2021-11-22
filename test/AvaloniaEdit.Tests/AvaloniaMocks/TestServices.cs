@@ -19,10 +19,10 @@ namespace AvaloniaEdit.AvaloniaMocks
     {
         public static readonly TestServices StyledWindow = new TestServices(
             assetLoader: new AssetLoader(),
-            layoutManager: new LayoutManager(),
+            layoutManager: new LayoutManager(null),
             platform: new AppBuilder().RuntimePlatform,
             renderInterface: new MockPlatformRenderInterface(),
-            standardCursorFactory: Mock.Of<IStandardCursorFactory>(),
+            standardCursorFactory: Mock.Of<ICursorFactory>(),
             styler: new Styler(),
             theme: () => CreateDefaultTheme(),
             threadingInterface: Mock.Of<IPlatformThreadingInterface>(x => x.CurrentThreadIsLoopThread == true),
@@ -50,7 +50,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             inputManager: new InputManager());
 
         public static readonly TestServices RealLayoutManager = new TestServices(
-            layoutManager: new LayoutManager());
+            layoutManager: new LayoutManager(null));
 
         public static readonly TestServices RealStyler = new TestServices(
             styler: new Styler());
@@ -67,7 +67,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             IPlatformRenderInterface renderInterface = null,
             IRenderLoop renderLoop = null,
             IScheduler scheduler = null,
-            IStandardCursorFactory standardCursorFactory = null,
+            ICursorFactory standardCursorFactory = null,
             IStyler styler = null,
             Func<Styles> theme = null,
             IPlatformThreadingInterface threadingInterface = null,
@@ -102,7 +102,7 @@ namespace AvaloniaEdit.AvaloniaMocks
         public IRuntimePlatform Platform { get; }
         public IPlatformRenderInterface RenderInterface { get; }
         public IScheduler Scheduler { get; }
-        public IStandardCursorFactory StandardCursorFactory { get; }
+        public ICursorFactory StandardCursorFactory { get; }
         public IStyler Styler { get; }
         public Func<Styles> Theme { get; }
         public IPlatformThreadingInterface ThreadingInterface { get; }
@@ -121,7 +121,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             IPlatformRenderInterface renderInterface = null,
             IRenderLoop renderLoop = null,
             IScheduler scheduler = null,
-            IStandardCursorFactory standardCursorFactory = null,
+            ICursorFactory standardCursorFactory = null,
             IStyler styler = null,
             Func<Styles> theme = null,
             IPlatformThreadingInterface threadingInterface = null,
@@ -154,11 +154,6 @@ namespace AvaloniaEdit.AvaloniaMocks
                 new DefaultTheme(),
             };
 
-            var loader = new AvaloniaXamlLoader();
-            var baseLight = (IStyle)loader.Load(
-                new Uri("resm:Avalonia.Themes.Default.Accents.BaseLight.xaml?assembly=Avalonia.Themes.Default"));
-            result.Add(baseLight);
-
             return result;
         }
 
@@ -168,6 +163,7 @@ namespace AvaloniaEdit.AvaloniaMocks
                 x.CreateFormattedText(
                     It.IsAny<string>(),
                     It.IsAny<Typeface>(),
+                    It.IsAny<double>(),
                     It.IsAny<TextAlignment>(),
                     It.IsAny<TextWrapping>(),
                     It.IsAny<Size>(),

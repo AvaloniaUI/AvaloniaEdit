@@ -2,6 +2,6 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AvaloniaVersion>0.10.9</AvaloniaVersion>
+    <AvaloniaVersion>0.10.10</AvaloniaVersion>
   </PropertyGroup>
 </Project>
