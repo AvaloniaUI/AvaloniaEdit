@@ -1,22 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Platform;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Native;
-using Avalonia.Platform;
+using Avalonia.Threading;
 using AvaloniaEdit.CodeCompletion;
+using AvaloniaEdit.Demo.Resources;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
-using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.TextMate;
+using TextMateSharp.Model;
+using TextMateSharp.Registry;
+using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.Demo
 {
@@ -25,20 +27,25 @@ namespace AvaloniaEdit.Demo
     public class MainWindow : Window
     {
         private readonly TextEditor _textEditor;
+        private readonly TextMate.TextMate.Installation _textMateInstallation;
         private CompletionWindow _completionWindow;
         private OverloadInsightWindow _insightWindow;
         private Button _addControlBtn;
         private Button _clearControlBtn;
+        private Button _changeThemeBtn;
+        private ComboBox _syntaxModeCombo;
         private ElementGenerator _generator = new ElementGenerator();
+        private int _currentTheme = (int)ThemeName.DarkPlus;
 
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
 
             _textEditor = this.FindControl<TextEditor>("Editor");
             _textEditor.Background = Brushes.Transparent;
             _textEditor.ShowLineNumbers = true;
-            //_textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
+
+            _textEditor.TextArea.Background = this.Background;
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
@@ -49,8 +56,27 @@ namespace AvaloniaEdit.Demo
             _clearControlBtn = this.FindControl<Button>("clearControlBtn");
             _clearControlBtn.Click += _clearControlBtn_Click; ;
 
+            _changeThemeBtn = this.FindControl<Button>("changeThemeBtn");
+            _changeThemeBtn.Click += _changeThemeBtn_Click;
+
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
-            
+
+            _textMateInstallation = _textEditor.InstallTextMate(
+                (ThemeName)_currentTheme,
+                null);
+
+            Language csharpLanguage = _textMateInstallation.RegistryOptions.GetLanguageByExtension(".cs");
+
+            _syntaxModeCombo = this.FindControl<ComboBox>("syntaxModeCombo");
+            _syntaxModeCombo.Items = _textMateInstallation.RegistryOptions.GetAvailableLanguages();
+            _syntaxModeCombo.SelectedItem = csharpLanguage;
+            _syntaxModeCombo.SelectionChanged += _syntaxModeCombo_SelectionChanged;
+
+            string scopeName = _textMateInstallation.RegistryOptions.GetScopeByLanguageId(csharpLanguage.Id);
+
+            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
+            _textMateInstallation.SetGrammarByLanguageId(csharpLanguage.Id);
+
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
             {
                 if (i.KeyModifiers != KeyModifiers.Control) return;
@@ -59,11 +85,35 @@ namespace AvaloniaEdit.Demo
             }, RoutingStrategies.Bubble, true);
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            _textMateInstallation.Dispose();
+        }
+
+        private void _syntaxModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Language language = (Language)_syntaxModeCombo.SelectedItem;
+
+            string scope = _textMateInstallation.RegistryOptions.GetScopeByLanguageId(language.Id);
+
+            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scope));
+            _textMateInstallation.SetGrammarByLanguageId(language.Id);
+        }
+
+        void _changeThemeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            _currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
+
+            _textMateInstallation.SetTheme((ThemeName)_currentTheme);
+        }
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
         }
-
+        
         void _addControlBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me" }));

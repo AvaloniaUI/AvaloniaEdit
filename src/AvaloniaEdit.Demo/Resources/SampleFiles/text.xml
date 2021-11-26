@@ -1,0 +1,34 @@
+<CATALOG>
+    <PLANT>
+        <COMMON>Bloodroot</COMMON>
+        <BOTANICAL>Sanguinaria canadensis</BOTANICAL>
+        <ZONE>4</ZONE>
+        <LIGHT>Mostly Shady</LIGHT>
+        <PRICE>$2.44</PRICE>
+        <AVAILABILITY>031599</AVAILABILITY>
+    </PLANT>
+    <PLANT>
+        <COMMON>Columbine</COMMON>
+        <BOTANICAL>Aquilegia canadensis</BOTANICAL>
+        <ZONE>3</ZONE>
+        <LIGHT>Mostly Shady</LIGHT>
+        <PRICE>$9.37</PRICE>
+        <AVAILABILITY>030699</AVAILABILITY>
+    </PLANT>
+    <PLANT>
+        <COMMON>Marsh Marigold</COMMON>
+        <BOTANICAL>Caltha palustris</BOTANICAL>
+        <ZONE>4</ZONE>
+        <LIGHT>Mostly Sunny</LIGHT>
+        <PRICE>$6.81</PRICE>
+        <AVAILABILITY>051799</AVAILABILITY>
+    </PLANT>
+    <PLANT>
+        <COMMON>Cowslip</COMMON>
+        <BOTANICAL>Caltha palustris</BOTANICAL>
+        <ZONE>4</ZONE>
+        <LIGHT>Mostly Shady</LIGHT>
+        <PRICE>$9.90</PRICE>
+        <AVAILABILITY>030699</AVAILABILITY>
+    </PLANT>
+</CATALOG>

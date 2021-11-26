@@ -1,0 +1,29 @@
+---
+includes:
+  - 'common.yaml'
+deliverables:
+  - name: 'HTML5'
+    context:
+      idref: 'html'
+    output: '.'
+    publication:
+      transtype: 'html5'
+      params:
+        - name: 'args.copycss'
+          value: 'yes'
+        - name: 'args.css'
+          value: 'dita-ot-doc.css'
+        - name: 'args.csspath'
+          value: 'css'
+        - name: 'args.cssroot'
+          path: '../../resources'
+        - name: 'args.gen.task.lbl'
+          value: 'YES'
+        - name: 'args.hdr'
+          href: '../../resources/header.xml'
+        - name: 'html5.toc.generate'
+          value: 'no'
+        - name: 'nav-toc'
+          value: 'partial'
+        - name: 'processing-mode'
+          value: 'strict'

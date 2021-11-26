@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Page Title</title>
+    </head>
+    <body>
+        <h1>My First Heading</h1>
+        <p>My first paragraph.</p>
+        <script type="text/javascript">
+            function doSomething() {
+               // some javascript comment here
+               alert('@Datetime.ToString()');
+            }
+
+            function myFunction() {
+                document.getElementById("demo").innerHTML = "Paragraph changed.";
+            }
+        </script>
+    </body>
+</html>

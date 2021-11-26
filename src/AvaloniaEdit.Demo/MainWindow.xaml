@@ -5,7 +5,7 @@
         MinHeight="300"
         Title="AvaloniaEdit Demo"
         x:Class="AvaloniaEdit.Demo.MainWindow"
-        Foreground="Black">
+        Background="#1E1E1E">
     <DockPanel>
         <StackPanel Orientation="Horizontal"
                     DockPanel.Dock="Top"
@@ -14,17 +14,16 @@
             <Button Content="Copy" />
             <Button Name="addControlBtn" Content="Add Button" />
             <Button Name="clearControlBtn" Content="Clear Buttons" />
+            <ComboBox Name="syntaxModeCombo" />
+            <Button Name="changeThemeBtn" Content="Change theme"/>
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
-                               FontFamily="Cascadia Code"
-                               Background="Gray"
+                               FontFamily="Consolas,Menlo,Monospace"
                                Margin="30"
-                               Foreground="White"
-                               SyntaxHighlighting="C#"
+                               Foreground="#D4D4D4"
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
                                FontWeight="Light"
-                               
-                               FontSize="18" />
+                               FontSize="14" />
     </DockPanel>
 </Window>
