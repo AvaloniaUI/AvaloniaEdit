@@ -35,7 +35,7 @@ namespace AvaloniaEdit.Highlighting
 			highlighter = new DocumentHighlighter(document, HighlightingManager.Instance.GetDefinition("C#"));
 		}
 		
-		[Test, Ignore("")]
+		[Test]
 		public void FullDocumentTest()
 		{
 			var segment = new TextSegment { StartOffset = 0, Length = document.TextLength };
@@ -45,7 +45,7 @@ namespace AvaloniaEdit.Highlighting
 			                "text = <span style=\"color: #191970; font-weight: bold; \">SomeMethod</span>();", html);
 		}
 		
-		[Test, Ignore("")]
+		[Test]
 		public void PartOfHighlightedWordTest()
 		{
 			var segment = new TextSegment { StartOffset = 1, Length = 3 };

@@ -98,8 +98,8 @@ namespace AvaloniaEdit.Highlighting
                 if (html.Length > 0)
                     html.AppendLine("<br>");
                 // TODO: html
-                //var s = SimpleSegment.GetOverlap(segment, line);
-                //html.Append(highlightedLine.ToHtml(s.Offset, s.EndOffset, options));
+                var s = SimpleSegment.GetOverlap(segment, line);
+                html.Append(highlightedLine.ToHtml(s.Offset, s.EndOffset, options));
                 line = line.NextLine;
             }
             return html.ToString();

@@ -17,14 +17,19 @@ namespace AvaloniaEdit.AvaloniaMocks
 
         public IWindowImpl CreateWindow()
         {
-            return _windowImpl?.Invoke() ?? Mock.Of<IWindowImpl>(x => x.Scaling == 1);
+            return _windowImpl?.Invoke() ?? Mock.Of<IWindowImpl>(x => x.RenderScaling == 1);
         }
 
-        public IEmbeddableWindowImpl CreateEmbeddableWindow()
+        public IWindowImpl CreateEmbeddableWindow()
         {
             throw new NotImplementedException();
         }
 
-        public IPopupImpl CreatePopup() => _popupImpl?.Invoke() ?? Mock.Of<IPopupImpl>(x => x.Scaling == 1);
+        public ITrayIconImpl CreateTrayIcon()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IPopupImpl CreatePopup() => _popupImpl?.Invoke() ?? Mock.Of<IPopupImpl>(x => x.RenderScaling == 1);
     }
 }
