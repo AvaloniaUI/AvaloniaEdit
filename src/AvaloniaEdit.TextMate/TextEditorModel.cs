@@ -58,7 +58,7 @@ namespace AvaloniaEdit.TextMate
             TokenizeViewPort();
         }
 
-        private void DocumentOnLineCountChanged(object? sender, EventArgs e)
+        private void DocumentOnLineCountChanged(object sender, EventArgs e)
         {
             lock (_lock)
             {
@@ -66,7 +66,7 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        private void DocumentOnChanging(object? sender, DocumentChangeEventArgs e)
+        private void DocumentOnChanging(object sender, DocumentChangeEventArgs e)
         {
             if (e.RemovedText is { })
             {
@@ -80,7 +80,7 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        private void DocumentOnChanged(object? sender, DocumentChangeEventArgs e)
+        private void DocumentOnChanged(object sender, DocumentChangeEventArgs e)
         {
             int startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
 
