@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using Avalonia;
 using Avalonia.Input;
+using Avalonia.Input.Platform;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -72,7 +73,8 @@ namespace AvaloniaEdit.AvaloniaMocks
             Func<Styles> theme = null,
             IPlatformThreadingInterface threadingInterface = null,
             IWindowImpl windowImpl = null,
-            IWindowingPlatform windowingPlatform = null)
+            IWindowingPlatform windowingPlatform = null,
+            PlatformHotkeyConfiguration platformHotkeyConfiguration = null)
         {
             AssetLoader = assetLoader;
             FocusManager = focusManager;
@@ -90,6 +92,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             ThreadingInterface = threadingInterface;
             WindowImpl = windowImpl;
             WindowingPlatform = windowingPlatform;
+            PlatformHotkeyConfiguration = platformHotkeyConfiguration;
         }
 
         public IAssetLoader AssetLoader { get; }
@@ -108,6 +111,7 @@ namespace AvaloniaEdit.AvaloniaMocks
         public IPlatformThreadingInterface ThreadingInterface { get; }
         public IWindowImpl WindowImpl { get; }
         public IWindowingPlatform WindowingPlatform { get; }
+        public PlatformHotkeyConfiguration PlatformHotkeyConfiguration { get; }
 
         public TestServices With(
             IAssetLoader assetLoader = null,

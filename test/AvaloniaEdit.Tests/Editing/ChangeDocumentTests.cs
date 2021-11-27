@@ -31,7 +31,8 @@ namespace AvaloniaEdit.Editing
         {
             using (UnitTestApplication.Start(new TestServices(
                 renderInterface: new MockPlatformRenderInterface(),
-                platform: new MockRuntimePlatform())))
+                platform: new MockRuntimePlatform(),
+                platformHotkeyConfiguration: new MockPlatformHotkeyConfiguration())))
             {
                 TextArea textArea = new TextArea();
                 textArea.Document = new TextDocument("1\n2\n3\n4th line");
@@ -49,7 +50,8 @@ namespace AvaloniaEdit.Editing
         {
             using (UnitTestApplication.Start(new TestServices(
                 renderInterface: new MockPlatformRenderInterface(),
-                platform: new MockRuntimePlatform())))
+                platform: new MockRuntimePlatform(),
+                platformHotkeyConfiguration: new MockPlatformHotkeyConfiguration())))
             {
                 TextArea textArea = new TextArea();
                 textArea.Document = new TextDocument("1\n2\n3\n4th line");
@@ -67,7 +69,8 @@ namespace AvaloniaEdit.Editing
         {
             using (UnitTestApplication.Start(new TestServices(
                 renderInterface: new MockPlatformRenderInterface(),
-                platform: new MockRuntimePlatform())))
+                platform: new MockRuntimePlatform(),
+                platformHotkeyConfiguration: new MockPlatformHotkeyConfiguration())))
             {
                 TextArea textArea = new TextArea();
                 TextDocument newDocument = new TextDocument();
