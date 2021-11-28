@@ -74,7 +74,8 @@ namespace AvaloniaEdit.AvaloniaMocks
             IPlatformThreadingInterface threadingInterface = null,
             IWindowImpl windowImpl = null,
             IWindowingPlatform windowingPlatform = null,
-            PlatformHotkeyConfiguration platformHotkeyConfiguration = null)
+            PlatformHotkeyConfiguration platformHotkeyConfiguration = null,
+            IFontManagerImpl fontManagerImpl = null)
         {
             AssetLoader = assetLoader;
             FocusManager = focusManager;
@@ -93,6 +94,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             WindowImpl = windowImpl;
             WindowingPlatform = windowingPlatform;
             PlatformHotkeyConfiguration = platformHotkeyConfiguration;
+            FontManagerImpl = fontManagerImpl;
         }
 
         public IAssetLoader AssetLoader { get; }
@@ -112,6 +114,7 @@ namespace AvaloniaEdit.AvaloniaMocks
         public IWindowImpl WindowImpl { get; }
         public IWindowingPlatform WindowingPlatform { get; }
         public PlatformHotkeyConfiguration PlatformHotkeyConfiguration { get; }
+        public IFontManagerImpl FontManagerImpl { get; }
 
         public TestServices With(
             IAssetLoader assetLoader = null,
@@ -130,7 +133,9 @@ namespace AvaloniaEdit.AvaloniaMocks
             Func<Styles> theme = null,
             IPlatformThreadingInterface threadingInterface = null,
             IWindowImpl windowImpl = null,
-            IWindowingPlatform windowingPlatform = null)
+            IWindowingPlatform windowingPlatform = null,
+            PlatformHotkeyConfiguration platformHotkeyConfiguration = null,
+            IFontManagerImpl fontManagerImpl = null)
         {
             return new TestServices(
                 assetLoader: assetLoader ?? AssetLoader,
@@ -148,7 +153,9 @@ namespace AvaloniaEdit.AvaloniaMocks
                 theme: theme ?? Theme,
                 threadingInterface: threadingInterface ?? ThreadingInterface,
                 windowingPlatform: windowingPlatform ?? WindowingPlatform,
-                windowImpl: windowImpl ?? WindowImpl);
+                windowImpl: windowImpl ?? WindowImpl,
+                platformHotkeyConfiguration: platformHotkeyConfiguration ?? PlatformHotkeyConfiguration,
+                fontManagerImpl: fontManagerImpl ?? FontManagerImpl);
         }
 
         private static Styles CreateDefaultTheme()
