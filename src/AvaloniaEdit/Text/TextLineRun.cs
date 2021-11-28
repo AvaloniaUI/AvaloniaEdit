@@ -1,14 +1,13 @@
 using System;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 
 namespace AvaloniaEdit.Text
 {
     internal sealed class TextLineRun
     {
         private const string NewlineString = "\r\n";
-        private const double BaselineFactor = 0.1;
-        private const double HeightFactor = 1.2;
 
         private FormattedText _formattedText;
         private Size _formattedTextSize;
@@ -41,7 +40,8 @@ namespace AvaloniaEdit.Text
                     var box = embeddedObject.ComputeBoundingBox();
                     return box.Y;
                 }
-                return GetDefaultBaseline(FontSize);
+
+                return GetDefaultBaseline(TextRun.Properties.FontMetrics);
             }
         }
 
@@ -59,19 +59,22 @@ namespace AvaloniaEdit.Text
                     return box.Height;
                 }
                 
-                return GetDefaultLineHeight(FontSize);
+                return GetDefaultLineHeight(TextRun.Properties.FontMetrics);
             }
         }
 
-        public static double GetDefaultLineHeight(double fontSize)
+        public static double GetDefaultLineHeight(FontMetrics fontMetrics)
         {
-            // add 2pt for underline
-            return fontSize * HeightFactor + 2;
+            // add additional space for underline and line gap
+            return fontMetrics.LineHeight +
+                fontMetrics.UnderlinePosition +
+                fontMetrics.UnderlineThickness + 
+                fontMetrics.LineGap;
         }
 
-        public static double GetDefaultBaseline(double fontSize)
+        public static double GetDefaultBaseline(FontMetrics fontMetrics)
         {
-            return fontSize * BaselineFactor;
+            return Math.Abs(fontMetrics.Ascent);
         }
 
         public Typeface Typeface => TextRun.Properties.Typeface;
