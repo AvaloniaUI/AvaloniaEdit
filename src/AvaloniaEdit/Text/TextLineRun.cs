@@ -65,11 +65,9 @@ namespace AvaloniaEdit.Text
 
         public static double GetDefaultLineHeight(FontMetrics fontMetrics)
         {
-            // add additional space for underline and line gap
-            return fontMetrics.LineHeight +
-                fontMetrics.UnderlinePosition +
-                fontMetrics.UnderlineThickness + 
-                fontMetrics.LineGap;
+            // adding an extra 15% of the line height look good across different font sizes
+            double extraLineHeight = fontMetrics.LineHeight * 0.15;
+            return fontMetrics.LineHeight + extraLineHeight;
         }
 
         public static double GetDefaultBaseline(FontMetrics fontMetrics)
