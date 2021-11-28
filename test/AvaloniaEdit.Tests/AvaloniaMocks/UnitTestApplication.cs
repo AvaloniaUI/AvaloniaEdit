@@ -56,7 +56,8 @@ namespace AvaloniaEdit.AvaloniaMocks
                 .Bind<ICursorFactory>().ToConstant(Services.StandardCursorFactory)
                 .Bind<IStyler>().ToConstant(Services.Styler)
                 .Bind<IWindowingPlatform>().ToConstant(Services.WindowingPlatform)
-                .Bind<PlatformHotkeyConfiguration>().ToConstant(Services.PlatformHotkeyConfiguration);
+                .Bind<PlatformHotkeyConfiguration>().ToConstant(Services.PlatformHotkeyConfiguration)
+                .Bind<IFontManagerImpl>().ToConstant(Services.FontManagerImpl);
             var styles = Services.Theme?.Invoke();
 
             if (styles != null)

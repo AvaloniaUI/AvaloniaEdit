@@ -1,14 +1,13 @@
 using System;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 
 namespace AvaloniaEdit.Text
 {
     internal sealed class TextLineRun
     {
         private const string NewlineString = "\r\n";
-        internal const double BaselineFactor = 0.1;
-        internal const double HeightFactor = 1.2;
 
         private FormattedText _formattedText;
         private Size _formattedTextSize;
@@ -41,7 +40,8 @@ namespace AvaloniaEdit.Text
                     var box = embeddedObject.ComputeBoundingBox();
                     return box.Y;
                 }
-                return FontSize * BaselineFactor;
+
+                return GetDefaultBaseline(TextRun.Properties.FontMetrics);
             }
         }
 
@@ -58,9 +58,21 @@ namespace AvaloniaEdit.Text
                     var box = embeddedObject.ComputeBoundingBox();
                     return box.Height;
                 }
-                // add 2pt for underline
-                return FontSize * HeightFactor + 2;
+                
+                return GetDefaultLineHeight(TextRun.Properties.FontMetrics);
             }
+        }
+
+        public static double GetDefaultLineHeight(FontMetrics fontMetrics)
+        {
+            // adding an extra 15% of the line height look good across different font sizes
+            double extraLineHeight = fontMetrics.LineHeight * 0.15;
+            return fontMetrics.LineHeight + extraLineHeight;
+        }
+
+        public static double GetDefaultBaseline(FontMetrics fontMetrics)
+        {
+            return Math.Abs(fontMetrics.Ascent);
         }
 
         public Typeface Typeface => TextRun.Properties.Typeface;
