@@ -1,0 +1,28 @@
+@{
+    string[] members = {"Jani", "Hege", "Kai", "Jim"};
+    int i = Array.IndexOf(members, "Kai")+1;
+    int len = members.Length;
+    string x = members[2-1];
+}
+<html>
+    <body>
+        <h3>Members</h3>
+        @foreach (var person in members)
+        {
+            <p>@person</p>
+        }
+        <p>The number of names in Members are @len</p>
+        <p>The person at position 2 is @x</p>
+        <p>Kai is now in position @i</p>
+        <script type="text/javascript">
+            function doSomething() {
+               // some javascript comment here
+               alert('@Datetime.ToString()');
+            }
+
+            function myFunction() {
+                document.getElementById("demo").innerHTML = "Paragraph changed.";
+            }
+        </script>
+    </body>
+</html>

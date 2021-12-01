@@ -22,8 +22,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SampleFiles\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\SampleFiles\source.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
     <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
+    <ProjectReference Include="..\AvaloniaEdit.TextMate\AvaloniaEdit.TextMate.csproj" />
   </ItemGroup>
 
 </Project>

@@ -103,10 +103,8 @@ namespace AvaloniaEdit.Text
 
             if (Height <= 0)
             {
-                var fontSize = paragraphProperties.DefaultTextRunProperties.FontSize;
-
-                Height = fontSize * TextLineRun.HeightFactor;
-                Baseline = fontSize * TextLineRun.BaselineFactor;
+                Height = TextLineRun.GetDefaultLineHeight(paragraphProperties.DefaultTextRunProperties.FontMetrics);
+                Baseline = TextLineRun.GetDefaultBaseline(paragraphProperties.DefaultTextRunProperties.FontMetrics);
             }
 
             FirstIndex = firstIndex;
