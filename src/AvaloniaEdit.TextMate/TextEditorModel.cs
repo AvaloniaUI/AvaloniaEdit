@@ -15,10 +15,11 @@ namespace AvaloniaEdit.TextMate
         private readonly TextEditor _editor;
         private int _lineCount;
 
-        public TextEditorModel(TextEditor editor, TextDocument document)
+        public TextEditorModel(TextEditor editor, TextDocument document, Action<Exception> exceptionHandler)
         {
             _editor = editor;
             _document = document;
+            _exceptionHandler = exceptionHandler;
 
             _lineCount = _document.LineCount;
 
@@ -55,55 +56,83 @@ namespace AvaloniaEdit.TextMate
 
         private void TextView_ScrollOffsetChanged(object sender, EventArgs e)
         {
-            TokenizeViewPort();
+            try
+            {
+                TokenizeViewPort();
+            }
+            catch (Exception ex)
+            {
+                _exceptionHandler?.Invoke(ex);
+            }
         }
 
         private void DocumentOnLineCountChanged(object sender, EventArgs e)
         {
-            lock (_lock)
+            try
             {
-                _lineCount = _document.LineCount;
+                lock (_lock)
+                {
+                    _lineCount = _document.LineCount;
+                }
+            }
+            catch (Exception ex)
+            {
+                _exceptionHandler?.Invoke(ex);
             }
         }
 
         private void DocumentOnChanging(object sender, DocumentChangeEventArgs e)
         {
-            if (e.RemovedText is { })
+            try
             {
-                var startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
-                var endLine = _document.GetLineByOffset(e.Offset + e.RemovalLength).LineNumber - 1;
-
-                for (int i = endLine; i > startLine; i--)
+                if (e.RemovedText is { })
                 {
-                    RemoveLine(i);
+                    var startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
+                    var endLine = _document.GetLineByOffset(e.Offset + e.RemovalLength).LineNumber - 1;
+
+                    for (int i = endLine; i > startLine; i--)
+                    {
+                        RemoveLine(i);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _exceptionHandler?.Invoke(ex);
             }
         }
 
         private void DocumentOnChanged(object sender, DocumentChangeEventArgs e)
         {
-            int startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
-
-            if (e.InsertedText is { })
+            try
             {
-                int endLine = _document.GetLineByOffset(e.Offset + e.InsertionLength).LineNumber - 1;
+                int startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
 
-                for (int i = startLine; i < endLine; i++)
+                if (e.InsertedText is { })
                 {
-                    AddLine(i);
-                }
+                    int endLine = _document.GetLineByOffset(e.Offset + e.InsertionLength).LineNumber - 1;
 
-                if (startLine == endLine)
+                    for (int i = startLine; i < endLine; i++)
+                    {
+                        AddLine(i);
+                    }
+
+                    if (startLine == endLine)
+                    {
+                        UpdateLine(startLine);
+                    }
+                }
+                else
                 {
                     UpdateLine(startLine);
                 }
-            }
-            else
-            {
-                UpdateLine(startLine);
-            }
 
-            InvalidateLine(startLine);
+                InvalidateLine(startLine);
+            }
+            catch (Exception ex)
+            {
+                _exceptionHandler?.Invoke(ex);
+            }
         }
 
         public override void UpdateLine(int lineIndex)
@@ -136,5 +165,7 @@ namespace AvaloniaEdit.TextMate
                 return _document.Lines[lineIndex].Length;
             }).GetAwaiter().GetResult();
         }
+
+        Action<Exception> _exceptionHandler;
     }
 }
