@@ -10,6 +10,11 @@ namespace AvaloniaEdit.TextMate
 {
     public static class TextMate
     {
+        public static void RegisterExceptionHandler(Action<Exception> handler)
+        {
+            _exceptionHandler = handler;
+        }
+
         public static Installation InstallTextMate(
             this TextEditor editor,
             ThemeName theme,
@@ -73,13 +78,20 @@ namespace AvaloniaEdit.TextMate
 
             void OnEditorOnDocumentChanged(object sender, EventArgs args)
             {
-                DisposeTMModel(_tmModel);
+                try
+                {
+                    DisposeTMModel(_tmModel);
 
-                _editorModel = new TextEditorModel(_editor, _editor.Document);
-                _tmModel = new TMModel(_editorModel);
-                _tmModel.SetGrammar(_grammar);
-                GetOrCreateTransformer().SetModel(_editor.Document, _editor.TextArea.TextView, _tmModel);
-                _tmModel.AddModelTokensChangedListener(GetOrCreateTransformer());
+                    _editorModel = new TextEditorModel(_editor, _editor.Document, _exceptionHandler);
+                    _tmModel = new TMModel(_editorModel);
+                    _tmModel.SetGrammar(_grammar);
+                    GetOrCreateTransformer().SetModel(_editor.Document, _editor.TextArea.TextView, _tmModel);
+                    _tmModel.AddModelTokensChangedListener(GetOrCreateTransformer());
+                }
+                catch (Exception ex)
+                {
+                    _exceptionHandler?.Invoke(ex);
+                }
             }
 
             TextMateColoringTransformer GetOrCreateTransformer()
@@ -111,5 +123,7 @@ namespace AvaloniaEdit.TextMate
             IGrammar _grammar;
             TMModel _tmModel;
         }
+
+        static Action<Exception> _exceptionHandler;
     }
 }
