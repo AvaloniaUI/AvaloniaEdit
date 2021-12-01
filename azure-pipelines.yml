@@ -1,8 +1,15 @@
 jobs:
 - job: Windows
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
+
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'test'
+      projects: 'test/AvaloniaEdit.Tests'
+    displayName: 'Run Tests'
+
   - task: PowerShell@2
     inputs:
       targetType: 'filePath'
