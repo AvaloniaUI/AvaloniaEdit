@@ -16,13 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Avalonia;
+using Avalonia.Input;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Utils;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using Avalonia;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Utils;
-using Avalonia.Input;
 
 namespace AvaloniaEdit.Editing
 {
@@ -392,8 +392,15 @@ namespace AvaloniaEdit.Editing
 
         private void TextArea_MouseLeftButtonDown(object sender, PointerPressedEventArgs e)
         {
-            if (e.GetCurrentPoint(TextArea).Properties.IsLeftButtonPressed)
-            { 
+            if (e.GetCurrentPoint(TextArea).Properties.IsLeftButtonPressed == false)
+            {
+                if (TextArea.IsRightClickMovesCaret == true)
+                {
+                    SetCaretOffsetToMousePosition(e);
+                }
+            }
+            else
+            {
                 TextArea.Cursor = Cursor.Parse("IBeam");
 
                 var pointer = e.GetPointerPoint(TextArea);
@@ -499,7 +506,8 @@ namespace AvaloniaEdit.Editing
                     e.Handled = true;
                 }
             }
-		}
+
+        }
         #endregion
 
         #region LeftButtonClick
@@ -687,7 +695,7 @@ namespace AvaloniaEdit.Editing
             else if (_mode == SelectionMode.WholeWord || _mode == SelectionMode.WholeLine)
             {
                 var newWord = (_mode == SelectionMode.WholeLine) ? GetLineAtMousePosition(e) : GetWordAtMousePosition(e);
-                if (newWord != SimpleSegment.Invalid &&_startWord != null)
+                if (newWord != SimpleSegment.Invalid && _startWord != null)
                 {
                     TextArea.Selection = Selection.Create(TextArea,
                                                           Math.Min(newWord.Offset, _startWord.Offset),

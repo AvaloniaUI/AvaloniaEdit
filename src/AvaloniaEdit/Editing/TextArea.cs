@@ -708,6 +708,21 @@ namespace AvaloniaEdit.Editing
             get => _readOnlySectionProvider;
             set => _readOnlySectionProvider = value ?? throw new ArgumentNullException(nameof(value));
         }
+
+        /// <summary>
+        /// The <see cref="IsRightClickMovesCaret"/> property.
+        /// </summary>
+        public static readonly StyledProperty<bool> IsRightClickMovesCaretProperty =
+            AvaloniaProperty.Register<TextArea, bool>(nameof(IsRightClickMovesCaret), false);
+
+        /// <summary>
+        /// Determines whether caret position should be changed to the mouse position when you right click or not.
+        /// </summary>
+        public bool IsRightClickMovesCaret
+        {
+            get => GetValue(IsRightClickMovesCaretProperty);
+            set => SetValue(IsRightClickMovesCaretProperty, value);
+        }
         #endregion
 
         #region Focus Handling (Show/Hide Caret)

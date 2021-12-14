@@ -49,7 +49,7 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
-
+            _textEditor.TextArea.IsRightClickMovesCaret = false;
             _addControlBtn = this.FindControl<Button>("addControlBtn");
             _addControlBtn.Click += _addControlBtn_Click;
 
