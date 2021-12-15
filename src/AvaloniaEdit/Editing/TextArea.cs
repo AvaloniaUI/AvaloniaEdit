@@ -710,18 +710,18 @@ namespace AvaloniaEdit.Editing
         }
 
         /// <summary>
-        /// The <see cref="IsRightClickMovesCaret"/> property.
+        /// The <see cref="RightClickMovesCaret"/> property.
         /// </summary>
-        public static readonly StyledProperty<bool> IsRightClickMovesCaretProperty =
-            AvaloniaProperty.Register<TextArea, bool>(nameof(IsRightClickMovesCaret), false);
+        public static readonly StyledProperty<bool> RightClickMovesCaretProperty =
+            AvaloniaProperty.Register<TextArea, bool>(nameof(RightClickMovesCaret), false);
 
         /// <summary>
         /// Determines whether caret position should be changed to the mouse position when you right click or not.
         /// </summary>
-        public bool IsRightClickMovesCaret
+        public bool RightClickMovesCaret
         {
-            get => GetValue(IsRightClickMovesCaretProperty);
-            set => SetValue(IsRightClickMovesCaretProperty, value);
+            get => GetValue(RightClickMovesCaretProperty);
+            set => SetValue(RightClickMovesCaretProperty, value);
         }
         #endregion
 

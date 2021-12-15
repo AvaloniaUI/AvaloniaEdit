@@ -394,7 +394,7 @@ namespace AvaloniaEdit.Editing
         {
             if (e.GetCurrentPoint(TextArea).Properties.IsLeftButtonPressed == false)
             {
-                if (TextArea.IsRightClickMovesCaret == true)
+                if (TextArea.RightClickMovesCaret == true && e.Handled == false)
                 {
                     SetCaretOffsetToMousePosition(e);
                 }
