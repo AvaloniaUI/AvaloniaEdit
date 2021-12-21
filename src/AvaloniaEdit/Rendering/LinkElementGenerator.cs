@@ -81,6 +81,10 @@ namespace AvaloniaEdit.Rendering
 		/// <inheritdoc/>
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
+			if (startOffset > VisualLine.LENGTH_LIMIT)
+				// do not process long lines
+				return -1;
+
 			GetMatch(startOffset, out var matchOffset);
 			return matchOffset;
 		}
