@@ -9,8 +9,6 @@ namespace AvaloniaEdit.Text
 {
     internal sealed class TextLineImpl : TextLine
     {
-        private const int MaxCharactersPerLine = 10000;
-
         private readonly TextLineRun[] _runs;
 
         public override int FirstIndex { get; }
@@ -47,11 +45,6 @@ namespace AvaloniaEdit.Text
             if (prevRun != null)
             {
                 visibleLength += AddRunReturnVisibleLength(runs, prevRun);
-            }
-
-            if (visibleLength >= MaxCharactersPerLine)
-            {
-                throw new NotSupportedException("Too many characters per line");
             }
 
             while (true)
