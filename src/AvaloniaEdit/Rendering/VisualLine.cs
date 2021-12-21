@@ -37,6 +37,8 @@ namespace AvaloniaEdit.Rendering
     /// </summary>
     public sealed class VisualLine
     {
+        public const int LENGTH_LIMIT = 3000;
+
         private enum LifetimePhase : byte
         {
             Generating,
@@ -179,7 +181,21 @@ namespace AvaloniaEdit.Rendering
                 if (textPieceEndOffset > offset)
                 {
                     var textPieceLength = textPieceEndOffset - offset;
-                    _elements.Add(new VisualLineText(this, textPieceLength));
+                    int remaining = textPieceLength;
+                    while (true)
+                    {
+                        if (remaining > LENGTH_LIMIT)
+                        {
+                            // split in chunks of LENGTH_LIMIT
+                            _elements.Add(new VisualLineText(this, LENGTH_LIMIT));
+                            remaining -= LENGTH_LIMIT;
+                        }
+                        else
+                        {
+                            _elements.Add(new VisualLineText(this, remaining));
+                            break;
+                        }
+                    }
                     offset = textPieceEndOffset;
                 }
                 // If no elements constructed / only zero-length elements constructed:
