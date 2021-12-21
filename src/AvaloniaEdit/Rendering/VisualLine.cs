@@ -157,6 +157,7 @@ namespace AvaloniaEdit.Rendering
         private void PerformVisualElementConstruction(VisualLineElementGenerator[] generators)
         {
             var document = Document;
+            var lineLength = FirstDocumentLine.Length;
             var offset = FirstDocumentLine.Offset;
             var currentLineEnd = offset + FirstDocumentLine.Length;
             LastDocumentLine = FirstDocumentLine;
@@ -166,7 +167,7 @@ namespace AvaloniaEdit.Rendering
                 var textPieceEndOffset = currentLineEnd;
                 foreach (var g in generators)
                 {
-                    g.CachedInterest = g.GetFirstInterestedOffset(offset + askInterestOffset);
+                    g.CachedInterest = (lineLength > LENGTH_LIMIT) ? -1: g.GetFirstInterestedOffset(offset + askInterestOffset);
                     if (g.CachedInterest != -1)
                     {
                         if (g.CachedInterest < offset)
