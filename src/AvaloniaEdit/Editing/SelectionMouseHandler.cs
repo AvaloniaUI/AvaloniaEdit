@@ -410,7 +410,7 @@ namespace AvaloniaEdit.Editing
                 {
                     var modifiers = e.KeyModifiers;
                     var shift = modifiers.HasFlag(KeyModifiers.Shift);
-                    if (_enableTextDragDrop && !shift)
+                    if (_enableTextDragDrop && e.ClickCount == 1 && !shift)
                     {
                         var offset = GetOffsetFromMousePosition(e, out _, out _);
                         if (TextArea.Selection.Contains(offset))
