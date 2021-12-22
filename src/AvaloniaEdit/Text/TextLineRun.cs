@@ -1,7 +1,11 @@
 using System;
+using System.Linq;
+
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
+
+using AvaloniaEdit.Rendering;
 
 namespace AvaloniaEdit.Text
 {
@@ -11,8 +15,7 @@ namespace AvaloniaEdit.Text
 
         private FormattedText _formattedText;
         private Size _formattedTextSize;
-        private double[] _glyphWidths;
-
+        private GlyphWidths _glyphWidths;
         public StringRange StringRange { get; private set; }
 
         public int Length { get; set; }
@@ -109,7 +112,10 @@ namespace AvaloniaEdit.Text
                 return new TextLineRun(textRun.Length, textRun)
                 {
                     IsEmbedded = true,
-                    _glyphWidths = new double[] { width },
+                    _glyphWidths = new GlyphWidths(
+                        stringRange,
+                        textRun.Properties.Typeface.GlyphTypeface,
+                        textRun.Properties.FontSize),
                     // Embedded objects must propagate their width to the container.
                     // Otherwise text runs after the embedded object are drawn at the same x position.
                     Width = width
@@ -162,7 +168,10 @@ namespace AvaloniaEdit.Text
                 Width = 40
             };
 
-            run.SetGlyphWidths();
+            run._glyphWidths = new GlyphWidths(
+                run.StringRange,
+                run.Typeface.GlyphTypeface,
+                run.FontSize);
 
             return run;
         }
@@ -192,7 +201,10 @@ namespace AvaloniaEdit.Text
 
             run.Width = size.Width;
 
-            run.SetGlyphWidths();
+            run._glyphWidths = new GlyphWidths(
+                run.StringRange,
+                run.Typeface.GlyphTypeface,
+                run.FontSize);
 
             return run;
         }
@@ -201,27 +213,6 @@ namespace AvaloniaEdit.Text
         {
             Length = length;
             TextRun = textRun;
-        }
-
-        private void SetGlyphWidths()
-        {
-            var result = new double[StringRange.Length];
-
-            for (var i = 0; i < StringRange.Length; i++)
-            {
-                // TODO: is there a better way of getting glyph metrics?
-                var tf = Typeface;
-                var size = new FormattedText
-                {
-                    Text = StringRange[i].ToString(),
-                    Typeface = new Typeface(tf.FontFamily, tf.Style, tf.Weight),
-                    FontSize = FontSize
-                }.Bounds.Size;
-
-                result[i] = size.Width;
-            }
-
-            _glyphWidths = result;
         }
 
         public void Draw(DrawingContext drawingContext, double x, double y)
@@ -290,7 +281,7 @@ namespace AvaloniaEdit.Text
             {
                 while (index > 0 && IsSpace(StringRange[index - 1]))
                 {
-                    trailing.SpaceWidth += _glyphWidths[index - 1];
+                    trailing.SpaceWidth += _glyphWidths.GetAt(index - 1);
                     index--;
                     trailing.Count++;
                 }
@@ -313,7 +304,7 @@ namespace AvaloniaEdit.Text
                 double distance = 0;
                 for (var i = 0; i < index; i++)
                 {
-                    distance += _glyphWidths[i];
+                    distance += _glyphWidths.GetAt(i);
                 }
 
                 return distance;
@@ -332,7 +323,7 @@ namespace AvaloniaEdit.Text
             double width = 0;
             for (; index < Length; index++)
             {
-                width = IsTab ? Width / Length : _glyphWidths[index];
+                width = IsTab ? Width / Length : _glyphWidths.GetAt(index);
                 if (distance < width)
                 {
                     break;
@@ -349,6 +340,56 @@ namespace AvaloniaEdit.Text
         private static bool IsSpace(char ch)
         {
             return ch == ' ' || ch == '\u00a0';
+        }
+
+        class GlyphWidths
+        {
+            private const double NOT_CALCULATED_YET = -1;
+            private double[] _glyphWidths;
+            private GlyphTypeface _typeFace;
+            private StringRange _range;
+            private double _scale;
+
+            internal GlyphWidths(StringRange range, GlyphTypeface typeFace, double fontSize)
+            {
+                _range = range;
+                _typeFace = typeFace;
+                _scale = fontSize / _typeFace.DesignEmHeight;
+
+                InitGlyphWidths();
+            }
+
+            internal double GetAt(int index)
+            {
+                if (_glyphWidths[index] == NOT_CALCULATED_YET)
+                    _glyphWidths[index] = MeasureGlyphAt(index);
+
+                return _glyphWidths[index];
+            }
+
+            double MeasureGlyphAt(int index)
+            {
+                return _typeFace.GetGlyphAdvance(
+                    _typeFace.GetGlyph(_range[index])) * _scale;
+            }
+
+            void InitGlyphWidths()
+            {
+                int capacity = _range.Length;
+
+                bool useCheapGlyphMeasurement = 
+                    capacity >= VisualLine.LENGTH_LIMIT && 
+                    _typeFace.IsFixedPitch;
+
+                if (useCheapGlyphMeasurement)
+                {
+                    double size = MeasureGlyphAt(0);
+                    _glyphWidths = Enumerable.Repeat<double>(size, capacity).ToArray();
+                    return;
+                }
+
+                _glyphWidths = Enumerable.Repeat<double>(NOT_CALCULATED_YET, capacity).ToArray();
+            }
         }
     }
 }

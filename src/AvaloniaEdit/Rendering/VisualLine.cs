@@ -37,6 +37,8 @@ namespace AvaloniaEdit.Rendering
     /// </summary>
     public sealed class VisualLine
     {
+        public const int LENGTH_LIMIT = 3000;
+
         private enum LifetimePhase : byte
         {
             Generating,
@@ -155,6 +157,7 @@ namespace AvaloniaEdit.Rendering
         private void PerformVisualElementConstruction(VisualLineElementGenerator[] generators)
         {
             var document = Document;
+            var lineLength = FirstDocumentLine.Length;
             var offset = FirstDocumentLine.Offset;
             var currentLineEnd = offset + FirstDocumentLine.Length;
             LastDocumentLine = FirstDocumentLine;
@@ -164,7 +167,7 @@ namespace AvaloniaEdit.Rendering
                 var textPieceEndOffset = currentLineEnd;
                 foreach (var g in generators)
                 {
-                    g.CachedInterest = g.GetFirstInterestedOffset(offset + askInterestOffset);
+                    g.CachedInterest = (lineLength > LENGTH_LIMIT) ? -1: g.GetFirstInterestedOffset(offset + askInterestOffset);
                     if (g.CachedInterest != -1)
                     {
                         if (g.CachedInterest < offset)
@@ -179,7 +182,21 @@ namespace AvaloniaEdit.Rendering
                 if (textPieceEndOffset > offset)
                 {
                     var textPieceLength = textPieceEndOffset - offset;
-                    _elements.Add(new VisualLineText(this, textPieceLength));
+                    int remaining = textPieceLength;
+                    while (true)
+                    {
+                        if (remaining > LENGTH_LIMIT)
+                        {
+                            // split in chunks of LENGTH_LIMIT
+                            _elements.Add(new VisualLineText(this, LENGTH_LIMIT));
+                            remaining -= LENGTH_LIMIT;
+                        }
+                        else
+                        {
+                            _elements.Add(new VisualLineText(this, remaining));
+                            break;
+                        }
+                    }
                     offset = textPieceEndOffset;
                 }
                 // If no elements constructed / only zero-length elements constructed:

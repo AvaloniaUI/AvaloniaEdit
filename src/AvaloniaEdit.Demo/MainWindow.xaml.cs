@@ -34,6 +34,7 @@ namespace AvaloniaEdit.Demo
         private Button _clearControlBtn;
         private Button _changeThemeBtn;
         private ComboBox _syntaxModeCombo;
+        private TextBlock _statusTextBlock;
         private ElementGenerator _generator = new ElementGenerator();
         private int _currentTheme = (int)ThemeName.DarkPlus;
 
@@ -57,7 +58,9 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy();
+            _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
+
             _addControlBtn = this.FindControl<Button>("addControlBtn");
             _addControlBtn.Click += _addControlBtn_Click;
 
@@ -85,12 +88,19 @@ namespace AvaloniaEdit.Demo
             _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammarByLanguageId(csharpLanguage.Id);
 
+            _statusTextBlock = this.Find<TextBlock>("StatusText");
+
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
             {
                 if (i.KeyModifiers != KeyModifiers.Control) return;
                 if (i.Delta.Y > 0) _textEditor.FontSize++;
                 else _textEditor.FontSize = _textEditor.FontSize > 1 ? _textEditor.FontSize - 1 : 1;
             }, RoutingStrategies.Bubble, true);
+        }
+
+        private void Caret_PositionChanged(object sender, EventArgs e)
+        {
+            _statusTextBlock.Text = String.Format("Line {0} Column {1}", _textEditor.TextArea.Caret.Line, _textEditor.TextArea.Caret.Column);
         }
 
         protected override void OnClosed(EventArgs e)

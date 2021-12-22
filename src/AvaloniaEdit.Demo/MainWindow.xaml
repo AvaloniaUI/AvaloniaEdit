@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         MinWidth="500"
         MinHeight="300"
+        Width="950"
         Title="AvaloniaEdit Demo"
         x:Class="AvaloniaEdit.Demo.MainWindow"
         Background="#1E1E1E">
@@ -16,6 +17,9 @@
             <Button Name="clearControlBtn" Content="Clear Buttons" />
             <ComboBox Name="syntaxModeCombo" />
             <Button Name="changeThemeBtn" Content="Change theme"/>
+        </StackPanel>
+        <StackPanel Name="StatusBar" Background="Purple" Height="25" DockPanel.Dock="Bottom" Orientation="Horizontal">
+            <TextBlock Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
                                FontFamily="Consolas,Menlo,Monospace"
