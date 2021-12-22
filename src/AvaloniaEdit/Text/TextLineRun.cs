@@ -112,7 +112,10 @@ namespace AvaloniaEdit.Text
                 return new TextLineRun(textRun.Length, textRun)
                 {
                     IsEmbedded = true,
-                    _glyphWidths = new GlyphWidths(stringRange, textRun.Properties.Typeface, textRun.Properties.FontSize),
+                    _glyphWidths = new GlyphWidths(
+                        stringRange,
+                        textRun.Properties.Typeface.GlyphTypeface,
+                        textRun.Properties.FontSize),
                     // Embedded objects must propagate their width to the container.
                     // Otherwise text runs after the embedded object are drawn at the same x position.
                     Width = width
@@ -165,7 +168,10 @@ namespace AvaloniaEdit.Text
                 Width = 40
             };
 
-            run._glyphWidths = new GlyphWidths(run.StringRange, run.Typeface, run.FontSize);
+            run._glyphWidths = new GlyphWidths(
+                run.StringRange,
+                run.Typeface.GlyphTypeface,
+                run.FontSize);
 
             return run;
         }
@@ -195,7 +201,10 @@ namespace AvaloniaEdit.Text
 
             run.Width = size.Width;
 
-            run._glyphWidths = new GlyphWidths(run.StringRange, run.Typeface, run.FontSize);
+            run._glyphWidths = new GlyphWidths(
+                run.StringRange,
+                run.Typeface.GlyphTypeface,
+                run.FontSize);
 
             return run;
         }
@@ -337,17 +346,17 @@ namespace AvaloniaEdit.Text
         {
             private const double NOT_CALCULATED_YET = -1;
             private double[] _glyphWidths;
-            private Typeface _typeFace;
-            private double _fontSize;
+            private GlyphTypeface _typeFace;
             private StringRange _range;
+            private double _scale;
 
-            internal GlyphWidths(StringRange range, Typeface typeFace, double fontSize)
+            internal GlyphWidths(StringRange range, GlyphTypeface typeFace, double fontSize)
             {
-                _typeFace = typeFace;
-                _fontSize = fontSize;
                 _range = range;
+                _typeFace = typeFace;
+                _scale = fontSize / _typeFace.DesignEmHeight;
 
-                _glyphWidths = InitGlyphWidths();
+                InitGlyphWidths();
             }
 
             internal double GetAt(int index)
@@ -360,29 +369,26 @@ namespace AvaloniaEdit.Text
 
             double MeasureGlyphAt(int index)
             {
-                return new FormattedText
-                {
-                    Text = _range[index].ToString(),
-                    Typeface = _typeFace,
-                    FontSize = _fontSize,
-                }.Bounds.Width;
+                return _typeFace.GetGlyphAdvance(
+                    _typeFace.GetGlyph(_range[index])) * _scale;
             }
 
-            double[] InitGlyphWidths()
+            void InitGlyphWidths()
             {
                 int capacity = _range.Length;
 
                 bool useCheapGlyphMeasurement = 
                     capacity >= VisualLine.LENGTH_LIMIT && 
-                    _typeFace.GlyphTypeface.IsFixedPitch;
+                    _typeFace.IsFixedPitch;
 
                 if (useCheapGlyphMeasurement)
                 {
                     double size = MeasureGlyphAt(0);
-                    return Enumerable.Repeat<double>(size, capacity).ToArray();
+                    _glyphWidths = Enumerable.Repeat<double>(size, capacity).ToArray();
+                    return;
                 }
 
-                return Enumerable.Repeat<double>(NOT_CALCULATED_YET, capacity).ToArray();
+                _glyphWidths = Enumerable.Repeat<double>(NOT_CALCULATED_YET, capacity).ToArray();
             }
         }
     }
