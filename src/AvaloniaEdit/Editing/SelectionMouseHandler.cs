@@ -16,13 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Avalonia;
+using Avalonia.Input;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Utils;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using Avalonia;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Utils;
-using Avalonia.Input;
 
 namespace AvaloniaEdit.Editing
 {
@@ -392,111 +392,122 @@ namespace AvaloniaEdit.Editing
 
         private void TextArea_MouseLeftButtonDown(object sender, PointerPressedEventArgs e)
         {
-            TextArea.Cursor = Cursor.Parse("IBeam");           
-
-            var pointer = e.GetPointerPoint(TextArea);
-
-            _mode = SelectionMode.None;
-            if (!e.Handled)
+            if (e.GetCurrentPoint(TextArea).Properties.IsLeftButtonPressed == false)
             {
-                var modifiers = e.KeyModifiers;
-                var shift = modifiers.HasFlag(KeyModifiers.Shift);
-                if (_enableTextDragDrop && !shift)
+                if (TextArea.RightClickMovesCaret == true && e.Handled == false)
                 {
-                    var offset = GetOffsetFromMousePosition(e, out _, out _);
-                    if (TextArea.Selection.Contains(offset))
-                    {
-                        if (TextArea.CapturePointer(e.Pointer))
-                        {
-                            _mode = SelectionMode.PossibleDragStart;
-                            _possibleDragStartMousePos = e.GetPosition(TextArea);
-                        }
-                        e.Handled = true;
-                        return;
-                    }
+                    SetCaretOffsetToMousePosition(e);
                 }
+            }
+            else
+            {
+                TextArea.Cursor = Cursor.Parse("IBeam");
 
-                var oldPosition = TextArea.Caret.Position;
-                SetCaretOffsetToMousePosition(e);
+                var pointer = e.GetPointerPoint(TextArea);
 
-
-                if (!shift)
+                _mode = SelectionMode.None;
+                if (!e.Handled)
                 {
-                    TextArea.ClearSelection();
-                }
-
-                if (TextArea.CapturePointer(e.Pointer))
-                {
-                    if (modifiers.HasFlag(KeyModifiers.Alt) && TextArea.Options.EnableRectangularSelection)
+                    var modifiers = e.KeyModifiers;
+                    var shift = modifiers.HasFlag(KeyModifiers.Shift);
+                    if (_enableTextDragDrop && e.ClickCount == 1 && !shift)
                     {
-                        _mode = SelectionMode.Rectangular;
-                        if (shift && TextArea.Selection is RectangleSelection)
+                        var offset = GetOffsetFromMousePosition(e, out _, out _);
+                        if (TextArea.Selection.Contains(offset))
                         {
-                            TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
-                        }
-                    }
-                    else if (modifiers.HasFlag(KeyModifiers.Control) && e.ClickCount == 1) // e.ClickCount == 1
-                    {
-                        _mode = SelectionMode.WholeWord;
-                        if (shift && !(TextArea.Selection is RectangleSelection))
-                        {
-                            TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
-                        }
-                    }
-                    else if(pointer.Properties.IsLeftButtonPressed && e.ClickCount == 1) // e.ClickCount == 1
-                    {
-                        _mode = SelectionMode.Normal;
-                        if (shift && !(TextArea.Selection is RectangleSelection))
-                        {
-                            TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
-                        }
-                    }
-                    else
-                    {
-                        SimpleSegment startWord;
-
-                        _mode = SelectionMode.WholeWord;
-                        startWord = GetWordAtMousePosition(e);
-                         
-                        if (e.ClickCount == 3)
-                        {
-                            _mode = SelectionMode.WholeLine;
-                            startWord = GetLineAtMousePosition(e);
-                        }
-                        else
-                        {
-                           _mode = SelectionMode.WholeWord;
-                            startWord = GetWordAtMousePosition(e);                           
-                        }
-                        
-                        if (startWord == SimpleSegment.Invalid)
-                        {
-                            _mode = SelectionMode.None;
-                            TextArea.ReleasePointerCapture(e.Pointer);
+                            if (TextArea.CapturePointer(e.Pointer))
+                            {
+                                _mode = SelectionMode.PossibleDragStart;
+                                _possibleDragStartMousePos = e.GetPosition(TextArea);
+                            }
+                            e.Handled = true;
                             return;
                         }
-                        if (shift && !TextArea.Selection.IsEmpty)
+                    }
+
+                    var oldPosition = TextArea.Caret.Position;
+                    SetCaretOffsetToMousePosition(e);
+
+
+                    if (!shift)
+                    {
+                        TextArea.ClearSelection();
+                    }
+
+                    if (TextArea.CapturePointer(e.Pointer))
+                    {
+                        if (modifiers.HasFlag(KeyModifiers.Alt) && TextArea.Options.EnableRectangularSelection)
                         {
-                            if (startWord.Offset < TextArea.Selection.SurroundingSegment.Offset)
+                            _mode = SelectionMode.Rectangular;
+                            if (shift && TextArea.Selection is RectangleSelection)
                             {
-                                TextArea.Selection = TextArea.Selection.SetEndpoint(new TextViewPosition(TextArea.Document.GetLocation(startWord.Offset)));
+                                TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
                             }
-                            else if (startWord.EndOffset > TextArea.Selection.SurroundingSegment.EndOffset)
+                        }
+                        else if (modifiers.HasFlag(KeyModifiers.Control) && e.ClickCount == 1) // e.ClickCount == 1
+                        {
+                            _mode = SelectionMode.WholeWord;
+                            if (shift && !(TextArea.Selection is RectangleSelection))
                             {
-                                TextArea.Selection = TextArea.Selection.SetEndpoint(new TextViewPosition(TextArea.Document.GetLocation(startWord.EndOffset)));
+                                TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
                             }
-                            _startWord = new AnchorSegment(TextArea.Document, TextArea.Selection.SurroundingSegment);
+                        }
+                        else if (pointer.Properties.IsLeftButtonPressed && e.ClickCount == 1) // e.ClickCount == 1
+                        {
+                            _mode = SelectionMode.Normal;
+                            if (shift && !(TextArea.Selection is RectangleSelection))
+                            {
+                                TextArea.Selection = TextArea.Selection.StartSelectionOrSetEndpoint(oldPosition, TextArea.Caret.Position);
+                            }
                         }
                         else
                         {
-                            TextArea.Selection = Selection.Create(TextArea, startWord.Offset, startWord.EndOffset);
-                            _startWord = new AnchorSegment(TextArea.Document, startWord.Offset, startWord.Length);
+                            SimpleSegment startWord;
+
+                            _mode = SelectionMode.WholeWord;
+                            startWord = GetWordAtMousePosition(e);
+
+                            if (e.ClickCount == 3)
+                            {
+                                _mode = SelectionMode.WholeLine;
+                                startWord = GetLineAtMousePosition(e);
+                            }
+                            else
+                            {
+                                _mode = SelectionMode.WholeWord;
+                                startWord = GetWordAtMousePosition(e);
+                            }
+
+                            if (startWord == SimpleSegment.Invalid)
+                            {
+                                _mode = SelectionMode.None;
+                                TextArea.ReleasePointerCapture(e.Pointer);
+                                return;
+                            }
+                            if (shift && !TextArea.Selection.IsEmpty)
+                            {
+                                if (startWord.Offset < TextArea.Selection.SurroundingSegment.Offset)
+                                {
+                                    TextArea.Selection = TextArea.Selection.SetEndpoint(new TextViewPosition(TextArea.Document.GetLocation(startWord.Offset)));
+                                }
+                                else if (startWord.EndOffset > TextArea.Selection.SurroundingSegment.EndOffset)
+                                {
+                                    TextArea.Selection = TextArea.Selection.SetEndpoint(new TextViewPosition(TextArea.Document.GetLocation(startWord.EndOffset)));
+                                }
+                                _startWord = new AnchorSegment(TextArea.Document, TextArea.Selection.SurroundingSegment);
+                            }
+                            else
+                            {
+                                TextArea.Selection = Selection.Create(TextArea, startWord.Offset, startWord.EndOffset);
+                                _startWord = new AnchorSegment(TextArea.Document, startWord.Offset, startWord.Length);
+                            }
                         }
                     }
+                    e.Handled = true;
                 }
-				e.Handled = true;
-			}
-		}
+            }
+
+        }
         #endregion
 
         #region LeftButtonClick
@@ -684,7 +695,7 @@ namespace AvaloniaEdit.Editing
             else if (_mode == SelectionMode.WholeWord || _mode == SelectionMode.WholeLine)
             {
                 var newWord = (_mode == SelectionMode.WholeLine) ? GetLineAtMousePosition(e) : GetWordAtMousePosition(e);
-                if (newWord != SimpleSegment.Invalid &&_startWord != null)
+                if (newWord != SimpleSegment.Invalid && _startWord != null)
                 {
                     TextArea.Selection = Selection.Create(TextArea,
                                                           Math.Min(newWord.Offset, _startWord.Offset),
