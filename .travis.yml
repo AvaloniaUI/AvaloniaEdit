@@ -1,9 +1,0 @@
-sudo: required
-language: csharp
-group: travis_latest
-os:
-  - linux
-dotnet: 2.1.300
-script:
-  - dotnet --info
-  - ./build.sh --configuration "Release"
