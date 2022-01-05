@@ -1,6 +1,6 @@
 using System;
+using System.IO;
 using System.Linq;
-
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 using TextMateSharp.Registry;
@@ -17,24 +17,38 @@ namespace AvaloniaEdit.TextMate
 
         public static Installation InstallTextMate(
             this TextEditor editor,
-            ThemeName theme,
+            string themePath,
             IGrammar grammar = null)
         {
-            return new Installation(editor, theme, grammar);
+            return new Installation(editor, themePath, grammar);
         }
 
         public class Installation
         {
             public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
 
-            public Installation(TextEditor editor, ThemeName defaultTheme, IGrammar grammar)
+            public Installation(TextEditor editor, string themePath, IGrammar grammar)
             {
-                _textMateRegistryOptions = new RegistryOptions(defaultTheme);
+                _textMateRegistryOptions = new RegistryOptions(ResourceLoader.LoadThemeFromPathToStream(themePath));
                 _textMateRegistry = new Registry(_textMateRegistryOptions);
 
                 _editor = editor;
 
-                SetTheme(defaultTheme);
+                SetTheme(themePath);
+                SetGrammar(grammar);
+
+                editor.DocumentChanged += OnEditorOnDocumentChanged;
+
+                OnEditorOnDocumentChanged(editor, EventArgs.Empty);
+            }
+            public Installation(TextEditor editor, Stream theme, IGrammar grammar)
+            {
+                _textMateRegistryOptions = new RegistryOptions(theme);
+                _textMateRegistry = new Registry(_textMateRegistryOptions);
+
+                _editor = editor;
+
+                SetTheme(ResourceLoader.LoadThemeFromStream(theme));
                 SetGrammar(grammar);
 
                 editor.DocumentChanged += OnEditorOnDocumentChanged;
@@ -57,11 +71,20 @@ namespace AvaloniaEdit.TextMate
                 _editor.TextArea.TextView.Redraw();
             }
 
-            public void SetTheme(ThemeName themeName)
+            public void SetTheme(string themePath)
             {
-                IRawTheme rawTheme = _textMateRegistryOptions.LoadTheme(themeName);
 
-                _textMateRegistry.SetTheme(rawTheme);
+                _textMateRegistry.SetTheme(ResourceLoader.LoadThemeFromPath(themePath));
+
+                GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
+
+                _tmModel?.InvalidateLine(0);
+                _editorModel?.TokenizeViewPort();
+            }
+            public void SetTheme(IRawTheme theme)
+            {
+
+                _textMateRegistry.SetTheme(theme);
 
                 GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
 

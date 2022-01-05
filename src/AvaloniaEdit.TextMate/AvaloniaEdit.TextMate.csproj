@@ -6,15 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Themes\*.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Grammars\**\*.json" />
   </ItemGroup>
 
   <ItemGroup>

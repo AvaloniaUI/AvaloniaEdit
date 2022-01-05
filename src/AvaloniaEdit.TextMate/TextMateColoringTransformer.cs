@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 using Avalonia.Media;
 using Avalonia.Threading;
-
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
-
+using System.Collections.Generic;
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 using TextMateSharp.Themes;

@@ -22,6 +22,7 @@ using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.Demo
 {
+    using static AvaloniaEdit.TextMate.TextMate;
     using Pair = KeyValuePair<int, IControl>;
 
     public class MainWindow : Window
@@ -36,7 +37,6 @@ namespace AvaloniaEdit.Demo
         private ComboBox _syntaxModeCombo;
         private TextBlock _statusTextBlock;
         private ElementGenerator _generator = new ElementGenerator();
-        private int _currentTheme = (int)ThemeName.DarkPlus;
 
         public MainWindow()
         {
@@ -72,8 +72,9 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
-            _textMateInstallation = _textEditor.InstallTextMate(
-                (ThemeName)_currentTheme,
+            _textMateInstallation = new Installation(
+                _textEditor,
+                TextMate.Grammars.ResourceLoader.LoadThemeByNameToStream(TextMate.Grammars.Enums.ThemeName.DarkPlus),
                 null);
 
             Language csharpLanguage = _textMateInstallation.RegistryOptions.GetLanguageByExtension(".cs");
@@ -85,7 +86,7 @@ namespace AvaloniaEdit.Demo
 
             string scopeName = _textMateInstallation.RegistryOptions.GetScopeByLanguageId(csharpLanguage.Id);
 
-            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
+            _textEditor.Document = new TextDocument(Demo.Resources.ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammarByLanguageId(csharpLanguage.Id);
 
             _statusTextBlock = this.Find<TextBlock>("StatusText");
@@ -116,15 +117,15 @@ namespace AvaloniaEdit.Demo
 
             string scope = _textMateInstallation.RegistryOptions.GetScopeByLanguageId(language.Id);
 
-            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scope));
+            _textEditor.Document = new TextDocument(Demo.Resources.ResourceLoader.LoadSampleFile(scope));
             _textMateInstallation.SetGrammarByLanguageId(language.Id);
         }
 
         void _changeThemeBtn_Click(object sender, RoutedEventArgs e)
         {
-            _currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
+            //_currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
 
-            _textMateInstallation.SetTheme((ThemeName)_currentTheme);
+            //_textMateInstallation.SetTheme((ThemeName)_currentTheme);
         }
 
         private void InitializeComponent()
