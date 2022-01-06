@@ -15,7 +15,7 @@ using AvaloniaEdit.Demo.Resources;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
-using AvaloniaEdit.TextMate;
+using AvaloniaEdit.TextMate.Models;
 using TextMateSharp.Model;
 using TextMateSharp.Registry;
 using TextMateSharp.Themes;

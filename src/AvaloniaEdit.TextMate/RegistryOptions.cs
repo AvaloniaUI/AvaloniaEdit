@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AvaloniaEdit.TextMate.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TextMateSharp.Registry;
