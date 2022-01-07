@@ -1,4 +1,5 @@
 ﻿using AvaloniaEdit.TextMate.Grammars.Enums;
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -29,16 +30,16 @@ namespace AvaloniaEdit.TextMate.Grammars
         const string GrammarPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Grammars.";
         const string ThemesPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Themes.";
 
-        internal static Stream LoadGrammarByNameToStream(GrammarName name)
+        public static Tuple<Stream,string> LoadGrammarByNameToStream(GrammarName name)
         {
-            return typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
-                GrammarPrefix + GrammarPrefix + name.ToString().ToLower() + "." + "package.json");
+            return new Tuple<Stream, string>(typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
+                GrammarPrefix + name.ToString().ToLower() + "." + "package.json"), name.ToString().ToLower() + "." + "package.json");
         }
 
-        public static Stream LoadThemeByNameToStream(ThemeName name)
+        public static Tuple<Stream,string> LoadThemeByNameToStream(ThemeName name)
         {
-            return typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
-                ThemesPrefix + GetThemeFileName(name));
+            return new Tuple<Stream, string>(typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
+                ThemesPrefix + GetThemeFileName(name)), GetThemeFileName(name));
         }
     }
 }

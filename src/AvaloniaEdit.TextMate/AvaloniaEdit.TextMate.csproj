@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="TextMateSharp" Version="1.0.15" />
+    <PackageReference Include="TextMateSharp" Version="1.0.16" />
   </ItemGroup>
 
 </Project>

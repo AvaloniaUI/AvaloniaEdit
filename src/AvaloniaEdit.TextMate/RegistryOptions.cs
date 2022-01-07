@@ -1,7 +1,10 @@
 ﻿using AvaloniaEdit.TextMate.Models;
+using AvaloniaEdit.TextMate.Storage.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using TextMateSharp.Internal.Types;
 using TextMateSharp.Registry;
 using TextMateSharp.Themes;
 
@@ -9,20 +12,18 @@ namespace AvaloniaEdit.TextMate
 {
     public class RegistryOptions : IRegistryOptions
     {
-        public Tuple<IRawTheme, Stream> _defaultTheme;
-        Dictionary<string, GrammarDefinition> _availableGrammars = new Dictionary<string, GrammarDefinition>();
+        private readonly IResourceStorage _resourceStorage;
 
-        public RegistryOptions(Stream defaultThemeStream)
+        public RegistryOptions(IResourceStorage storage)
         {
-            _defaultTheme = new Tuple<IRawTheme, Stream>(ResourceLoader.LoadThemeFromStream(defaultThemeStream), defaultThemeStream);
-            //InitializeGrammars();
+            _resourceStorage = storage;
         }
 
         public List<Language> GetAvailableLanguages()
         {
             List<Language> result = new List<Language>();
 
-            foreach (GrammarDefinition definition in _availableGrammars.Values)
+            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.Grammars.Values)
             {
                 foreach (Language language in definition.Contributes.Languages)
                 {
@@ -36,9 +37,19 @@ namespace AvaloniaEdit.TextMate
             return result;
         }
 
+        public IRawTheme GetDefaultTheme()
+        {
+            return _resourceStorage.ThemeStorage.SelectedTheme;
+        }
+
+        public IRawGrammar GetGrammar(string scopeName)
+        {
+            return _resourceStorage.GrammarStorage.Grammars.First(x => x.Key == scopeName).Value;
+        }
+
         public Language GetLanguageByExtension(string extension)
         {
-            foreach (GrammarDefinition definition in _availableGrammars.Values)
+            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.Grammars.Values)
             {
                 foreach (var language in definition.Contributes.Languages)
                 {
@@ -61,7 +72,7 @@ namespace AvaloniaEdit.TextMate
 
         public string GetScopeByExtension(string extension)
         {
-            foreach (GrammarDefinition definition in _availableGrammars.Values)
+            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.Grammars.Values)
             {
                 foreach (var language in definition.Contributes.Languages)
                 {
@@ -87,7 +98,7 @@ namespace AvaloniaEdit.TextMate
             if (string.IsNullOrEmpty(languageId))
                 return null;
 
-            foreach (GrammarDefinition definition in _availableGrammars.Values)
+            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.Grammars.Values)
             {
                 foreach (var grammar in definition.Contributes.Grammars)
                 {
@@ -99,9 +110,9 @@ namespace AvaloniaEdit.TextMate
             return null;
         }
 
-        public IRawTheme LoadTheme(string themePath)
+        public IRawTheme GetTheme(string scopeName)
         {
-            return ResourceLoader.LoadThemeFromPath(themePath);
+            return _resourceStorage.ThemeStorage.Themes.First(x => x.Key == scopeName).Value;
         }
 
         //void InitializeGrammars()
@@ -120,44 +131,12 @@ namespace AvaloniaEdit.TextMate
         //    }
         //}
 
-        string IRegistryOptions.GetFilePath(string scopeName)
-        {
-            foreach (string grammarName in _availableGrammars.Keys)
-            {
-                GrammarDefinition definition = _availableGrammars[grammarName];
-
-                foreach (Grammar grammar in definition.Contributes.Grammars)
-                {
-                    if (scopeName.Equals(grammar.ScopeName))
-                    {
-                        string grammarPath = grammar.Path;
-
-                        if (grammarPath.StartsWith("./"))
-                            grammarPath = grammarPath.Substring(2);
-
-                        grammarPath = grammarPath.Replace("/", ".");
-
-                        return grammarName.ToLower() + "." + grammarPath;
-                    }
-                }
-            }
-
-            return null;
-        }
+       
 
         ICollection<string> IRegistryOptions.GetInjections(string scopeName)
         {
             return null;
         }
 
-        Stream IRegistryOptions.GetInputStream(string scopeName)
-        {
-            return _defaultTheme.Item2;
-        }
-
-        IRawTheme IRegistryOptions.GetTheme()
-        {
-            return _defaultTheme.Item1;
-        }
     }
 }

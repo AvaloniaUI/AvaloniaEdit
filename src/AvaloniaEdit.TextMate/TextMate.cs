@@ -1,3 +1,4 @@
+using AvaloniaEdit.TextMate.Storage.Abstractions;
 using System;
 using System.IO;
 using System.Linq;
@@ -15,41 +16,19 @@ namespace AvaloniaEdit.TextMate
             _exceptionHandler = handler;
         }
 
-        public static Installation InstallTextMate(
-            this TextEditor editor,
-            string themePath,
-            IGrammar grammar = null)
-        {
-            return new Installation(editor, themePath, grammar);
-        }
-
         public class Installation
         {
             public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
 
-            public Installation(TextEditor editor, string themePath, IGrammar grammar)
+            public Installation(TextEditor editor, IResourceStorage storage)
             {
-                _textMateRegistryOptions = new RegistryOptions(ResourceLoader.LoadThemeFromPathToStream(themePath));
+                _textMateRegistryOptions = new RegistryOptions(storage);
                 _textMateRegistry = new Registry(_textMateRegistryOptions);
 
                 _editor = editor;
 
-                SetTheme(themePath);
-                SetGrammar(grammar);
-
-                editor.DocumentChanged += OnEditorOnDocumentChanged;
-
-                OnEditorOnDocumentChanged(editor, EventArgs.Empty);
-            }
-            public Installation(TextEditor editor, Stream theme, IGrammar grammar)
-            {
-                _textMateRegistryOptions = new RegistryOptions(theme);
-                _textMateRegistry = new Registry(_textMateRegistryOptions);
-
-                _editor = editor;
-
-                SetTheme(ResourceLoader.LoadThemeFromStream(theme));
-                SetGrammar(grammar);
+                SetTheme(storage.ThemeStorage.SelectedTheme);
+                //SetGrammar(SetGrammarByLanguageId(storage.GrammarStorage.SelectedGrammar.));
 
                 editor.DocumentChanged += OnEditorOnDocumentChanged;
 

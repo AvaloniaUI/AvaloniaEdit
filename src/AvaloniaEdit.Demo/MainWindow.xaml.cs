@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -15,7 +16,10 @@ using AvaloniaEdit.Demo.Resources;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.TextMate.Grammars.Enums;
 using AvaloniaEdit.TextMate.Models;
+using AvaloniaEdit.TextMate.Storage;
+using TextMateSharp.Internal.Types;
 using TextMateSharp.Model;
 using TextMateSharp.Registry;
 using TextMateSharp.Themes;
@@ -72,10 +76,23 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
+            var themes = new Dictionary<string,IRawTheme>();
+            foreach (var item in Enum.GetValues(typeof(ThemeName)).Cast<ThemeName>())
+            {
+                var theme = TextMate.Grammars.ResourceLoader.LoadThemeByNameToStream(item);
+                themes.Add(theme.Item2,AvaloniaEdit.TextMate.ResourceLoader.LoadThemeFromStream(theme.Item1));
+            }
+            var grammars = new Dictionary<string,IRawGrammar>();
+            foreach (var item in Enum.GetValues(typeof(GrammarName)).Cast<GrammarName>())
+            {
+                var grammar = TextMate.Grammars.ResourceLoader.LoadGrammarByNameToStream(item);
+                grammars.Add(grammar.Item2, AvaloniaEdit.TextMate.ResourceLoader.LoadGrammarFromStream(grammar.Item1));
+            }
+            var storage = new ResourceStorage(new ThemeStorage(themes, themes.First().Value),
+                new GrammarStorage(grammars,grammars.First().Value));
             _textMateInstallation = new Installation(
                 _textEditor,
-                TextMate.Grammars.ResourceLoader.LoadThemeByNameToStream(TextMate.Grammars.Enums.ThemeName.DarkPlus),
-                null);
+                storage);
 
             Language csharpLanguage = _textMateInstallation.RegistryOptions.GetLanguageByExtension(".cs");
 

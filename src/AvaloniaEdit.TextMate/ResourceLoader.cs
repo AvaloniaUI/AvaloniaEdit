@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using TextMateSharp.Internal.Grammars.Reader;
 using TextMateSharp.Internal.Themes.Reader;
+using TextMateSharp.Internal.Types;
 using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.TextMate
@@ -25,8 +27,13 @@ namespace AvaloniaEdit.TextMate
         }
         public static IRawTheme LoadThemeFromStream(Stream stream)
         {
-            StreamReader reader = new(stream);
+            using StreamReader reader = new(stream);
             return ThemeReader.ReadThemeSync(reader);
+        }
+        public static IRawGrammar LoadGrammarFromStream(Stream stream)
+        {
+            using StreamReader reader = new(stream);
+            return GrammarReader.ReadGrammarSync(reader);
         }
     }
 }
