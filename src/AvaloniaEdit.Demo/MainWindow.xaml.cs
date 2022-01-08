@@ -91,14 +91,16 @@ namespace AvaloniaEdit.Demo
             {
                 var grammar = TextMate.Grammars.ResourceLoader.LoadGrammarByNameToStream(item);
                 var serializer = new JsonSerializer();
+                GrammarDefinition definition = null;
                 using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(grammar.Item1 ?? "")))
                 using (StreamReader reader = new StreamReader(stream))
                 using (JsonTextReader jsonTextReader = new JsonTextReader(reader))
                 {
-                    GrammarDefinition definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
+                    definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
                     grammarDefinitions.Add(definition);
                 }
-                grammars.Add(grammar.Item2, AvaloniaEdit.TextMate.ResourceLoader.LoadGrammarFromStream(grammar.Item1));
+                var rawGrammar = AvaloniaEdit.TextMate.ResourceLoader.LoadGrammarFromStream(grammar.Item1);
+                grammars.Add(definition.Contributes.Grammars.First().ScopeName, rawGrammar);
             }
             var storage = new ResourceStorage(new ThemeStorage(themes, themes.First().Value),
                 new GrammarStorage(grammars,grammars.First().Value, grammarDefinitions));
