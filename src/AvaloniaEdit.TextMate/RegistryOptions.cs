@@ -23,7 +23,7 @@ namespace AvaloniaEdit.TextMate
         {
             List<Language> result = new List<Language>();
 
-            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.Grammars.Values)
+            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.GrammarDefinitions)
             {
                 foreach (Language language in definition.Contributes.Languages)
                 {
@@ -49,7 +49,7 @@ namespace AvaloniaEdit.TextMate
 
         public Language GetLanguageByExtension(string extension)
         {
-            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.Grammars.Values)
+            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.GrammarDefinitions)
             {
                 foreach (var language in definition.Contributes.Languages)
                 {
@@ -72,7 +72,7 @@ namespace AvaloniaEdit.TextMate
 
         public string GetScopeByExtension(string extension)
         {
-            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.Grammars.Values)
+            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.GrammarDefinitions)
             {
                 foreach (var language in definition.Contributes.Languages)
                 {
@@ -98,7 +98,7 @@ namespace AvaloniaEdit.TextMate
             if (string.IsNullOrEmpty(languageId))
                 return null;
 
-            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.Grammars.Values)
+            foreach (GrammarDefinition definition in _resourceStorage.GrammarStorage.GrammarDefinitions)
             {
                 foreach (var grammar in definition.Contributes.Grammars)
                 {

@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using AvaloniaEdit.TextMate.Models.Abstractions;
+using Newtonsoft.Json;
 
 namespace AvaloniaEdit.TextMate.Models
 {
-    public class GrammarDefinition
+    public class GrammarDefinition : IGrammarDefinition
     {
         [JsonProperty("name")]
         public string Name { get; set; }

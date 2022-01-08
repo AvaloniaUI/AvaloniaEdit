@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -18,7 +19,9 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate.Grammars.Enums;
 using AvaloniaEdit.TextMate.Models;
+using AvaloniaEdit.TextMate.Models.Abstractions;
 using AvaloniaEdit.TextMate.Storage;
+using Newtonsoft.Json;
 using TextMateSharp.Internal.Types;
 using TextMateSharp.Model;
 using TextMateSharp.Registry;
@@ -83,13 +86,22 @@ namespace AvaloniaEdit.Demo
                 themes.Add(theme.Item2,AvaloniaEdit.TextMate.ResourceLoader.LoadThemeFromStream(theme.Item1));
             }
             var grammars = new Dictionary<string,IRawGrammar>();
+            var grammarDefinitions = new List<IGrammarDefinition>();
             foreach (var item in Enum.GetValues(typeof(GrammarName)).Cast<GrammarName>())
             {
                 var grammar = TextMate.Grammars.ResourceLoader.LoadGrammarByNameToStream(item);
+                var serializer = new JsonSerializer();
+                using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(grammar.Item1 ?? "")))
+                using (StreamReader reader = new StreamReader(stream))
+                using (JsonTextReader jsonTextReader = new JsonTextReader(reader))
+                {
+                    GrammarDefinition definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
+                    grammarDefinitions.Add(definition);
+                }
                 grammars.Add(grammar.Item2, AvaloniaEdit.TextMate.ResourceLoader.LoadGrammarFromStream(grammar.Item1));
             }
             var storage = new ResourceStorage(new ThemeStorage(themes, themes.First().Value),
-                new GrammarStorage(grammars,grammars.First().Value));
+                new GrammarStorage(grammars,grammars.First().Value, grammarDefinitions));
             _textMateInstallation = new Installation(
                 _textEditor,
                 storage);
