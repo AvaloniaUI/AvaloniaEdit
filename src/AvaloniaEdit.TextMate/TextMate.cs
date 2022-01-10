@@ -1,6 +1,5 @@
 using AvaloniaEdit.TextMate.Storage.Abstractions;
 using System;
-using System.IO;
 using System.Linq;
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
@@ -11,6 +10,8 @@ namespace AvaloniaEdit.TextMate
 {
     public static class TextMate
     {
+        static Action<Exception> _exceptionHandler;
+
         public static void RegisterExceptionHandler(Action<Exception> handler)
         {
             _exceptionHandler = handler;
@@ -18,8 +19,12 @@ namespace AvaloniaEdit.TextMate
 
         public class Installation
         {
-            public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
-
+            TextEditor _editor;
+            TextEditorModel _editorModel;
+            IGrammar _grammar;
+            Registry _textMateRegistry;
+            RegistryOptions _textMateRegistryOptions;
+            TMModel _tmModel;
             public Installation(TextEditor editor, IResourceStorage storage)
             {
                 _textMateRegistryOptions = new RegistryOptions(storage);
@@ -35,10 +40,12 @@ namespace AvaloniaEdit.TextMate
                 OnEditorOnDocumentChanged(editor, EventArgs.Empty);
             }
 
-            public void SetGrammarByLanguageId(string languageId)
+            public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
+            public void Dispose()
             {
-                string scopeName = _textMateRegistryOptions.GetScopeByLanguageId(languageId);
-                SetGrammar((scopeName == null) ? null : _textMateRegistry.LoadGrammar(scopeName));
+                _editor.DocumentChanged -= OnEditorOnDocumentChanged;
+
+                DisposeTMModel(_tmModel);
             }
 
             public void SetGrammar(IGrammar grammar)
@@ -50,15 +57,10 @@ namespace AvaloniaEdit.TextMate
                 _editor.TextArea.TextView.Redraw();
             }
 
-            public void SetTheme(string themePath)
+            public void SetGrammarByLanguageId(string languageId)
             {
-
-                _textMateRegistry.SetTheme(ResourceLoader.LoadThemeFromPath(themePath));
-
-                GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
-
-                _tmModel?.InvalidateLine(0);
-                _editorModel?.TokenizeViewPort();
+                string scopeName = _textMateRegistryOptions.GetScopeByLanguageId(languageId);
+                SetGrammar((scopeName == null) ? null : _textMateRegistry.LoadGrammar(scopeName));
             }
             public void SetTheme(IRawTheme theme)
             {
@@ -70,12 +72,26 @@ namespace AvaloniaEdit.TextMate
                 _tmModel?.InvalidateLine(0);
                 _editorModel?.TokenizeViewPort();
             }
-
-            public void Dispose()
+            static void DisposeTMModel(TMModel tmModel)
             {
-                _editor.DocumentChanged -= OnEditorOnDocumentChanged;
+                if (tmModel == null)
+                    return;
 
-                DisposeTMModel(_tmModel);
+                tmModel.Dispose();
+            }
+
+            TextMateColoringTransformer GetOrCreateTransformer()
+            {
+                var transformer = _editor.TextArea.TextView.LineTransformers.OfType<TextMateColoringTransformer>().FirstOrDefault();
+
+                if (transformer is null)
+                {
+                    transformer = new TextMateColoringTransformer();
+
+                    _editor.TextArea.TextView.LineTransformers.Add(transformer);
+                }
+
+                return transformer;
             }
 
             void OnEditorOnDocumentChanged(object sender, EventArgs args)
@@ -95,37 +111,6 @@ namespace AvaloniaEdit.TextMate
                     _exceptionHandler?.Invoke(ex);
                 }
             }
-
-            TextMateColoringTransformer GetOrCreateTransformer()
-            {
-                var transformer = _editor.TextArea.TextView.LineTransformers.OfType<TextMateColoringTransformer>().FirstOrDefault();
-
-                if (transformer is null)
-                {
-                    transformer = new TextMateColoringTransformer();
-
-                    _editor.TextArea.TextView.LineTransformers.Add(transformer);
-                }
-
-                return transformer;
-            }
-
-            static void DisposeTMModel(TMModel tmModel)
-            {
-                if (tmModel == null)
-                    return;
-
-                tmModel.Dispose();
-            }
-
-            RegistryOptions _textMateRegistryOptions;
-            Registry _textMateRegistry;
-            TextEditor _editor;
-            TextEditorModel _editorModel;
-            IGrammar _grammar;
-            TMModel _tmModel;
         }
-
-        static Action<Exception> _exceptionHandler;
     }
 }

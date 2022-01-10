@@ -2,7 +2,6 @@
 using AvaloniaEdit.TextMate.Storage.Abstractions;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using TextMateSharp.Internal.Types;
 using TextMateSharp.Registry;
@@ -19,6 +18,7 @@ namespace AvaloniaEdit.TextMate
             _resourceStorage = storage;
         }
 
+        public IResourceStorage Storage { get => _resourceStorage; }
         public List<Language> GetAvailableLanguages()
         {
             List<Language> result = new List<Language>();
@@ -45,6 +45,11 @@ namespace AvaloniaEdit.TextMate
         public IRawGrammar GetGrammar(string scopeName)
         {
             return _resourceStorage.GrammarStorage.Grammars.First(x => x.Key == scopeName).Value;
+        }
+
+        ICollection<string> IRegistryOptions.GetInjections(string scopeName)
+        {
+            return null;
         }
 
         public Language GetLanguageByExtension(string extension)
@@ -112,31 +117,7 @@ namespace AvaloniaEdit.TextMate
 
         public IRawTheme GetTheme(string scopeName)
         {
-            return _resourceStorage.ThemeStorage.Themes.First(x => x.Key == scopeName).Value;
+            return _resourceStorage.ThemeStorage.Themes.First(x => x.Key == scopeName.Substring(2)).Value;
         }
-
-        //void InitializeGrammars()
-        //{
-        //    var serializer = new JsonSerializer();
-
-        //    foreach (string grammar in GrammarNames.SupportedGrammars)
-        //    {
-        //        using (Stream stream = ResourceLoader.OpenGrammarPackage(grammar))
-        //        using (StreamReader reader = new StreamReader(stream))
-        //        using (JsonTextReader jsonTextReader = new JsonTextReader(reader))
-        //        {
-        //            GrammarDefinition definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
-        //            _availableGrammars.Add(grammar, definition);
-        //        }
-        //    }
-        //}
-
-       
-
-        ICollection<string> IRegistryOptions.GetInjections(string scopeName)
-        {
-            return null;
-        }
-
     }
 }

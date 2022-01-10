@@ -122,9 +122,7 @@ namespace AvaloniaEdit.Demo
 
             }
 
-
-
-            var storage = new ResourceStorage(new ThemeStorage(themes, themes.First().Value),
+            var storage = new ResourceStorage(new ThemeStorage(themes, themes.First(x=>x.Value.GetName()== "Dark+ (default dark)").Value),
                 new GrammarStorage(grammars, grammars.First().Value, grammarDefinitions));
             _textMateInstallation = new Installation(
                 _textEditor,
@@ -176,9 +174,7 @@ namespace AvaloniaEdit.Demo
 
         void _changeThemeBtn_Click(object sender, RoutedEventArgs e)
         {
-            //_currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
-
-            //_textMateInstallation.SetTheme((ThemeName)_currentTheme);
+            
         }
 
         private void InitializeComponent()
