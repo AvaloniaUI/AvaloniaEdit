@@ -1,19 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using AvaloniaEdit.CodeCompletion;
-using AvaloniaEdit.Demo.Resources;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
@@ -22,9 +13,14 @@ using AvaloniaEdit.TextMate.Models;
 using AvaloniaEdit.TextMate.Models.Abstractions;
 using AvaloniaEdit.TextMate.Storage;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 using TextMateSharp.Internal.Types;
-using TextMateSharp.Model;
-using TextMateSharp.Registry;
 using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.Demo
@@ -52,14 +48,14 @@ namespace AvaloniaEdit.Demo
             _textEditor = this.FindControl<TextEditor>("Editor");
             _textEditor.Background = Brushes.Transparent;
             _textEditor.ShowLineNumbers = true;
-            _textEditor.ContextMenu = new ContextMenu 
-            { 
-                Items = new List<MenuItem> 
-                { 
+            _textEditor.ContextMenu = new ContextMenu
+            {
+                Items = new List<MenuItem>
+                {
                     new MenuItem { Header = "Copy", InputGesture = new KeyGesture(Key.C, KeyModifiers.Control) },
                     new MenuItem { Header = "Paste", InputGesture = new KeyGesture(Key.V, KeyModifiers.Control) },
                     new MenuItem { Header = "Cut", InputGesture = new KeyGesture(Key.X, KeyModifiers.Control) }
-                } 
+                }
             };
             _textEditor.TextArea.Background = this.Background;
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
@@ -79,17 +75,37 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
-            var themes = new Dictionary<string,IRawTheme>();
+            var themes = new Dictionary<string, IRawTheme>();
             foreach (var item in Enum.GetValues(typeof(ThemeName)).Cast<ThemeName>())
             {
                 var theme = TextMate.Grammars.ResourceLoader.LoadThemeByNameToStream(item);
-                themes.Add(theme.Item2,AvaloniaEdit.TextMate.ResourceLoader.LoadThemeFromStream(theme.Item1));
+                themes.Add(theme.Item2, AvaloniaEdit.TextMate.ResourceLoader.LoadThemeFromStream(theme.Item1));
             }
-            var grammars = new Dictionary<string,IRawGrammar>();
+            var grammars = new Dictionary<string, IRawGrammar>();
             var grammarDefinitions = new List<IGrammarDefinition>();
+            string GetFilePath(string scopeName, IGrammarDefinition grammarDefinition)
+            {
+                foreach (Grammar grammar in grammarDefinition.Contributes.Grammars)
+                {
+                    if (scopeName.Equals(grammar.ScopeName))
+                    {
+                        string grammarPath = grammar.Path;
+
+                        if (grammarPath.StartsWith("./"))
+                            grammarPath = grammarPath.Substring(2);
+
+                        grammarPath = grammarPath.Replace("/", ".");
+
+                        return grammarPath;
+                    }
+                }
+
+                return null;
+            }
             foreach (var item in Enum.GetValues(typeof(GrammarName)).Cast<GrammarName>())
             {
                 var grammar = TextMate.Grammars.ResourceLoader.LoadGrammarByNameToStream(item);
+
                 var serializer = new JsonSerializer();
                 GrammarDefinition definition = null;
                 using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(grammar.Item1 ?? "")))
@@ -99,11 +115,17 @@ namespace AvaloniaEdit.Demo
                     definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
                     grammarDefinitions.Add(definition);
                 }
-                var rawGrammar = AvaloniaEdit.TextMate.ResourceLoader.LoadGrammarFromStream(grammar.Item1);
+
+                var gr2 = TextMate.Grammars.ResourceLoader.LoadGrammarByNameToStream2(item, GetFilePath(definition.Contributes.Grammars.First().ScopeName, definition));
+                var rawGrammar = AvaloniaEdit.TextMate.ResourceLoader.LoadGrammarFromStream(gr2);
                 grammars.Add(definition.Contributes.Grammars.First().ScopeName, rawGrammar);
+
             }
+
+
+
             var storage = new ResourceStorage(new ThemeStorage(themes, themes.First().Value),
-                new GrammarStorage(grammars,grammars.First().Value, grammarDefinitions));
+                new GrammarStorage(grammars, grammars.First().Value, grammarDefinitions));
             _textMateInstallation = new Installation(
                 _textEditor,
                 storage);
@@ -163,7 +185,7 @@ namespace AvaloniaEdit.Demo
         {
             AvaloniaXamlLoader.Load(this);
         }
-        
+
         void _addControlBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me" }));

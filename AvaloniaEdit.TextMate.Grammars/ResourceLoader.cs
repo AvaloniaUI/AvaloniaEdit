@@ -38,6 +38,14 @@ namespace AvaloniaEdit.TextMate.Grammars
             var text = reader.ReadToEnd();
             return new Tuple<string, string>(text, name.ToString().ToLower() + "." + "package.json");
         }
+        public static  string  LoadGrammarByNameToStream2(GrammarName name,string fileName)
+        {
+            var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
+                GrammarPrefix + name.ToString().ToLower() + "." + fileName);
+            using var reader = new StreamReader(stream);
+            var text = reader.ReadToEnd();
+            return text;
+        }
 
         public static Tuple<string,string> LoadThemeByNameToStream(ThemeName name)
         {
