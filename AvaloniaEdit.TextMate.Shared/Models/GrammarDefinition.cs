@@ -1,4 +1,5 @@
 ﻿using AvaloniaEdit.TextMate.Models.Abstractions;
+using AvaloniaEdit.TextMate.Shared.Models.Abstractions;
 using Newtonsoft.Json;
 
 namespace AvaloniaEdit.TextMate.Models
@@ -18,9 +19,9 @@ namespace AvaloniaEdit.TextMate.Models
         [JsonProperty("license")]
         public string License { get; set; }
         [JsonProperty("engines")]
-        public Engines Engines { get; set; }
+        public Engine Engine { get; set; }
         [JsonProperty("scripts")]
-        public Scripts Scripts { get; set; }
+        public Script Script { get; set; }
         [JsonProperty("contributes")]
         public Contributes Contributes { get; set; }
         [JsonProperty("repository")]

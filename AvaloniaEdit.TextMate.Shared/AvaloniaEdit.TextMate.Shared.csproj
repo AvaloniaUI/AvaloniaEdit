@@ -2,13 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\AvaloniaEdit.TextMate.Shared\AvaloniaEdit.TextMate.Shared.csproj" />
-    <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

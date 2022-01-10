@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AvaloniaEdit.TextMate.Shared.Models.Abstractions;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AvaloniaEdit.TextMate.Models

@@ -7,6 +7,37 @@ namespace AvaloniaEdit.TextMate.Grammars
 {
     public static class ResourceLoader
     {
+        private const string GrammarPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Grammars.";
+
+        private const string ThemesPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Themes.";
+
+        public static Tuple<string, string> LoadGrammarByNameToStream(GrammarName name)
+        {
+            var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
+                GrammarPrefix + name.ToString().ToLower() + "." + "package.json");
+            using var reader = new StreamReader(stream);
+            var text = reader.ReadToEnd();
+            return new Tuple<string, string>(text, name.ToString().ToLower() + "." + "package.json");
+        }
+
+        public static string LoadGrammarByNameToStream2(GrammarName name, string fileName)
+        {
+            var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
+                GrammarPrefix + name.ToString().ToLower() + "." + fileName);
+            using var reader = new StreamReader(stream);
+            var text = reader.ReadToEnd();
+            return text;
+        }
+
+        public static Tuple<string, string> LoadThemeByNameToStream(ThemeName name)
+        {
+            var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
+                ThemesPrefix + GetThemeFileName(name));
+            using var reader = new StreamReader(stream);
+            var text = reader.ReadToEnd();
+            return new Tuple<string, string>(text, GetThemeFileName(name));
+        }
+
         private static string GetThemeFileName(ThemeName name)
         {
             return name switch
@@ -26,34 +57,6 @@ namespace AvaloniaEdit.TextMate.Grammars
                 ThemeName.TomorrowNightBlue => "tomorrow-night-blue-color-theme.json",
                 _ => null,
             };
-        }
-        const string GrammarPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Grammars.";
-        const string ThemesPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Themes.";
-
-        public static Tuple<string, string> LoadGrammarByNameToStream(GrammarName name)
-        {
-            var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
-                GrammarPrefix + name.ToString().ToLower() + "." + "package.json");
-            using var reader = new StreamReader(stream);
-            var text = reader.ReadToEnd();
-            return new Tuple<string, string>(text, name.ToString().ToLower() + "." + "package.json");
-        }
-        public static  string  LoadGrammarByNameToStream2(GrammarName name,string fileName)
-        {
-            var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
-                GrammarPrefix + name.ToString().ToLower() + "." + fileName);
-            using var reader = new StreamReader(stream);
-            var text = reader.ReadToEnd();
-            return text;
-        }
-
-        public static Tuple<string,string> LoadThemeByNameToStream(ThemeName name)
-        {
-            var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
-                ThemesPrefix + GetThemeFileName(name));
-            using var reader = new StreamReader(stream);
-            var text = reader.ReadToEnd();
-            return new Tuple<string, string>(text, GetThemeFileName(name));
         }
     }
 }

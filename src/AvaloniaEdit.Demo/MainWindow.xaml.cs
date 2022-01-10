@@ -122,6 +122,7 @@ namespace AvaloniaEdit.Demo
 
             }
 
+
             var storage = new ResourceStorage(new ThemeStorage(themes, themes.First(x=>x.Value.GetName()== "Dark+ (default dark)").Value),
                 new GrammarStorage(grammars, grammars.First().Value, grammarDefinitions));
             _textMateInstallation = new Installation(

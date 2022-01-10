@@ -66,7 +66,7 @@ namespace AvaloniaEdit.TextMate
                         if (extension.Equals(languageExtension,
                             StringComparison.OrdinalIgnoreCase))
                         {
-                            return language;
+                            return (Language)language;
                         }
                     }
                 }

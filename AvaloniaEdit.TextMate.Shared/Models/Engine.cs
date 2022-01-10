@@ -2,7 +2,7 @@
 
 namespace AvaloniaEdit.TextMate.Models
 {
-    public class Engines
+    public class Engine
     {
         [JsonProperty("engines")]
         public string VsCode { get; set; }

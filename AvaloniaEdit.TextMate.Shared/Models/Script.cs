@@ -2,7 +2,7 @@
 
 namespace AvaloniaEdit.TextMate.Models
 {
-    public class Scripts
+    public class Script
     {
         [JsonProperty("update-grammar")]
         public string UpdateGrammar { get; set; }

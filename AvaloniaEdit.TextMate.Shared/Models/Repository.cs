@@ -2,7 +2,7 @@
 
 namespace AvaloniaEdit.TextMate.Models
 {
-    public class Repository
+    public class Repository 
     {
         [JsonProperty("type")]
         public string Type { get; set; }

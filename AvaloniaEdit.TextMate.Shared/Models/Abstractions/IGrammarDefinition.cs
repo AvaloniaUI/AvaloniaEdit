@@ -1,4 +1,6 @@
-﻿namespace AvaloniaEdit.TextMate.Models.Abstractions
+﻿using AvaloniaEdit.TextMate.Shared.Models.Abstractions;
+
+namespace AvaloniaEdit.TextMate.Models.Abstractions
 {
     public interface IGrammarDefinition
     {
@@ -8,8 +10,8 @@
         public string Version { get; set; }
         public string Publisher { get; set; }
         public string License { get; set; }
-        public Engines Engines { get; set; }
-        public Scripts Scripts { get; set; }
+        public Engine Engine { get; set; }
+        public Script Script { get; set; }
         public Contributes Contributes { get; set; }
         public Repository Repository { get; set; }
     }
