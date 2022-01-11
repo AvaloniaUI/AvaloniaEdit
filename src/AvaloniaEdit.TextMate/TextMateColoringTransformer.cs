@@ -14,18 +14,65 @@ namespace AvaloniaEdit.TextMate
         IModelTokensChangedListener,
         ForegroundTextTransformation.IColorMap
     {
-        private Theme _theme;
+        private readonly Dictionary<int, IBrush> _brushes;
+        private TextDocument _document;
         private IGrammar _grammar;
         private TMModel _model;
-        private TextDocument _document;
         private TextView _textView;
-
-        private readonly Dictionary<int, IBrush> _brushes;
+        private Theme _theme;
         private TextSegmentCollection<TextTransformation> _transformations;
 
         public TextMateColoringTransformer()
         {
             _brushes = new Dictionary<int, IBrush>();
+        }
+
+        bool ForegroundTextTransformation.IColorMap.Contains(int foregroundColor)
+        {
+            if (_brushes == null)
+                return false;
+
+            return _brushes.ContainsKey(foregroundColor);
+        }
+
+        IBrush ForegroundTextTransformation.IColorMap.GetForegroundBrush(int foregroundColor)
+        {
+            return _brushes[foregroundColor];
+        }
+
+        public void ModelTokensChanged(ModelTokensChangedEvent e)
+        {
+            var ranges = e.ranges.ToArray();
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (_model.IsStopped)
+                    return;
+
+                foreach (var range in ranges)
+                {
+                    if (!IsValidRange(range, _document.LineCount))
+                        continue;
+
+                    ProcessRange(range);
+
+                    var startLine = _document.GetLineByNumber(range.fromLineNumber);
+                    var endLine = _document.GetLineByNumber(range.toLineNumber);
+
+                    _textView.Redraw(startLine.Offset, endLine.EndOffset - startLine.Offset);
+                }
+            });
+        }
+
+        public void SetGrammar(IGrammar grammar)
+        {
+            _grammar = grammar;
+            _transformations?.Clear();
+
+            if (_model != null)
+            {
+                _model.SetGrammar(grammar);
+            }
         }
 
         public void SetModel(TextDocument document, TextView textView, TMModel model)
@@ -59,31 +106,6 @@ namespace AvaloniaEdit.TextMate
 
             _transformations?.Clear();
         }
-
-        public void SetGrammar(IGrammar grammar)
-        {
-            _grammar = grammar;
-            _transformations?.Clear();
-
-            if (_model != null)
-            {
-                _model.SetGrammar(grammar);
-            }
-        }
-
-        bool ForegroundTextTransformation.IColorMap.Contains(int foregroundColor)
-        {
-            if (_brushes == null)
-                return false;
-
-            return _brushes.ContainsKey(foregroundColor);
-        }
-
-        IBrush ForegroundTextTransformation.IColorMap.GetForegroundBrush(int foregroundColor)
-        {
-            return _brushes[foregroundColor];
-        }
-
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
             if (_transformations is { })
@@ -94,6 +116,31 @@ namespace AvaloniaEdit.TextMate
                 {
                     transform.Transform(this, line);
                 }
+            }
+        }
+
+        static bool IsValidRange(Range range, int lineCount)
+        {
+            if (range.fromLineNumber < 0 || range.fromLineNumber > lineCount)
+                return false;
+
+            if (range.toLineNumber < 0 || range.toLineNumber > lineCount)
+                return false;
+
+            return true;
+        }
+
+        private void ProcessRange(Range range)
+        {
+            for (int i = range.fromLineNumber; i <= range.toLineNumber; i++)
+            {
+                var tokens = _model.GetLineTokens(i - 1);
+
+                if (tokens == null)
+                    continue;
+
+                RemoveLineTransformations(i);
+                ProcessTokens(i, tokens);
             }
         }
 
@@ -136,55 +183,6 @@ namespace AvaloniaEdit.TextMate
             {
                 _transformations.Remove(transform);
             }
-        }
-
-        private void ProcessRange(Range range)
-        {
-            for (int i = range.fromLineNumber; i <= range.toLineNumber; i++)
-            {
-                var tokens = _model.GetLineTokens(i - 1);
-
-                if (tokens == null)
-                    continue;
-
-                RemoveLineTransformations(i);
-                ProcessTokens(i, tokens);
-            }
-        }
-
-        public void ModelTokensChanged(ModelTokensChangedEvent e)
-        {
-            var ranges = e.ranges.ToArray();
-
-            Dispatcher.UIThread.Post(() =>
-            {
-                if (_model.IsStopped)
-                    return;
-
-                foreach (var range in ranges)
-                {
-                    if (!IsValidRange(range, _document.LineCount))
-                        continue;
-
-                    ProcessRange(range);
-
-                    var startLine = _document.GetLineByNumber(range.fromLineNumber);
-                    var endLine = _document.GetLineByNumber(range.toLineNumber);
-
-                    _textView.Redraw(startLine.Offset, endLine.EndOffset - startLine.Offset);
-                }
-            });
-        }
-
-        static bool IsValidRange(Range range, int lineCount)
-        {
-            if (range.fromLineNumber < 0 || range.fromLineNumber > lineCount)
-                return false;
-
-            if (range.toLineNumber < 0 || range.toLineNumber > lineCount)
-                return false;
-
-            return true;
         }
     }
 }

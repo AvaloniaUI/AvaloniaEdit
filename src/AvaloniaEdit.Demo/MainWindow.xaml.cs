@@ -13,6 +13,7 @@ using AvaloniaEdit.TextMate.Grammars;
 using AvaloniaEdit.TextMate.Grammars.Enums;
 using AvaloniaEdit.TextMate.Models;
 using System;
+using AvaloniaEdit.TextMate.Extensions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -71,14 +72,14 @@ namespace AvaloniaEdit.Demo
 
             _textMateInstallation = new Installation(_textEditor, ResourceLoader.SetupStorage(ThemeName.DarkPlus, GrammarName.CSharp));
 
-            Language csharpLanguage = _textMateInstallation.RegistryOptions.GetLanguageByExtension(".cs");
+            Language csharpLanguage = _textMateInstallation.RegistryOptions.Storage.GetLanguageByExtension(".cs");
 
             _syntaxModeCombo = this.FindControl<ComboBox>("syntaxModeCombo");
             _syntaxModeCombo.Items = _textMateInstallation.RegistryOptions.GetAvailableLanguages();
             _syntaxModeCombo.SelectedItem = csharpLanguage;
             _syntaxModeCombo.SelectionChanged += _syntaxModeCombo_SelectionChanged;
 
-            string scopeName = _textMateInstallation.RegistryOptions.GetScopeByLanguageId(csharpLanguage.Id);
+            string scopeName = _textMateInstallation.RegistryOptions.Storage.GetScopeByLanguageId(csharpLanguage.Id);
 
             _textEditor.Document = new TextDocument(Demo.Resources.ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammarByLanguageId(csharpLanguage.Id);
@@ -108,7 +109,7 @@ namespace AvaloniaEdit.Demo
         {
             Language language = (Language)_syntaxModeCombo.SelectedItem;
 
-            string scope = _textMateInstallation.RegistryOptions.GetScopeByLanguageId(language.Id);
+            string scope = _textMateInstallation.RegistryOptions.Storage.GetScopeByLanguageId(language.Id);
 
             _textEditor.Document = new TextDocument(Demo.Resources.ResourceLoader.LoadSampleFile(scope));
             _textMateInstallation.SetGrammarByLanguageId(language.Id);

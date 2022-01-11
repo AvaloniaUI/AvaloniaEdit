@@ -1,4 +1,5 @@
-﻿using AvaloniaEdit.TextMate.Storage.Abstractions;
+﻿using AvaloniaEdit.TextMate.Extensions;
+using AvaloniaEdit.TextMate.Storage.Abstractions;
 using System;
 using System.Linq;
 using TextMateSharp.Grammars;
@@ -56,7 +57,7 @@ namespace AvaloniaEdit.TextMate
 
         public void SetGrammarByLanguageId(string languageId)
         {
-            string scopeName = _textMateRegistryOptions.GetScopeByLanguageId(languageId);
+            string scopeName = _textMateRegistryOptions.Storage.GetScopeByLanguageId(languageId);
             SetGrammar((scopeName == null) ? null : _textMateRegistry.LoadGrammar(scopeName));
         }
         public void SetTheme(IRawTheme theme)

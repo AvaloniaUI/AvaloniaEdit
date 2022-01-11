@@ -3,24 +3,9 @@ using AvaloniaEdit.Document;
 
 namespace AvaloniaEdit.TextMate
 {
-    public abstract class TextTransformation : TextSegment
-    {
-        public TextTransformation(int startOffset, int endOffset)
-        {
-            StartOffset = startOffset;
-            EndOffset = endOffset;
-        }
-
-        public abstract void Transform(GenericLineTransformer transformer, DocumentLine line);
-    }
-
     public class ForegroundTextTransformation : TextTransformation
     {
-        public interface IColorMap
-        {
-            bool Contains(int foregroundColor);
-            IBrush GetForegroundBrush(int foregroundColor);
-        }
+        private readonly IColorMap _colorMap;
 
         public ForegroundTextTransformation(IColorMap colorMap, int startOffset, int endOffset, int brushId) : base(startOffset, endOffset)
         {
@@ -28,6 +13,11 @@ namespace AvaloniaEdit.TextMate
             Foreground = brushId;
         }
 
+        public interface IColorMap
+        {
+            bool Contains(int foregroundColor);
+            IBrush GetForegroundBrush(int foregroundColor);
+        }
         public int Foreground { get; set; }
 
         public override void Transform(GenericLineTransformer transformer, DocumentLine line)
@@ -57,7 +47,16 @@ namespace AvaloniaEdit.TextMate
 
             transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset, _colorMap.GetForegroundBrush(Foreground));
         }
+    }
 
-        IColorMap _colorMap;
+    public abstract class TextTransformation : TextSegment
+    {
+        public TextTransformation(int startOffset, int endOffset)
+        {
+            StartOffset = startOffset;
+            EndOffset = endOffset;
+        }
+
+        public abstract void Transform(GenericLineTransformer transformer, DocumentLine line);
     }
 }
