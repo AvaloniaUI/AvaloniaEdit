@@ -8,6 +8,7 @@ using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.TextMate.Grammars;
 using AvaloniaEdit.TextMate.Grammars.Enums;
 using AvaloniaEdit.TextMate.Models;
 using AvaloniaEdit.TextMate.Models.Abstractions;
@@ -75,59 +76,9 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
-            var themes = new Dictionary<string, IRawTheme>();
-            foreach (var item in Enum.GetValues(typeof(ThemeName)).Cast<ThemeName>())
-            {
-                var theme = TextMate.Grammars.ResourceLoader.LoadThemeByNameToStream(item);
-                themes.Add(theme.Item2, AvaloniaEdit.TextMate.ResourceLoader.LoadThemeFromStream(theme.Item1));
-            }
-            var grammars = new Dictionary<string, IRawGrammar>();
-            var grammarDefinitions = new List<IGrammarDefinition>();
-            string GetFilePath(string scopeName, IGrammarDefinition grammarDefinition)
-            {
-                foreach (Grammar grammar in grammarDefinition.Contributes.Grammars)
-                {
-                    if (scopeName.Equals(grammar.ScopeName))
-                    {
-                        string grammarPath = grammar.Path;
-
-                        if (grammarPath.StartsWith("./"))
-                            grammarPath = grammarPath.Substring(2);
-
-                        grammarPath = grammarPath.Replace("/", ".");
-
-                        return grammarPath;
-                    }
-                }
-
-                return null;
-            }
-            foreach (var item in Enum.GetValues(typeof(GrammarName)).Cast<GrammarName>())
-            {
-                var grammar = TextMate.Grammars.ResourceLoader.LoadGrammarByNameToStream(item);
-
-                var serializer = new JsonSerializer();
-                GrammarDefinition definition = null;
-                using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(grammar.Item1 ?? "")))
-                using (StreamReader reader = new StreamReader(stream))
-                using (JsonTextReader jsonTextReader = new JsonTextReader(reader))
-                {
-                    definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
-                    grammarDefinitions.Add(definition);
-                }
-
-                var gr2 = TextMate.Grammars.ResourceLoader.LoadGrammarByNameToStream2(item, GetFilePath(definition.Contributes.Grammars.First().ScopeName, definition));
-                var rawGrammar = AvaloniaEdit.TextMate.ResourceLoader.LoadGrammarFromStream(gr2);
-                grammars.Add(definition.Contributes.Grammars.First().ScopeName, rawGrammar);
-
-            }
-
-
-            var storage = new ResourceStorage(new ThemeStorage(themes, themes.First(x=>x.Value.GetName()== "Dark+ (default dark)").Value),
-                new GrammarStorage(grammars, grammars.First().Value, grammarDefinitions));
             _textMateInstallation = new Installation(
                 _textEditor,
-                storage);
+                ResourceLoader.SetupStorage());
 
             Language csharpLanguage = _textMateInstallation.RegistryOptions.GetLanguageByExtension(".cs");
 
@@ -175,7 +126,7 @@ namespace AvaloniaEdit.Demo
 
         void _changeThemeBtn_Click(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         private void InitializeComponent()
