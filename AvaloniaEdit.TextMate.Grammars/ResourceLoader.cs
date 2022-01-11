@@ -22,37 +22,45 @@ namespace AvaloniaEdit.TextMate.Grammars
 
         private const string ThemesPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Themes.";
 
-        public static IResourceStorage SetupStorage()
+        public static IResourceStorage SetupStorage(ThemeName selectedTheme, GrammarName selectedGrammar)
         {
             var themes = new Dictionary<string, IRawTheme>();
             var grammars = new Dictionary<string, IRawGrammar>();
             var grammarDefinitions = new List<IGrammarDefinition>();
+            IRawTheme selectedThemeRaw = null;
+            IRawGrammar selectedGrammarRaw = null;
             foreach (var item in Enum.GetValues(typeof(ThemeName)).Cast<ThemeName>())
             {
                 var theme = LoadThemeByNameToStream(item);
                 using StreamReader reader = new(theme.Item1);
-                themes.Add(theme.Item2, ThemeReader.ReadThemeSync(reader));
+                var rawTheme = ThemeReader.ReadThemeSync(reader);
+                if (item == selectedTheme)
+                {
+                    selectedThemeRaw = rawTheme;
+                }
+                themes.Add(theme.Item2, rawTheme);
             }
             foreach (var item in Enum.GetValues(typeof(GrammarName)).Cast<GrammarName>())
             {
-                var stream = LoadGrammarByNameToStream(item);
-
                 var serializer = new JsonSerializer();
                 GrammarDefinition definition = null;
-                using (var reader = new StreamReader(stream))
-                using (var jsonTextReader = new JsonTextReader(reader))
-                {
-                    definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
-                    grammarDefinitions.Add(definition);
-                }
+                using var reader = new StreamReader(LoadGrammarByNameToStream(item));
+                using var jsonTextReader = new JsonTextReader(reader);
+                definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
+                grammarDefinitions.Add(definition);
 
-                var gr2 = LoadGrammarByNameToStream2(item, GetFilePath(definition.Contributes.Grammars.First().ScopeName, definition));
-                using StreamReader reader2 = new(gr2);
-                grammars.Add(definition.Contributes.Grammars.First().ScopeName, GrammarReader.ReadGrammarSync(reader2));
+                var grammarPackage = LoadGrammarPackageByNameToStream(item, GetFilePath(definition.Contributes.Grammars.First().ScopeName, definition));
+                using var reader2 = new StreamReader(grammarPackage);
+                var grammarRaw = GrammarReader.ReadGrammarSync(reader2);
+                if (item == selectedGrammar)
+                {
+                    selectedGrammarRaw = grammarRaw;
+                }
+                grammars.Add(definition.Contributes.Grammars.First().ScopeName, grammarRaw);
 
             }
-            return new ResourceStorage(new ThemeStorage(themes, themes.First(x => x.Value.GetName() == "Dark+ (default dark)").Value),
-               new GrammarStorage(grammars, grammars.First().Value, grammarDefinitions));
+            return new ResourceStorage(new ThemeStorage(themes, selectedThemeRaw),
+               new GrammarStorage(grammars, selectedGrammarRaw, grammarDefinitions));
         }
         private static string GetFilePath(string scopeName, IGrammarDefinition grammarDefinition)
         {
@@ -79,7 +87,7 @@ namespace AvaloniaEdit.TextMate.Grammars
                 GrammarPrefix + name.ToString().ToLower() + "." + "package.json");
         }
 
-        public static Stream LoadGrammarByNameToStream2(GrammarName name, string fileName)
+        public static Stream LoadGrammarPackageByNameToStream(GrammarName name, string fileName)
         {
             return typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
                 GrammarPrefix + name.ToString().ToLower() + "." + fileName);
@@ -87,9 +95,10 @@ namespace AvaloniaEdit.TextMate.Grammars
 
         public static Tuple<Stream, string> LoadThemeByNameToStream(ThemeName name)
         {
+            var themeFileName = GetThemeFileName(name);
             var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
-                ThemesPrefix + GetThemeFileName(name));
-            return new Tuple<Stream, string>(stream, GetThemeFileName(name));
+                ThemesPrefix + themeFileName);
+            return new Tuple<Stream, string>(stream, themeFileName);
         }
 
         private static string GetThemeFileName(ThemeName name)
