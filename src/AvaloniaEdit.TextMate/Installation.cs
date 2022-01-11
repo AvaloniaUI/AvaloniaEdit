@@ -9,7 +9,7 @@ using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.TextMate
 {
-    public class Installation
+    public class Installation : IDisposable
     {
         private static Action<Exception> _exceptionHandler;
         private readonly TextEditor _editor;

@@ -2,8 +2,8 @@
 {
     public interface IResourceStorage
     {
-        public IThemeStorage ThemeStorage { get; set; }
+        public IThemeStorage ThemeStorage { get; }
 
-        public IGrammarStorage GrammarStorage { get; set; }
+        public IGrammarStorage GrammarStorage { get; }
     }
 }
