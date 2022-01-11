@@ -1,6 +1,4 @@
-﻿using AvaloniaEdit.TextMate.Shared.Models.Abstractions;
-
-namespace AvaloniaEdit.TextMate.Models.Abstractions
+﻿namespace AvaloniaEdit.TextMate.Models.Abstractions
 {
     public interface IGrammarDefinition
     {
