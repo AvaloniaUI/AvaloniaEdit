@@ -22,6 +22,26 @@ namespace AvaloniaEdit.TextMate.Grammars
 
         private const string ThemesPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Themes.";
 
+        public static Stream LoadGrammarByNameToStream(GrammarName name)
+        {
+            return typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
+                GrammarPrefix + name.ToString().ToLower() + "." + "package.json");
+        }
+
+        public static Stream LoadGrammarPackageByNameToStream(GrammarName name, string fileName)
+        {
+            return typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
+                GrammarPrefix + name.ToString().ToLower() + "." + fileName);
+        }
+
+        public static Tuple<Stream, string> LoadThemeByNameToStream(ThemeName name)
+        {
+            var themeFileName = GetThemeFileName(name);
+            var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
+                ThemesPrefix + themeFileName);
+            return new Tuple<Stream, string>(stream, themeFileName);
+        }
+
         public static IResourceStorage SetupStorage(ThemeName selectedTheme, GrammarName selectedGrammar)
         {
             var themes = new Dictionary<string, IRawTheme>();
@@ -62,6 +82,7 @@ namespace AvaloniaEdit.TextMate.Grammars
             return new ResourceStorage(new ThemeStorage(themes, selectedThemeRaw),
                new GrammarStorage(grammars, selectedGrammarRaw, grammarDefinitions));
         }
+
         private static string GetFilePath(string scopeName, IGrammarDefinition grammarDefinition)
         {
             foreach (Grammar grammar in grammarDefinition.Contributes.Grammars)
@@ -80,25 +101,6 @@ namespace AvaloniaEdit.TextMate.Grammars
             }
 
             return null;
-        }
-        public static Stream LoadGrammarByNameToStream(GrammarName name)
-        {
-            return typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
-                GrammarPrefix + name.ToString().ToLower() + "." + "package.json");
-        }
-
-        public static Stream LoadGrammarPackageByNameToStream(GrammarName name, string fileName)
-        {
-            return typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
-                GrammarPrefix + name.ToString().ToLower() + "." + fileName);
-        }
-
-        public static Tuple<Stream, string> LoadThemeByNameToStream(ThemeName name)
-        {
-            var themeFileName = GetThemeFileName(name);
-            var stream = typeof(ResourceLoader).GetTypeInfo().Assembly.GetManifestResourceStream(
-                ThemesPrefix + themeFileName);
-            return new Tuple<Stream, string>(stream, themeFileName);
         }
 
         private static string GetThemeFileName(ThemeName name)

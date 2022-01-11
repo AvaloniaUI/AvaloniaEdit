@@ -33,7 +33,7 @@ namespace AvaloniaEdit.TextMate
                 _editor = editor;
 
                 SetTheme(storage.ThemeStorage.SelectedTheme);
-                //SetGrammar(SetGrammarByLanguageId(storage.GrammarStorage.SelectedGrammar.));
+                //SetGrammar(_textMateRegistry.LoadGrammar(storage.GrammarStorage.Grammars.First(x => x.Value == storage.GrammarStorage.SelectedGrammar).Key));
 
                 editor.DocumentChanged += OnEditorOnDocumentChanged;
 

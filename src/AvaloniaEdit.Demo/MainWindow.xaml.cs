@@ -11,18 +11,10 @@ using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate.Grammars;
 using AvaloniaEdit.TextMate.Grammars.Enums;
 using AvaloniaEdit.TextMate.Models;
-using AvaloniaEdit.TextMate.Models.Abstractions;
-using AvaloniaEdit.TextMate.Storage;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using TextMateSharp.Internal.Types;
-using TextMateSharp.Themes;
 
 namespace AvaloniaEdit.Demo
 {
@@ -78,7 +70,7 @@ namespace AvaloniaEdit.Demo
 
             _textMateInstallation = new Installation(
                 _textEditor,
-                ResourceLoader.SetupStorage());
+                ResourceLoader.SetupStorage(ThemeName.DarkPlus, GrammarName.CSharp));
 
             Language csharpLanguage = _textMateInstallation.RegistryOptions.GetLanguageByExtension(".cs");
 
@@ -91,7 +83,6 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.Document = new TextDocument(Demo.Resources.ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammarByLanguageId(csharpLanguage.Id);
-
             _statusTextBlock = this.Find<TextBlock>("StatusText");
 
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
