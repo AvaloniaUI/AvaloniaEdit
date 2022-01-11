@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AvaloniaEdit.TextMate.Shared\AvaloniaEdit.TextMate.Shared.csproj" />
+    <ProjectReference Include="..\AvaloniaEdit.TextMate.Shared\AvaloniaEdit.TextMate.Shared.csproj" />
     <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
   </ItemGroup>
 
