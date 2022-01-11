@@ -8,6 +8,7 @@ using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.TextMate;
 using AvaloniaEdit.TextMate.Grammars;
 using AvaloniaEdit.TextMate.Grammars.Enums;
 using AvaloniaEdit.TextMate.Models;
@@ -18,13 +19,13 @@ using System.Runtime.CompilerServices;
 
 namespace AvaloniaEdit.Demo
 {
-    using static AvaloniaEdit.TextMate.TextMate;
     using Pair = KeyValuePair<int, IControl>;
+    using ResourceLoader = TextMate.Grammars.ResourceLoader;
 
     public class MainWindow : Window
     {
         private readonly TextEditor _textEditor;
-        private readonly TextMate.TextMate.Installation _textMateInstallation;
+        private readonly Installation _textMateInstallation;
         private CompletionWindow _completionWindow;
         private OverloadInsightWindow _insightWindow;
         private Button _addControlBtn;
@@ -68,9 +69,7 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
-            _textMateInstallation = new Installation(
-                _textEditor,
-                ResourceLoader.SetupStorage(ThemeName.DarkPlus, GrammarName.CSharp));
+            _textMateInstallation = new Installation(_textEditor, ResourceLoader.SetupStorage(ThemeName.DarkPlus, GrammarName.CSharp));
 
             Language csharpLanguage = _textMateInstallation.RegistryOptions.GetLanguageByExtension(".cs");
 

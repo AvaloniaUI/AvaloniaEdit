@@ -6,13 +6,6 @@ namespace AvaloniaEdit.TextMate
 {
     public abstract class GenericLineTransformer : DocumentColorizingTransformer
     {
-        protected override void ColorizeLine(DocumentLine line)
-        {
-            TransformLine(line, CurrentContext);
-        }
-
-        protected abstract void TransformLine(DocumentLine line, ITextRunConstructionContext context);
-
         public void SetTextOpacity(DocumentLine line, int startIndex, int length, double opacity)
         {
             if (startIndex >= 0 && length > 0)
@@ -70,5 +63,12 @@ namespace AvaloniaEdit.TextMate
                 ChangeLinePart(line.Offset, line.EndOffset, e => { e.TextRunProperties.ForegroundBrush = foreground; });
             }
         }
+
+        protected override void ColorizeLine(DocumentLine line)
+        {
+            TransformLine(line, CurrentContext);
+        }
+
+        protected abstract void TransformLine(DocumentLine line, ITextRunConstructionContext context);
     }
 }
