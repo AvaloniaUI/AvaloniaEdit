@@ -95,7 +95,20 @@ namespace AvaloniaEdit.TextMate.Grammars
                         grammars.Add(GetScopeByLanguageId(definition, language.Id), grammarRaw);
                     }
                 }
-
+                //foreach (var item3 in definition.Contributes.Grammars)
+                //{
+                //    if (!grammars.ContainsKey(item3.ScopeName))
+                //    {
+                //        var grammarPackage = LoadGrammarPackageByNameToStream(item, GetFilePath(item3.ScopeName, definition));
+                //        using var reader2 = new StreamReader(grammarPackage);
+                //        var grammarRaw = GrammarReader.ReadGrammarSync(reader2);
+                //        if (item == selectedGrammar)
+                //        {
+                //            selectedGrammarRaw = grammarRaw;
+                //        }
+                //        grammars.Add(item3.ScopeName, grammarRaw);
+                //    }
+                //}
 
             }
             return new ResourceStorage(new ThemeStorage(themes, selectedThemeRaw),
