@@ -60,19 +60,6 @@ namespace AvaloniaEdit.TextMate.Grammars
                 }
                 themes.Add(theme.Item2, rawTheme);
             }
-            static string GetScopeByLanguageId(GrammarDefinition definition, string languageId)
-            {
-                if (string.IsNullOrEmpty(languageId))
-                    return null;
-
-                foreach (var grammar in definition.Contributes.Grammars)
-                {
-                    if (languageId.Equals(grammar.Language))
-                        return grammar.ScopeName;
-                }
-
-                return null;
-            }
             foreach (var item in Enum.GetValues(typeof(GrammarName)).Cast<GrammarName>())
             {
                 var serializer = new JsonSerializer();
@@ -81,35 +68,15 @@ namespace AvaloniaEdit.TextMate.Grammars
                 using var jsonTextReader = new JsonTextReader(reader);
                 definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
                 grammarDefinitions.Add(definition);
-                foreach (var language in definition.Contributes.Languages)
-                {
-                    if (language.Extensions?.Count > 0 && !grammars.ContainsKey(GetScopeByLanguageId(definition, language.Id)))
-                    {
-                        var grammarPackage = LoadGrammarPackageByNameToStream(item, GetFilePath(GetScopeByLanguageId(definition, language.Id), definition));
-                        using var reader2 = new StreamReader(grammarPackage);
-                        var grammarRaw = GrammarReader.ReadGrammarSync(reader2);
-                        if (item == selectedGrammar)
-                        {
-                            selectedGrammarRaw = grammarRaw;
-                        }
-                        grammars.Add(GetScopeByLanguageId(definition, language.Id), grammarRaw);
-                    }
-                }
-                //foreach (var item3 in definition.Contributes.Grammars)
-                //{
-                //    if (!grammars.ContainsKey(item3.ScopeName))
-                //    {
-                //        var grammarPackage = LoadGrammarPackageByNameToStream(item, GetFilePath(item3.ScopeName, definition));
-                //        using var reader2 = new StreamReader(grammarPackage);
-                //        var grammarRaw = GrammarReader.ReadGrammarSync(reader2);
-                //        if (item == selectedGrammar)
-                //        {
-                //            selectedGrammarRaw = grammarRaw;
-                //        }
-                //        grammars.Add(item3.ScopeName, grammarRaw);
-                //    }
-                //}
 
+                var grammarPackage = LoadGrammarPackageByNameToStream(item, GetFilePath(definition.Contributes.Grammars.First().ScopeName, definition));
+                using var reader2 = new StreamReader(grammarPackage);
+                var grammarRaw = GrammarReader.ReadGrammarSync(reader2);
+                if (item == selectedGrammar)
+                {
+                    selectedGrammarRaw = grammarRaw;
+                }
+                grammars.Add(definition.Contributes.Grammars.First().ScopeName, grammarRaw);
             }
             return new ResourceStorage(new ThemeStorage(themes, selectedThemeRaw),
                new GrammarStorage(grammars, selectedGrammarRaw, grammarDefinitions));
