@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <WarningsNotAsErrors>0612,0618</WarningsNotAsErrors>
-    <Version>0.10.10</Version>
+    <Version>$(AvaloniaVersion)</Version>
   </PropertyGroup>
 
   <ItemGroup>
