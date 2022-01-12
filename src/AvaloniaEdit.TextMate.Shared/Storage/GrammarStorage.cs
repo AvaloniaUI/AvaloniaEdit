@@ -13,8 +13,16 @@ namespace AvaloniaEdit.TextMate.Storage
             SelectedGrammar = selectedGrammar;
             GrammarDefinitions = grammarDefinitions;
         }
+        /// <summary>
+        /// Dictionary where the key is scope name and the value is IRawGrammar.
+        /// IRawGrammar is created from *.tmLanguage.json file.
+        /// </summary>
         public Dictionary<string, IRawGrammar> Grammars { get; set; }
         public IRawGrammar SelectedGrammar { get; set; }
+
+        /// <summary>
+        /// IGrammarDefinition is generated from package.json file.
+        /// </summary>
         public List<IGrammarDefinition> GrammarDefinitions { get; set; }
     }
 }

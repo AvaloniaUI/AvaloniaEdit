@@ -26,6 +26,8 @@ namespace AvaloniaEdit.TextMate
             _editor = editor;
 
             SetTheme(storage.ThemeStorage.SelectedTheme);
+
+            //code below somewhy doesent work correctly
             //SetGrammar(_textMateRegistry.LoadGrammar(storage.GrammarStorage.Grammars.First(x => x.Value == storage.GrammarStorage.SelectedGrammar).Key));
 
             editor.DocumentChanged += OnEditorOnDocumentChanged;
@@ -70,7 +72,7 @@ namespace AvaloniaEdit.TextMate
             _tmModel?.InvalidateLine(0);
             _editorModel?.TokenizeViewPort();
         }
-        static void DisposeTMModel(TMModel tmModel)
+        private void DisposeTMModel(TMModel tmModel)
         {
             if (tmModel == null)
                 return;
@@ -78,7 +80,7 @@ namespace AvaloniaEdit.TextMate
             tmModel.Dispose();
         }
 
-        TextMateColoringTransformer GetOrCreateTransformer()
+        private TextMateColoringTransformer GetOrCreateTransformer()
         {
             var transformer = _editor.TextArea.TextView.LineTransformers.OfType<TextMateColoringTransformer>().FirstOrDefault();
 
@@ -92,7 +94,7 @@ namespace AvaloniaEdit.TextMate
             return transformer;
         }
 
-        void OnEditorOnDocumentChanged(object sender, EventArgs args)
+        private void OnEditorOnDocumentChanged(object sender, EventArgs args)
         {
             try
             {
