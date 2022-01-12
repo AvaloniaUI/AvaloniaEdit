@@ -10,18 +10,17 @@ jobs:
       projects: 'test/AvaloniaEdit.Tests'
     displayName: 'Run Tests'
 
-  - task: PowerShell@2
+  - task: DotNetCoreCLI@2
+    displayName: 'Pack AvaloniaEdit'
     inputs:
-      targetType: 'filePath'
-      filePath: $(System.DefaultWorkingDirectory)\build.ps1
-      arguments: > # Use this to avoid newline characters in multiline string
-        -Platform "AnyCPU"
-        -Configuration "Release"
-    displayName: 'Build and Package'
+      packagesToPack: 'AvaloniaEdit.csproj','AvaloniaEdit.TextMate.csproj'
+      command: pack
+      outputDir: '$(Build.ArtifactStagingDirectory)/NuGet'
+      verbosityPack: normal
 
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: '$(Build.SourcesDirectory)/artifacts/nuget'
+      pathToPublish: '$(Build.ArtifactStagingDirectory)/NuGet'
       artifactName: 'Nuget'
     condition: succeeded()
 
