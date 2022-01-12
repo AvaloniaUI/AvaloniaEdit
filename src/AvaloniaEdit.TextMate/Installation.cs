@@ -49,7 +49,7 @@ namespace AvaloniaEdit.TextMate
         public void SetGrammar(IGrammar grammar)
         {
             _grammar = grammar;
-
+            _textMateRegistryOptions.Storage.GrammarStorage.SelectedGrammar = _textMateRegistryOptions.Storage.GrammarStorage.Grammars[grammar.GetScopeName()];
             GetOrCreateTransformer().SetGrammar(grammar);
 
             _editor.TextArea.TextView.Redraw();
@@ -64,7 +64,7 @@ namespace AvaloniaEdit.TextMate
         {
 
             _textMateRegistry.SetTheme(theme);
-
+            _textMateRegistryOptions.Storage.ThemeStorage.SelectedTheme = theme;
             GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
 
             _tmModel?.InvalidateLine(0);

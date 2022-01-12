@@ -7,6 +7,6 @@ namespace AvaloniaEdit.TextMate.Storage.Abstractions
     {
         public Dictionary<string, IRawTheme> Themes { get; }
 
-        public IRawTheme SelectedTheme { get; }
+        public IRawTheme SelectedTheme { get; set; }
     }
 }
