@@ -6,7 +6,9 @@ using AvaloniaEdit.TextMate.Resources;
 
 using Newtonsoft.Json;
 
+using TextMateSharp.Internal.Grammars.Reader;
 using TextMateSharp.Internal.Themes.Reader;
+using TextMateSharp.Internal.Types;
 using TextMateSharp.Registry;
 using TextMateSharp.Themes;
 
@@ -169,7 +171,7 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        string IRegistryOptions.GetFilePath(string scopeName)
+        string GetFilePath(string scopeName)
         {
             foreach (string grammarName in _availableGrammars.Keys)
             {
@@ -199,17 +201,35 @@ namespace AvaloniaEdit.TextMate
             return null;
         }
 
-        Stream IRegistryOptions.GetInputStream(string scopeName)
+        IRawTheme IRegistryOptions.GetTheme(string scopeName)
         {
             Stream themeStream = ResourceLoader.TryOpenThemeStream(scopeName.Replace("./", string.Empty));
 
-            if (themeStream != null)
-                return themeStream;
+            if (themeStream == null)
+                return null;
 
-            return ResourceLoader.TryOpenGrammarStream(((IRegistryOptions)this).GetFilePath(scopeName));
+            using (themeStream)
+            using (StreamReader reader = new StreamReader(themeStream))
+            {
+                return ThemeReader.ReadThemeSync(reader);
+            }
         }
 
-        IRawTheme IRegistryOptions.GetTheme()
+        IRawGrammar IRegistryOptions.GetGrammar(string scopeName)
+        {
+            Stream grammarStream = ResourceLoader.TryOpenGrammarStream(GetFilePath(scopeName));
+
+            if (grammarStream == null)
+                return null;
+
+            using (grammarStream)
+            using (StreamReader reader = new StreamReader(grammarStream))
+            {
+                return GrammarReader.ReadGrammarSync(reader);
+            }
+        }
+
+        IRawTheme IRegistryOptions.GetDefaultTheme()
         {
             return LoadTheme(_defaultTheme);
         }
