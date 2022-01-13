@@ -17,51 +17,38 @@ namespace AvaloniaEdit.TextMate
 
         public static Installation InstallTextMate(
             this TextEditor editor,
-            ThemeName theme,
-            IGrammar grammar = null)
+            IRegistryOptions registryOptions)
         {
-            return new Installation(editor, theme, grammar);
+            return new Installation(editor, registryOptions);
         }
 
         public class Installation
         {
-            public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
-
-            public Installation(TextEditor editor, ThemeName defaultTheme, IGrammar grammar)
+            public Installation(TextEditor editor, IRegistryOptions registryOptions)
             {
-                _textMateRegistryOptions = new RegistryOptions(defaultTheme);
-                _textMateRegistry = new Registry(_textMateRegistryOptions);
+                _textMateRegistry = new Registry(registryOptions);
 
                 _editor = editor;
 
-                SetTheme(defaultTheme);
-                SetGrammar(grammar);
+                SetTheme(registryOptions.GetDefaultTheme());
 
                 editor.DocumentChanged += OnEditorOnDocumentChanged;
 
                 OnEditorOnDocumentChanged(editor, EventArgs.Empty);
             }
 
-            public void SetGrammarByLanguageId(string languageId)
+            public void SetGrammar(string scopeName)
             {
-                string scopeName = _textMateRegistryOptions.GetScopeByLanguageId(languageId);
-                SetGrammar((scopeName == null) ? null : _textMateRegistry.LoadGrammar(scopeName));
-            }
+                _grammar = _textMateRegistry.LoadGrammar(scopeName);
 
-            public void SetGrammar(IGrammar grammar)
-            {
-                _grammar = grammar;
-
-                GetOrCreateTransformer().SetGrammar(grammar);
+                GetOrCreateTransformer().SetGrammar(_grammar);
 
                 _editor.TextArea.TextView.Redraw();
             }
 
-            public void SetTheme(ThemeName themeName)
+            public void SetTheme(IRawTheme theme)
             {
-                IRawTheme rawTheme = _textMateRegistryOptions.LoadTheme(themeName);
-
-                _textMateRegistry.SetTheme(rawTheme);
+                _textMateRegistry.SetTheme(theme);
 
                 GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
 
@@ -116,7 +103,6 @@ namespace AvaloniaEdit.TextMate
                 tmModel.Dispose();
             }
 
-            RegistryOptions _textMateRegistryOptions;
             Registry _textMateRegistry;
             TextEditor _editor;
             TextEditorModel _editorModel;

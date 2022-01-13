@@ -16,6 +16,9 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
+
+using TextMateSharp.Grammars;
+using TextMateSharp.Internal.Types;
 using TextMateSharp.Model;
 using TextMateSharp.Registry;
 using TextMateSharp.Themes;
@@ -36,6 +39,7 @@ namespace AvaloniaEdit.Demo
         private ComboBox _syntaxModeCombo;
         private TextBlock _statusTextBlock;
         private ElementGenerator _generator = new ElementGenerator();
+        private RegistryOptions _registryOptions;
         private int _currentTheme = (int)ThemeName.DarkPlus;
 
         public MainWindow()
@@ -72,21 +76,22 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
-            _textMateInstallation = _textEditor.InstallTextMate(
-                (ThemeName)_currentTheme,
-                null);
+            _registryOptions = new RegistryOptions(
+                (ThemeName)_currentTheme);
 
-            Language csharpLanguage = _textMateInstallation.RegistryOptions.GetLanguageByExtension(".cs");
+            _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
+
+            Language csharpLanguage = _registryOptions.GetLanguageByExtension(".cs");
 
             _syntaxModeCombo = this.FindControl<ComboBox>("syntaxModeCombo");
-            _syntaxModeCombo.Items = _textMateInstallation.RegistryOptions.GetAvailableLanguages();
+            _syntaxModeCombo.Items = _registryOptions.GetAvailableLanguages();
             _syntaxModeCombo.SelectedItem = csharpLanguage;
             _syntaxModeCombo.SelectionChanged += _syntaxModeCombo_SelectionChanged;
 
-            string scopeName = _textMateInstallation.RegistryOptions.GetScopeByLanguageId(csharpLanguage.Id);
+            string scopeName = _registryOptions.GetScopeByLanguageId(csharpLanguage.Id);
 
             _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
-            _textMateInstallation.SetGrammarByLanguageId(csharpLanguage.Id);
+            _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(csharpLanguage.Id));
 
             _statusTextBlock = this.Find<TextBlock>("StatusText");
 
@@ -114,17 +119,18 @@ namespace AvaloniaEdit.Demo
         {
             Language language = (Language)_syntaxModeCombo.SelectedItem;
 
-            string scope = _textMateInstallation.RegistryOptions.GetScopeByLanguageId(language.Id);
+            string scopeName = _registryOptions.GetScopeByLanguageId(language.Id);
 
-            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scope));
-            _textMateInstallation.SetGrammarByLanguageId(language.Id);
+            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
+            _textMateInstallation.SetGrammar(scopeName);
         }
 
         void _changeThemeBtn_Click(object sender, RoutedEventArgs e)
         {
             _currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
 
-            _textMateInstallation.SetTheme((ThemeName)_currentTheme);
+            _textMateInstallation.SetTheme(_registryOptions.LoadTheme(
+                (ThemeName)_currentTheme));
         }
 
         private void InitializeComponent()
