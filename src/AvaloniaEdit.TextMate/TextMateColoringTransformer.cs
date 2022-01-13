@@ -24,26 +24,44 @@ namespace AvaloniaEdit.TextMate
         private TextDocument _document;
         private TextView _textView;
 
+        private volatile int _firstVisibleLine = -1;
+        private volatile int _lastVisibleLine = -1;
+
         private readonly Dictionary<int, IBrush> _brushes;
         private TextSegmentCollection<TextTransformation> _transformations;
 
-        public TextMateColoringTransformer()
+        public TextMateColoringTransformer(TextView textView)
         {
+            _textView = textView;
             _brushes = new Dictionary<int, IBrush>();
+            _textView.VisualLinesChanged += TextView_VisualLinesChanged;
         }
 
-        public void SetModel(TextDocument document, TextView textView, TMModel model)
+        public void SetModel(TextDocument document, TMModel model)
         {
             _document = document;
             _model = model;
-            _textView = textView;
-
             _transformations = new TextSegmentCollection<TextTransformation>(_document);
 
             if (_grammar != null)
             {
                 _model.SetGrammar(_grammar);
             }
+        }
+
+        private void TextView_VisualLinesChanged(object sender, EventArgs e)
+        {
+            if (!_textView.VisualLinesValid || _textView.VisualLines.Count == 0)
+                return;
+
+            _firstVisibleLine = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
+            _lastVisibleLine = _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1;
+        }
+
+        public void Dispose()
+        {
+            if (_textView != null)
+                _textView.VisualLinesChanged -= TextView_VisualLinesChanged;
         }
 
         public void SetTheme(Theme theme)
@@ -90,14 +108,21 @@ namespace AvaloniaEdit.TextMate
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            if (_transformations is { })
-            {
-                var transformsInLine = _transformations.FindOverlappingSegments(line);
+            int i = line.LineNumber;
 
-                foreach (var transform in transformsInLine)
-                {
-                    transform.Transform(this, line);
-                }
+            var tokens = _model.GetLineTokens(i - 1);
+
+            if (tokens == null)
+                return;
+
+            RemoveLineTransformations(i);
+            ProcessTokens(i, tokens);
+
+            var transformsInLine = _transformations.FindOverlappingSegments(line);
+
+            foreach (var transform in transformsInLine)
+            {
+                transform.Transform(this, line);
             }
         }
 
@@ -142,53 +167,33 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        private void ProcessRange(Range range)
-        {
-            for (int i = range.fromLineNumber; i <= range.toLineNumber; i++)
-            {
-                var tokens = _model.GetLineTokens(i - 1);
-
-                if (tokens == null)
-                    continue;
-
-                RemoveLineTransformations(i);
-                ProcessTokens(i, tokens);
-            }
-        }
-
         public void ModelTokensChanged(ModelTokensChangedEvent e)
         {
-            var ranges = e.ranges.ToArray();
+            if (e.ranges == null)
+                return;
+
+            if (_model.IsStopped)
+                return;
+
+            bool redraw = false;
+
+            foreach (var range in e.ranges)
+            {
+                if (range.fromLineNumber >= _firstVisibleLine || range.toLineNumber >= _firstVisibleLine ||
+                   range.fromLineNumber <= _lastVisibleLine || range.toLineNumber <= _lastVisibleLine)
+                {
+                    redraw = true;
+                    break;
+                }
+            }
+
+            if (!redraw)
+                return;
 
             Dispatcher.UIThread.Post(() =>
             {
-                if (_model.IsStopped)
-                    return;
-
-                foreach (var range in ranges)
-                {
-                    if (!IsValidRange(range, _document.LineCount))
-                        continue;
-
-                    ProcessRange(range);
-
-                    var startLine = _document.GetLineByNumber(range.fromLineNumber);
-                    var endLine = _document.GetLineByNumber(range.toLineNumber);
-
-                    _textView.Redraw(startLine.Offset, endLine.EndOffset - startLine.Offset);
-                }
-            });
-        }
-
-        static bool IsValidRange(Range range, int lineCount)
-        {
-            if (range.fromLineNumber < 0 || range.fromLineNumber > lineCount)
-                return false;
-
-            if (range.toLineNumber < 0 || range.toLineNumber > lineCount)
-                return false;
-
-            return true;
+                _textView.Redraw();
+            }, DispatcherPriority.Render - 1);
         }
     }
 }

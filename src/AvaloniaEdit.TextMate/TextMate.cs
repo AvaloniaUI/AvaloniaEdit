@@ -74,6 +74,7 @@ namespace AvaloniaEdit.TextMate
                 _editor.DocumentChanged -= OnEditorOnDocumentChanged;
 
                 DisposeTMModel(_tmModel);
+                DisposeTransformer();
             }
 
             void OnEditorOnDocumentChanged(object sender, EventArgs args)
@@ -85,7 +86,7 @@ namespace AvaloniaEdit.TextMate
                     _editorModel = new TextEditorModel(_editor, _editor.Document, _exceptionHandler);
                     _tmModel = new TMModel(_editorModel);
                     _tmModel.SetGrammar(_grammar);
-                    GetOrCreateTransformer().SetModel(_editor.Document, _editor.TextArea.TextView, _tmModel);
+                    GetOrCreateTransformer().SetModel(_editor.Document, _tmModel);
                     _tmModel.AddModelTokensChangedListener(GetOrCreateTransformer());
                 }
                 catch (Exception ex)
@@ -100,13 +101,24 @@ namespace AvaloniaEdit.TextMate
 
                 if (transformer is null)
                 {
-                    transformer = new TextMateColoringTransformer();
+                    transformer = new TextMateColoringTransformer(_editor.TextArea.TextView);
 
                     _editor.TextArea.TextView.LineTransformers.Add(transformer);
                 }
 
                 return transformer;
             }
+
+            void DisposeTransformer()
+            {
+                var transformer = _editor.TextArea.TextView.LineTransformers.OfType<TextMateColoringTransformer>().FirstOrDefault();
+
+                if (transformer == null)
+                    return;
+
+                transformer.Dispose();
+            }
+
 
             static void DisposeTMModel(TMModel tmModel)
             {
