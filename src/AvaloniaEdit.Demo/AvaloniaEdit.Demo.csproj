@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <ProjectReference Include="..\AvaloniaEdit.TextMate.Grammars\AvaloniaEdit.TextMate.Grammars.csproj" />
     <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
     <ProjectReference Include="..\AvaloniaEdit.TextMate\AvaloniaEdit.TextMate.csproj" />
   </ItemGroup>
