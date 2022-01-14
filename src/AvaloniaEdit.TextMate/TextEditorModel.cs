@@ -73,6 +73,9 @@ namespace AvaloniaEdit.TextMate
             _document.Changed -= DocumentOnChanged;
             _document.LineCountChanged -= DocumentOnLineCountChanged;
             _textView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
+
+            if (_lineRanges != null)
+                ArrayPool<LineRange>.Shared.Return(_lineRanges);
         }
 
         public void TokenizeViewPort()
