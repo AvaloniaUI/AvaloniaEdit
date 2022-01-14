@@ -83,7 +83,7 @@ namespace AvaloniaEdit.TextMate
                 {
                     DisposeTMModel(_tmModel);
 
-                    _editorModel = new TextEditorModel(_editor, _editor.Document, _exceptionHandler);
+                    _editorModel = new TextEditorModel(_editor.TextArea.TextView, _editor.Document, _exceptionHandler);
                     _tmModel = new TMModel(_editorModel);
                     _tmModel.SetGrammar(_grammar);
                     GetOrCreateTransformer().SetModel(_editor.Document, _tmModel);

@@ -1,35 +1,67 @@
 using System;
+using System.Collections.Generic;
 
 using Avalonia.Threading;
 
 using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
 
 using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
 {
-    class TextEditorModel : AbstractLineList
+    public class TextEditorModel : AbstractLineList
     {
         private object _lock = new object();
         private readonly TextDocument _document;
-        private readonly TextEditor _editor;
+        private readonly TextView _textView;
         private int _lineCount;
+        private ITextSource _textSource;
+        private List<LineRange> _lineRanges = new List<LineRange>();
+        private Action<Exception> _exceptionHandler;
 
-        public TextEditorModel(TextEditor editor, TextDocument document, Action<Exception> exceptionHandler)
+        public TextEditorModel(TextView textView, TextDocument document, Action<Exception> exceptionHandler)
         {
-            _editor = editor;
+            _textView = textView;
             _document = document;
             _exceptionHandler = exceptionHandler;
 
             _lineCount = _document.LineCount;
 
-            for (int i = 0; i < _document.LineCount; i++)
+            for (int i = 0; i < _lineCount; i++)
                 AddLine(i);
+
+            UpdateSnapshot();
+            UpdateLineRanges();
 
             _document.Changing += DocumentOnChanging;
             _document.Changed += DocumentOnChanged;
             _document.LineCountChanged += DocumentOnLineCountChanged;
-            _editor.TextArea.TextView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
+            _textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
+        }
+
+        private void UpdateSnapshot()
+        {
+            lock (_lock)
+            {
+                _textSource = _document.CreateSnapshot();
+            }
+        }
+
+        private void UpdateLineRanges()
+        {
+            lock (_lock)
+            {
+                _lineRanges.Clear();
+                foreach (var line in _document.Lines)
+                {
+                    _lineRanges.Add(new LineRange()
+                    {
+                        Offset = line.Offset,
+                        Length = line.TotalLength
+                    });
+                }
+            }
         }
 
         public override void Dispose()
@@ -37,20 +69,20 @@ namespace AvaloniaEdit.TextMate
             _document.Changing -= DocumentOnChanging;
             _document.Changed -= DocumentOnChanged;
             _document.LineCountChanged -= DocumentOnLineCountChanged;
-            _editor.TextArea.TextView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
+            _textView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
         }
 
         public void TokenizeViewPort()
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (!_editor.TextArea.TextView.VisualLinesValid ||
-                    _editor.TextArea.TextView.VisualLines.Count == 0)
+                if (!_textView.VisualLinesValid ||
+                    _textView.VisualLines.Count == 0)
                     return;
 
                 ForceTokenization(
-                    _editor.TextArea.TextView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
-                    _editor.TextArea.TextView.VisualLines[_editor.TextArea.TextView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
+                    _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
+                    _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
             }, DispatcherPriority.MinValue);
         }
 
@@ -127,6 +159,12 @@ namespace AvaloniaEdit.TextMate
                     UpdateLine(startLine);
                 }
 
+                if (e.RemovalLength > 0 || e.InsertionLength > 0)
+                {
+                    UpdateLineRanges();
+                }
+
+                UpdateSnapshot();
                 InvalidateLine(startLine);
             }
             catch (Exception ex)
@@ -137,35 +175,46 @@ namespace AvaloniaEdit.TextMate
 
         public override void UpdateLine(int lineIndex)
         {
-            // No op
+            lock(_lock)
+            {
+                var line = _document.Lines[lineIndex];
+                _lineRanges[lineIndex] = new LineRange()
+                {
+                    Offset = line.Offset,
+                    Length = line.TotalLength
+                };
+            }
         }
 
-        public override int GetNumberOfLines() => _lineCount;
+        public override int GetNumberOfLines()
+        {
+            lock (_lock)
+            {
+                return _lineCount;
+            }
+        }
 
         public override string GetLineText(int lineIndex)
         {
-            if (Dispatcher.UIThread.CheckAccess())
+            lock (_lock)
             {
-                return _document.GetText(_document.Lines[lineIndex]);
+                var lineRange = _lineRanges[lineIndex];
+                return _textSource.GetText(lineRange.Offset, lineRange.Length);
             }
-
-            return Dispatcher.UIThread.InvokeAsync(() => { return _document.GetText(_document.Lines[lineIndex]); })
-                .GetAwaiter().GetResult();
         }
 
         public override int GetLineLength(int lineIndex)
         {
-            if (Dispatcher.UIThread.CheckAccess())
+            lock (_lock)
             {
-                return _document.Lines[lineIndex].Length;
+                return _lineRanges[lineIndex].Length;
             }
-
-            return Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                return _document.Lines[lineIndex].Length;
-            }).GetAwaiter().GetResult();
         }
 
-        Action<Exception> _exceptionHandler;
+        struct LineRange
+        {
+            public int Offset;
+            public int Length;
+        }
     }
 }
