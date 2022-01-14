@@ -34,8 +34,8 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Text = "puppy\npussy\nbirdie";
 
-            Assert.AreEqual("puppy\n", textEditorModel.GetLineText(0));
-            Assert.AreEqual("pussy\n", textEditorModel.GetLineText(1));
+            Assert.AreEqual("puppy", textEditorModel.GetLineText(0));
+            Assert.AreEqual("pussy", textEditorModel.GetLineText(1));
             Assert.AreEqual("birdie", textEditorModel.GetLineText(2));
         }
 
@@ -52,8 +52,8 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Insert(0, "cutty ");
 
-            Assert.AreEqual("cutty puppy\n", textEditorModel.GetLineText(0));
-            Assert.AreEqual("pussy\n", textEditorModel.GetLineText(1));
+            Assert.AreEqual("cutty puppy", textEditorModel.GetLineText(0));
+            Assert.AreEqual("pussy", textEditorModel.GetLineText(1));
             Assert.AreEqual("birdie", textEditorModel.GetLineText(2));
         }
 
@@ -70,7 +70,7 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Insert(0, "cutty ");
 
-            Assert.AreEqual("cutty puppy\n".Length, textEditorModel.GetLineLength(0));
+            Assert.AreEqual("cutty puppy".Length, textEditorModel.GetLineLength(0));
         }
 
         [Test]
@@ -86,9 +86,9 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Insert(0, "lion\n");
 
-            Assert.AreEqual("lion\n", textEditorModel.GetLineText(0));
-            Assert.AreEqual("puppy\n", textEditorModel.GetLineText(1));
-            Assert.AreEqual("pussy\n", textEditorModel.GetLineText(2));
+            Assert.AreEqual("lion", textEditorModel.GetLineText(0));
+            Assert.AreEqual("puppy", textEditorModel.GetLineText(1));
+            Assert.AreEqual("pussy", textEditorModel.GetLineText(2));
             Assert.AreEqual("birdie", textEditorModel.GetLineText(3));
         }
 
@@ -107,7 +107,7 @@ namespace AvaloniaEdit.Tests.TextMate
                 document.Lines[0].Offset,
                 document.Lines[0].TotalLength);
 
-            Assert.AreEqual("pussy\n", textEditorModel.GetLineText(0));
+            Assert.AreEqual("pussy", textEditorModel.GetLineText(0));
             Assert.AreEqual("birdie", textEditorModel.GetLineText(1));
         }
 
@@ -126,7 +126,7 @@ namespace AvaloniaEdit.Tests.TextMate
                 document.Lines[0].Offset,
                 document.Lines[0].TotalLength);
 
-            Assert.AreEqual("pussy\r\n", textEditorModel.GetLineText(0));
+            Assert.AreEqual("pussy", textEditorModel.GetLineText(0));
             Assert.AreEqual("birdie", textEditorModel.GetLineText(1));
         }
 
@@ -219,7 +219,7 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Replace(0, 1, "P");
 
-            Assert.AreEqual("Puppy\n", textEditorModel.GetLineText(0));
+            Assert.AreEqual("Puppy", textEditorModel.GetLineText(0));
         }
 
         [Test]
@@ -235,7 +235,7 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Replace(0, 1, "\n");
 
-            Assert.AreEqual("\n", textEditorModel.GetLineText(0));
+            Assert.AreEqual("", textEditorModel.GetLineText(0));
         }
     }
 }
