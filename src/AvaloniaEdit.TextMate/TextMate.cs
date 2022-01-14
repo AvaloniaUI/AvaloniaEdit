@@ -81,6 +81,7 @@ namespace AvaloniaEdit.TextMate
             {
                 try
                 {
+                    DisposeEditorModel(_editorModel);
                     DisposeTMModel(_tmModel);
 
                     _editorModel = new TextEditorModel(_editor.TextArea.TextView, _editor.Document, _exceptionHandler);
@@ -119,13 +120,20 @@ namespace AvaloniaEdit.TextMate
                 transformer.Dispose();
             }
 
-
             static void DisposeTMModel(TMModel tmModel)
             {
                 if (tmModel == null)
                     return;
 
                 tmModel.Dispose();
+            }
+
+            static void DisposeEditorModel(TextEditorModel editorModel)
+            {
+                if (editorModel == null)
+                    return;
+
+                editorModel.Dispose();
             }
 
             RegistryOptions _textMateRegistryOptions;

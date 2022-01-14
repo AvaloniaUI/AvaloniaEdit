@@ -53,10 +53,11 @@ namespace AvaloniaEdit.TextMate
             {
                 _lineCount = _document.Lines.Count;
 
-                if (_lineRanges != null)
-                    ArrayPool<LineRange>.Shared.Return(_lineRanges);
+                if (_lineRanges == null)
+                    _lineRanges = new LineRange[_lineCount];
 
-                _lineRanges = ArrayPool<LineRange>.Shared.Rent(_lineCount);
+                Array.Resize(ref _lineRanges, _lineCount);
+
                 for (int i = 0; i < _lineCount; i++)
                 {
                     var line = _document.Lines[i];
@@ -71,9 +72,6 @@ namespace AvaloniaEdit.TextMate
             _document.Changing -= DocumentOnChanging;
             _document.Changed -= DocumentOnChanged;
             _textView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
-
-            if (_lineRanges != null)
-                ArrayPool<LineRange>.Shared.Return(_lineRanges);
         }
 
         public void TokenizeViewPort()
