@@ -1,6 +1,5 @@
 using System;
 using System.Buffers;
-using System.Collections.Generic;
 
 using Avalonia.Threading;
 
@@ -121,7 +120,7 @@ namespace AvaloniaEdit.TextMate
         {
             try
             {
-                if (e.RemovedText is { })
+                if (e.RemovalLength > 0)
                 {
                     var startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
                     var endLine = _document.GetLineByOffset(e.Offset + e.RemovalLength).LineNumber - 1;
@@ -144,7 +143,7 @@ namespace AvaloniaEdit.TextMate
             {
                 int startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
 
-                if (e.InsertedText is { })
+                if (e.InsertionLength > 0)
                 {
                     int endLine = _document.GetLineByOffset(e.Offset + e.InsertionLength).LineNumber - 1;
 
