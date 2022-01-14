@@ -36,7 +36,6 @@ namespace AvaloniaEdit.TextMate
 
             _document.Changing += DocumentOnChanging;
             _document.Changed += DocumentOnChanged;
-            _document.LineCountChanged += DocumentOnLineCountChanged;
             _textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
         }
 
@@ -52,13 +51,13 @@ namespace AvaloniaEdit.TextMate
         {
             lock (_lock)
             {
-                int count = _document.Lines.Count;
+                _lineCount = _document.Lines.Count;
 
                 if (_lineRanges != null)
                     ArrayPool<LineRange>.Shared.Return(_lineRanges);
 
-                _lineRanges = ArrayPool<LineRange>.Shared.Rent(count);
-                for (int i = 0; i < count; i++)
+                _lineRanges = ArrayPool<LineRange>.Shared.Rent(_lineCount);
+                for (int i = 0; i < _lineCount; i++)
                 {
                     var line = _document.Lines[i];
                     _lineRanges[i].Offset = line.Offset;
@@ -71,7 +70,6 @@ namespace AvaloniaEdit.TextMate
         {
             _document.Changing -= DocumentOnChanging;
             _document.Changed -= DocumentOnChanged;
-            _document.LineCountChanged -= DocumentOnLineCountChanged;
             _textView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
 
             if (_lineRanges != null)
@@ -97,21 +95,6 @@ namespace AvaloniaEdit.TextMate
             try
             {
                 TokenizeViewPort();
-            }
-            catch (Exception ex)
-            {
-                _exceptionHandler?.Invoke(ex);
-            }
-        }
-
-        private void DocumentOnLineCountChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    _lineCount = _document.LineCount;
-                }
             }
             catch (Exception ex)
             {
@@ -187,7 +170,7 @@ namespace AvaloniaEdit.TextMate
 
         public override void UpdateLine(int lineIndex)
         {
-            lock(_lock)
+            lock (_lock)
             {
                 var line = _document.Lines[lineIndex];
                 _lineRanges[lineIndex].Offset = line.Offset;
