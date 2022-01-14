@@ -175,24 +175,33 @@ namespace AvaloniaEdit.TextMate
             if (_model.IsStopped)
                 return;
 
-            bool redraw = false;
+            int firstChangedLine = int.MaxValue;
+            int lastChangedLine = -1;
 
             foreach (var range in e.ranges)
             {
-                if (range.fromLineNumber >= _firstVisibleLine || range.toLineNumber >= _firstVisibleLine ||
-                   range.fromLineNumber <= _lastVisibleLine || range.toLineNumber <= _lastVisibleLine)
-                {
-                    redraw = true;
-                    break;
-                }
+                firstChangedLine = Math.Min(range.fromLineNumber - 1, firstChangedLine);
+                lastChangedLine = Math.Max(range.toLineNumber - 1, lastChangedLine);
             }
 
-            if (!redraw)
+            bool areChangedLinesVisible =
+                firstChangedLine >= _firstVisibleLine ||
+                lastChangedLine >= _firstVisibleLine ||
+                firstChangedLine <= _lastVisibleLine ||
+                lastChangedLine <= _lastVisibleLine;
+
+            if (!areChangedLinesVisible)
                 return;
 
             Dispatcher.UIThread.Post(() =>
             {
-                _textView.Redraw();
+                int iniInvalidateLine = Math.Max(firstChangedLine, _firstVisibleLine);
+                int endInvalidateLine = Math.Min(lastChangedLine, _lastVisibleLine);
+
+                DocumentLine iniLine = _document.Lines[iniInvalidateLine];
+                DocumentLine lastLine = _document.Lines[endInvalidateLine];
+
+                _textView.Redraw(iniLine.Offset, (lastLine.Offset + lastLine.TotalLength) - iniLine.Offset);
             }, DispatcherPriority.Render - 1);
         }
     }
