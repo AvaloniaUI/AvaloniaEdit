@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 
 using Avalonia.Threading;
@@ -17,7 +18,7 @@ namespace AvaloniaEdit.TextMate
         private readonly TextView _textView;
         private int _lineCount;
         private ITextSource _textSource;
-        private List<LineRange> _lineRanges = new List<LineRange>();
+        private LineRange[] _lineRanges;
         private Action<Exception> _exceptionHandler;
 
         public TextEditorModel(TextView textView, TextDocument document, Action<Exception> exceptionHandler)
@@ -52,14 +53,17 @@ namespace AvaloniaEdit.TextMate
         {
             lock (_lock)
             {
-                _lineRanges.Clear();
-                foreach (var line in _document.Lines)
+                int count = _document.Lines.Count;
+
+                if (_lineRanges != null)
+                    ArrayPool<LineRange>.Shared.Return(_lineRanges);
+
+                _lineRanges = ArrayPool<LineRange>.Shared.Rent(count);
+                for (int i = 0; i < count; i++)
                 {
-                    _lineRanges.Add(new LineRange()
-                    {
-                        Offset = line.Offset,
-                        Length = line.TotalLength
-                    });
+                    var line = _document.Lines[i];
+                    _lineRanges[i].Offset = line.Offset;
+                    _lineRanges[i].Length = line.TotalLength;
                 }
             }
         }
@@ -178,11 +182,8 @@ namespace AvaloniaEdit.TextMate
             lock(_lock)
             {
                 var line = _document.Lines[lineIndex];
-                _lineRanges[lineIndex] = new LineRange()
-                {
-                    Offset = line.Offset,
-                    Length = line.TotalLength
-                };
+                _lineRanges[lineIndex].Offset = line.Offset;
+                _lineRanges[lineIndex].Length = line.TotalLength;
             }
         }
 
