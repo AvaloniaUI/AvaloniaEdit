@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="TextMateSharp" Version="1.0.18" />
+    <PackageReference Include="TextMateSharp" Version="1.0.19" />
   </ItemGroup>
 
 </Project>
