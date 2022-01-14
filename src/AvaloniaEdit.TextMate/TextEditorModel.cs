@@ -171,6 +171,12 @@ namespace AvaloniaEdit.TextMate
                 }
 
                 UpdateSnapshot();
+
+                // invalidate current and previous line
+                // some grammars (JSON, csharp, ...)
+                // need to invalidate previous lines
+                if (startLine - 1 >= 0)
+                    InvalidateLine(startLine - 1);
                 InvalidateLine(startLine);
             }
             catch (Exception ex)
