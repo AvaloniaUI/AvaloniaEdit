@@ -195,14 +195,28 @@ namespace AvaloniaEdit.TextMate
 
             Dispatcher.UIThread.Post(() =>
             {
-                int iniInvalidateLine = Math.Max(firstChangedLine, _firstVisibleLine);
-                int endInvalidateLine = Math.Min(lastChangedLine, _lastVisibleLine);
+                int iniIndex = Math.Max(firstChangedLine, _firstVisibleLine);
+                int endIndexLine = Math.Min(lastChangedLine, _lastVisibleLine);
 
-                DocumentLine iniLine = _document.Lines[iniInvalidateLine];
-                DocumentLine lastLine = _document.Lines[endInvalidateLine];
+                int totalLines = _document.Lines.Count - 1;
+
+                iniIndex = Clamp(iniIndex, 0,  totalLines);
+                endIndexLine = Clamp(endIndexLine, 0, totalLines);
+
+                DocumentLine iniLine = _document.Lines[iniIndex];
+                DocumentLine lastLine = _document.Lines[endIndexLine];
 
                 _textView.Redraw(iniLine.Offset, (lastLine.Offset + lastLine.TotalLength) - iniLine.Offset);
             }, DispatcherPriority.Render - 1);
+        }
+
+        static int Clamp(int value, int min, int max)
+        {
+            if (value < min)
+                return min;
+            if (value > max)
+                return max;
+            return value;
         }
     }
 }
