@@ -165,7 +165,7 @@ namespace AvaloniaEdit.TextMate
                     UpdateLine(startLine);
                 }
 
-                if (e.RemovalLength > 0 || e.InsertionLength > 0)
+                if (e.RemovalLength - e.InsertionLength != 0)
                 {
                     UpdateLineRanges();
                 }

@@ -205,5 +205,21 @@ namespace AvaloniaEdit.Tests.TextMate
 
             Assert.AreEqual(document.LineCount, count);
         }
+
+        [Test]
+        public void Remove_Text_Of_Same_Length_Should_Update_Line_Content()
+        {
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            TextEditorModel textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "puppy\npussy\nbirdie";
+
+            document.Replace(0, 1, "P");
+
+            Assert.AreEqual("Puppy\n", textEditorModel.GetLineText(0));
+        }
     }
 }
