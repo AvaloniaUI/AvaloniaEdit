@@ -62,7 +62,7 @@ namespace AvaloniaEdit.TextMate
                 {
                     var line = _document.Lines[i];
                     _lineRanges[i].Offset = line.Offset;
-                    _lineRanges[i].Length = line.TotalLength;
+                    _lineRanges[i].Length = line.Length;
                 }
             }
         }
@@ -191,7 +191,7 @@ namespace AvaloniaEdit.TextMate
             {
                 var line = _document.Lines[lineIndex];
                 _lineRanges[lineIndex].Offset = line.Offset;
-                _lineRanges[lineIndex].Length = line.TotalLength;
+                _lineRanges[lineIndex].Length = line.Length;
             }
         }
 
