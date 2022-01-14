@@ -1,4 +1,4 @@
-﻿namespace AvaloniaEdit.TextMate
+﻿namespace AvaloniaEdit.TextMate.Grammars
 {
     public enum ThemeName
     {

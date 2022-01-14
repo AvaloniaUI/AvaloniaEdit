@@ -12,7 +12,7 @@ using TextMateSharp.Internal.Types;
 using TextMateSharp.Registry;
 using TextMateSharp.Themes;
 
-namespace AvaloniaEdit.TextMate
+namespace AvaloniaEdit.TextMate.Grammars
 {
     public class RegistryOptions : IRegistryOptions
     {
