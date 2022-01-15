@@ -24,8 +24,8 @@ namespace AvaloniaEdit.TextMate
         private TextDocument _document;
         private TextView _textView;
 
-        private volatile int _firstVisibleLine = -1;
-        private volatile int _lastVisibleLine = -1;
+        private volatile int _firstVisibleLineIndex = -1;
+        private volatile int _lastVisibleLineIndex = -1;
 
         private readonly Dictionary<int, IBrush> _brushes;
         private TextSegmentCollection<TextTransformation> _transformations;
@@ -54,14 +54,13 @@ namespace AvaloniaEdit.TextMate
             if (!_textView.VisualLinesValid || _textView.VisualLines.Count == 0)
                 return;
 
-            _firstVisibleLine = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
-            _lastVisibleLine = _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1;
+            _firstVisibleLineIndex = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
+            _lastVisibleLineIndex = _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1;
         }
 
         public void Dispose()
         {
-            if (_textView != null)
-                _textView.VisualLinesChanged -= TextView_VisualLinesChanged;
+            _textView.VisualLinesChanged -= TextView_VisualLinesChanged;
         }
 
         public void SetTheme(Theme theme)
@@ -175,38 +174,40 @@ namespace AvaloniaEdit.TextMate
             if (_model.IsStopped)
                 return;
 
-            int firstChangedLine = int.MaxValue;
-            int lastChangedLine = -1;
+            int firstChangedLineIndex = int.MaxValue;
+            int lastChangedLineIndex = -1;
 
             foreach (var range in e.ranges)
             {
-                firstChangedLine = Math.Min(range.fromLineNumber - 1, firstChangedLine);
-                lastChangedLine = Math.Max(range.toLineNumber - 1, lastChangedLine);
+                firstChangedLineIndex = Math.Min(range.fromLineNumber - 1, firstChangedLineIndex);
+                lastChangedLineIndex = Math.Max(range.toLineNumber - 1, lastChangedLineIndex);
             }
 
             bool areChangedLinesVisible =
-                firstChangedLine >= _firstVisibleLine ||
-                lastChangedLine >= _firstVisibleLine ||
-                firstChangedLine <= _lastVisibleLine ||
-                lastChangedLine <= _lastVisibleLine;
+                firstChangedLineIndex >= _firstVisibleLineIndex ||
+                lastChangedLineIndex >= _firstVisibleLineIndex ||
+                firstChangedLineIndex <= _lastVisibleLineIndex ||
+                lastChangedLineIndex <= _lastVisibleLineIndex;
 
             if (!areChangedLinesVisible)
                 return;
 
             Dispatcher.UIThread.Post(() =>
             {
-                int iniIndex = Math.Max(firstChangedLine, _firstVisibleLine);
-                int endIndexLine = Math.Min(lastChangedLine, _lastVisibleLine);
+                int firstLineIndexToRedraw = Math.Max(firstChangedLineIndex, _firstVisibleLineIndex);
+                int lastLineIndexToRedrawLine = Math.Min(lastChangedLineIndex, _lastVisibleLineIndex);
 
                 int totalLines = _document.Lines.Count - 1;
 
-                iniIndex = Clamp(iniIndex, 0,  totalLines);
-                endIndexLine = Clamp(endIndexLine, 0, totalLines);
+                firstLineIndexToRedraw = Clamp(firstLineIndexToRedraw, 0,  totalLines);
+                lastLineIndexToRedrawLine = Clamp(lastLineIndexToRedrawLine, 0, totalLines);
 
-                DocumentLine iniLine = _document.Lines[iniIndex];
-                DocumentLine lastLine = _document.Lines[endIndexLine];
+                DocumentLine firstLineToRedraw = _document.Lines[firstLineIndexToRedraw];
+                DocumentLine lastLineToRedraw = _document.Lines[lastLineIndexToRedrawLine];
 
-                _textView.Redraw(iniLine.Offset, (lastLine.Offset + lastLine.TotalLength) - iniLine.Offset);
+                _textView.Redraw(
+                    firstLineToRedraw.Offset,
+                    (lastLineToRedraw.Offset + lastLineToRedraw.TotalLength) - firstLineToRedraw.Offset);
             }, DispatcherPriority.Render - 1);
         }
 
