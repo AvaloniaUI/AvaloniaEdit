@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using Avalonia.Threading;
 
 using AvaloniaEdit.Document;
@@ -75,7 +76,7 @@ namespace AvaloniaEdit.TextMate
             {
                 var id = _theme.GetColorId(color);
 
-                _brushes[id] = SolidColorBrush.Parse(color);
+                _brushes[id] = new ImmutableSolidColorBrush(Color.Parse(color));
             }
 
             _transformations?.Clear();

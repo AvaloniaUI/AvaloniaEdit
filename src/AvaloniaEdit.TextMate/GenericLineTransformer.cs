@@ -1,4 +1,6 @@
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
+
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 
@@ -29,9 +31,9 @@ namespace AvaloniaEdit.TextMate
                 {
                     ChangeLinePart(startOffset, endoffset, e =>
                     {
-                        if (e.TextRunProperties.ForegroundBrush is SolidColorBrush solidBrush)
+                        if (e.TextRunProperties.ForegroundBrush is ISolidColorBrush solidBrush)
                         {
-                            e.TextRunProperties.ForegroundBrush = new SolidColorBrush(solidBrush.Color, opacity);
+                            e.TextRunProperties.ForegroundBrush = new ImmutableSolidColorBrush(solidBrush.Color, opacity);
                         }
                     });
                 }
@@ -40,9 +42,9 @@ namespace AvaloniaEdit.TextMate
             {
                 ChangeLinePart(line.Offset, line.EndOffset, e =>
                 {
-                    if (e.TextRunProperties.ForegroundBrush is SolidColorBrush solidBrush)
+                    if (e.TextRunProperties.ForegroundBrush is ISolidColorBrush solidBrush)
                     {
-                        e.TextRunProperties.ForegroundBrush = new SolidColorBrush(solidBrush.Color, opacity);
+                        e.TextRunProperties.ForegroundBrush = new ImmutableSolidColorBrush(solidBrush.Color, opacity);
                     }
                 });
             }
