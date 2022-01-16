@@ -51,6 +51,7 @@ namespace AvaloniaEdit.TextMate
         {
             lock (_lock)
             {
+                _lineCount = _document.LineCount;
                 _lineRanges.Update(e);
             }
         }
