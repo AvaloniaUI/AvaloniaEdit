@@ -4,13 +4,13 @@ using AvaloniaEdit.Document;
 
 namespace AvaloniaEdit.TextMate
 {
-    internal class DocumentSnapshot
+    public class DocumentSnapshot
     {
         private LineRange[] _lineRanges;
         private TextDocument _document;
         private ITextSource _textSource;
 
-        internal DocumentSnapshot(TextDocument document)
+        public DocumentSnapshot(TextDocument document)
         {
             _document = document;
             _lineRanges = new LineRange[document.LineCount];
@@ -18,18 +18,45 @@ namespace AvaloniaEdit.TextMate
             Update(null);
         }
 
-        internal string GetLineText(int lineIndex)
+        public string GetLineText(int lineIndex)
         {
             var lineRange = _lineRanges[lineIndex];
             return _textSource.GetText(lineRange.Offset, lineRange.Length);
         }
 
-        internal int GetLineLength(int lineIndex)
+        public string GetLineTextIncludingTerminator(int lineIndex)
+        {
+            var lineRange = _lineRanges[lineIndex];
+            return _textSource.GetText(lineRange.Offset, lineRange.TotalLength);
+        }
+
+        public string GetLineTerminator(int lineIndex)
+        {
+            var lineRange = _lineRanges[lineIndex];
+            return _textSource.GetText(lineRange.Offset + lineRange.Length, lineRange.TotalLength - lineRange.Length);
+        }
+
+        public int GetLineLength(int lineIndex)
         {
             return _lineRanges[lineIndex].Length;
         }
 
-        internal void Update(DocumentChangeEventArgs e)
+        public int GetTotalLineLength(int lineIndex)
+        {
+            return _lineRanges[lineIndex].TotalLength;
+        }
+
+        public int GetLineCount()
+        {
+            return _lineRanges.Length;
+        }
+
+        public string GetText()
+        {
+            return _textSource.Text;
+        }
+
+        public void Update(DocumentChangeEventArgs e)
         {
             int lineCount = _document.Lines.Count;
 
@@ -43,6 +70,7 @@ namespace AvaloniaEdit.TextMate
 
                 _lineRanges[lineIndex].Offset = changedLine.Offset;
                 _lineRanges[lineIndex].Length = changedLine.Length;
+                _lineRanges[lineIndex].TotalLength = changedLine.TotalLength;
 
                 for (int i = lineIndex + 1; i < lineCount; i++)
                 {
@@ -64,6 +92,7 @@ namespace AvaloniaEdit.TextMate
                 {
                     _lineRanges[currentLineIndex].Offset = currentLine.Offset;
                     _lineRanges[currentLineIndex].Length = currentLine.Length;
+                    _lineRanges[currentLineIndex].TotalLength = currentLine.TotalLength;
                     currentLine = currentLine.NextLine;
                     currentLineIndex++;
                 }
@@ -76,6 +105,7 @@ namespace AvaloniaEdit.TextMate
         {
             public int Offset;
             public int Length;
+            public int TotalLength;
         }
     }
 }

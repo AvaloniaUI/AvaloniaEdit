@@ -26,6 +26,7 @@ namespace AvaloniaEdit.TextMate
         public class Installation
         {
             public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
+            public TextEditorModel EditorModel { get { return _editorModel; } }
 
             public Installation(TextEditor editor, ThemeName defaultTheme, IGrammar grammar)
             {

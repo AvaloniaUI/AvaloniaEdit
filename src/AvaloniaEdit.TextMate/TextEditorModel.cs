@@ -18,6 +18,8 @@ namespace AvaloniaEdit.TextMate
         private DocumentSnapshot _documentSnapshot;
         private Action<Exception> _exceptionHandler;
 
+        public DocumentSnapshot DocumentSnapshot { get { return _documentSnapshot; } }
+
         public TextEditorModel(TextView textView, TextDocument document, Action<Exception> exceptionHandler)
         {
             _textView = textView;
