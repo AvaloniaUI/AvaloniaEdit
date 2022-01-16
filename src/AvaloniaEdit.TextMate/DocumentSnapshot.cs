@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Diagnostics;
 
 using AvaloniaEdit.Document;
 
 namespace AvaloniaEdit.TextMate
 {
-    internal class LineRanges
+    internal class DocumentSnapshot
     {
         private LineRange[] _lineRanges;
         private TextDocument _document;
-        internal LineRanges(TextDocument document)
+        private ITextSource _textSource;
+
+        internal DocumentSnapshot(TextDocument document)
         {
             _document = document;
             _lineRanges = new LineRange[document.LineCount];
@@ -17,12 +18,16 @@ namespace AvaloniaEdit.TextMate
             Update(null);
         }
 
-        internal LineRange Get(int lineIndex)
+        internal string GetLineText(int lineIndex)
         {
-            return _lineRanges[lineIndex];
+            var lineRange = _lineRanges[lineIndex];
+            return _textSource.GetText(lineRange.Offset, lineRange.Length);
         }
 
-        Stopwatch sw = new Stopwatch();
+        internal int GetLineLength(int lineIndex)
+        {
+            return _lineRanges[lineIndex].Length;
+        }
 
         internal void Update(DocumentChangeEventArgs e)
         {
@@ -63,6 +68,8 @@ namespace AvaloniaEdit.TextMate
                     currentLineIndex++;
                 }
             }
+
+            _textSource = _document.CreateSnapshot();
         }
     }
 

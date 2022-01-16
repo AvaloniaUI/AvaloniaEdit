@@ -16,8 +16,7 @@ namespace AvaloniaEdit.TextMate
         private readonly TextDocument _document;
         private readonly TextView _textView;
         private volatile int _lineCount;
-        private ITextSource _textSource;
-        private LineRanges _lineRanges;
+        private DocumentSnapshot _documentSnapshot;
         private Action<Exception> _exceptionHandler;
 
         public TextEditorModel(TextView textView, TextDocument document, Action<Exception> exceptionHandler)
@@ -27,24 +26,14 @@ namespace AvaloniaEdit.TextMate
             _exceptionHandler = exceptionHandler;
 
             _lineCount = _document.LineCount;
-            _lineRanges = new LineRanges(_document);
+            _documentSnapshot = new DocumentSnapshot(_document);
 
             for (int i = 0; i < _lineCount; i++)
                 AddLine(i);
 
-            UpdateSnapshot();
-
             _document.Changing += DocumentOnChanging;
             _document.Changed += DocumentOnChanged;
             _textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
-        }
-
-        private void UpdateSnapshot()
-        {
-            lock (_lock)
-            {
-                _textSource = _document.CreateSnapshot();
-            }
         }
 
         private void UpdateLineRanges(DocumentChangeEventArgs e)
@@ -52,7 +41,7 @@ namespace AvaloniaEdit.TextMate
             lock (_lock)
             {
                 _lineCount = _document.LineCount;
-                _lineRanges.Update(e);
+                _documentSnapshot.Update(e);
             }
         }
 
@@ -131,7 +120,6 @@ namespace AvaloniaEdit.TextMate
                 }
 
                 UpdateLineRanges(e);
-                UpdateSnapshot();
 
                 // invalidate the changed line it's previous line
                 // some grammars (JSON, csharp, ...)
@@ -158,8 +146,7 @@ namespace AvaloniaEdit.TextMate
         {
             lock (_lock)
             {
-                var lineRange = _lineRanges.Get(lineIndex);
-                return _textSource.GetText(lineRange.Offset, lineRange.Length);
+                return _documentSnapshot.GetLineText(lineIndex);
             }
         }
 
@@ -167,7 +154,7 @@ namespace AvaloniaEdit.TextMate
         {
             lock (_lock)
             {
-                return _lineRanges.Get(lineIndex).Length;
+                return _documentSnapshot.GetLineLength(lineIndex);
             }
         }
     }
