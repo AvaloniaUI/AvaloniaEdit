@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+
 using AvaloniaEdit.Document;
 
 namespace AvaloniaEdit.TextMate
@@ -20,11 +22,13 @@ namespace AvaloniaEdit.TextMate
             return _lineRanges[lineIndex];
         }
 
+        Stopwatch sw = new Stopwatch();
+
         internal void Update(DocumentChangeEventArgs e)
         {
-            int _lineCount = _document.Lines.Count;
+            int lineCount = _document.Lines.Count;
 
-            if (e != null && e.OffsetChangeMap != null && _lineRanges != null && _lineCount == _lineRanges.Length)
+            if (e != null && e.OffsetChangeMap != null && _lineRanges != null && lineCount == _lineRanges.Length)
             {
                 // it's a single-line change
                 // update the offsets usign the OffsetChangeMap
@@ -35,7 +39,7 @@ namespace AvaloniaEdit.TextMate
                 _lineRanges[lineIndex].Offset = changedLine.Offset;
                 _lineRanges[lineIndex].Length = changedLine.Length;
 
-                for (int i = lineIndex + 1; i < _lineCount; i++)
+                for (int i = lineIndex + 1; i < lineCount; i++)
                 {
                     _lineRanges[i].Offset = e.OffsetChangeMap.GetNewOffset(_lineRanges[i].Offset);
                 }
@@ -45,16 +49,18 @@ namespace AvaloniaEdit.TextMate
                 // recompute all the line ranges
                 // based in the document lines
 
-                Array.Resize(ref _lineRanges, _lineCount);
+                Array.Resize(ref _lineRanges, lineCount);
 
-                int startLineIndex = (e != null) ?
+                int currentLineIndex = (e != null) ?
                     _document.GetLineByOffset(e.Offset).LineNumber - 1 : 0;
+                var currentLine = _document.GetLineByNumber(currentLineIndex + 1);
 
-                for (int i = startLineIndex; i < _lineCount; i++)
+                while (currentLine != null)
                 {
-                    var line = _document.Lines[i];
-                    _lineRanges[i].Offset = line.Offset;
-                    _lineRanges[i].Length = line.Length;
+                    _lineRanges[currentLineIndex].Offset = currentLine.Offset;
+                    _lineRanges[currentLineIndex].Length = currentLine.Length;
+                    currentLine = currentLine.NextLine;
+                    currentLineIndex++;
                 }
             }
         }
