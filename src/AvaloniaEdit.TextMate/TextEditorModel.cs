@@ -35,7 +35,7 @@ namespace AvaloniaEdit.TextMate
             _textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
         }
 
-        private void UpdateLineRanges(DocumentChangeEventArgs e)
+        private void UpdateDocumentSnapshot(DocumentChangeEventArgs e)
         {
             lock (_lock)
             {
@@ -118,7 +118,7 @@ namespace AvaloniaEdit.TextMate
                     }
                 }
 
-                UpdateLineRanges(e);
+                UpdateDocumentSnapshot(e);
 
                 // invalidate the changed line it's previous line
                 // some grammars (JSON, csharp, ...)
