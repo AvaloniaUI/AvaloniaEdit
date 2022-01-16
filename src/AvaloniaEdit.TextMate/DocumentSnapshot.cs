@@ -71,11 +71,11 @@ namespace AvaloniaEdit.TextMate
 
             _textSource = _document.CreateSnapshot();
         }
-    }
 
-    internal struct LineRange
-    {
-        public int Offset;
-        public int Length;
+        struct LineRange
+        {
+            public int Offset;
+            public int Length;
+        }
     }
 }
