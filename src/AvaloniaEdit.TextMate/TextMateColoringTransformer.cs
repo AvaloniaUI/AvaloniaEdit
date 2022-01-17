@@ -207,7 +207,7 @@ namespace AvaloniaEdit.TextMate
                 _textView.Redraw(
                     firstLineToRedraw.Offset,
                     (lastLineToRedraw.Offset + lastLineToRedraw.TotalLength) - firstLineToRedraw.Offset);
-            }, DispatcherPriority.Render - 1);
+            });
         }
 
         static int Clamp(int value, int min, int max)
