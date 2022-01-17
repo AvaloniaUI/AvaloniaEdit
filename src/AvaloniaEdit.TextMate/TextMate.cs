@@ -74,6 +74,7 @@ namespace AvaloniaEdit.TextMate
             {
                 _editor.DocumentChanged -= OnEditorOnDocumentChanged;
 
+                DisposeEditorModel(_editorModel);
                 DisposeTMModel(_tmModel);
                 DisposeTransformer();
             }
