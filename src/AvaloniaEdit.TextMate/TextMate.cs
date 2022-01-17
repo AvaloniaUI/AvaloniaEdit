@@ -25,7 +25,16 @@ namespace AvaloniaEdit.TextMate
 
         public class Installation
         {
+            private RegistryOptions _textMateRegistryOptions;
+            private Registry _textMateRegistry;
+            private TextEditor _editor;
+            private TextEditorModel _editorModel;
+            private IGrammar _grammar;
+            private TMModel _tmModel;
+            private TextMateColoringTransformer _transformer;
+
             public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
+            public TextEditorModel EditorModel { get { return _editorModel; } }
 
             public Installation(TextEditor editor, ThemeName defaultTheme, IGrammar grammar)
             {
@@ -73,20 +82,24 @@ namespace AvaloniaEdit.TextMate
             {
                 _editor.DocumentChanged -= OnEditorOnDocumentChanged;
 
+                DisposeEditorModel(_editorModel);
                 DisposeTMModel(_tmModel);
+                DisposeTransformer(_transformer);
             }
 
             void OnEditorOnDocumentChanged(object sender, EventArgs args)
             {
                 try
                 {
+                    DisposeEditorModel(_editorModel);
                     DisposeTMModel(_tmModel);
 
-                    _editorModel = new TextEditorModel(_editor, _editor.Document, _exceptionHandler);
+                    _editorModel = new TextEditorModel(_editor.TextArea.TextView, _editor.Document, _exceptionHandler);
                     _tmModel = new TMModel(_editorModel);
                     _tmModel.SetGrammar(_grammar);
-                    GetOrCreateTransformer().SetModel(_editor.Document, _editor.TextArea.TextView, _tmModel);
-                    _tmModel.AddModelTokensChangedListener(GetOrCreateTransformer());
+                    _transformer = GetOrCreateTransformer();
+                    _transformer.SetModel(_editor.Document, _tmModel);
+                    _tmModel.AddModelTokensChangedListener(_transformer);
                 }
                 catch (Exception ex)
                 {
@@ -100,12 +113,20 @@ namespace AvaloniaEdit.TextMate
 
                 if (transformer is null)
                 {
-                    transformer = new TextMateColoringTransformer();
+                    transformer = new TextMateColoringTransformer(_editor.TextArea.TextView);
 
                     _editor.TextArea.TextView.LineTransformers.Add(transformer);
                 }
 
                 return transformer;
+            }
+
+            static void DisposeTransformer(TextMateColoringTransformer transformer)
+            {
+                if (transformer == null)
+                    return;
+
+                transformer.Dispose();
             }
 
             static void DisposeTMModel(TMModel tmModel)
@@ -116,12 +137,13 @@ namespace AvaloniaEdit.TextMate
                 tmModel.Dispose();
             }
 
-            RegistryOptions _textMateRegistryOptions;
-            Registry _textMateRegistry;
-            TextEditor _editor;
-            TextEditorModel _editorModel;
-            IGrammar _grammar;
-            TMModel _tmModel;
+            static void DisposeEditorModel(TextEditorModel editorModel)
+            {
+                if (editorModel == null)
+                    return;
+
+                editorModel.Dispose();
+            }
         }
 
         static Action<Exception> _exceptionHandler;

@@ -3,54 +3,57 @@ using System;
 using Avalonia.Threading;
 
 using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
 
 using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
 {
-    class TextEditorModel : AbstractLineList
+    public class TextEditorModel : AbstractLineList
     {
-        private object _lock = new object();
         private readonly TextDocument _document;
-        private readonly TextEditor _editor;
-        private int _lineCount;
+        private readonly TextView _textView;
+        private DocumentSnapshot _documentSnapshot;
+        private Action<Exception> _exceptionHandler;
 
-        public TextEditorModel(TextEditor editor, TextDocument document, Action<Exception> exceptionHandler)
+        public DocumentSnapshot DocumentSnapshot { get { return _documentSnapshot; } }
+
+        public TextEditorModel(TextView textView, TextDocument document, Action<Exception> exceptionHandler)
         {
-            _editor = editor;
+            _textView = textView;
             _document = document;
             _exceptionHandler = exceptionHandler;
 
-            _lineCount = _document.LineCount;
+            _documentSnapshot = new DocumentSnapshot(_document);
 
             for (int i = 0; i < _document.LineCount; i++)
                 AddLine(i);
 
             _document.Changing += DocumentOnChanging;
             _document.Changed += DocumentOnChanged;
-            _document.LineCountChanged += DocumentOnLineCountChanged;
-            _editor.TextArea.TextView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
+            _textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
         }
 
         public override void Dispose()
         {
             _document.Changing -= DocumentOnChanging;
             _document.Changed -= DocumentOnChanged;
-            _document.LineCountChanged -= DocumentOnLineCountChanged;
-            _editor.TextArea.TextView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
+            _textView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
         }
+
+        public override void UpdateLine(int lineIndex) { }
 
         public void TokenizeViewPort()
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (!_editor.TextArea.TextView.VisualLinesValid ||
-                    _editor.TextArea.TextView.VisualLines.Count == 0)
+                if (!_textView.VisualLinesValid ||
+                    _textView.VisualLines.Count == 0)
                     return;
 
                 ForceTokenization(
-                    _editor.TextArea.TextView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
-                    _editor.TextArea.TextView.VisualLines[_editor.TextArea.TextView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
+                    _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
+                    _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
             }, DispatcherPriority.MinValue);
         }
 
@@ -66,26 +69,11 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        private void DocumentOnLineCountChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    _lineCount = _document.LineCount;
-                }
-            }
-            catch (Exception ex)
-            {
-                _exceptionHandler?.Invoke(ex);
-            }
-        }
-
         private void DocumentOnChanging(object sender, DocumentChangeEventArgs e)
         {
             try
             {
-                if (e.RemovedText is { })
+                if (e.RemovalLength > 0)
                 {
                     var startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
                     var endLine = _document.GetLineByOffset(e.Offset + e.RemovalLength).LineNumber - 1;
@@ -93,6 +81,7 @@ namespace AvaloniaEdit.TextMate
                     for (int i = endLine; i > startLine; i--)
                     {
                         RemoveLine(i);
+                        _documentSnapshot.LineCount--;
                     }
                 }
             }
@@ -108,7 +97,7 @@ namespace AvaloniaEdit.TextMate
             {
                 int startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
 
-                if (e.InsertedText is { })
+                if (e.InsertionLength > 0)
                 {
                     int endLine = _document.GetLineByOffset(e.Offset + e.InsertionLength).LineNumber - 1;
 
@@ -116,17 +105,15 @@ namespace AvaloniaEdit.TextMate
                     {
                         AddLine(i);
                     }
-
-                    if (startLine == endLine)
-                    {
-                        UpdateLine(startLine);
-                    }
-                }
-                else
-                {
-                    UpdateLine(startLine);
                 }
 
+                _documentSnapshot.Update(e);
+
+                // invalidate the changed line it's previous line
+                // some grammars (JSON, csharp, ...)
+                // need to invalidate the previous line
+                if (startLine - 1 >= 0)
+                    InvalidateLine(startLine - 1);
                 InvalidateLine(startLine);
             }
             catch (Exception ex)
@@ -135,37 +122,19 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        public override void UpdateLine(int lineIndex)
+        public override int GetNumberOfLines()
         {
-            // No op
+            return _documentSnapshot.LineCount;
         }
-
-        public override int GetNumberOfLines() => _lineCount;
 
         public override string GetLineText(int lineIndex)
         {
-            if (Dispatcher.UIThread.CheckAccess())
-            {
-                return _document.GetText(_document.Lines[lineIndex]);
-            }
-
-            return Dispatcher.UIThread.InvokeAsync(() => { return _document.GetText(_document.Lines[lineIndex]); })
-                .GetAwaiter().GetResult();
+            return _documentSnapshot.GetLineText(lineIndex);
         }
 
         public override int GetLineLength(int lineIndex)
         {
-            if (Dispatcher.UIThread.CheckAccess())
-            {
-                return _document.Lines[lineIndex].Length;
-            }
-
-            return Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                return _document.Lines[lineIndex].Length;
-            }).GetAwaiter().GetResult();
+            return _documentSnapshot.GetLineLength(lineIndex);
         }
-
-        Action<Exception> _exceptionHandler;
     }
 }
