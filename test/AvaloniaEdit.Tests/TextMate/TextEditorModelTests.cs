@@ -237,5 +237,43 @@ namespace AvaloniaEdit.Tests.TextMate
 
             Assert.AreEqual("", textEditorModel.GetLineText(0));
         }
+
+        [Test]
+        public void Remove_Document_Text_Should_Update_Line_Contents()
+        {
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            TextEditorModel textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "puppy\npussy\nbirdie";
+            Assert.AreEqual(3, textEditorModel.GetNumberOfLines());
+
+            document.Text = string.Empty;
+            Assert.AreEqual(1, textEditorModel.GetNumberOfLines());
+            Assert.AreEqual(string.Empty, textEditorModel.GetLineText(0));
+        }
+
+        [Test]
+        public void Replace_Document_Text_Should_Update_Line_Contents()
+        {
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            TextEditorModel textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "puppy\npussy\nbirdie";
+            Assert.AreEqual(3, textEditorModel.GetNumberOfLines());
+
+            document.Text = "one\ntwo\nthree\nfour";
+            Assert.AreEqual(4, textEditorModel.GetNumberOfLines());
+
+            Assert.AreEqual("one", textEditorModel.GetLineText(0));
+            Assert.AreEqual("two", textEditorModel.GetLineText(1));
+            Assert.AreEqual("three", textEditorModel.GetLineText(2));
+            Assert.AreEqual("four", textEditorModel.GetLineText(3));
+        }
     }
 }
