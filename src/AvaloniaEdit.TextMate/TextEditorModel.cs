@@ -11,10 +11,8 @@ namespace AvaloniaEdit.TextMate
 {
     public class TextEditorModel : AbstractLineList
     {
-        private object _lock = new object();
         private readonly TextDocument _document;
         private readonly TextView _textView;
-        private volatile int _lineCount;
         private DocumentSnapshot _documentSnapshot;
         private Action<Exception> _exceptionHandler;
 
@@ -26,24 +24,14 @@ namespace AvaloniaEdit.TextMate
             _document = document;
             _exceptionHandler = exceptionHandler;
 
-            _lineCount = _document.LineCount;
             _documentSnapshot = new DocumentSnapshot(_document);
 
-            for (int i = 0; i < _lineCount; i++)
+            for (int i = 0; i < _document.LineCount; i++)
                 AddLine(i);
 
             _document.Changing += DocumentOnChanging;
             _document.Changed += DocumentOnChanged;
             _textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
-        }
-
-        private void UpdateDocumentSnapshot(DocumentChangeEventArgs e)
-        {
-            lock (_lock)
-            {
-                _lineCount = _document.LineCount;
-                _documentSnapshot.Update(e);
-            }
         }
 
         public override void Dispose()
@@ -93,7 +81,7 @@ namespace AvaloniaEdit.TextMate
                     for (int i = endLine; i > startLine; i--)
                     {
                         RemoveLine(i);
-                        _lineCount--;
+                        _documentSnapshot.LineCount--;
                     }
                 }
             }
@@ -116,11 +104,10 @@ namespace AvaloniaEdit.TextMate
                     for (int i = startLine; i < endLine; i++)
                     {
                         AddLine(i);
-                        _lineCount++;
                     }
                 }
 
-                UpdateDocumentSnapshot(e);
+                _documentSnapshot.Update(e);
 
                 // invalidate the changed line it's previous line
                 // some grammars (JSON, csharp, ...)
@@ -137,26 +124,17 @@ namespace AvaloniaEdit.TextMate
 
         public override int GetNumberOfLines()
         {
-            lock (_lock)
-            {
-                return _lineCount;
-            }
+            return _documentSnapshot.LineCount;
         }
 
         public override string GetLineText(int lineIndex)
         {
-            lock (_lock)
-            {
-                return _documentSnapshot.GetLineText(lineIndex);
-            }
+            return _documentSnapshot.GetLineText(lineIndex);
         }
 
         public override int GetLineLength(int lineIndex)
         {
-            lock (_lock)
-            {
-                return _documentSnapshot.GetLineLength(lineIndex);
-            }
+            return _documentSnapshot.GetLineLength(lineIndex);
         }
     }
 }
