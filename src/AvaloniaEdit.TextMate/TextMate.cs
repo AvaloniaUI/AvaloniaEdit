@@ -25,6 +25,14 @@ namespace AvaloniaEdit.TextMate
 
         public class Installation
         {
+            private RegistryOptions _textMateRegistryOptions;
+            private Registry _textMateRegistry;
+            private TextEditor _editor;
+            private TextEditorModel _editorModel;
+            private IGrammar _grammar;
+            private TMModel _tmModel;
+            private TextMateColoringTransformer _transformer;
+
             public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
             public TextEditorModel EditorModel { get { return _editorModel; } }
 
@@ -76,7 +84,7 @@ namespace AvaloniaEdit.TextMate
 
                 DisposeEditorModel(_editorModel);
                 DisposeTMModel(_tmModel);
-                DisposeTransformer();
+                DisposeTransformer(_transformer);
             }
 
             void OnEditorOnDocumentChanged(object sender, EventArgs args)
@@ -89,8 +97,9 @@ namespace AvaloniaEdit.TextMate
                     _editorModel = new TextEditorModel(_editor.TextArea.TextView, _editor.Document, _exceptionHandler);
                     _tmModel = new TMModel(_editorModel);
                     _tmModel.SetGrammar(_grammar);
-                    GetOrCreateTransformer().SetModel(_editor.Document, _tmModel);
-                    _tmModel.AddModelTokensChangedListener(GetOrCreateTransformer());
+                    _transformer = GetOrCreateTransformer();
+                    _transformer.SetModel(_editor.Document, _tmModel);
+                    _tmModel.AddModelTokensChangedListener(_transformer);
                 }
                 catch (Exception ex)
                 {
@@ -112,10 +121,8 @@ namespace AvaloniaEdit.TextMate
                 return transformer;
             }
 
-            void DisposeTransformer()
+            static void DisposeTransformer(TextMateColoringTransformer transformer)
             {
-                var transformer = _editor.TextArea.TextView.LineTransformers.OfType<TextMateColoringTransformer>().FirstOrDefault();
-
                 if (transformer == null)
                     return;
 
@@ -137,13 +144,6 @@ namespace AvaloniaEdit.TextMate
 
                 editorModel.Dispose();
             }
-
-            RegistryOptions _textMateRegistryOptions;
-            Registry _textMateRegistry;
-            TextEditor _editor;
-            TextEditorModel _editorModel;
-            IGrammar _grammar;
-            TMModel _tmModel;
         }
 
         static Action<Exception> _exceptionHandler;
