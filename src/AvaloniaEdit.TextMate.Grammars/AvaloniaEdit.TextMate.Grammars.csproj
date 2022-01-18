@@ -8,8 +8,8 @@
     <EmbeddedResource Include="Resources\Themes\*.json" />
     <EmbeddedResource Include="Resources\Grammars\**\*.json" />
   </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
-        <PackageReference Include="TextMateSharp" Version="$(TextMateSharpVersion)" />
-    </ItemGroup>
+  <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+      <PackageReference Include="TextMateSharp" Version="$(TextMateSharpVersion)" />
+  </ItemGroup>
 </Project>
