@@ -22,7 +22,7 @@ namespace AvaloniaEdit.TextMate.Grammars
         public RegistryOptions(ThemeName defaultTheme)
         {
             _defaultTheme = defaultTheme;
-            InitializeGrammars();
+            InitializeAvailableGrammars();
         }
 
         public List<Language> GetAvailableLanguages()
@@ -108,16 +108,86 @@ namespace AvaloniaEdit.TextMate.Grammars
 
         public IRawTheme LoadTheme(ThemeName name)
         {
-            string themeFile = GetThemeFile(name);
+            return GetTheme(GetThemeFile(name));
+        }
 
-            if (themeFile == null)
+        public ICollection<string> GetInjections(string scopeName)
+        {
+            return null;
+        }
+
+        public IRawTheme GetTheme(string scopeName)
+        {
+            Stream themeStream = ResourceLoader.TryOpenThemeStream(scopeName.Replace("./", string.Empty));
+
+            if (themeStream == null)
                 return null;
 
-            using (Stream s = ResourceLoader.TryOpenThemeStream(GetThemeFile(name)))
-            using (StreamReader reader = new StreamReader(s))
+            using (themeStream)
+            using (StreamReader reader = new StreamReader(themeStream))
             {
                 return ThemeReader.ReadThemeSync(reader);
             }
+        }
+
+        public IRawGrammar GetGrammar(string scopeName)
+        {
+            Stream grammarStream = ResourceLoader.TryOpenGrammarStream(GetGrammarFile(scopeName));
+
+            if (grammarStream == null)
+                return null;
+
+            using (grammarStream)
+            using (StreamReader reader = new StreamReader(grammarStream))
+            {
+                return GrammarReader.ReadGrammarSync(reader);
+            }
+        }
+
+        public IRawTheme GetDefaultTheme()
+        {
+            return LoadTheme(_defaultTheme);
+        }
+
+        void InitializeAvailableGrammars()
+        {
+            var serializer = new JsonSerializer();
+
+            foreach (string grammar in GrammarNames.SupportedGrammars)
+            {
+                using (Stream stream = ResourceLoader.OpenGrammarPackage(grammar))
+                using (StreamReader reader = new StreamReader(stream))
+                using (JsonTextReader jsonTextReader = new JsonTextReader(reader))
+                {
+                    GrammarDefinition definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
+                    _availableGrammars.Add(grammar, definition);
+                }
+            }
+        }
+
+        string GetGrammarFile(string scopeName)
+        {
+            foreach (string grammarName in _availableGrammars.Keys)
+            {
+                GrammarDefinition definition = _availableGrammars[grammarName];
+
+                foreach (Grammar grammar in definition.Contributes.Grammars)
+                {
+                    if (scopeName.Equals(grammar.ScopeName))
+                    {
+                        string grammarPath = grammar.Path;
+
+                        if (grammarPath.StartsWith("./"))
+                            grammarPath = grammarPath.Substring(2);
+
+                        grammarPath = grammarPath.Replace("/", ".");
+
+                        return grammarName.ToLower() + "." + grammarPath;
+                    }
+                }
+            }
+
+            return null;
         }
 
         string GetThemeFile(ThemeName name)
@@ -153,85 +223,6 @@ namespace AvaloniaEdit.TextMate.Grammars
             }
 
             return null;
-        }
-
-        void InitializeGrammars()
-        {
-            var serializer = new JsonSerializer();
-
-            foreach (string grammar in GrammarNames.SupportedGrammars)
-            {
-                using (Stream stream = ResourceLoader.OpenGrammarPackage(grammar))
-                using (StreamReader reader = new StreamReader(stream))
-                using (JsonTextReader jsonTextReader = new JsonTextReader(reader))
-                {
-                    GrammarDefinition definition = serializer.Deserialize<GrammarDefinition>(jsonTextReader);
-                    _availableGrammars.Add(grammar, definition);
-                }
-            }
-        }
-
-        string GetFilePath(string scopeName)
-        {
-            foreach (string grammarName in _availableGrammars.Keys)
-            {
-                GrammarDefinition definition = _availableGrammars[grammarName];
-
-                foreach (Grammar grammar in definition.Contributes.Grammars)
-                {
-                    if (scopeName.Equals(grammar.ScopeName))
-                    {
-                        string grammarPath = grammar.Path;
-
-                        if (grammarPath.StartsWith("./"))
-                            grammarPath = grammarPath.Substring(2);
-
-                        grammarPath = grammarPath.Replace("/", ".");
-
-                        return grammarName.ToLower() + "." + grammarPath;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        ICollection<string> IRegistryOptions.GetInjections(string scopeName)
-        {
-            return null;
-        }
-
-        IRawTheme IRegistryOptions.GetTheme(string scopeName)
-        {
-            Stream themeStream = ResourceLoader.TryOpenThemeStream(scopeName.Replace("./", string.Empty));
-
-            if (themeStream == null)
-                return null;
-
-            using (themeStream)
-            using (StreamReader reader = new StreamReader(themeStream))
-            {
-                return ThemeReader.ReadThemeSync(reader);
-            }
-        }
-
-        IRawGrammar IRegistryOptions.GetGrammar(string scopeName)
-        {
-            Stream grammarStream = ResourceLoader.TryOpenGrammarStream(GetFilePath(scopeName));
-
-            if (grammarStream == null)
-                return null;
-
-            using (grammarStream)
-            using (StreamReader reader = new StreamReader(grammarStream))
-            {
-                return GrammarReader.ReadGrammarSync(reader);
-            }
-        }
-
-        IRawTheme IRegistryOptions.GetDefaultTheme()
-        {
-            return LoadTheme(_defaultTheme);
         }
     }
 }
