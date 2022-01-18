@@ -2,6 +2,8 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AvaloniaVersion>0.10.10</AvaloniaVersion>
+    <AvaloniaVersion>0.10.11</AvaloniaVersion>
+    <TextMateSharpVersion>1.0.21</TextMateSharpVersion>
+    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
   </PropertyGroup>
 </Project>

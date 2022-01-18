@@ -6,8 +6,8 @@ namespace AvaloniaEdit.TextMate.Resources
 {
     internal class ResourceLoader
     {
-        const string GrammarPrefix = "AvaloniaEdit.TextMate.Resources.Grammars.";
-        const string ThemesPrefix = "AvaloniaEdit.TextMate.Resources.Themes.";
+        const string GrammarPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Grammars.";
+        const string ThemesPrefix = "AvaloniaEdit.TextMate.Grammars.Resources.Themes.";
 
         internal static Stream OpenGrammarPackage(string grammarName)
         {

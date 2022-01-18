@@ -2,16 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-	<Version>$(AvaloniaVersion)</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
+    <EmbeddedResource Include="Resources\Themes\*.json" />
+    <EmbeddedResource Include="Resources\Grammars\**\*.json" />
   </ItemGroup>
-
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageReference Include="TextMateSharp" Version="$(TextMateSharpVersion)" />
   </ItemGroup>
-
 </Project>

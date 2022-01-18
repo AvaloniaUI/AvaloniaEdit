@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28621.142
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit", "src\AvaloniaEdit\AvaloniaEdit.csproj", "{4B04026F-BA96-4721-AE28-0970CB5806A9}"
 EndProject
@@ -11,12 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit.Tests", "test\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E9668961-BD19-4360-8ABE-B9BD55EB52CA}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
-		build.cake = build.cake
+		azure-pipelines.yml = azure-pipelines.yml
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit.TextMate", "src\AvaloniaEdit.TextMate\AvaloniaEdit.TextMate.csproj", "{63826C17-C08C-4E5F-AABB-443EBA565E92}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit.TextMate.Grammars", "src\AvaloniaEdit.TextMate.Grammars\AvaloniaEdit.TextMate.Grammars.csproj", "{8FBDB2C4-A830-4CF4-94B4-06F06798EEAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +59,14 @@ Global
 		{63826C17-C08C-4E5F-AABB-443EBA565E92}.Release|Any CPU.Build.0 = Release|Any CPU
 		{63826C17-C08C-4E5F-AABB-443EBA565E92}.Release|x64.ActiveCfg = Release|Any CPU
 		{63826C17-C08C-4E5F-AABB-443EBA565E92}.Release|x64.Build.0 = Release|Any CPU
+		{8FBDB2C4-A830-4CF4-94B4-06F06798EEAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FBDB2C4-A830-4CF4-94B4-06F06798EEAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FBDB2C4-A830-4CF4-94B4-06F06798EEAE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8FBDB2C4-A830-4CF4-94B4-06F06798EEAE}.Debug|x64.Build.0 = Debug|Any CPU
+		{8FBDB2C4-A830-4CF4-94B4-06F06798EEAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FBDB2C4-A830-4CF4-94B4-06F06798EEAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FBDB2C4-A830-4CF4-94B4-06F06798EEAE}.Release|x64.ActiveCfg = Release|Any CPU
+		{8FBDB2C4-A830-4CF4-94B4-06F06798EEAE}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

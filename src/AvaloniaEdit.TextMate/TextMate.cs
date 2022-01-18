@@ -17,15 +17,14 @@ namespace AvaloniaEdit.TextMate
 
         public static Installation InstallTextMate(
             this TextEditor editor,
-            ThemeName theme,
-            IGrammar grammar = null)
+            IRegistryOptions registryOptions)
         {
-            return new Installation(editor, theme, grammar);
+            return new Installation(editor, registryOptions);
         }
 
         public class Installation
         {
-            private RegistryOptions _textMateRegistryOptions;
+            private IRegistryOptions _textMateRegistryOptions;
             private Registry _textMateRegistry;
             private TextEditor _editor;
             private TextEditorModel _editorModel;
@@ -33,49 +32,41 @@ namespace AvaloniaEdit.TextMate
             private TMModel _tmModel;
             private TextMateColoringTransformer _transformer;
 
-            public RegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
+            public IRegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
             public TextEditorModel EditorModel { get { return _editorModel; } }
 
-            public Installation(TextEditor editor, ThemeName defaultTheme, IGrammar grammar)
+            public Installation(TextEditor editor, IRegistryOptions registryOptions)
             {
-                _textMateRegistryOptions = new RegistryOptions(defaultTheme);
-                _textMateRegistry = new Registry(_textMateRegistryOptions);
+                _textMateRegistryOptions = registryOptions;
+                _textMateRegistry = new Registry(registryOptions);
 
                 _editor = editor;
 
-                SetTheme(defaultTheme);
-                SetGrammar(grammar);
+                SetTheme(registryOptions.GetDefaultTheme());
 
                 editor.DocumentChanged += OnEditorOnDocumentChanged;
 
                 OnEditorOnDocumentChanged(editor, EventArgs.Empty);
             }
 
-            public void SetGrammarByLanguageId(string languageId)
+            public void SetGrammar(string scopeName)
             {
-                string scopeName = _textMateRegistryOptions.GetScopeByLanguageId(languageId);
-                SetGrammar((scopeName == null) ? null : _textMateRegistry.LoadGrammar(scopeName));
-            }
+                _grammar = _textMateRegistry.LoadGrammar(scopeName);
 
-            public void SetGrammar(IGrammar grammar)
-            {
-                _grammar = grammar;
-
-                GetOrCreateTransformer().SetGrammar(grammar);
+                GetOrCreateTransformer().SetGrammar(_grammar);
 
                 _editor.TextArea.TextView.Redraw();
             }
 
-            public void SetTheme(ThemeName themeName)
+            public void SetTheme(IRawTheme theme)
             {
-                IRawTheme rawTheme = _textMateRegistryOptions.LoadTheme(themeName);
-
-                _textMateRegistry.SetTheme(rawTheme);
+                _textMateRegistry.SetTheme(theme);
 
                 GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
 
                 _tmModel?.InvalidateLine(0);
-                _editorModel?.TokenizeViewPort();
+
+                _editorModel?.InvalidateViewPortLines();
             }
 
             public void Dispose()
