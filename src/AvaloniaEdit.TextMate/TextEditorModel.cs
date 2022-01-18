@@ -43,18 +43,30 @@ namespace AvaloniaEdit.TextMate
 
         public override void UpdateLine(int lineIndex) { }
 
-        public void TokenizeViewPort()
+        public void InvalidateViewPortLines()
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                if (!_textView.VisualLinesValid ||
-                    _textView.VisualLines.Count == 0)
-                    return;
+            if (!_textView.VisualLinesValid ||
+                _textView.VisualLines.Count == 0)
+                return;
 
-                ForceTokenization(
-                    _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
-                    _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
-            }, DispatcherPriority.MinValue);
+            InvalidateLineRange(
+                _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
+                _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
+        }
+
+        public override int GetNumberOfLines()
+        {
+            return _documentSnapshot.LineCount;
+        }
+
+        public override string GetLineText(int lineIndex)
+        {
+            return _documentSnapshot.GetLineText(lineIndex);
+        }
+
+        public override int GetLineLength(int lineIndex)
+        {
+            return _documentSnapshot.GetLineLength(lineIndex);
         }
 
         private void TextView_ScrollOffsetChanged(object sender, EventArgs e)
@@ -122,19 +134,18 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        public override int GetNumberOfLines()
+        void TokenizeViewPort()
         {
-            return _documentSnapshot.LineCount;
-        }
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (!_textView.VisualLinesValid ||
+                    _textView.VisualLines.Count == 0)
+                    return;
 
-        public override string GetLineText(int lineIndex)
-        {
-            return _documentSnapshot.GetLineText(lineIndex);
-        }
-
-        public override int GetLineLength(int lineIndex)
-        {
-            return _documentSnapshot.GetLineLength(lineIndex);
+                ForceTokenization(
+                    _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
+                    _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
+            }, DispatcherPriority.MinValue);
         }
     }
 }

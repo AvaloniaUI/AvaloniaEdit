@@ -65,7 +65,8 @@ namespace AvaloniaEdit.TextMate
                 GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
 
                 _tmModel?.InvalidateLine(0);
-                _editorModel?.TokenizeViewPort();
+
+                _editorModel?.InvalidateViewPortLines();
             }
 
             public void Dispose()
