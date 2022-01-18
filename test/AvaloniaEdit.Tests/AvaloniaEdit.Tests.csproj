@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\AvaloniaEdit.TextMate\AvaloniaEdit.TextMate.csproj" />
     <ProjectReference Include="..\..\src\AvaloniaEdit\AvaloniaEdit.csproj" />
   </ItemGroup>
 

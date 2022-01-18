@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using Avalonia.Threading;
 
 using AvaloniaEdit.Document;
@@ -24,26 +25,43 @@ namespace AvaloniaEdit.TextMate
         private TextDocument _document;
         private TextView _textView;
 
+        private volatile int _firstVisibleLineIndex = -1;
+        private volatile int _lastVisibleLineIndex = -1;
+
         private readonly Dictionary<int, IBrush> _brushes;
         private TextSegmentCollection<TextTransformation> _transformations;
 
-        public TextMateColoringTransformer()
+        public TextMateColoringTransformer(TextView textView)
         {
+            _textView = textView;
             _brushes = new Dictionary<int, IBrush>();
+            _textView.VisualLinesChanged += TextView_VisualLinesChanged;
         }
 
-        public void SetModel(TextDocument document, TextView textView, TMModel model)
+        public void SetModel(TextDocument document, TMModel model)
         {
             _document = document;
             _model = model;
-            _textView = textView;
-
             _transformations = new TextSegmentCollection<TextTransformation>(_document);
 
             if (_grammar != null)
             {
                 _model.SetGrammar(_grammar);
             }
+        }
+
+        private void TextView_VisualLinesChanged(object sender, EventArgs e)
+        {
+            if (!_textView.VisualLinesValid || _textView.VisualLines.Count == 0)
+                return;
+
+            _firstVisibleLineIndex = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
+            _lastVisibleLineIndex = _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1;
+        }
+
+        public void Dispose()
+        {
+            _textView.VisualLinesChanged -= TextView_VisualLinesChanged;
         }
 
         public void SetTheme(Theme theme)
@@ -58,7 +76,7 @@ namespace AvaloniaEdit.TextMate
             {
                 var id = _theme.GetColorId(color);
 
-                _brushes[id] = SolidColorBrush.Parse(color);
+                _brushes[id] = new ImmutableSolidColorBrush(Color.Parse(color));
             }
 
             _transformations?.Clear();
@@ -90,14 +108,21 @@ namespace AvaloniaEdit.TextMate
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            if (_transformations is { })
-            {
-                var transformsInLine = _transformations.FindOverlappingSegments(line);
+            int i = line.LineNumber;
 
-                foreach (var transform in transformsInLine)
-                {
-                    transform.Transform(this, line);
-                }
+            var tokens = _model.GetLineTokens(i - 1);
+
+            if (tokens == null)
+                return;
+
+            RemoveLineTransformations(i);
+            ProcessTokens(i, tokens);
+
+            var transformsInLine = _transformations.FindOverlappingSegments(line);
+
+            foreach (var transform in transformsInLine)
+            {
+                transform.Transform(this, line);
             }
         }
 
@@ -142,53 +167,56 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        private void ProcessRange(Range range)
-        {
-            for (int i = range.fromLineNumber; i <= range.toLineNumber; i++)
-            {
-                var tokens = _model.GetLineTokens(i - 1);
-
-                if (tokens == null)
-                    continue;
-
-                RemoveLineTransformations(i);
-                ProcessTokens(i, tokens);
-            }
-        }
-
         public void ModelTokensChanged(ModelTokensChangedEvent e)
         {
-            var ranges = e.ranges.ToArray();
+            if (e.ranges == null)
+                return;
+
+            if (_model.IsStopped)
+                return;
+
+            int firstChangedLineIndex = int.MaxValue;
+            int lastChangedLineIndex = -1;
+
+            foreach (var range in e.ranges)
+            {
+                firstChangedLineIndex = Math.Min(range.fromLineNumber - 1, firstChangedLineIndex);
+                lastChangedLineIndex = Math.Max(range.toLineNumber - 1, lastChangedLineIndex);
+            }
+
+            bool changedLinesAreNotVisible =
+                (firstChangedLineIndex < _firstVisibleLineIndex && lastChangedLineIndex < _firstVisibleLineIndex) ||
+                (firstChangedLineIndex > _lastVisibleLineIndex && lastChangedLineIndex > _lastVisibleLineIndex);
+
+            if (changedLinesAreNotVisible)
+                return;
 
             Dispatcher.UIThread.Post(() =>
             {
-                if (_model.IsStopped)
-                    return;
+                int firstLineIndexToRedraw = Math.Max(firstChangedLineIndex, _firstVisibleLineIndex);
+                int lastLineIndexToRedrawLine = Math.Min(lastChangedLineIndex, _lastVisibleLineIndex);
 
-                foreach (var range in ranges)
-                {
-                    if (!IsValidRange(range, _document.LineCount))
-                        continue;
+                int totalLines = _document.Lines.Count - 1;
 
-                    ProcessRange(range);
+                firstLineIndexToRedraw = Clamp(firstLineIndexToRedraw, 0,  totalLines);
+                lastLineIndexToRedrawLine = Clamp(lastLineIndexToRedrawLine, 0, totalLines);
 
-                    var startLine = _document.GetLineByNumber(range.fromLineNumber);
-                    var endLine = _document.GetLineByNumber(range.toLineNumber);
+                DocumentLine firstLineToRedraw = _document.Lines[firstLineIndexToRedraw];
+                DocumentLine lastLineToRedraw = _document.Lines[lastLineIndexToRedrawLine];
 
-                    _textView.Redraw(startLine.Offset, endLine.EndOffset - startLine.Offset);
-                }
+                _textView.Redraw(
+                    firstLineToRedraw.Offset,
+                    (lastLineToRedraw.Offset + lastLineToRedraw.TotalLength) - firstLineToRedraw.Offset);
             });
         }
 
-        static bool IsValidRange(Range range, int lineCount)
+        static int Clamp(int value, int min, int max)
         {
-            if (range.fromLineNumber < 0 || range.fromLineNumber > lineCount)
-                return false;
-
-            if (range.toLineNumber < 0 || range.toLineNumber > lineCount)
-                return false;
-
-            return true;
+            if (value < min)
+                return min;
+            if (value > max)
+                return max;
+            return value;
         }
     }
 }
