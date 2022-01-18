@@ -9,7 +9,7 @@
     <EmbeddedResource Include="Resources\Grammars\**\*.json" />
   </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="TextMateSharp" Version="1.0.20" />
+        <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+        <PackageReference Include="TextMateSharp" Version="$(TextMateSharpVersion)" />
     </ItemGroup>
 </Project>
