@@ -121,12 +121,15 @@ namespace AvaloniaEdit.TextMate
 
                 _documentSnapshot.Update(e);
 
-                // invalidate the changed line it's previous line
+                if (startLine == 0)
+                {
+                    InvalidateLine(startLine);
+                    return;
+                }
+
                 // some grammars (JSON, csharp, ...)
-                // need to invalidate the previous line
-                if (startLine - 1 >= 0)
-                    InvalidateLine(startLine - 1);
-                InvalidateLine(startLine);
+                // need to invalidate the previous line too
+                InvalidateLineRange(startLine - 1, startLine);
             }
             catch (Exception ex)
             {
