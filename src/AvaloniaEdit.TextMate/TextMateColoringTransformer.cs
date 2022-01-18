@@ -76,7 +76,7 @@ namespace AvaloniaEdit.TextMate
             {
                 var id = _theme.GetColorId(color);
 
-                _brushes[id] = new ImmutableSolidColorBrush(Color.Parse(color));
+                _brushes[id] = new ImmutableSolidColorBrush(Color.Parse(NormalizeColor(color)));
             }
 
             _transformations?.Clear();
@@ -217,6 +217,15 @@ namespace AvaloniaEdit.TextMate
             if (value > max)
                 return max;
             return value;
+        }
+
+        static string NormalizeColor(string color)
+        {
+            if (color.Length == 9)
+                // convert from #RRGGBBAA to #AARRGGBB
+                return "#" + color.Substring(7, 2) + color.Substring(1, 2) + color.Substring(3, 2) + color.Substring(5, 2);
+
+            return color;
         }
     }
 }
