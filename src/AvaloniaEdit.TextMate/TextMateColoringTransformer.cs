@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Threading;
@@ -76,7 +75,7 @@ namespace AvaloniaEdit.TextMate
             {
                 var id = _theme.GetColorId(color);
 
-                _brushes[id] = new ImmutableSolidColorBrush(Color.Parse(color));
+                _brushes[id] = new ImmutableSolidColorBrush(Color.Parse(NormalizeColor(color)));
             }
 
             _transformations?.Clear();
@@ -217,6 +216,18 @@ namespace AvaloniaEdit.TextMate
             if (value > max)
                 return max;
             return value;
+        }
+
+        static string NormalizeColor(string color)
+        {
+            if (color.Length == 9)
+            {
+                Span<char> normalizedColor = stackalloc char[] { '#', color[7], color[8], color[1], color[2], color[3], color[4], color[5], color[6] };
+
+                return normalizedColor.ToString();
+            }
+
+            return color;
         }
     }
 }
