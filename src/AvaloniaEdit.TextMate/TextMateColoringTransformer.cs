@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Threading;
@@ -222,8 +221,11 @@ namespace AvaloniaEdit.TextMate
         static string NormalizeColor(string color)
         {
             if (color.Length == 9)
-                // convert from #RRGGBBAA to #AARRGGBB
-                return "#" + color.Substring(7, 2) + color.Substring(1, 2) + color.Substring(3, 2) + color.Substring(5, 2);
+            {
+                Span<char> normalizedColor = stackalloc char[] { '#', color[7], color[8], color[1], color[2], color[3], color[4], color[5], color[6] };
+
+                return normalizedColor.ToString();
+            }
 
             return color;
         }
