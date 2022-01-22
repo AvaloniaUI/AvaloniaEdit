@@ -225,11 +225,12 @@ namespace AvaloniaEdit.Rendering
 
         private sealed class SpecialCharacterTextRun : FormattedTextRun
         {
+            private const double _boxMargin = 3;
             private static readonly ISolidColorBrush DarkGrayBrush;
 
             static SpecialCharacterTextRun()
             {
-				DarkGrayBrush = new ImmutableSolidColorBrush(Color.FromArgb(200, 128, 128, 128));
+                DarkGrayBrush = new ImmutableSolidColorBrush(Color.FromArgb(200, 128, 128, 128));
             }
 
             public SpecialCharacterTextRun(FormattedTextElement element, TextRunProperties properties)
@@ -237,17 +238,17 @@ namespace AvaloniaEdit.Rendering
             {
             }
 
-            public override Rect ComputeBoundingBox()
+            public override Size GetSize(double remainingParagraphWidth)
             {
-                var r = base.ComputeBoundingBox();
-                return r.WithWidth(r.Width + 3);
+                var s = base.GetSize(remainingParagraphWidth);
+                return s.WithWidth(s.Width + _boxMargin);
             }
 
             public override void Draw(DrawingContext drawingContext, Point origin)
             {
-                var newOrigin = new Point(origin.X + 1.5, origin.Y);
+                var newOrigin = new Point(origin.X + (_boxMargin / 2), origin.Y);
                 var metrics = GetSize(double.PositiveInfinity);
-                var r = new Rect(newOrigin.X - 0.5, newOrigin.Y, metrics.Width + 2, metrics.Height);
+                var r = new Rect(origin.X, origin.Y, metrics.Width, metrics.Height);
                 drawingContext.FillRectangle(DarkGrayBrush, r, 2.5f);
                 base.Draw(drawingContext, newOrigin);
             }
