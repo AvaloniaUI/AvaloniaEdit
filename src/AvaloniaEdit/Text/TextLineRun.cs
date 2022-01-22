@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 using Avalonia;
@@ -15,7 +17,7 @@ namespace AvaloniaEdit.Text
 
         private FormattedText _formattedText;
         private Size _formattedTextSize;
-        private GlyphWidths _glyphWidths;
+        private IReadOnlyList<double> _glyphWidths;
         public StringRange StringRange { get; private set; }
 
         public int Length { get; set; }
@@ -112,10 +114,7 @@ namespace AvaloniaEdit.Text
                 return new TextLineRun(textRun.Length, textRun)
                 {
                     IsEmbedded = true,
-                    _glyphWidths = new GlyphWidths(
-                        stringRange,
-                        textRun.Properties.Typeface.GlyphTypeface,
-                        textRun.Properties.FontSize),
+                    _glyphWidths = new double[] { width },
                     // Embedded objects must propagate their width to the container.
                     // Otherwise text runs after the embedded object are drawn at the same x position.
                     Width = width
@@ -168,10 +167,7 @@ namespace AvaloniaEdit.Text
                 Width = 40
             };
 
-            run._glyphWidths = new GlyphWidths(
-                run.StringRange,
-                run.Typeface.GlyphTypeface,
-                run.FontSize);
+            run._glyphWidths = new double[] { run.Width };
 
             return run;
         }
@@ -281,7 +277,7 @@ namespace AvaloniaEdit.Text
             {
                 while (index > 0 && IsSpace(StringRange[index - 1]))
                 {
-                    trailing.SpaceWidth += _glyphWidths.GetAt(index - 1);
+                    trailing.SpaceWidth += _glyphWidths[index - 1];
                     index--;
                     trailing.Count++;
                 }
@@ -304,7 +300,7 @@ namespace AvaloniaEdit.Text
                 double distance = 0;
                 for (var i = 0; i < index; i++)
                 {
-                    distance += _glyphWidths.GetAt(i);
+                    distance += _glyphWidths[i];
                 }
 
                 return distance;
@@ -323,7 +319,7 @@ namespace AvaloniaEdit.Text
             double width = 0;
             for (; index < Length; index++)
             {
-                width = IsTab ? Width / Length : _glyphWidths.GetAt(index);
+                width = IsTab ? Width / Length : _glyphWidths[index];
                 if (distance < width)
                 {
                     break;
@@ -342,13 +338,16 @@ namespace AvaloniaEdit.Text
             return ch == ' ' || ch == '\u00a0';
         }
 
-        class GlyphWidths
+        class GlyphWidths : IReadOnlyList<double>
         {
             private const double NOT_CALCULATED_YET = -1;
             private double[] _glyphWidths;
             private GlyphTypeface _typeFace;
             private StringRange _range;
             private double _scale;
+
+            public int Count => _glyphWidths.Length;
+            public double this[int index] => GetAt(index);
 
             internal GlyphWidths(StringRange range, GlyphTypeface typeFace, double fontSize)
             {
@@ -359,8 +358,11 @@ namespace AvaloniaEdit.Text
                 InitGlyphWidths();
             }
 
-            internal double GetAt(int index)
+            double GetAt(int index)
             {
+                if (_glyphWidths.Length == 0)
+                    return 0;
+
                 if (_glyphWidths[index] == NOT_CALCULATED_YET)
                     _glyphWidths[index] = MeasureGlyphAt(index);
 
@@ -389,6 +391,17 @@ namespace AvaloniaEdit.Text
                 }
 
                 _glyphWidths = Enumerable.Repeat<double>(NOT_CALCULATED_YET, capacity).ToArray();
+            }
+
+            IEnumerator<double> IEnumerable<double>.GetEnumerator()
+            {
+                foreach (double value in _glyphWidths)
+                    yield return value;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _glyphWidths.GetEnumerator();
             }
         }
     }
