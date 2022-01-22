@@ -18,6 +18,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
@@ -223,10 +225,11 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
-        private sealed class SpecialCharacterTextRun : FormattedTextRun
+        internal sealed class SpecialCharacterTextRun : FormattedTextRun
         {
-            private const double _boxMargin = 3;
             private static readonly ISolidColorBrush DarkGrayBrush;
+
+            internal const double BoxMargin = 3;
 
             static SpecialCharacterTextRun()
             {
@@ -241,12 +244,12 @@ namespace AvaloniaEdit.Rendering
             public override Size GetSize(double remainingParagraphWidth)
             {
                 var s = base.GetSize(remainingParagraphWidth);
-                return s.WithWidth(s.Width + _boxMargin);
+                return s.WithWidth(s.Width + BoxMargin);
             }
 
             public override void Draw(DrawingContext drawingContext, Point origin)
             {
-                var newOrigin = new Point(origin.X + (_boxMargin / 2), origin.Y);
+                var newOrigin = new Point(origin.X + (BoxMargin / 2), origin.Y);
                 var metrics = GetSize(double.PositiveInfinity);
                 var r = new Rect(origin.X, origin.Y, metrics.Width, metrics.Height);
                 drawingContext.FillRectangle(DarkGrayBrush, r, 2.5f);
