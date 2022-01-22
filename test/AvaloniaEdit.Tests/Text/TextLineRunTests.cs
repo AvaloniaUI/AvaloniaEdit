@@ -27,7 +27,7 @@ namespace AvaloniaEdit.Text
                 "0123",
                 CreateDefaultTextProperties());
 
-            TextLineRun run = TextLineRun.Create(s, 0, 0, 2);
+            TextLineRun run = TextLineRun.Create(s, 0, 0, 4);
 
             Assert.AreEqual(MockGlyphTypeface.GlyphAdvance * 0, run.GetDistanceFromCharacter(0));
             Assert.AreEqual(MockGlyphTypeface.GlyphAdvance * 1, run.GetDistanceFromCharacter(1));
