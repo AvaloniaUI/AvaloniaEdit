@@ -27,7 +27,7 @@ namespace AvaloniaEdit.Text
                 "0123",
                 CreateDefaultTextProperties());
 
-            TextLineRun run = TextLineRun.Create(s, 0, 0, 4);
+            TextLineRun run = TextLineRun.Create(s, 0, 0, 4, CreateDefaultParagraphProperties());
 
             Assert.AreEqual(MockGlyphTypeface.GlyphAdvance * 0, run.GetDistanceFromCharacter(0));
             Assert.AreEqual(MockGlyphTypeface.GlyphAdvance * 1, run.GetDistanceFromCharacter(1));
@@ -47,9 +47,11 @@ namespace AvaloniaEdit.Text
                 "\t",
                 CreateDefaultTextProperties());
 
-            TextLineRun run = TextLineRun.Create(s, 0, 0, 1);
+            var paragraphProperties = CreateDefaultParagraphProperties();
 
-            Assert.AreEqual(40, run.GetDistanceFromCharacter(1));
+            TextLineRun run = TextLineRun.Create(s, 0, 0, 1, paragraphProperties);
+
+            Assert.AreEqual(paragraphProperties.DefaultIncrementalTab, run.GetDistanceFromCharacter(1));
         }
 
         [Test]
@@ -72,7 +74,7 @@ namespace AvaloniaEdit.Text
             Mock<TextSource> ts = new Mock<TextSource>();
             ts.Setup(s=> s.GetTextRun(It.IsAny<int>())).Returns(f);
 
-            TextLineRun run = TextLineRun.Create(ts.Object, 0, 0, 1);
+            TextLineRun run = TextLineRun.Create(ts.Object, 0, 0, 1, CreateDefaultParagraphProperties());
 
             Assert.AreEqual(
                 runWidth + SpecialCharacterTextRun.BoxMargin,
@@ -85,6 +87,16 @@ namespace AvaloniaEdit.Text
             {
                 Typeface = new Typeface("Default"),
                 FontSize = MockGlyphTypeface.DefaultFontSize,
+            };
+        }
+
+        TextParagraphProperties CreateDefaultParagraphProperties()
+        {
+            return new TextParagraphProperties()
+            {
+                DefaultTextRunProperties = CreateDefaultTextProperties(),
+                DefaultIncrementalTab = 70,
+                Indent = 4,
             };
         }
     }
