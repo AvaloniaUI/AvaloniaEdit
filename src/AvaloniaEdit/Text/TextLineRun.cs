@@ -14,6 +14,7 @@ namespace AvaloniaEdit.Text
     internal sealed class TextLineRun
     {
         private const string NewlineString = "\r\n";
+        private const string TabString = "\t";
 
         private FormattedText _formattedText;
         private Size _formattedTextSize;
@@ -88,18 +89,18 @@ namespace AvaloniaEdit.Text
         {
         }
 
-        public static TextLineRun Create(TextSource textSource, int index, int firstIndex, double lengthLeft)
+        public static TextLineRun Create(TextSource textSource, int index, int firstIndex, double lengthLeft, TextParagraphProperties paragraphProperties)
         {
             var textRun = textSource.GetTextRun(index);
             var stringRange = textRun.GetStringRange();
-            return Create(textSource, stringRange, textRun, index, lengthLeft);
+            return Create(textSource, stringRange, textRun, index, lengthLeft, paragraphProperties);
         }
 
-        private static TextLineRun Create(TextSource textSource, StringRange stringRange, TextRun textRun, int index, double widthLeft)
+        private static TextLineRun Create(TextSource textSource, StringRange stringRange, TextRun textRun, int index, double widthLeft, TextParagraphProperties paragraphProperties)
         {
             if (textRun is TextCharacters)
             {
-                return CreateRunForEol(textSource, stringRange, textRun, index) ??
+                return CreateRunForSpecialChars(textSource, stringRange, textRun, index, paragraphProperties) ??
                        CreateRunForText(stringRange, textRun, widthLeft, false, true);
             }
 
@@ -124,7 +125,7 @@ namespace AvaloniaEdit.Text
             throw new NotSupportedException("Unsupported run type");
         }
 
-        private static TextLineRun CreateRunForEol(TextSource textSource, StringRange stringRange, TextRun textRun, int index)
+        private static TextLineRun CreateRunForSpecialChars(TextSource textSource, StringRange stringRange, TextRun textRun, int index, TextParagraphProperties paragraphProperties)
         {
             switch (stringRange[0])
             {
@@ -149,25 +150,47 @@ namespace AvaloniaEdit.Text
                 case '\n':
                     return new TextLineRun(1, textRun) { IsEnd = true };
                 case '\t':
-                    return CreateRunForTab(textRun);
+                    return CreateRunForTab(textRun, paragraphProperties);
+                case ' ':
+                    return CreateRunForSpaceBlock(textRun, stringRange, paragraphProperties);
                 default:
                     return null;
             }
         }
 
-        private static TextLineRun CreateRunForTab(TextRun textRun)
+        private static TextLineRun CreateRunForTab(TextRun textRun, TextParagraphProperties paragraphProperties)
         {
-            var spaceRun = new TextCharacters(" ", textRun.Properties);
+            var spaceRun = new TextCharacters(TabString, textRun.Properties);
             var stringRange = spaceRun.StringRange;
             var run = new TextLineRun(1, spaceRun)
             {
                 IsTab = true,
                 StringRange = stringRange,
-                // TODO: get from para props
-                Width = 40
+                Width = paragraphProperties.DefaultIncrementalTab
             };
 
             run._glyphWidths = new double[] { run.Width };
+
+            return run;
+        }
+
+        private static TextLineRun CreateRunForSpaceBlock(TextRun textRun, StringRange stringRange, TextParagraphProperties paragraphProperties)
+        {
+            int blockLength = 0;
+            while (blockLength < stringRange.Length && stringRange[blockLength] == ' ')
+                blockLength++;
+
+            var run = new TextLineRun(blockLength, textRun)
+            {
+                IsTab = false,
+                StringRange = stringRange,
+                Width = paragraphProperties.WideSpaceWidth * blockLength,
+            };
+
+            run._glyphWidths = Enumerable.Repeat(
+                    paragraphProperties.WideSpaceWidth,
+                    blockLength)
+                .ToList();
 
             return run;
         }

@@ -4,6 +4,7 @@ namespace AvaloniaEdit.Text
 {
     public sealed class TextParagraphProperties
     {
+        public double WideSpaceWidth { get; set; }
         public double DefaultIncrementalTab { get; set; }
 
         public bool FirstLineInParagraph { get; set; }
