@@ -183,7 +183,7 @@ namespace AvaloniaEdit.Text
             var run = new TextLineRun(blockLength, textRun)
             {
                 IsTab = false,
-                StringRange = stringRange,
+                StringRange = stringRange.WithLength(blockLength),
                 Width = paragraphProperties.WideSpaceWidth * blockLength,
             };
 
