@@ -18,7 +18,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
