@@ -63,10 +63,5 @@ namespace AvaloniaEdit.Text
         {
             return !left.Equals(right);
         }
-
-        internal StringRange WithLength(int length)
-        {
-            return new StringRange(String, OffsetToFirstChar, length);
-        }
     }
 }
