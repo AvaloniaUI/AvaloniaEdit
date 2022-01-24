@@ -158,9 +158,9 @@ namespace AvaloniaEdit.Text
 
         private static TextLineRun CreateRunForTab(TextRun textRun, TextParagraphProperties paragraphProperties)
         {
-            var spaceRun = new TextCharacters(TabString, textRun.Properties);
-            var stringRange = spaceRun.StringRange;
-            var run = new TextLineRun(1, spaceRun)
+            var tabRun = new TextCharacters(TabString, textRun.Properties);
+            var stringRange = tabRun.StringRange;
+            var run = new TextLineRun(1, tabRun)
             {
                 IsTab = true,
                 StringRange = stringRange,
