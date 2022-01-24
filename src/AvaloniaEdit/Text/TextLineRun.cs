@@ -177,10 +177,10 @@ namespace AvaloniaEdit.Text
         private static TextLineRun CreateRunForMixedSpaceAndTabs(TextRun textRun, StringRange stringRange, TextParagraphProperties paragraphProperties)
         {
             int blockLength = 0;
-            while (blockLength < stringRange.Length && stringRange[blockLength] != '\t')
+            while (blockLength < stringRange.Length && stringRange[blockLength] == ' ')
                 blockLength++;
 
-            bool foundTab = blockLength < stringRange.Length;
+            bool foundTab = blockLength < stringRange.Length && stringRange[blockLength] == '\t';
 
             if (!foundTab)
                 return null;
