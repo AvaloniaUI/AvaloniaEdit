@@ -1076,7 +1076,6 @@ namespace AvaloniaEdit.Rendering
             {
                 DefaultTextRunProperties = defaultTextRunProperties,
                 TextWrapping = _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
-                WideSpaceWidth = WideSpaceWidth,
                 DefaultIncrementalTab = Options.IndentationSize * WideSpaceWidth
             };
         }
