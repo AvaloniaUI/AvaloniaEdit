@@ -152,7 +152,7 @@ namespace AvaloniaEdit.Text
                 case '\t':
                     return CreateRunForTab(textRun, paragraphProperties);
                 case ' ':
-                    return CreateRunForSpaceBlock(textRun, stringRange, paragraphProperties);
+                    return CreateRunForMixedSpaceAndTabs(textRun, stringRange, paragraphProperties);
                 default:
                     return null;
             }
@@ -174,11 +174,16 @@ namespace AvaloniaEdit.Text
             return run;
         }
 
-        private static TextLineRun CreateRunForSpaceBlock(TextRun textRun, StringRange stringRange, TextParagraphProperties paragraphProperties)
+        private static TextLineRun CreateRunForMixedSpaceAndTabs(TextRun textRun, StringRange stringRange, TextParagraphProperties paragraphProperties)
         {
             int blockLength = 0;
-            while (blockLength < stringRange.Length && stringRange[blockLength] == ' ')
+            while (blockLength < stringRange.Length && stringRange[blockLength] != '\t')
                 blockLength++;
+
+            bool foundTab = blockLength < stringRange.Length;
+
+            if (!foundTab)
+                return null;
 
             var run = new TextLineRun(blockLength, textRun)
             {

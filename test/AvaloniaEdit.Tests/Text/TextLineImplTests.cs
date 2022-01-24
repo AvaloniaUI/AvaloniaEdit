@@ -124,6 +124,26 @@ namespace AvaloniaEdit.Text
             Assert.IsTrue(textLine.LineRuns[3].IsEnd);
         }
 
+        [Test]
+        public void Space_Block_Without_Tab_Should_Not_Split_Runs()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                "    hello",
+                CreateDefaultTextProperties());
+
+            TextLineImpl textLine = TextLineImpl.Create(
+                CreateDefaultParagraphProperties(), 0, 9, s);
+
+            Assert.AreEqual(2, textLine.LineRuns.Length);
+
+            Assert.AreEqual("    hello", textLine.LineRuns[0].StringRange.ToString());
+            Assert.IsTrue(textLine.LineRuns[1].IsEnd);
+        }
 
         TextParagraphProperties CreateDefaultParagraphProperties()
         {
