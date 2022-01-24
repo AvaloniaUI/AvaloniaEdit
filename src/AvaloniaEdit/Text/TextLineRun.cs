@@ -101,7 +101,7 @@ namespace AvaloniaEdit.Text
             if (textRun is TextCharacters)
             {
                 return CreateRunForSpecialChars(textSource, stringRange, textRun, index, paragraphProperties) ??
-                       CreateRunForText(stringRange, textRun, widthLeft, false, true);
+                       CreateRunForText(stringRange, textRun, widthLeft, false, true, paragraphProperties);
             }
 
             if (textRun is TextEndOfLine)
@@ -151,8 +151,6 @@ namespace AvaloniaEdit.Text
                     return new TextLineRun(1, textRun) { IsEnd = true };
                 case '\t':
                     return CreateRunForTab(textRun, paragraphProperties);
-                case ' ':
-                    return CreateRunForMixedSpaceAndTabs(textRun, stringRange, paragraphProperties);
                 default:
                     return null;
             }
@@ -174,33 +172,7 @@ namespace AvaloniaEdit.Text
             return run;
         }
 
-        private static TextLineRun CreateRunForMixedSpaceAndTabs(TextRun textRun, StringRange stringRange, TextParagraphProperties paragraphProperties)
-        {
-            int blockLength = 0;
-            while (blockLength < stringRange.Length && stringRange[blockLength] == ' ')
-                blockLength++;
-
-            bool foundTab = blockLength < stringRange.Length && stringRange[blockLength] == '\t';
-
-            if (!foundTab)
-                return null;
-
-            var run = new TextLineRun(blockLength, textRun)
-            {
-                IsTab = false,
-                StringRange = stringRange.WithLength(blockLength),
-                Width = paragraphProperties.WideSpaceWidth * blockLength,
-            };
-
-            run._glyphWidths = Enumerable.Repeat(
-                    paragraphProperties.WideSpaceWidth,
-                    blockLength)
-                .ToList();
-
-            return run;
-        }
-
-        internal static TextLineRun CreateRunForText(StringRange stringRange, TextRun textRun, double widthLeft, bool emergencyWrap, bool breakOnTabs)
+        internal static TextLineRun CreateRunForText(StringRange stringRange, TextRun textRun, double widthLeft, bool emergencyWrap, bool breakOnTabs, TextParagraphProperties paragraphProperties)
         {
             var run = new TextLineRun
             {
@@ -228,7 +200,8 @@ namespace AvaloniaEdit.Text
             run._glyphWidths = new GlyphWidths(
                 run.StringRange,
                 run.Typeface.GlyphTypeface,
-                run.FontSize);
+                run.FontSize,
+                paragraphProperties.DefaultIncrementalTab);
 
             return run;
         }
@@ -373,15 +346,17 @@ namespace AvaloniaEdit.Text
             private GlyphTypeface _typeFace;
             private StringRange _range;
             private double _scale;
+            private double _tabSize;
 
             public int Count => _glyphWidths.Length;
             public double this[int index] => GetAt(index);
 
-            internal GlyphWidths(StringRange range, GlyphTypeface typeFace, double fontSize)
+            internal GlyphWidths(StringRange range, GlyphTypeface typeFace, double fontSize, double tabSize)
             {
                 _range = range;
                 _typeFace = typeFace;
                 _scale = fontSize / _typeFace.DesignEmHeight;
+                _tabSize = tabSize;
 
                 InitGlyphWidths();
             }
@@ -390,6 +365,9 @@ namespace AvaloniaEdit.Text
             {
                 if (_glyphWidths.Length == 0)
                     return 0;
+
+                if (_range[index] == '\t')
+                    return _tabSize;
 
                 if (_glyphWidths[index] == NOT_CALCULATED_YET)
                     _glyphWidths[index] = MeasureGlyphAt(index);

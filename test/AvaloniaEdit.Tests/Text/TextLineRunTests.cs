@@ -55,6 +55,62 @@ namespace AvaloniaEdit.Text
         }
 
         [Test]
+        public void Spaces_Plus_Tab_Line_Run_Should_Have_Correct_Glyph_Widths()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                " \t ",
+                CreateDefaultTextProperties());
+
+            var paragraphProperties = CreateDefaultParagraphProperties();
+
+            TextLineRun run = TextLineRun.Create(s, 0, 0, 1, paragraphProperties);
+
+            double[] expectedLengths = new double[]
+            {
+                0,
+                MockGlyphTypeface.GlyphAdvance * 1,
+                MockGlyphTypeface.GlyphAdvance * 1 + paragraphProperties.DefaultIncrementalTab,
+                MockGlyphTypeface.GlyphAdvance * 2 + paragraphProperties.DefaultIncrementalTab
+            };
+
+            for (int i = 0; i < 4; i++)
+                Assert.AreEqual(expectedLengths[i], run.GetDistanceFromCharacter(i));
+        }
+
+        [Test]
+        public void Chars_Plus_Tab_Line_Run_Should_Have_Correct_Glyph_Widths()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                "a\ta",
+                CreateDefaultTextProperties());
+
+            var paragraphProperties = CreateDefaultParagraphProperties();
+
+            TextLineRun run = TextLineRun.Create(s, 0, 0, 1, paragraphProperties);
+
+            double[] expectedLengths = new double[]
+            {
+                0,
+                MockGlyphTypeface.GlyphAdvance * 1,
+                MockGlyphTypeface.GlyphAdvance * 1 + paragraphProperties.DefaultIncrementalTab,
+                MockGlyphTypeface.GlyphAdvance * 2 + paragraphProperties.DefaultIncrementalTab
+            };
+
+            for (int i = 0; i < 4; i++)
+                Assert.AreEqual(expectedLengths[i], run.GetDistanceFromCharacter(i));
+        }
+
+        [Test]
         public void TextEmbeddedObject_Line_Run_Should_Have_Fixed_Glyph_Width()
         {
             using var app = UnitTestApplication.Start(new TestServices().With(

@@ -32,52 +32,6 @@ namespace AvaloniaEdit.Text
         }
 
         [Test]
-        public void Space_Block_With_Tab_Should_Split_Runs()
-        {
-            using var app = UnitTestApplication.Start(new TestServices().With(
-                renderInterface: new MockPlatformRenderInterface(),
-                fontManagerImpl: new MockFontManagerImpl(),
-                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
-
-            SimpleTextSource s = new SimpleTextSource(
-                "    \t    ",
-                CreateDefaultTextProperties());
-
-            TextLineImpl textLine = TextLineImpl.Create(
-                CreateDefaultParagraphProperties(), 0, 5, s);
-
-            Assert.AreEqual(4, textLine.LineRuns.Length);
-
-            Assert.AreEqual(textLine.LineRuns[0].Length, 4);
-            Assert.IsTrue(textLine.LineRuns[1].IsTab);
-            Assert.AreEqual(textLine.LineRuns[2].Length, 4);
-            Assert.IsTrue(textLine.LineRuns[3].IsEnd);
-        }
-
-        [Test]
-        public void Space_Block_With_Tab_And_Text_Should_Split_Runs()
-        {
-            using var app = UnitTestApplication.Start(new TestServices().With(
-                renderInterface: new MockPlatformRenderInterface(),
-                fontManagerImpl: new MockFontManagerImpl(),
-                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
-
-            SimpleTextSource s = new SimpleTextSource(
-                "    \thello",
-                CreateDefaultTextProperties());
-
-            TextLineImpl textLine = TextLineImpl.Create(
-                CreateDefaultParagraphProperties(), 0, 5, s);
-
-            Assert.AreEqual(4, textLine.LineRuns.Length);
-
-            Assert.AreEqual("    ", textLine.LineRuns[0].StringRange.ToString());
-            Assert.IsTrue(textLine.LineRuns[1].IsTab);
-            Assert.AreEqual("hello", textLine.LineRuns[2].StringRange.ToString());
-            Assert.IsTrue(textLine.LineRuns[3].IsEnd);
-        }
-
-        [Test]
         public void Tab_Block_Should_Split_Runs()
         {
             using var app = UnitTestApplication.Start(new TestServices().With(
