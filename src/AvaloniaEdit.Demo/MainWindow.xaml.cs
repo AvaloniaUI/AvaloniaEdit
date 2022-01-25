@@ -14,6 +14,7 @@ using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Demo.Resources;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
+using AvaloniaEdit.Folding;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 using AvaloniaEdit.TextMate.Grammars;
@@ -25,6 +26,7 @@ namespace AvaloniaEdit.Demo
     public class MainWindow : Window
     {
         private readonly TextEditor _textEditor;
+        private FoldingManager _foldingManager;
         private readonly TextMate.TextMate.Installation _textMateInstallation;
         private CompletionWindow _completionWindow;
         private OverloadInsightWindow _insightWindow;
@@ -56,7 +58,7 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.Background = this.Background;
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
-            _textEditor.Options.ConvertTabsToSpaces = true;
+            _textEditor.Options.ShowBoxForControlCharacters = true;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy(_textEditor.Options);
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
@@ -86,7 +88,9 @@ namespace AvaloniaEdit.Demo
 
             string scopeName = _registryOptions.GetScopeByLanguageId(csharpLanguage.Id);
 
-            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
+            _textEditor.Document = new TextDocument(
+                "// AvaloniaEdit supports displaying control chars: \a or \b or \v" + Environment.NewLine +
+                ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(csharpLanguage.Id));
 
             _statusTextBlock = this.Find<TextBlock>("StatusText");
@@ -117,10 +121,25 @@ namespace AvaloniaEdit.Demo
         {
             Language language = (Language)_syntaxModeCombo.SelectedItem;
 
+            if (_foldingManager != null)
+            {
+                _foldingManager.Clear();
+                FoldingManager.Uninstall(_foldingManager);
+            }
+
             string scopeName = _registryOptions.GetScopeByLanguageId(language.Id);
 
             _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammar(scopeName);
+
+            if (language.Id == "xml")
+            {
+                _foldingManager = FoldingManager.Install(_textEditor.TextArea);
+
+                var strategy = new XmlFoldingStrategy();
+                strategy.UpdateFoldings(_foldingManager, _textEditor.Document);
+                return;
+            }
         }
 
         private void ChangeThemeButton_Click(object sender, RoutedEventArgs e)

@@ -11,6 +11,7 @@ namespace AvaloniaEdit.Text
     {
         private readonly TextLineRun[] _runs;
 
+        public TextLineRun[] LineRuns { get { return _runs; } }
         public override int FirstIndex { get; }
 
         public override int Length { get; }
@@ -31,13 +32,14 @@ namespace AvaloniaEdit.Text
             var visibleLength = 0;
             var widthLeft = paragraphProperties.TextWrapping == TextWrapping.Wrap && paragraphLength > 0 ? paragraphLength : double.MaxValue;
             TextLineRun prevRun = null;
-            var run = TextLineRun.Create(textSource, index, firstIndex, widthLeft);
+            var run = TextLineRun.Create(textSource, index, firstIndex, widthLeft, paragraphProperties);
+
             if (!run.IsEnd && run.Width <= widthLeft)
             {
                 index += run.Length;
                 widthLeft -= run.Width;
                 prevRun = run;
-                run = TextLineRun.Create(textSource, index, firstIndex, widthLeft);
+                run = TextLineRun.Create(textSource, index, firstIndex, widthLeft, paragraphProperties);
             }
 
             var trailing = new TrailingInfo();
@@ -59,7 +61,7 @@ namespace AvaloniaEdit.Text
                     return new TextLineImpl(paragraphProperties, firstIndex, runs, trailing);
                 }
 
-                run = TextLineRun.Create(textSource, index, firstIndex, widthLeft);
+                run = TextLineRun.Create(textSource, index, firstIndex, widthLeft, paragraphProperties);
             }
         }
 

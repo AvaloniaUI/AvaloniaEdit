@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 using Avalonia;
@@ -12,10 +14,11 @@ namespace AvaloniaEdit.Text
     internal sealed class TextLineRun
     {
         private const string NewlineString = "\r\n";
+        private const string TabString = "\t";
 
         private FormattedText _formattedText;
         private Size _formattedTextSize;
-        private GlyphWidths _glyphWidths;
+        private IReadOnlyList<double> _glyphWidths;
         public StringRange StringRange { get; private set; }
 
         public int Length { get; set; }
@@ -86,19 +89,19 @@ namespace AvaloniaEdit.Text
         {
         }
 
-        public static TextLineRun Create(TextSource textSource, int index, int firstIndex, double lengthLeft)
+        public static TextLineRun Create(TextSource textSource, int index, int firstIndex, double lengthLeft, TextParagraphProperties paragraphProperties)
         {
             var textRun = textSource.GetTextRun(index);
             var stringRange = textRun.GetStringRange();
-            return Create(textSource, stringRange, textRun, index, lengthLeft);
+            return Create(textSource, stringRange, textRun, index, lengthLeft, paragraphProperties);
         }
 
-        private static TextLineRun Create(TextSource textSource, StringRange stringRange, TextRun textRun, int index, double widthLeft)
+        private static TextLineRun Create(TextSource textSource, StringRange stringRange, TextRun textRun, int index, double widthLeft, TextParagraphProperties paragraphProperties)
         {
             if (textRun is TextCharacters)
             {
-                return CreateRunForEol(textSource, stringRange, textRun, index) ??
-                       CreateRunForText(stringRange, textRun, widthLeft, false, true);
+                return CreateRunForSpecialChars(textSource, stringRange, textRun, index, paragraphProperties) ??
+                       CreateRunForText(stringRange, textRun, widthLeft, false, true, paragraphProperties);
             }
 
             if (textRun is TextEndOfLine)
@@ -112,10 +115,7 @@ namespace AvaloniaEdit.Text
                 return new TextLineRun(textRun.Length, textRun)
                 {
                     IsEmbedded = true,
-                    _glyphWidths = new GlyphWidths(
-                        stringRange,
-                        textRun.Properties.Typeface.GlyphTypeface,
-                        textRun.Properties.FontSize),
+                    _glyphWidths = new double[] { width },
                     // Embedded objects must propagate their width to the container.
                     // Otherwise text runs after the embedded object are drawn at the same x position.
                     Width = width
@@ -125,7 +125,7 @@ namespace AvaloniaEdit.Text
             throw new NotSupportedException("Unsupported run type");
         }
 
-        private static TextLineRun CreateRunForEol(TextSource textSource, StringRange stringRange, TextRun textRun, int index)
+        private static TextLineRun CreateRunForSpecialChars(TextSource textSource, StringRange stringRange, TextRun textRun, int index, TextParagraphProperties paragraphProperties)
         {
             switch (stringRange[0])
             {
@@ -150,33 +150,29 @@ namespace AvaloniaEdit.Text
                 case '\n':
                     return new TextLineRun(1, textRun) { IsEnd = true };
                 case '\t':
-                    return CreateRunForTab(textRun);
+                    return CreateRunForTab(textRun, paragraphProperties);
                 default:
                     return null;
             }
         }
 
-        private static TextLineRun CreateRunForTab(TextRun textRun)
+        private static TextLineRun CreateRunForTab(TextRun textRun, TextParagraphProperties paragraphProperties)
         {
-            var spaceRun = new TextCharacters(" ", textRun.Properties);
-            var stringRange = spaceRun.StringRange;
-            var run = new TextLineRun(1, spaceRun)
+            var tabRun = new TextCharacters(TabString, textRun.Properties);
+            var stringRange = tabRun.StringRange;
+            var run = new TextLineRun(1, tabRun)
             {
                 IsTab = true,
                 StringRange = stringRange,
-                // TODO: get from para props
-                Width = 40
+                Width = paragraphProperties.DefaultIncrementalTab
             };
 
-            run._glyphWidths = new GlyphWidths(
-                run.StringRange,
-                run.Typeface.GlyphTypeface,
-                run.FontSize);
+            run._glyphWidths = new double[] { run.Width };
 
             return run;
         }
 
-        internal static TextLineRun CreateRunForText(StringRange stringRange, TextRun textRun, double widthLeft, bool emergencyWrap, bool breakOnTabs)
+        internal static TextLineRun CreateRunForText(StringRange stringRange, TextRun textRun, double widthLeft, bool emergencyWrap, bool breakOnTabs, TextParagraphProperties paragraphProperties)
         {
             var run = new TextLineRun
             {
@@ -204,7 +200,8 @@ namespace AvaloniaEdit.Text
             run._glyphWidths = new GlyphWidths(
                 run.StringRange,
                 run.Typeface.GlyphTypeface,
-                run.FontSize);
+                run.FontSize,
+                paragraphProperties.DefaultIncrementalTab);
 
             return run;
         }
@@ -281,7 +278,7 @@ namespace AvaloniaEdit.Text
             {
                 while (index > 0 && IsSpace(StringRange[index - 1]))
                 {
-                    trailing.SpaceWidth += _glyphWidths.GetAt(index - 1);
+                    trailing.SpaceWidth += _glyphWidths[index - 1];
                     index--;
                     trailing.Count++;
                 }
@@ -304,7 +301,7 @@ namespace AvaloniaEdit.Text
                 double distance = 0;
                 for (var i = 0; i < index; i++)
                 {
-                    distance += _glyphWidths.GetAt(i);
+                    distance += _glyphWidths[i];
                 }
 
                 return distance;
@@ -323,7 +320,7 @@ namespace AvaloniaEdit.Text
             double width = 0;
             for (; index < Length; index++)
             {
-                width = IsTab ? Width / Length : _glyphWidths.GetAt(index);
+                width = IsTab ? Width / Length : _glyphWidths[index];
                 if (distance < width)
                 {
                     break;
@@ -342,25 +339,36 @@ namespace AvaloniaEdit.Text
             return ch == ' ' || ch == '\u00a0';
         }
 
-        class GlyphWidths
+        class GlyphWidths : IReadOnlyList<double>
         {
             private const double NOT_CALCULATED_YET = -1;
             private double[] _glyphWidths;
             private GlyphTypeface _typeFace;
             private StringRange _range;
             private double _scale;
+            private double _tabSize;
 
-            internal GlyphWidths(StringRange range, GlyphTypeface typeFace, double fontSize)
+            public int Count => _glyphWidths.Length;
+            public double this[int index] => GetAt(index);
+
+            internal GlyphWidths(StringRange range, GlyphTypeface typeFace, double fontSize, double tabSize)
             {
                 _range = range;
                 _typeFace = typeFace;
                 _scale = fontSize / _typeFace.DesignEmHeight;
+                _tabSize = tabSize;
 
                 InitGlyphWidths();
             }
 
-            internal double GetAt(int index)
+            double GetAt(int index)
             {
+                if (_glyphWidths.Length == 0)
+                    return 0;
+
+                if (_range[index] == '\t')
+                    return _tabSize;
+
                 if (_glyphWidths[index] == NOT_CALCULATED_YET)
                     _glyphWidths[index] = MeasureGlyphAt(index);
 
@@ -389,6 +397,17 @@ namespace AvaloniaEdit.Text
                 }
 
                 _glyphWidths = Enumerable.Repeat<double>(NOT_CALCULATED_YET, capacity).ToArray();
+            }
+
+            IEnumerator<double> IEnumerable<double>.GetEnumerator()
+            {
+                foreach (double value in _glyphWidths)
+                    yield return value;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _glyphWidths.GetEnumerator();
             }
         }
     }

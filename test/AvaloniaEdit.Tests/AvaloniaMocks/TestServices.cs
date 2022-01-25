@@ -75,7 +75,8 @@ namespace AvaloniaEdit.AvaloniaMocks
             IWindowImpl windowImpl = null,
             IWindowingPlatform windowingPlatform = null,
             PlatformHotkeyConfiguration platformHotkeyConfiguration = null,
-            IFontManagerImpl fontManagerImpl = null)
+            IFontManagerImpl fontManagerImpl = null,
+            IFormattedTextImpl formattedTextImpl = null)
         {
             AssetLoader = assetLoader;
             FocusManager = focusManager;
@@ -95,6 +96,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             WindowingPlatform = windowingPlatform;
             PlatformHotkeyConfiguration = platformHotkeyConfiguration;
             FontManagerImpl = fontManagerImpl;
+            FormattedTextImpl = formattedTextImpl;
         }
 
         public IAssetLoader AssetLoader { get; }
@@ -115,6 +117,7 @@ namespace AvaloniaEdit.AvaloniaMocks
         public IWindowingPlatform WindowingPlatform { get; }
         public PlatformHotkeyConfiguration PlatformHotkeyConfiguration { get; }
         public IFontManagerImpl FontManagerImpl { get; }
+        public IFormattedTextImpl FormattedTextImpl { get;  }
 
         public TestServices With(
             IAssetLoader assetLoader = null,
@@ -135,7 +138,8 @@ namespace AvaloniaEdit.AvaloniaMocks
             IWindowImpl windowImpl = null,
             IWindowingPlatform windowingPlatform = null,
             PlatformHotkeyConfiguration platformHotkeyConfiguration = null,
-            IFontManagerImpl fontManagerImpl = null)
+            IFontManagerImpl fontManagerImpl = null,
+            IFormattedTextImpl formattedTextImpl = null)
         {
             return new TestServices(
                 assetLoader: assetLoader ?? AssetLoader,
@@ -155,7 +159,8 @@ namespace AvaloniaEdit.AvaloniaMocks
                 windowingPlatform: windowingPlatform ?? WindowingPlatform,
                 windowImpl: windowImpl ?? WindowImpl,
                 platformHotkeyConfiguration: platformHotkeyConfiguration ?? PlatformHotkeyConfiguration,
-                fontManagerImpl: fontManagerImpl ?? FontManagerImpl);
+                fontManagerImpl: fontManagerImpl ?? FontManagerImpl,
+                formattedTextImpl : formattedTextImpl ?? FormattedTextImpl);
         }
 
         private static Styles CreateDefaultTheme()

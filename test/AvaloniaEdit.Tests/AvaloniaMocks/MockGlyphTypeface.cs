@@ -6,7 +6,10 @@ namespace AvaloniaEdit.AvaloniaMocks
 {
     public class MockGlyphTypeface : IGlyphTypefaceImpl
     {
-        public short DesignEmHeight => 10;
+        public const int GlyphAdvance = 8;
+        public const short DefaultFontSize = 10;
+
+        public short DesignEmHeight => DefaultFontSize;
         public int Ascent => 2;
         public int Descent => 10;
         public int LineGap { get; }
@@ -28,7 +31,7 @@ namespace AvaloniaEdit.AvaloniaMocks
 
         public int GetGlyphAdvance(ushort glyph)
         {
-            return 8;
+            return GlyphAdvance;
         }
 
         public int[] GetGlyphAdvances(ReadOnlySpan<ushort> glyphs)
@@ -37,7 +40,7 @@ namespace AvaloniaEdit.AvaloniaMocks
 
             for (var i = 0; i < advances.Length; i++)
             {
-                advances[i] = 8;
+                advances[i] = GlyphAdvance;
             }
 
             return advances;
