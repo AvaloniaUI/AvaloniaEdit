@@ -24,25 +24,24 @@ namespace AvaloniaEdit.TextMate
     {
         public interface IColorMap
         {
-            bool Contains(int color);
             IBrush GetBrush(int color);
         }
 
-        int _foregroundBrushId;
-        int _backgroundBrushId;
+        int _foreground;
+        int _background;
         int _fontStyle;
 
         public ForegroundTextTransformation(
             IColorMap colorMap,
             int startOffset,
             int endOffset,
-            int foregroundBrushId,
-            int backgroundBrushId,
+            int foreground,
+            int background,
             int fontStyle) : base(startOffset, endOffset)
         {
             _colorMap = colorMap;
-            _foregroundBrushId = foregroundBrushId;
-            _backgroundBrushId = backgroundBrushId;
+            _foreground = foreground;
+            _background = background;
             _fontStyle = fontStyle;
         }
 
@@ -67,8 +66,8 @@ namespace AvaloniaEdit.TextMate
             }
 
                 transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset,
-                _colorMap.GetBrush(_foregroundBrushId),
-                _colorMap.GetBrush(_backgroundBrushId),
+                _colorMap.GetBrush(_foreground),
+                _colorMap.GetBrush(_background),
                 GetFontStyle(),
                 GetFontWeight(),
                 IsUnderline());

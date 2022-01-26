@@ -92,18 +92,12 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        bool ForegroundTextTransformation.IColorMap.Contains(int foregroundColor)
+        IBrush ForegroundTextTransformation.IColorMap.GetBrush(int colorId)
         {
             if (_brushes == null)
-                return false;
+                return null;
 
-            return _brushes.ContainsKey(foregroundColor);
-        }
-
-        IBrush ForegroundTextTransformation.IColorMap.GetBrush(int color)
-        {
-            IBrush result = null;
-            _brushes.TryGetValue(color, out result);
+            _brushes.TryGetValue(colorId, out IBrush result);
             return result;
         }
 
