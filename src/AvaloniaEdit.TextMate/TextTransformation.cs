@@ -24,26 +24,31 @@ namespace AvaloniaEdit.TextMate
     {
         public interface IColorMap
         {
-            bool Contains(int foregroundColor);
-            IBrush GetForegroundBrush(int foregroundColor);
+            bool Contains(int color);
+            IBrush GetBrush(int color);
         }
 
-        public ForegroundTextTransformation(IColorMap colorMap, int startOffset, int endOffset, int brushId) : base(startOffset, endOffset)
+        int _foregroundBrushId;
+        int _backgroundBrushId;
+        int _fontStyle;
+
+        public ForegroundTextTransformation(
+            IColorMap colorMap,
+            int startOffset,
+            int endOffset,
+            int foregroundBrushId,
+            int backgroundBrushId,
+            int fontStyle) : base(startOffset, endOffset)
         {
             _colorMap = colorMap;
-            Foreground = brushId;
+            _foregroundBrushId = foregroundBrushId;
+            _backgroundBrushId = backgroundBrushId;
+            _fontStyle = fontStyle;
         }
-
-        public int Foreground { get; set; }
 
         public override void Transform(GenericLineTransformer transformer, DocumentLine line)
         {
             if (Length == 0)
-            {
-                return;
-            }
-
-            if (!_colorMap.Contains(Foreground))
             {
                 return;
             }
@@ -61,7 +66,39 @@ namespace AvaloniaEdit.TextMate
                 endOffset = EndOffset;
             }
 
-            transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset, _colorMap.GetForegroundBrush(Foreground));
+                transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset,
+                _colorMap.GetBrush(_foregroundBrushId),
+                _colorMap.GetBrush(_backgroundBrushId),
+                GetFontStyle(),
+                GetFontWeight(),
+                IsUnderline());
+        }
+
+        FontStyle GetFontStyle()
+        {
+            if (_fontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
+                (_fontStyle & TextMateSharp.Themes.FontStyle.Italic) != 0)
+                return FontStyle.Italic;
+
+            return FontStyle.Normal;
+        }
+
+        FontWeight GetFontWeight()
+        {
+            if (_fontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
+                (_fontStyle & TextMateSharp.Themes.FontStyle.Bold) != 0)
+                return FontWeight.Bold;
+
+            return FontWeight.Regular;
+        }
+
+        bool IsUnderline()
+        {
+            if (_fontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
+                (_fontStyle & TextMateSharp.Themes.FontStyle.Underline) != 0)
+                return true;
+
+            return false;
         }
 
         IColorMap _colorMap;
