@@ -100,9 +100,11 @@ namespace AvaloniaEdit.TextMate
             return _brushes.ContainsKey(foregroundColor);
         }
 
-        IBrush ForegroundTextTransformation.IColorMap.GetForegroundBrush(int foregroundColor)
+        IBrush ForegroundTextTransformation.IColorMap.GetBrush(int color)
         {
-            return _brushes[foregroundColor];
+            IBrush result = null;
+            _brushes.TryGetValue(color, out result);
+            return result;
         }
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
@@ -142,16 +144,24 @@ namespace AvaloniaEdit.TextMate
 
                 var lineOffset = _document.GetLineByNumber(lineNumber).Offset;
 
+                int foreground = 0;
+                int background = 0;
+                int fontStyle = 0;
+
                 foreach (var themeRule in _theme.Match(token.Scopes))
                 {
-                    if (themeRule.foreground > 0 && _brushes.ContainsKey(themeRule.foreground))
-                    {
-                        _transformations.Add(new ForegroundTextTransformation(this, lineOffset + startIndex,
-                            lineOffset + endIndex, themeRule.foreground));
+                    if (foreground == 0 && themeRule.foreground > 0)
+                        foreground =  themeRule.foreground;
 
-                        break;
-                    }
+                    if (background == 0 && themeRule.background > 0)
+                        background = themeRule.background;
+
+                    if (fontStyle == 0 && themeRule.fontStyle > 0)
+                        fontStyle = themeRule.fontStyle;
                 }
+
+                _transformations.Add(new ForegroundTextTransformation(this, lineOffset + startIndex,
+                    lineOffset + endIndex, foreground, background, fontStyle));
             }
         }
 
