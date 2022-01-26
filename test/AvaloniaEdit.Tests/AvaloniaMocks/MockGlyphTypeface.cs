@@ -8,10 +8,12 @@ namespace AvaloniaEdit.AvaloniaMocks
     {
         public const int GlyphAdvance = 8;
         public const short DefaultFontSize = 10;
+        public const int GlyphAscent = 2;
+        public const int GlyphDescent = 10;
 
         public short DesignEmHeight => DefaultFontSize;
-        public int Ascent => 2;
-        public int Descent => 10;
+        public int Ascent => GlyphAscent;
+        public int Descent => GlyphDescent;
         public int LineGap { get; }
         public int UnderlinePosition { get; }
         public int UnderlineThickness { get; }
