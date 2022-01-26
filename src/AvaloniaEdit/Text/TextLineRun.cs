@@ -41,13 +41,16 @@ namespace AvaloniaEdit.Text
                 {
                     return 0.0;
                 }
+
+                double defaultBaseLine = GetDefaultBaseline(TextRun.Properties.FontMetrics);
+
                 if (IsEmbedded && TextRun is TextEmbeddedObject embeddedObject)
                 {
                     var box = embeddedObject.ComputeBoundingBox();
-                    return box.Y;
+                    return defaultBaseLine - box.Y;
                 }
 
-                return GetDefaultBaseline(TextRun.Properties.FontMetrics);
+                return defaultBaseLine;
             }
         }
 

@@ -142,7 +142,7 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
-        private sealed class TabTextElement : VisualLineElement
+        internal sealed class TabTextElement : VisualLineElement
         {
             internal readonly TextLine Text;
 
@@ -175,7 +175,7 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
-        private sealed class TabGlyphRun : TextEmbeddedObject
+        internal sealed class TabGlyphRun : TextEmbeddedObject
         {
             private readonly TabTextElement _element;
 
@@ -195,8 +195,9 @@ namespace AvaloniaEdit.Rendering
 
             public override Size GetSize(double remainingParagraphWidth)
             {
-                var width = Math.Min(0, _element.Text.WidthIncludingTrailingWhitespace - 1);
-                return new Size(width, _element.Text.Height);
+                return new Size(
+                    _element.Text.WidthIncludingTrailingWhitespace,
+                    _element.Text.Height);
             }
 
             public override Rect ComputeBoundingBox()
@@ -206,7 +207,6 @@ namespace AvaloniaEdit.Rendering
 
             public override void Draw(DrawingContext drawingContext, Point origin)
             {
-                origin = origin.WithY(origin.Y - _element.Text.Baseline);
                 _element.Text.Draw(drawingContext, origin);
             }
         }
