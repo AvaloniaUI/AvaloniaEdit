@@ -34,6 +34,8 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Data;
+using Avalonia.Input.TextInput;
+using Avalonia.VisualTree;
 using AvaloniaEdit.Search;
 
 namespace AvaloniaEdit
@@ -42,7 +44,7 @@ namespace AvaloniaEdit
     /// The text editor control.
     /// Contains a scrollable TextArea.
     /// </summary>
-    public class TextEditor : TemplatedControl, ITextEditorComponent
+    public class TextEditor : TemplatedControl, ITextEditorComponent, ITextInputMethodClient
     {
         #region Constructors
         static TextEditor()
@@ -1190,6 +1192,43 @@ namespace AvaloniaEdit
                     }
                 }
             }*/
+        }
+
+        void ITextInputMethodClient.SetPreeditText(string text)
+        {
+            throw new NotImplementedException();
+        }
+
+        Rect ITextInputMethodClient.CursorRectangle => textArea.Caret.CalculateCaretRectangle();
+
+        IVisual ITextInputMethodClient.TextViewVisual => textArea;
+
+        bool ITextInputMethodClient.SupportsPreedit => false;
+
+        bool ITextInputMethodClient.SupportsSurroundingText => false;
+
+        TextInputMethodSurroundingText ITextInputMethodClient.SurroundingText => throw new NotImplementedException();
+
+        string ITextInputMethodClient.TextBeforeCursor => null;
+
+        string ITextInputMethodClient.TextAfterCursor => null;
+
+        event EventHandler ITextInputMethodClient.CursorRectangleChanged
+        {
+            add => throw new NotImplementedException();
+            remove => throw new NotImplementedException();
+        }
+
+        event EventHandler ITextInputMethodClient.TextViewVisualChanged
+        {
+            add => throw new NotImplementedException();
+            remove => throw new NotImplementedException();
+        }
+
+        event EventHandler ITextInputMethodClient.SurroundingTextChanged
+        {
+            add => throw new NotImplementedException();
+            remove => throw new NotImplementedException();
         }
     }
 }
