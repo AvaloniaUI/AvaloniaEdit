@@ -31,7 +31,7 @@ var  _registryOptions = new RegistryOptions(ThemeName.DarkPlus);
 var _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
 
 //Here we are getting the lanuage by the extension and right after that we are initializing grammar with this lanuage.
-//And that all 😀, we are ready to use AvaloniaEdit with syntax highlighting!
+//And that's all 😀, you are ready to use AvaloniaEdit with syntax highlighting!
 _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".cs").Id));
 ```
   
