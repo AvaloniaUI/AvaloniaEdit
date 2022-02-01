@@ -1,0 +1,779 @@
+{
+	"information_for_contributors": [
+		"This file has been converted from https://raw.githubusercontent.com/AnsonYeung/vscode-pascal-language-basics/master/syntaxes/pascal.tmLanguage.yaml",
+		"If you want to provide a fix or improvement, please create a pull request against the original repository.",
+		"Once accepted there, we are happy to receive an update request."
+	],
+	"version": "https://github.com/AnsonYeung/vscode-pascal-language-basics/commit/5faf4d487e08fb410f19b23562f9a3cd01f4d86b",
+	"name": "Pascal",
+	"patterns": [
+	  {
+		"include": "#comment"
+	  },
+	  {
+		"include": "#program"
+	  },
+	  {
+		"include": "#unit"
+	  },
+	  {
+		"include": "#interface"
+	  },
+	  {
+		"include": "#implementation"
+	  },
+	  {
+		"include": "#unit-main"
+	  },
+	  {
+		"include": "#uses"
+	  },
+	  {
+		"include": "#label"
+	  },
+	  {
+		"include": "#function-declaration"
+	  },
+	  {
+		"include": "#function-body"
+	  },
+	  {
+		"include": "#function-mod"
+	  },
+	  {
+		"include": "#asm"
+	  },
+	  {
+		"name": "meta.program.end.pascal",
+		"match": "(?i)\\b(end)\\s*\\.",
+		"captures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		}
+	  },
+	  {
+		"include": "#type-declaration"
+	  },
+	  {
+		"include": "#declaration"
+	  },
+	  {
+		"include": "#keywords"
+	  }
+	],
+	"repository": {
+	  "comment": {
+		"patterns": [
+		  {
+			"name": "comment.block.pascal",
+			"begin": "\\(\\*",
+			"end": "\\*\\)"
+		  },
+		  {
+			"name": "comment.block.pascal",
+			"begin": "\\{",
+			"end": "\\}"
+		  },
+		  {
+			"name": "comment.line.pascal",
+			"match": "//.*$"
+		  }
+		]
+	  },
+	  "program": {
+		"name": "meta.program.pascal",
+		"begin": "(?i)\\b(program)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "storage.type.pascal"
+		  }
+		},
+		"end": ";",
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"name": "entity.name.function.pascal",
+			"match": "(?i)([_a-z][0-9_a-z]*)"
+		  },
+		  {
+			"include": "#parameter-list"
+		  }
+		]
+	  },
+	  "unit": {
+		"name": "meta.unit.pascal",
+		"begin": "(?i)\\b(unit)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "storage.type.pascal"
+		  }
+		},
+		"end": ";",
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"name": "entity.name.function.pascal",
+			"match": "(?i)([_a-z][0-9_a-z]*)"
+		  }
+		]
+	  },
+	  "interface": {
+		"name": "meta.interface.pascal",
+		"begin": "(?i)\\b(interface)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"end": "(?i)(?=\\b(implementation)\\b)",
+		"endCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"include": "#uses"
+		  },
+		  {
+			"include": "#label"
+		  },
+		  {
+			"include": "#function-declaration"
+		  },
+		  {
+			"include": "#function-mod"
+		  },
+		  {
+			"include": "#type-declaration"
+		  },
+		  {
+			"include": "#declaration"
+		  }
+		]
+	  },
+	  "implementation": {
+		"name": "meta.implementation.pascal",
+		"begin": "(?i)\\b(implementation)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"end": "(?i)(?=\\b(initialization|end)\\b)",
+		"endCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"include": "#uses"
+		  },
+		  {
+			"include": "#label"
+		  },
+		  {
+			"include": "#function-declaration"
+		  },
+		  {
+			"include": "#function-body"
+		  },
+		  {
+			"include": "#function-mod"
+		  },
+		  {
+			"include": "#type-declaration"
+		  },
+		  {
+			"include": "#declaration"
+		  }
+		]
+	  },
+	  "unit-main": {
+		"begin": "(?i)\\b(initialization)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"end": "(?i)\\b(end)\\s*\\.",
+		"endCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"include": "#asm"
+		  },
+		  {
+			"name": "keyword.control.pascal",
+			"match": "(?i)\\b(finalization)\\b"
+		  },
+		  {
+			"include": "#statement"
+		  }
+		]
+	  },
+	  "uses": {
+		"name": "meta.uses.pascal",
+		"begin": "(?i)\\b(uses)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.control.declaration.pascal"
+		  }
+		},
+		"end": ";",
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"name": "string.unquoted.pascal",
+			"match": "(?i)([_a-z][0-9_a-z]*)"
+		  }
+		]
+	  },
+	  "label": {
+		"name": "meta.label.pascal",
+		"begin": "(?i)\\b(label)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "storage.type.pascal"
+		  }
+		},
+		"end": ";",
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"name": "string.unquoted.pascal",
+			"match": "(?i)([_a-z][0-9_a-z]*)"
+		  }
+		]
+	  },
+	  "function-declaration": {
+		"name": "meta.function.pascal",
+		"begin": "(?i)\\b(constructor|destructor|procedure|function)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "storage.type.pascal"
+		  }
+		},
+		"end": "(?=;)",
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"match": "(?i)([_a-z][0-9_a-z]*)\\s*\\.",
+			"captures": {
+			  "1": {
+				"name": "entity.name.type.pascal"
+			  }
+			}
+		  },
+		  {
+			"name": "entity.name.function.pascal",
+			"match": "(?i)([_a-z][0-9_a-z]*)"
+		  },
+		  {
+			"include": "#parameter-list"
+		  },
+		  {
+			"begin": ":",
+			"end": "(?=;)",
+			"patterns": [
+			  {
+				"include": "#type"
+			  }
+			]
+		  }
+		]
+	  },
+	  "function-body": {
+		"name": "meta.body.pascal",
+		"begin": "(?i)\\b(begin)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"end": "(?i)\\b(end)\\s*[;|\\.]",
+		"endCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"include": "#asm"
+		  },
+		  {
+			"include": "#statement"
+		  }
+		]
+	  },
+	  "function-mod": {
+		"begin": "(?i)\\b(alias|assembler|cdecl|external|forward|inline|interrupt|pascal|popstack|public|register|saveregisters|safecall|stdcall)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.pascal"
+		  }
+		},
+		"end": ";",
+		"patterns": [
+		  {
+			"name": "keyword.pascal",
+			"match": "(?i)\\b(name)\\b"
+		  },
+		  {
+			"include": "#expression"
+		  }
+		]
+	  },
+	  "asm": {
+		"contentName": "meta.embedded.asm",
+		"begin": "(?i)(asm)",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"end": "(?i)\\b(end)\\b([^;]*);",
+		"endCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  },
+		  "2": {
+			"patterns": [
+			  {
+				"include": "#strings"
+			  }
+			]
+		  }
+		},
+		"patterns": []
+	  },
+	  "type-declaration": {
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"name": "keyword.control.pascal",
+			"match": "(?i)\\btype\\b"
+		  },
+		  {
+			"name": "meta.type.alias.pascal",
+			"begin": "(?i)\\b([_a-z][0-9_a-z]*)\\s*(?==)",
+			"beginCaptures": {
+			  "1": {
+				"name": "entity.name.type.pascal"
+			  }
+			},
+			"end": ";",
+			"patterns": [
+			  {
+				"begin": "=",
+				"end": "(?=;)",
+				"patterns": [
+				  {
+					"include": "#type"
+				  }
+				]
+			  }
+			]
+		  }
+		]
+	  },
+	  "declaration": {
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"name": "keyword.control.pascal",
+			"match": "(?i)\\b(const|type|var)\\b"
+		  },
+		  {
+			"name": "meta.declaration.pascal",
+			"begin": "(?i)\\b([_a-z][0-9_a-z]*)\\b",
+			"beginCaptures": {
+			  "1": {
+				"name": "variable.other.pascal"
+			  }
+			},
+			"end": "(;|,|(?=\\)))",
+			"patterns": [
+			  {
+				"include": "#comment"
+			  },
+			  {
+				"begin": ":",
+				"end": "(?=[;=)])",
+				"patterns": [
+				  {
+					"include": "#type"
+				  }
+				]
+			  },
+			  {
+				"name": "meta.expression.pascal",
+				"match": "=([^;\\)]*)",
+				"captures": {
+				  "1": {
+					"patterns": [
+					  {
+						"include": "#comment"
+					  },
+					  {
+						"include": "#expression"
+					  }
+					]
+				  }
+				}
+			  }
+			]
+		  }
+		]
+	  },
+	  "parameter-list": {
+		"name": "meta.parameterlist.pascal",
+		"begin": "\\(",
+		"end": "\\)",
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"include": "#declaration"
+		  }
+		]
+	  },
+	  "type": {
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"include": "#class-declaration"
+		  },
+		  {
+			"include": "#record-declaration"
+		  },
+		  {
+			"include": "#function-declaration"
+		  },
+		  {
+			"include": "#keywords"
+		  },
+		  {
+			"begin": "\\[",
+			"end": "\\]",
+			"patterns": [
+			  {
+				"include": "#expression"
+			  }
+			]
+		  },
+		  {
+			"name": "entity.name.type.pascal",
+			"match": "(?i)\\b[_a-z][0-9_a-z]*\\b"
+		  }
+		]
+	  },
+	  "record-declaration": {
+		"begin": "(?i)\\b(record)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"end": "(?i)\\b(end)\\b",
+		"endCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"begin": "(?i)\\b(case)\\b",
+			"beginCaptures": {
+			  "1": {
+				"name": "keyword.control.pascal"
+			  }
+			},
+			"end": "(?i)(?=\\bend\\b)",
+			"patterns": [
+			  {
+				"begin": "(?i)\\b(of)\\b",
+				"beginCaptures": {
+				  "1": {
+					"name": "keyword.control.pascal"
+				  }
+				},
+				"end": "(?i)(?=\\bend\\b)",
+				"patterns": [
+				  {
+					"begin": "(?i):\\s*\\(",
+					"end": "(?i)\\)\\s*",
+					"patterns": [
+					  {
+						"include": "#declaration"
+					  }
+					]
+				  },
+				  {
+					"include": "#expression"
+				  }
+				]
+			  },
+			  {
+				"name": "entity.name.type.pascal",
+				"match": "(?i)\\b([_a-z][0-9_a-z]*)\\b(?!\\s*:)"
+			  },
+			  {
+				"include": "#identifier"
+			  }
+			]
+		  },
+		  {
+			"include": "#declaration"
+		  }
+		]
+	  },
+	  "class-declaration": {
+		"begin": "(?i)\\b(class)\\b(?:\\s*\\((.*?)\\))?",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  },
+		  "2": {
+			"name": "entity.name.type.pascal"
+		  }
+		},
+		"end": "(?i)\\b(end)\\b",
+		"endCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"name": "storage.type.method.pascal",
+			"match": "(?i)(private|public|protected|published)"
+		  },
+		  {
+			"include": "#function-declaration"
+		  },
+		  {
+			"include": "#property"
+		  },
+		  {
+			"include": "#declaration"
+		  }
+		]
+	  },
+	  "property": {
+		"name": "meta.property.pascal",
+		"begin": "(?i)\\b(property)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.pascal"
+		  }
+		},
+		"end": ";",
+		"patterns": [
+		  {
+			"match": "(?i)\\b([_a-z][0-9_a-z]*)\\s*:\\s*([^;]*)",
+			"captures": {
+			  "1": {
+				"name": "variable.other.pascal"
+			  },
+			  "2": {
+				"patterns": [
+				  {
+					"match": "(?i)\\b(read|write|stored)\\s+([_a-z][0-9_a-z]*)\\b",
+					"captures": {
+					  "1": {
+						"name": "keyword.pascal"
+					  },
+					  "2": {
+						"patterns": [
+						  {
+							"include": "#keywords"
+						  },
+						  {
+							"name": "entity.name.function.pascal",
+							"match": ".*"
+						  }
+						]
+					  }
+					}
+				  },
+				  {
+					"match": "(?i)\\b(default)\\s+(((?!\\b(?:read|write|stored|;)\\b).)*)",
+					"captures": {
+					  "1": {
+						"name": "keyword.pascal"
+					  },
+					  "2": {
+						"patterns": [
+						  {
+							"include": "#expression"
+						  }
+						]
+					  }
+					}
+				  },
+				  {
+					"name": "entity.name.class.pascal",
+					"match": "(?i)\\b([_a-z][0-9_a-z]*)\\b"
+				  }
+				]
+			  }
+			}
+		  }
+		]
+	  },
+	  "statement": {
+		"patterns": [
+		  {
+			"include": "#statement-compound"
+		  },
+		  {
+			"include": "#expression"
+		  }
+		]
+	  },
+	  "expression": {
+		"patterns": [
+		  {
+			"name": "constant.character.pascal",
+			"match": "(?i)#[0-9]+"
+		  },
+		  {
+			"name": "constant.numeric.pascal",
+			"match": "(?i)\\$[0-9a-f]+\\b"
+		  },
+		  {
+			"name": "constant.numeric.pascal",
+			"match": "(?i)\\b[0-9]+(\\.[0-9]+)?(e(\\+|\\-)?[0-9]+)?\\b"
+		  },
+		  {
+			"include": "#strings"
+		  },
+		  {
+			"include": "#keywords"
+		  },
+		  {
+			"include": "#identifier"
+		  }
+		]
+	  },
+	  "statement-compound": {
+		"name": "meta.section.pascal",
+		"begin": "(?i)\\b(begin|case|try)\\b",
+		"beginCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"end": "(?i)\\b(end)\\b",
+		"endCaptures": {
+		  "1": {
+			"name": "keyword.control.pascal"
+		  }
+		},
+		"patterns": [
+		  {
+			"include": "#comment"
+		  },
+		  {
+			"include": "#asm"
+		  },
+		  {
+			"include": "#statement"
+		  }
+		]
+	  },
+	  "identifier": {
+		"patterns": [
+		  {
+			"match": "(?i)([_a-z][0-9_a-z]*)\\s*\\(",
+			"captures": {
+			  "1": {
+				"name": "entity.name.function.pascal"
+			  }
+			}
+		  },
+		  {
+			"name": "variable.other.pascal",
+			"match": "(?i)\\b([_a-z][0-9_a-z]*)\\b(?!\\s*\\.)"
+		  },
+		  {
+			"name": "entity.name.class.pascal",
+			"match": "(?i)\\b([_a-z][0-9_a-z]*)\\b"
+		  }
+		]
+	  },
+	  "keywords": {
+		"patterns": [
+		  {
+			"name": "entity.name.type.pascal",
+			"match": "(?i)\\b(string)\\b"
+		  },
+		  {
+			"name": "keyword.control.pascal",
+			"match": "(?i)\\b(break|continue|do|downto|else|for|goto|if|repeat|then|until|while|with)\\b"
+		  },
+		  {
+			"name": "constant.language.pascal",
+			"match": "(?i)\\b(true|false)\\b"
+		  },
+		  {
+			"name": "keyword.pascal",
+			"match": "(?i)\\b(absolute|and|array|const|constructor|destructor|div|file|function|implementation|in|inherited|inline|interface|label|mod|nil|not|object|of|on|operator|or|packed|procedure|program|record|reintroduce|self|set|shl|shr|then|to|type|unit|uses|var|xor|as|class|except|exports|finalization|finally|initialization|is|library|on|property|raise|threadvar|try|dispose|exit|new)\\b"
+		  }
+		]
+	  },
+	  "strings": {
+		"name": "string.quoted.pascal",
+		"begin": "'",
+		"end": "'(?!')",
+		"patterns": [
+		  {
+			"name": "constant.character.escape.pascal",
+			"match": "''"
+		  }
+		]
+	  }
+	},
+	"scopeName": "source.pascal"
+  }

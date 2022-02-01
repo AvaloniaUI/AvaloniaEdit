@@ -1,0 +1,37 @@
+{
+    "comments": {
+        // symbol used for single line comment. Remove this entry if your language does not support line comments
+        "lineComment": "//",
+        // symbols used for start and end a block comment. Remove this entry if your language does not support block comments
+        "blockComment": [ "(*", "*)"]
+    },
+    // symbols used as brackets
+    "brackets": [
+        ["Begin", "End"],
+        ["{", "}"],
+        ["[", "]"],
+        ["(*", "*)"],
+        ["(.", ".)"],
+        ["(", ")"]
+    ],
+    // symbols that are auto closed when typing
+    "autoClosingPairs": [
+        ["{", "}"],
+        ["[", "]"],
+        ["(", ")"],
+        ["(.", "."],
+        ["(*", "*"],
+        {"open": "'", "close": "'", "notIn": ["string", "comment"]}
+    ],
+    "autoCloseBefore": ";:.,=}])>` \n\t",
+    // symbols that that can be used to surround a selection
+    "surroundingPairs": [
+        ["{", "}"],
+        ["[", "]"],
+        ["(", ")"],
+        ["*", "*"],
+        [".", "."],
+        ["'", "'"]
+    ],
+    "wordPattern": "(?i:([_a-z][0-9_a-z]*))"
+}
