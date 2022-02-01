@@ -3,7 +3,7 @@
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AvaloniaVersion>0.10.12</AvaloniaVersion>
-    <TextMateSharpVersion>1.0.23</TextMateSharpVersion>
+    <TextMateSharpVersion>1.0.24</TextMateSharpVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
 	<Version>0.10.12.1</Version>
   </PropertyGroup>
