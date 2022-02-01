@@ -30,6 +30,7 @@
             "MarkdownBasics",
             "MarkdownMath",
             "ObjectiveC",
+            "Pascal",
             "Perl",
             "PHP",
             "PowerShell",
