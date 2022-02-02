@@ -25,7 +25,7 @@ namespace AvaloniaEdit.Utils
     /// <summary>
     /// Class that can open text files with auto-detection of the encoding.
     /// </summary>
-    internal static class FileReader
+    public static class FileReader
     {
         /// <summary>
         /// Gets if the given encoding is a Unicode encoding (UTF).
