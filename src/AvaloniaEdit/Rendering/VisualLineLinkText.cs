@@ -123,25 +123,22 @@ namespace AvaloniaEdit.Rendering
             };
         }
 
-        static Action<OpenUriRoutedEventArgs> ExecuteOpenUriEventHandler(Window window)
+        private static void ExecuteOpenUriEventHandler(Window window, OpenUriRoutedEventArgs arg)
         {
-            return arg =>
+            var url = arg.Uri.ToString();
+            try
             {
-                var url = arg.Uri.ToString();
-                try
+                Process.Start(new ProcessStartInfo
                 {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = url,
-                        UseShellExecute = true
-                    });
-                }
-                catch (Exception)
-                {
-                    // Process.Start can throw several errors (not all of them documented),
-                    // just ignore all of them.
-                }
-            };
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception)
+            {
+                // Process.Start can throw several errors (not all of them documented),
+                // just ignore all of them.
+            }
         }
     }
 
