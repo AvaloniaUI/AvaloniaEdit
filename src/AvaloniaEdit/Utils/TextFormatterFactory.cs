@@ -17,10 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Globalization;
 using AvaloniaEdit.Text;
 using Avalonia.Controls;
 using Avalonia.Media;
-using AvaloniaEdit.Rendering;
 
 namespace AvaloniaEdit.Utils
 {
@@ -43,7 +43,7 @@ namespace AvaloniaEdit.Utils
 		/// <param name="emSize">The font size. If this parameter is null, the font size of the <paramref name="element"/> will be used.</param>
 		/// <param name="foreground">The foreground color. If this parameter is null, the foreground of the <paramref name="element"/> will be used.</param>
 		/// <returns>A FormattedText object using the specified settings.</returns>
-		public static FormattedText CreateFormattedText(Control element, string text, Avalonia.Media.FontFamily typeface, double? emSize, IBrush foreground)
+		public static FormattedText CreateFormattedText(Control element, string text, FontFamily typeface, double? emSize, IBrush foreground)
 	    {
 	        if (element == null)
 	            throw new ArgumentNullException(nameof(element));
@@ -56,14 +56,9 @@ namespace AvaloniaEdit.Utils
 	        if (foreground == null)
 	            foreground = TextBlock.GetForeground(element);
 
-            var formattedText = new FormattedText
-            {
-                Text = text,
-                Typeface = new Typeface(typeface.Name),
-				FontSize = emSize.Value
-            };
-	        
-	        formattedText.SetTextStyle(0, text.Length, foreground);
+	        var formattedText = new FormattedText(text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+		        new Typeface(typeface.Name), emSize.Value, foreground!);
+            
 
 	        return formattedText;
 	    }

@@ -134,7 +134,7 @@ namespace AvaloniaEdit.Rendering
             var formattedText = Element.FormattedText;
             if (formattedText != null)
             {
-                return formattedText.Bounds.Size;
+                return new Size(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
             }
             var text = Element.TextLine;
             return new Size(text.WidthIncludingTrailingWhitespace,
@@ -153,7 +153,7 @@ namespace AvaloniaEdit.Rendering
             if (Element.FormattedText != null)
             {
                 //origin = origin.WithY(origin.Y - Element.formattedText.Baseline);
-                drawingContext.DrawText(null, origin, Element.FormattedText);
+                drawingContext.DrawText(Element.FormattedText, origin);
             }
             else
             {

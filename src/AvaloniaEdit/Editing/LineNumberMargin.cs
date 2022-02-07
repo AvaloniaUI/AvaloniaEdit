@@ -62,7 +62,7 @@ namespace AvaloniaEdit.Editing
                 EmSize,
                 GetValue(TemplatedControl.ForegroundProperty)
             );
-            return new Size(text.Bounds.Width, 0);
+            return new Size(text.WidthIncludingTrailingWhitespace, 0);
         }
 
         /// <inheritdoc/>
@@ -82,8 +82,8 @@ namespace AvaloniaEdit.Editing
                         Typeface, EmSize, foreground
                     );
                     var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                    drawingContext.DrawText(foreground, new Point(renderSize.Width - text.Bounds.Width, y - textView.VerticalOffset),
-                        text);
+                    drawingContext.DrawText(text,
+                        new Point(renderSize.Width - text.WidthIncludingTrailingWhitespace, y - textView.VerticalOffset));
                 }
             }
         }

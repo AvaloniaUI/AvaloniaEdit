@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 using Avalonia;
@@ -185,16 +186,13 @@ namespace AvaloniaEdit.Text
             };
 
             var tf = run.Typeface;
-            var formattedText = new FormattedText
-            {
-                Text = stringRange.ToString(),
-                Typeface = new Typeface(tf.FontFamily, tf.Style, tf.Weight),
-                FontSize = run.FontSize
-            };
+            var formattedText = new FormattedText(stringRange.ToString(), CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight, new Typeface(tf.FontFamily, tf.Style, tf.Weight), run.FontSize, textRun.Properties.ForegroundBrush);
+
 
             run._formattedText = formattedText;
 
-            var size = formattedText.Bounds.Size;
+            var size = new Size(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
 
             run._formattedTextSize = size;
 
@@ -237,8 +235,7 @@ namespace AvaloniaEdit.Text
                     drawingContext.FillRectangle(TextRun.Properties.BackgroundBrush, bounds);
                 }
 
-                drawingContext.DrawText(TextRun.Properties.ForegroundBrush,
-                    new Point(x, y), _formattedText);
+                drawingContext.DrawText(_formattedText, new Point(x, y));
 
                 var glyphTypeface = TextRun.Properties.Typeface.GlyphTypeface;
                 
