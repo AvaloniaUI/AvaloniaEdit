@@ -37,6 +37,36 @@ namespace AvaloniaEdit.Text
         }
 
         [Test]
+        public void Tab_Line_Run_Should_Have_Same_Width_As_Indentation_Size()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+
+            SimpleTextSource s1 = new SimpleTextSource(
+                "\ta",
+                CreateDefaultTextProperties());
+
+            SimpleTextSource s2 = new SimpleTextSource(
+                "    a",
+                CreateDefaultTextProperties());
+
+            var textParagraphProperties = new TextParagraphProperties()
+            {
+                DefaultIncrementalTab = 4 * MockGlyphTypeface.GlyphAdvance,
+                Indent = 4
+            };
+
+            TextLineRun run1 = TextLineRun.Create(s1, 0, 0, 2, textParagraphProperties);
+            TextLineRun run2 = TextLineRun.Create(s2, 0, 0, 5, textParagraphProperties);
+
+            Assert.AreEqual(
+                run1.GetDistanceFromCharacter(1),
+                run2.GetDistanceFromCharacter(4));
+        }
+
+        [Test]
         public void Tab_Line_Run_Should_Have_Fixed_Glyph_Width()
         {
             using var app = UnitTestApplication.Start(new TestServices().With(
@@ -183,19 +213,16 @@ namespace AvaloniaEdit.Text
         }
 
         [Test]
-        public void Tab_Glyph_Run_Shuld_Have_Valid_Bounds()
+        public void Tab_Glyph_Run_Shuld_Have_Zero_Width()
         {
             using var app = UnitTestApplication.Start(new TestServices().With(
                 renderInterface: new MockPlatformRenderInterface(),
                 fontManagerImpl: new MockFontManagerImpl(),
                 formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
 
-            double runWidth = 50;
             double runHeight = 20;
 
             Mock<TextLine> textLineMock = new Mock<TextLine>();
-            textLineMock.Setup(
-                t => t.WidthIncludingTrailingWhitespace).Returns(runWidth);
             textLineMock.Setup(
                 t => t.Height).Returns(runHeight);
 
@@ -207,7 +234,7 @@ namespace AvaloniaEdit.Text
 
             Size runSize = tabRun.GetSize(double.PositiveInfinity);
 
-            Assert.AreEqual(runWidth, runSize.Width, "Wrong run width");
+            Assert.AreEqual(0, runSize.Width, "Wrong run width");
             Assert.AreEqual(runHeight, runSize.Height, "Wrong run height");
         }
 
