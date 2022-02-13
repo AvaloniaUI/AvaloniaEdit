@@ -28,7 +28,7 @@ namespace AvaloniaEdit.Text
                 "0123",
                 CreateDefaultTextProperties());
 
-            TextLineRun run = TextLineRun.Create(s, 0, 0, 4, CreateDefaultParagraphProperties());
+            TextLineRun run = TextLineRun.Create(s, 0, 0, 32000, CreateDefaultParagraphProperties());
 
             Assert.AreEqual(MockGlyphTypeface.GlyphAdvance * 0, run.GetDistanceFromCharacter(0));
             Assert.AreEqual(MockGlyphTypeface.GlyphAdvance * 1, run.GetDistanceFromCharacter(1));
@@ -58,8 +58,8 @@ namespace AvaloniaEdit.Text
                 Indent = 4
             };
 
-            TextLineRun run1 = TextLineRun.Create(s1, 0, 0, 2, textParagraphProperties);
-            TextLineRun run2 = TextLineRun.Create(s2, 0, 0, 5, textParagraphProperties);
+            TextLineRun run1 = TextLineRun.Create(s1, 0, 0, 32000, textParagraphProperties);
+            TextLineRun run2 = TextLineRun.Create(s2, 0, 0, 32000, textParagraphProperties);
 
             Assert.AreEqual(
                 run1.GetDistanceFromCharacter(1),
@@ -99,7 +99,7 @@ namespace AvaloniaEdit.Text
 
             var paragraphProperties = CreateDefaultParagraphProperties();
 
-            TextLineRun run = TextLineRun.Create(s, 0, 0, 1, paragraphProperties);
+            TextLineRun run = TextLineRun.Create(s, 0, 0, 32000, paragraphProperties);
 
             double[] expectedLengths = new double[]
             {
@@ -127,7 +127,7 @@ namespace AvaloniaEdit.Text
 
             var paragraphProperties = CreateDefaultParagraphProperties();
 
-            TextLineRun run = TextLineRun.Create(s, 0, 0, 1, paragraphProperties);
+            TextLineRun run = TextLineRun.Create(s, 0, 0, 32000, paragraphProperties);
 
             double[] expectedLengths = new double[]
             {
