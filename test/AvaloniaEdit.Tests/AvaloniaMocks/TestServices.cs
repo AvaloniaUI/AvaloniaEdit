@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Media;
 using Avalonia.Platform;
 using Avalonia.Rendering;
@@ -20,14 +21,14 @@ namespace AvaloniaEdit.AvaloniaMocks
     {
         public static readonly TestServices StyledWindow = new TestServices(
             assetLoader: new AssetLoader(),
-            layoutManager: new LayoutManager(null),
             platform: new AppBuilder().RuntimePlatform,
             renderInterface: new MockPlatformRenderInterface(),
             standardCursorFactory: Mock.Of<ICursorFactory>(),
             styler: new Styler(),
             theme: () => CreateDefaultTheme(),
             threadingInterface: Mock.Of<IPlatformThreadingInterface>(x => x.CurrentThreadIsLoopThread == true),
-            windowingPlatform: new MockWindowingPlatform());
+            windowingPlatform: new MockWindowingPlatform(),
+            fontManagerImpl: new MockFontManagerImpl());
 
         public static readonly TestServices MockPlatformRenderInterface = new TestServices(
             renderInterface: new MockPlatformRenderInterface());
@@ -49,9 +50,6 @@ namespace AvaloniaEdit.AvaloniaMocks
             keyboardDevice: () => new KeyboardDevice(),
             keyboardNavigation: new KeyboardNavigationHandler(),
             inputManager: new InputManager());
-
-        public static readonly TestServices RealLayoutManager = new TestServices(
-            layoutManager: new LayoutManager(null));
 
         public static readonly TestServices RealStyler = new TestServices(
             styler: new Styler());

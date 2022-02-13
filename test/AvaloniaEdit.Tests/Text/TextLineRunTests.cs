@@ -238,6 +238,80 @@ namespace AvaloniaEdit.Text
             Assert.AreEqual(runHeight, runSize.Height, "Wrong run height");
         }
 
+        [Test]
+        public void Text_Line_Run_Should_Not_Wrap_Line_When_There_Is_Enough_Available_Space()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                "0123456789",
+                CreateDefaultTextProperties());
+
+            var paragraphProperties = CreateDefaultParagraphProperties();
+
+            TextLineRun run = TextLineRun.Create(s, 0, 0, 32000, paragraphProperties);
+
+            Assert.AreEqual(10, run.Length);
+        }
+
+        [Test]
+        public void Text_Line_Run_Should_Perform_Word_Wrap_Line_When_Space_Found()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                "0123456789 0123456789",
+                CreateDefaultTextProperties());
+
+            var paragraphProperties = CreateDefaultParagraphProperties();
+
+            TextLineRun run = TextLineRun.Create(s, 0, 0, MockGlyphTypeface.GlyphAdvance * 13, paragraphProperties);
+
+            Assert.AreEqual(11, run.Length);
+        }
+
+        [Test]
+        public void Text_Line_Run_Should_Perform_Character_Line_Wrapping_When_Space_Not_Found()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                "0123456789",
+                CreateDefaultTextProperties());
+
+            var paragraphProperties = CreateDefaultParagraphProperties();
+
+            TextLineRun run = TextLineRun.Create(s, 0, 0, MockGlyphTypeface.GlyphAdvance * 3, paragraphProperties);
+
+            Assert.AreEqual(3, run.Length);
+        }
+
+        [Test]
+        public void Text_Line_Run_Should_Update_StringRange_When_Word_Wrap()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                "0123456789 0123456789",
+                CreateDefaultTextProperties());
+
+            var paragraphProperties = CreateDefaultParagraphProperties();
+
+            TextLineRun run = TextLineRun.Create(s, 0, 0, MockGlyphTypeface.GlyphAdvance * 13, paragraphProperties);
+
+            Assert.AreEqual("0123456789 ", run.StringRange.ToString());
+        }
+
         TextRunProperties CreateDefaultTextProperties()
         {
             return new TextRunProperties()
