@@ -6,6 +6,8 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
+using Avalonia.Media.TextFormatting.Unicode;
+using Avalonia.Utilities;
 
 using AvaloniaEdit.Rendering;
 
@@ -229,7 +231,7 @@ namespace AvaloniaEdit.Text
         {
             (int firstIndex, int trailingLength) characterHit = run.GetCharacterFromDistance(widthLeft);
 
-            int lenForTextWrapping = GetLenForTextWrapping(run.StringRange, characterHit.firstIndex);
+            int lenForTextWrapping = FindPositionForTextWrapping(run.StringRange, characterHit.firstIndex);
 
             return CreateTextLineRun(
                 run.StringRange.WithLength(lenForTextWrapping),
@@ -238,20 +240,25 @@ namespace AvaloniaEdit.Text
                 paragraphProperties);
         }
 
-        private static int GetLenForTextWrapping(StringRange range, int ini)
+        private static int FindPositionForTextWrapping(StringRange range, int maxIndex)
         {
-            if (ini > range.Length - 1)
-                ini = range.Length - 1;
+            if (maxIndex > range.Length - 1)
+                maxIndex = range.Length - 1;
 
-            for (int i = ini; i>= 0; i--)
+            LineBreakEnumerator lineBreakEnumerator = new LineBreakEnumerator(
+                new ReadOnlySlice<char>(range.String.AsMemory().Slice(range.OffsetToFirstChar, range.Length)));
+
+            LineBreak? lineBreak = null;
+
+            while (lineBreakEnumerator.MoveNext())
             {
-                if (range[i] == ' ' || range[i] == '\t')
-                {
-                    return i + 1;
-                }
+                if (lineBreakEnumerator.Current.PositionWrap > maxIndex)
+                    break;
+
+                lineBreak = lineBreakEnumerator.Current;
             }
 
-            return ini;
+            return lineBreak.HasValue ? lineBreak.Value.PositionWrap : maxIndex;
         }
 
         private TextLineRun(int length, TextRun textRun)
