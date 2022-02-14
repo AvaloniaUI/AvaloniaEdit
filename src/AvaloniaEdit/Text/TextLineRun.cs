@@ -6,6 +6,8 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
+using Avalonia.Media.TextFormatting.Unicode;
+using Avalonia.Utilities;
 
 using AvaloniaEdit.Rendering;
 
@@ -104,7 +106,7 @@ namespace AvaloniaEdit.Text
             if (textRun is TextCharacters)
             {
                 return CreateRunForSpecialChars(textSource, stringRange, textRun, index, paragraphProperties) ??
-                       CreateRunForText(stringRange, textRun, widthLeft, false, true, paragraphProperties);
+                       CreateRunForText(stringRange, textRun, widthLeft, paragraphProperties);
             }
 
             if (textRun is TextEndOfLine)
@@ -175,19 +177,35 @@ namespace AvaloniaEdit.Text
             return run;
         }
 
-        internal static TextLineRun CreateRunForText(StringRange stringRange, TextRun textRun, double widthLeft, bool emergencyWrap, bool breakOnTabs, TextParagraphProperties paragraphProperties)
+        internal static TextLineRun CreateRunForText(
+            StringRange stringRange,
+            TextRun textRun,
+            double widthLeft,
+            TextParagraphProperties paragraphProperties)
+        {
+            TextLineRun run = CreateTextLineRun(stringRange, textRun, textRun.Length, paragraphProperties);
+
+            if (run.Width <= widthLeft)
+                return run;
+
+            TextLineRun wrapped = PerformTextWrapping(run, widthLeft, paragraphProperties);
+            wrapped.Width = run.Width;
+            return wrapped;
+        }
+
+        private static TextLineRun CreateTextLineRun(StringRange stringRange, TextRun textRun, int length, TextParagraphProperties paragraphProperties)
         {
             var run = new TextLineRun
             {
                 StringRange = stringRange,
                 TextRun = textRun,
-                Length = textRun.Length
+                Length = length
             };
 
             var tf = run.Typeface;
             var formattedText = new FormattedText
             {
-                Text = stringRange.ToString(),
+                Text = stringRange.ToString(run.Length),
                 Typeface = new Typeface(tf.FontFamily, tf.Style, tf.Weight),
                 FontSize = run.FontSize
             };
@@ -207,6 +225,40 @@ namespace AvaloniaEdit.Text
                 paragraphProperties.DefaultIncrementalTab);
 
             return run;
+        }
+
+        private static TextLineRun PerformTextWrapping(TextLineRun run, double widthLeft, TextParagraphProperties paragraphProperties)
+        {
+            (int firstIndex, int trailingLength) characterHit = run.GetCharacterFromDistance(widthLeft);
+
+            int lenForTextWrapping = FindPositionForTextWrapping(run.StringRange, characterHit.firstIndex);
+
+            return CreateTextLineRun(
+                run.StringRange.WithLength(lenForTextWrapping),
+                run.TextRun,
+                lenForTextWrapping,
+                paragraphProperties);
+        }
+
+        private static int FindPositionForTextWrapping(StringRange range, int maxIndex)
+        {
+            if (maxIndex > range.Length - 1)
+                maxIndex = range.Length - 1;
+
+            LineBreakEnumerator lineBreakEnumerator = new LineBreakEnumerator(
+                new ReadOnlySlice<char>(range.String.AsMemory().Slice(range.OffsetToFirstChar, range.Length)));
+
+            LineBreak? lineBreak = null;
+
+            while (lineBreakEnumerator.MoveNext())
+            {
+                if (lineBreakEnumerator.Current.PositionWrap > maxIndex)
+                    break;
+
+                lineBreak = lineBreakEnumerator.Current;
+            }
+
+            return lineBreak.HasValue ? lineBreak.Value.PositionWrap : maxIndex;
         }
 
         private TextLineRun(int length, TextRun textRun)

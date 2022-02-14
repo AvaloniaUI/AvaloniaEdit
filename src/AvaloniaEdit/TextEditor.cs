@@ -201,8 +201,26 @@ namespace AvaloniaEdit
         private void OnPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
             OnOptionChanged(e);
-
         }
+
+        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+        {
+            base.OnPropertyChanged(change);
+
+            if (change.Property == WordWrapProperty)
+            {
+                if (WordWrap)
+                {
+                    _horizontalScrollBarVisibilityBck = HorizontalScrollBarVisibility;
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                }
+                else
+                {
+                    HorizontalScrollBarVisibility = _horizontalScrollBarVisibilityBck;
+                }
+            }
+        }
+
         private void OnUndoStackPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsOriginalFile")
@@ -1068,6 +1086,8 @@ namespace AvaloniaEdit
             get => GetValue(HorizontalScrollBarVisibilityProperty);
             set => SetValue(HorizontalScrollBarVisibilityProperty, value);
         }
+
+        private ScrollBarVisibility _horizontalScrollBarVisibilityBck = ScrollBarVisibility.Auto;
 
         /// <summary>
         /// Dependency property for <see cref="VerticalScrollBarVisibility"/>

@@ -6,6 +6,8 @@ using Avalonia.Media;
 using Avalonia.Platform;
 using Avalonia.Visuals.Media.Imaging;
 
+using AvaloniaEdit.Tests.AvaloniaMocks;
+
 using Moq;
 
 namespace AvaloniaEdit.AvaloniaMocks
@@ -92,7 +94,7 @@ namespace AvaloniaEdit.AvaloniaMocks
 
         public IFormattedTextImpl CreateFormattedText(string text, Typeface typeface, double fontSize, TextAlignment textAlignment, TextWrapping wrapping, Size constraint, IReadOnlyList<FormattedTextStyleSpan> spans)
         {
-            return Mock.Of<IFormattedTextImpl>();
+            return new MockFormattedTextImpl(text, typeface);
         }
 
         public IGeometryImpl CreateGeometryGroup(FillRule fillRule, IReadOnlyList<Geometry> children)
