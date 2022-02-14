@@ -99,6 +99,48 @@ namespace AvaloniaEdit.Text
             Assert.IsTrue(textLine.LineRuns[1].IsEnd);
         }
 
+        [Test]
+        public void Text_Line_Should_Not_Wrap_In_Two_Runs_When_Option_Disabled()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                "hello world",
+                CreateDefaultTextProperties());
+
+            TextParagraphProperties paraProps = CreateDefaultParagraphProperties();
+            paraProps.TextWrapping = TextWrapping.NoWrap;
+
+            TextLineImpl textLine = TextLineImpl.Create(
+                paraProps, 0, MockGlyphTypeface.GlyphAdvance * 7, s);
+
+            Assert.AreEqual("hello world".Length, textLine.LineRuns[0].Length);
+        }
+
+        [Test]
+        public void Text_Line_Should_Wrap_In_Two_Runs_Option_Enabled()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                "hello world",
+                CreateDefaultTextProperties());
+
+            TextParagraphProperties paraProps = CreateDefaultParagraphProperties();
+            paraProps.TextWrapping = TextWrapping.Wrap;
+
+            TextLineImpl textLine = TextLineImpl.Create(
+                paraProps, 0, MockGlyphTypeface.GlyphAdvance * 7, s);
+
+            Assert.AreEqual("hello ".Length, textLine.LineRuns[0].Length);
+        }
+
         TextParagraphProperties CreateDefaultParagraphProperties()
         {
             return new TextParagraphProperties()
