@@ -17,7 +17,8 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Folding;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
-using AvaloniaEdit.TextMate.Grammars;
+
+using TextMateSharp.Grammars;
 
 namespace AvaloniaEdit.Demo
 {
