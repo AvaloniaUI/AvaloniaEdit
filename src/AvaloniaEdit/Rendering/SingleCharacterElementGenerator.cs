@@ -195,9 +195,7 @@ namespace AvaloniaEdit.Rendering
 
             public override Size GetSize(double remainingParagraphWidth)
             {
-                return new Size(
-                    _element.Text.WidthIncludingTrailingWhitespace,
-                    _element.Text.Height);
+                return new Size(0, _element.Text.Height);
             }
 
             public override Rect ComputeBoundingBox()

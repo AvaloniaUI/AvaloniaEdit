@@ -62,6 +62,11 @@ namespace AvaloniaEdit.Text
                 }
 
                 run = TextLineRun.Create(textSource, index, firstIndex, widthLeft, paragraphProperties);
+
+                if (run.Width > widthLeft)
+                {
+                    return new TextLineImpl(paragraphProperties, firstIndex, runs, trailing);
+                }
             }
         }
 
