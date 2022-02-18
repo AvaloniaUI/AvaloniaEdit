@@ -172,7 +172,7 @@ namespace AvaloniaEdit.TextMate
 
         public void ModelTokensChanged(ModelTokensChangedEvent e)
         {
-            if (e.ranges == null)
+            if (e.Ranges == null)
                 return;
 
             if (_model.IsStopped)
@@ -181,10 +181,10 @@ namespace AvaloniaEdit.TextMate
             int firstChangedLineIndex = int.MaxValue;
             int lastChangedLineIndex = -1;
 
-            foreach (var range in e.ranges)
+            foreach (var range in e.Ranges)
             {
-                firstChangedLineIndex = Math.Min(range.fromLineNumber - 1, firstChangedLineIndex);
-                lastChangedLineIndex = Math.Max(range.toLineNumber - 1, lastChangedLineIndex);
+                firstChangedLineIndex = Math.Min(range.FromLineNumber - 1, firstChangedLineIndex);
+                lastChangedLineIndex = Math.Max(range.ToLineNumber - 1, lastChangedLineIndex);
             }
 
             bool changedLinesAreNotVisible =
