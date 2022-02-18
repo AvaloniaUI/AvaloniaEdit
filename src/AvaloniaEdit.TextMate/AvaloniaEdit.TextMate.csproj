@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="TextMateSharp" Version="$(TextMateSharpVersion)" />
+    <PackageReference Include="TextMateSharp.Grammars" Version="$(TextMateSharpVersion)" />
   </ItemGroup>
 
 </Project>
