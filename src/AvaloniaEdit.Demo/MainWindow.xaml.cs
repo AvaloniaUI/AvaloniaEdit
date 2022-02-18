@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -9,7 +8,6 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-
 using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Demo.Resources;
 using AvaloniaEdit.Document;
@@ -17,7 +15,6 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Folding;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
-
 using TextMateSharp.Grammars;
 
 namespace AvaloniaEdit.Demo
