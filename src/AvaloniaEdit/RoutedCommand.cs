@@ -25,24 +25,18 @@ namespace AvaloniaEdit
             ExecutedEvent.AddClassHandler<IRoutedCommandBindable>(ExecutedEventHandler);
         }
 
-        private static Action<CanExecuteRoutedEventArgs> CanExecuteEventHandler(IRoutedCommandBindable control)
+        private static void CanExecuteEventHandler(IRoutedCommandBindable control, CanExecuteRoutedEventArgs args)
         {
-            return args =>
-            {
-                var binding = control.CommandBindings.Where(c => c != null)
-                    .FirstOrDefault(c => c.Command == args.Command && c.DoCanExecute(control, args));
-                args.CanExecute = binding != null;
-            };
+            var binding = control.CommandBindings.Where(c => c != null)
+                .FirstOrDefault(c => c.Command == args.Command && c.DoCanExecute(control, args));
+            args.CanExecute = binding != null;
         }
 
-        private static Action<ExecutedRoutedEventArgs> ExecutedEventHandler(IRoutedCommandBindable control)
+        private static void ExecutedEventHandler(IRoutedCommandBindable control, ExecutedRoutedEventArgs args)
         {
-            return args =>
-            {
-                // ReSharper disable once UnusedVariable
-                var binding = control.CommandBindings.Where(c => c != null)
-                    .FirstOrDefault(c => c.Command == args.Command && c.DoExecuted(control, args));
-            };
+            // ReSharper disable once UnusedVariable
+            var binding = control.CommandBindings.Where(c => c != null)
+                .FirstOrDefault(c => c.Command == args.Command && c.DoExecuted(control, args));
         }
 
         public static RoutedEvent<CanExecuteRoutedEventArgs> CanExecuteEvent { get; } = RoutedEvent.Register<CanExecuteRoutedEventArgs>(nameof(CanExecuteEvent), RoutingStrategies.Bubble, typeof(RoutedCommand));
