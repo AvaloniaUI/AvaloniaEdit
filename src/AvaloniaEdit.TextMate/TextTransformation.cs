@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 
 using Avalonia.Media;
 
 using AvaloniaEdit.Document;
-
-using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
 {
@@ -27,12 +24,15 @@ namespace AvaloniaEdit.TextMate
             IBrush GetBrush(int color);
         }
 
-        int _foreground;
-        int _background;
-        int _fontStyle;
+        private IColorMap _colorMap;
+        private Action<Exception> _exceptionHandler;
+        private int _foreground;
+        private int _background;
+        private int _fontStyle;
 
         public ForegroundTextTransformation(
             IColorMap colorMap,
+            Action<Exception> exceptionHandler,
             int startOffset,
             int endOffset,
             int foreground,
@@ -40,6 +40,7 @@ namespace AvaloniaEdit.TextMate
             int fontStyle) : base(startOffset, endOffset)
         {
             _colorMap = colorMap;
+            _exceptionHandler = exceptionHandler;
             _foreground = foreground;
             _background = background;
             _fontStyle = fontStyle;
@@ -47,23 +48,25 @@ namespace AvaloniaEdit.TextMate
 
         public override void Transform(GenericLineTransformer transformer, DocumentLine line)
         {
-            if (Length == 0)
+            try
             {
-                return;
-            }
+                if (Length == 0)
+                {
+                    return;
+                }
 
-            var formattedOffset = 0;
-            var endOffset = line.EndOffset;
+                var formattedOffset = 0;
+                var endOffset = line.EndOffset;
 
-            if (StartOffset > line.Offset)
-            {
-                formattedOffset = StartOffset - line.Offset;
-            }
+                if (StartOffset > line.Offset)
+                {
+                    formattedOffset = StartOffset - line.Offset;
+                }
 
-            if (EndOffset < line.EndOffset)
-            {
-                endOffset = EndOffset;
-            }
+                if (EndOffset < line.EndOffset)
+                {
+                    endOffset = EndOffset;
+                }
 
                 transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset,
                 _colorMap.GetBrush(_foreground),
@@ -71,6 +74,11 @@ namespace AvaloniaEdit.TextMate
                 GetFontStyle(),
                 GetFontWeight(),
                 IsUnderline());
+            }
+            catch(Exception ex)
+            {
+                _exceptionHandler?.Invoke(ex);
+            }
         }
 
         FontStyle GetFontStyle()
@@ -99,7 +107,5 @@ namespace AvaloniaEdit.TextMate
 
             return false;
         }
-
-        IColorMap _colorMap;
     }
 }
