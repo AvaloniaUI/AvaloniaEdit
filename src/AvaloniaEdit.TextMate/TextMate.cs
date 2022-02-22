@@ -108,7 +108,8 @@ namespace AvaloniaEdit.TextMate
 
                 if (transformer is null)
                 {
-                    transformer = new TextMateColoringTransformer(_editor.TextArea.TextView);
+                    transformer = new TextMateColoringTransformer(
+                        _editor.TextArea.TextView, _exceptionHandler);
 
                     _editor.TextArea.TextView.LineTransformers.Add(transformer);
                 }
