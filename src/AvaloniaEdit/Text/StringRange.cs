@@ -21,6 +21,30 @@ namespace AvaloniaEdit.Text
             Length = length;
         }
 
+        public int IndexOf(char ch, int startIndex = 0)
+        {
+            for (int i = startIndex; i < Length; ++i)
+            {
+                if (ch == this[i])
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public StringRange SubRange(int start, int length)
+        {
+            if (start < 0)
+                throw new ArgumentOutOfRangeException(nameof(start));
+
+            if (start + length > Length)
+                throw new ArgumentOutOfRangeException(nameof(length));
+
+
+            return new StringRange(String, OffsetToFirstChar + start, length);
+        }
+
         public override string ToString()
         {
             if (String == null) return string.Empty;
