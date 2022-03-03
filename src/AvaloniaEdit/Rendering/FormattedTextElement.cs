@@ -31,7 +31,6 @@ namespace AvaloniaEdit.Rendering
     /// </summary>
     public class FormattedTextElement : VisualLineElement
     {
-        internal FormattedText FormattedText { get; }
         internal string Text { get; set; }
         internal TextLine TextLine { get; set; }
 
@@ -51,15 +50,6 @@ namespace AvaloniaEdit.Rendering
         internal FormattedTextElement(TextLine text, int documentLength) : base(1, documentLength)
         {
             TextLine = text ?? throw new ArgumentNullException(nameof(text));
-        }
-
-        /// <summary>
-        /// Creates a new FormattedTextElement that displays the specified text
-        /// and occupies the specified length in the document.
-        /// </summary>
-        public FormattedTextElement(FormattedText text, int documentLength) : base(1, documentLength)
-        {
-            FormattedText = text ?? throw new ArgumentNullException(nameof(text));
         }
 
         /// <inheritdoc/>
@@ -131,11 +121,6 @@ namespace AvaloniaEdit.Rendering
 
         public override Size GetSize(double remainingParagraphWidth)
         {
-            var formattedText = Element.FormattedText;
-            if (formattedText != null)
-            {
-                return new Size(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
-            }
             var text = Element.TextLine;
             return new Size(text.WidthIncludingTrailingWhitespace,
                 text.Height);
@@ -150,16 +135,8 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         public override void Draw(DrawingContext drawingContext, Point origin)
         {
-            if (Element.FormattedText != null)
-            {
-                //origin = origin.WithY(origin.Y - Element.formattedText.Baseline);
-                drawingContext.DrawText(Element.FormattedText, origin);
-            }
-            else
-            {
-                //origin.Y -= element.textLine.Baseline;
-                Element.TextLine.Draw(drawingContext, origin);
-            }
+            //origin.Y -= element.textLine.Baseline;
+            Element.TextLine.Draw(drawingContext, origin);
         }
     }
 }

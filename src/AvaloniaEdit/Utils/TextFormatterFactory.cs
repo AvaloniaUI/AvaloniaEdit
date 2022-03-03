@@ -28,39 +28,48 @@ namespace AvaloniaEdit.Utils
     /// Creates TextFormatter instances that with the correct TextFormattingMode, if running on .NET 4.0.
     /// </summary>
     public static class TextFormatterFactory
-	{
-	    public static TextFormatter Create()
-	    {
-	        return new TextFormatter();
-	    }
+    {
+        public static TextFormatter Create()
+        {
+            return new TextFormatter();
+        }
 
-		/// <summary>
-		/// Creates formatted text.
-		/// </summary>
-		/// <param name="element">The owner element. The text formatter setting are read from this element.</param>
-		/// <param name="text">The text.</param>
-		/// <param name="typeface">The typeface to use. If this parameter is null, the typeface of the <paramref name="element"/> will be used.</param>
-		/// <param name="emSize">The font size. If this parameter is null, the font size of the <paramref name="element"/> will be used.</param>
-		/// <param name="foreground">The foreground color. If this parameter is null, the foreground of the <paramref name="element"/> will be used.</param>
-		/// <returns>A FormattedText object using the specified settings.</returns>
-		public static FormattedText CreateFormattedText(Control element, string text, FontFamily typeface, double? emSize, IBrush foreground)
-	    {
-	        if (element == null)
-	            throw new ArgumentNullException(nameof(element));
-	        if (text == null)
-	            throw new ArgumentNullException(nameof(text));
-	        if (typeface == null)
-	            typeface = TextBlock.GetFontFamily(element);
-	        if (emSize == null)
-	            emSize = TextBlock.GetFontSize(element);
-	        if (foreground == null)
-	            foreground = TextBlock.GetForeground(element);
+        public static Avalonia.Media.TextFormatting.TextLine CreateTextLine(
+            string text,
+            Typeface typeface,
+            double fontSize,
+            IBrush foreground)
+        {
+            return new Avalonia.Media.TextFormatting.TextLayout(text, typeface, fontSize, foreground).TextLines[0];
+        }
 
-	        var formattedText = new FormattedText(text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-		        new Typeface(typeface.Name), emSize.Value, foreground!);
-            
+        /// <summary>
+        /// Creates text line.
+        /// </summary>
+        /// <param name="element">The owner element. The text formatter setting are read from this element.</param>
+        /// <param name="text">The text.</param>
+        /// <param name="typeface">The typeface to use. If this parameter is null, the typeface of the <paramref name="element"/> will be used.</param>
+        /// <param name="emSize">The font size. If this parameter is null, the font size of the <paramref name="element"/> will be used.</param>
+        /// <param name="foreground">The foreground color. If this parameter is null, the foreground of the <paramref name="element"/> will be used.</param>
+        /// <returns>A FormattedText object using the specified settings.</returns>
+        public static Avalonia.Media.TextFormatting.TextLine CreateTextLine(
+            Control element, 
+            string text, 
+            FontFamily typeface, double? emSize, 
+            IBrush foreground)
+        {
+            if (element == null)
+                throw new ArgumentNullException(nameof(element));
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+            if (typeface == null)
+                typeface = TextBlock.GetFontFamily(element);
+            if (emSize == null)
+                emSize = TextBlock.GetFontSize(element);
+            if (foreground == null)
+                foreground = TextBlock.GetForeground(element);
 
-	        return formattedText;
-	    }
-	}
+            return CreateTextLine(text, new Typeface(typeface.Name), emSize.Value, foreground!);
+        }
+    }
 }

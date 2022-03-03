@@ -55,7 +55,7 @@ namespace AvaloniaEdit.Editing
             Typeface = GetValue(TextBlock.FontFamilyProperty);
             EmSize = GetValue(TextBlock.FontSizeProperty);
 
-            var text = TextFormatterFactory.CreateFormattedText(
+            var text = TextFormatterFactory.CreateTextLine(
                 this,
                 new string('9', MaxLineNumberLength),
                 Typeface,
@@ -76,13 +76,13 @@ namespace AvaloniaEdit.Editing
                 foreach (var line in textView.VisualLines)
                 {
                     var lineNumber = line.FirstDocumentLine.LineNumber;
-                    var text = TextFormatterFactory.CreateFormattedText(
+                    var text = TextFormatterFactory.CreateTextLine(
                         this,
                         lineNumber.ToString(CultureInfo.CurrentCulture),
                         Typeface, EmSize, foreground
                     );
                     var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                    drawingContext.DrawText(text,
+                    text.Draw(drawingContext,
                         new Point(renderSize.Width - text.WidthIncludingTrailingWhitespace, y - textView.VerticalOffset));
                 }
             }

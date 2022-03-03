@@ -9,6 +9,7 @@ using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Text
 {
@@ -17,7 +18,7 @@ namespace AvaloniaEdit.Text
         private const string NewlineString = "\r\n";
         private const string TabString = "\t";
 
-        private FormattedText _formattedText;
+        private Avalonia.Media.TextFormatting.TextLine _formattedText;
         private Size _formattedTextSize;
         private IReadOnlyList<double> _glyphWidths;
         public StringRange StringRange { get; private set; }
@@ -68,7 +69,7 @@ namespace AvaloniaEdit.Text
                     var box = embeddedObject.ComputeBoundingBox();
                     return box.Height;
                 }
-                
+
                 return GetDefaultLineHeight(TextRun.Properties.FontMetrics);
             }
         }
@@ -186,23 +187,40 @@ namespace AvaloniaEdit.Text
             };
 
             var tf = run.Typeface;
-            var formattedText = new FormattedText(stringRange.ToString(), CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight, new Typeface(tf.FontFamily, tf.Style, tf.Weight), run.FontSize, textRun.Properties.ForegroundBrush);
 
+            var line = TextFormatterFactory.CreateTextLine(
+                               stringRange.ToString(),
+                               new Typeface(tf.FontFamily, tf.Style, tf.Weight),
+                               run.FontSize,
+                               textRun.Properties.ForegroundBrush);
 
-            run._formattedText = formattedText;
+            run._formattedText = line;
 
-            var size = new Size(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
+            var size = new Size(line.WidthIncludingTrailingWhitespace, line.Height);
 
             run._formattedTextSize = size;
 
             run.Width = size.Width;
 
-            run._glyphWidths = new GlyphWidths(
-                run.StringRange,
-                run.Typeface.GlyphTypeface,
-                run.FontSize,
-                paragraphProperties.DefaultIncrementalTab);
+            // TODO: check about surrogate pair
+            var grlyphWids = new double[stringRange.Length];
+            var hit = new CharacterHit(0);
+            double prevPos = 0;
+            for (var i = 0; i < stringRange.Length; ++i)
+            {
+                hit = line.GetNextCaretCharacterHit(hit);
+                var dist = line.GetDistanceFromCharacterHit(hit);
+                grlyphWids[i] = dist - prevPos;
+
+                prevPos = dist;
+            }
+            run._glyphWidths = grlyphWids;
+
+            //run._glyphWidths = new GlyphWidths(
+            //    run.StringRange,
+            //    run.Typeface.GlyphTypeface,
+            //    run.FontSize,
+            //    paragraphProperties.DefaultIncrementalTab);
 
             return run;
         }
@@ -235,14 +253,14 @@ namespace AvaloniaEdit.Text
                     drawingContext.FillRectangle(TextRun.Properties.BackgroundBrush, bounds);
                 }
 
-                drawingContext.DrawText(_formattedText, new Point(x, y));
+                _formattedText.Draw(drawingContext, new Point(x, y));
 
                 var glyphTypeface = TextRun.Properties.Typeface.GlyphTypeface;
-                
-                var scale =  TextRun.Properties.FontSize / glyphTypeface.DesignEmHeight;
+
+                var scale = TextRun.Properties.FontSize / glyphTypeface.DesignEmHeight;
 
                 var baseline = y + -glyphTypeface.Ascent * scale;
-                
+
                 if (TextRun.Properties.Underline)
                 {
                     var pen = new Pen(TextRun.Properties.ForegroundBrush, glyphTypeface.UnderlineThickness * scale);
@@ -385,8 +403,8 @@ namespace AvaloniaEdit.Text
             {
                 int capacity = _range.Length;
 
-                bool useCheapGlyphMeasurement = 
-                    capacity >= VisualLine.LENGTH_LIMIT && 
+                bool useCheapGlyphMeasurement =
+                    capacity >= VisualLine.LENGTH_LIMIT &&
                     _typeFace.IsFixedPitch;
 
                 if (useCheapGlyphMeasurement)

@@ -5,8 +5,9 @@
     <AvaloniaVersion>0.10.999-cibuild0018389-beta</AvaloniaVersion>
     <TextMateSharpVersion>1.0.24</TextMateSharpVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
-	<Version>0.10.12.1</Version>
+    <Version>0.10.12.1</Version>
     <RestoreSources>
+      https://api.nuget.org/v3/index.json;
       https://nuget.avaloniaui.net/repository/avalonia-nightly/index.json;
     </RestoreSources>
   </PropertyGroup>
