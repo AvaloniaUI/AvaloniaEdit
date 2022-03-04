@@ -93,8 +93,9 @@ namespace AvaloniaEdit.TextMate
                     for (int i = endLine; i > startLine; i--)
                     {
                         RemoveLine(i);
-                        _documentSnapshot.LineCount--;
                     }
+
+                    _documentSnapshot.RemoveLines(startLine, endLine);
                 }
             }
             catch (Exception ex)

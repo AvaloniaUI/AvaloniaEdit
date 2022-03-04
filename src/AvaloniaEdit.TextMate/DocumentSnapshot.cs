@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using AvaloniaEdit.Document;
 
@@ -15,7 +17,6 @@ namespace AvaloniaEdit.TextMate
         public int LineCount
         {
             get { lock (_lock) { return _lineCount; } }
-            set { lock (_lock) { _lineCount = value; } }
         }
 
         public DocumentSnapshot(TextDocument document)
@@ -24,6 +25,17 @@ namespace AvaloniaEdit.TextMate
             _lineRanges = new LineRange[document.LineCount];
 
             Update(null);
+        }
+
+        public void RemoveLines(int startLine, int endLine)
+        {
+            lock (_lock)
+            {
+                var tmpList = _lineRanges.ToList();
+                tmpList.RemoveRange(startLine, endLine - startLine + 1);
+                _lineRanges = tmpList.ToArray();
+                _lineCount = _lineRanges.Length;
+            }
         }
 
         public string GetLineText(int lineIndex)
