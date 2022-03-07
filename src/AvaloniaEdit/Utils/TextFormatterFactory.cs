@@ -20,7 +20,12 @@ using System;
 using AvaloniaEdit.Text;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
 using AvaloniaEdit.Rendering;
+using TextLine = Avalonia.Media.TextFormatting.TextLine;
+using TextRun = Avalonia.Media.TextFormatting.TextRun;
+using TextRunProperties = Avalonia.Media.TextFormatting.TextRunProperties;
 
 namespace AvaloniaEdit.Utils
 {
@@ -29,11 +34,6 @@ namespace AvaloniaEdit.Utils
     /// </summary>
     public static class TextFormatterFactory
 	{
-	    public static TextFormatter Create()
-	    {
-	        return new TextFormatter();
-	    }
-
 		/// <summary>
 		/// Creates formatted text.
 		/// </summary>
@@ -43,29 +43,32 @@ namespace AvaloniaEdit.Utils
 		/// <param name="emSize">The font size. If this parameter is null, the font size of the <paramref name="element"/> will be used.</param>
 		/// <param name="foreground">The foreground color. If this parameter is null, the foreground of the <paramref name="element"/> will be used.</param>
 		/// <returns>A FormattedText object using the specified settings.</returns>
-		public static FormattedText CreateFormattedText(Control element, string text, Avalonia.Media.FontFamily typeface, double? emSize, IBrush foreground)
+		public static TextLine FormatLine(ReadOnlySlice<char> text, Typeface typeface, double emSize, IBrush foreground)
 	    {
-	        if (element == null)
-	            throw new ArgumentNullException(nameof(element));
-	        if (text == null)
-	            throw new ArgumentNullException(nameof(text));
-	        if (typeface == null)
-	            typeface = TextBlock.GetFontFamily(element);
-	        if (emSize == null)
-	            emSize = TextBlock.GetFontSize(element);
-	        if (foreground == null)
-	            foreground = TextBlock.GetForeground(element);
+		    var defaultProperties = new GenericTextRunProperties(typeface, emSize, null, foreground);
+		    var paragraphProperties = new GenericTextParagraphProperties(FlowDirection.LeftToRight, TextAlignment.Left,
+			    true, false, defaultProperties, TextWrapping.NoWrap, 0, 0);
+		    
+		    var textSource = new SimpleTextSource(text, defaultProperties);
 
-            var formattedText = new FormattedText
-            {
-                Text = text,
-                Typeface = new Typeface(typeface.Name),
-				FontSize = emSize.Value
-            };
-	        
-	        formattedText.SetTextStyle(0, text.Length, foreground);
-
-	        return formattedText;
+		    return TextFormatter.Current.FormatLine(textSource, 0, double.PositiveInfinity, paragraphProperties);
 	    }
+		
+		private readonly struct SimpleTextSource : ITextSource
+		{
+			private readonly ReadOnlySlice<char> _text;
+			private readonly TextRunProperties _defaultProperties;
+
+			public SimpleTextSource(ReadOnlySlice<char> text, TextRunProperties defaultProperties)
+			{
+				_text = text;
+				_defaultProperties = defaultProperties;
+			}
+			
+			public TextRun GetTextRun(int textSourceIndex)
+			{
+				return new TextCharacters(_text, _defaultProperties);
+			}
+		}
 	}
 }

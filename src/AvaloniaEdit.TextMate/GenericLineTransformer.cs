@@ -77,18 +77,21 @@ namespace AvaloniaEdit.TextMate
             bool isUnderline)
         {
             if (foreground != null)
-                visualLine.TextRunProperties.ForegroundBrush = foreground;
+                visualLine.TextRunProperties.SetForegroundBrush(foreground);
 
             if (background != null)
-                visualLine.TextRunProperties.BackgroundBrush = background;
+                visualLine.TextRunProperties.SetBackgroundBrush(background);
 
-            visualLine.TextRunProperties.Underline = isUnderline;
+            if (isUnderline)
+            {
+                visualLine.TextRunProperties.SetTextDecorations(TextDecorations.Underline);
+            }
 
             if (visualLine.TextRunProperties.Typeface.Style != fontStyle ||
                 visualLine.TextRunProperties.Typeface.Weight != fontWeigth)
             {
-                visualLine.TextRunProperties.Typeface = new Typeface(
-                    visualLine.TextRunProperties.Typeface.FontFamily, fontStyle, fontWeigth);
+                visualLine.TextRunProperties.SetTypeface(new Typeface(
+                    visualLine.TextRunProperties.Typeface.FontFamily, fontStyle, fontWeigth));
             }
 
         }

@@ -18,6 +18,7 @@
 
 using System;
 using System.Globalization;
+using System.Linq;
 using Avalonia;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
@@ -41,7 +42,7 @@ namespace AvaloniaEdit.Editing
         /// The typeface used for rendering the line number margin.
         /// This field is calculated in MeasureOverride() based on the FontFamily etc. properties.
         /// </summary>
-        protected FontFamily Typeface { get; set; }
+        protected Typeface Typeface { get; set; }
 
         /// <summary>
         /// The font size used for rendering the line number margin.
@@ -52,17 +53,16 @@ namespace AvaloniaEdit.Editing
         /// <inheritdoc/>
         protected override Size MeasureOverride(Size availableSize)
         {
-            Typeface = GetValue(TextBlock.FontFamilyProperty);
+            Typeface = new Typeface(GetValue(TextBlock.FontFamilyProperty));
             EmSize = GetValue(TextBlock.FontSizeProperty);
 
-            var text = TextFormatterFactory.CreateFormattedText(
-                this,
-                new string('9', MaxLineNumberLength),
+            var textLine = TextFormatterFactory.FormatLine(Enumerable.Repeat('9', MaxLineNumberLength).ToArray(),
                 Typeface,
                 EmSize,
                 GetValue(TemplatedControl.ForegroundProperty)
             );
-            return new Size(text.Bounds.Width, 0);
+
+            return new Size(textLine.WidthIncludingTrailingWhitespace, textLine.Height);
         }
 
         /// <inheritdoc/>
@@ -70,20 +70,24 @@ namespace AvaloniaEdit.Editing
         {
             var textView = TextView;
             var renderSize = Bounds.Size;
+            
             if (textView != null && textView.VisualLinesValid)
             {
                 var foreground = GetValue(TemplatedControl.ForegroundProperty);
+                
                 foreach (var line in textView.VisualLines)
                 {
                     var lineNumber = line.FirstDocumentLine.LineNumber;
-                    var text = TextFormatterFactory.CreateFormattedText(
-                        this,
-                        lineNumber.ToString(CultureInfo.CurrentCulture),
-                        Typeface, EmSize, foreground
+                    var text = lineNumber.ToString(CultureInfo.CurrentCulture);
+                    var textLine = TextFormatterFactory.FormatLine(text.AsMemory(),
+                        Typeface,
+                        EmSize,
+                        GetValue(TemplatedControl.ForegroundProperty)
                     );
+                    
                     var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                    drawingContext.DrawText(foreground, new Point(renderSize.Width - text.Bounds.Width, y - textView.VerticalOffset),
-                        text);
+                    
+                    textLine.Draw(drawingContext, new Point(renderSize.Width - textLine.WidthIncludingTrailingWhitespace, y - textView.VerticalOffset));
                 }
             }
         }
@@ -193,7 +197,7 @@ namespace AvaloniaEdit.Editing
                 return SimpleSegment.Invalid;
             var tl = vl.GetTextLineByVisualYPosition(pos.Y);
             var visualStartColumn = vl.GetTextLineVisualStartColumn(tl);
-            var visualEndColumn = visualStartColumn + tl.Length;
+            var visualEndColumn = visualStartColumn + tl.TextRange.Length;
             var relStart = vl.FirstDocumentLine.Offset;
             var startOffset = vl.GetRelativeOffset(visualStartColumn) + relStart;
             var endOffset = vl.GetRelativeOffset(visualEndColumn) + relStart;

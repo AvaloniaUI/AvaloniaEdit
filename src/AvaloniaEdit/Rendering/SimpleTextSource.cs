@@ -16,25 +16,29 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using AvaloniaEdit.Text;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
 
 namespace AvaloniaEdit.Rendering
 {
-    internal sealed class SimpleTextSource : TextSource
+    internal sealed class SimpleTextSource : ITextSource
 	{
-	    private readonly string _text;
+	    private readonly ReadOnlySlice<char> _text;
 	    private readonly TextRunProperties _properties;
 		
-		public SimpleTextSource(string text, TextRunProperties properties)
+		public SimpleTextSource(ReadOnlySlice<char> text, TextRunProperties properties)
 		{
 			_text = text;
 			_properties = properties;
 		}
 		
-		public override TextRun GetTextRun(int characterIndex)
+		public TextRun GetTextRun(int characterIndex)
 		{
-		    if (characterIndex < _text.Length)
+			if (characterIndex < _text.Length)
+			{
 				return new TextCharacters(_text, characterIndex, _text.Length - characterIndex, _properties);
+			}
+			
 		    return new TextEndOfParagraph(1);
 		}
 	}

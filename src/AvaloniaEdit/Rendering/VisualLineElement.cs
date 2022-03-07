@@ -23,6 +23,9 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Text;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
+using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -75,14 +78,14 @@ namespace AvaloniaEdit.Rendering
 		/// <see cref="TextRunProperties"/> will affect only this
 		/// <see cref="VisualLineElement"/>.
 		/// </summary>
-		public TextRunProperties TextRunProperties { get; private set; }
+		public CustomTextRunProperties TextRunProperties { get; private set; }
 		
 		/// <summary>
 		/// Gets/sets the brush used for the background of this <see cref="VisualLineElement" />.
 		/// </summary>
 		public IBrush BackgroundBrush { get; set; }
 		
-		internal void SetTextRunProperties(TextRunProperties p)
+		internal void SetTextRunProperties(CustomTextRunProperties p)
 		{
 			TextRunProperties = p;
 		}
@@ -104,9 +107,9 @@ namespace AvaloniaEdit.Rendering
 		/// Retrieves the text span immediately before the visual column.
 		/// </summary>
 		/// <remarks>This method is used for word-wrapping in bidirectional text.</remarks>
-		public virtual StringRange GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
+		public virtual ReadOnlySlice<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
 		{
-			return StringRange.Empty;
+			return ReadOnlySlice<char>.Empty;
 		}
 		
 		/// <summary>
@@ -160,9 +163,9 @@ namespace AvaloniaEdit.Rendering
 			firstPart.DocumentLength = relativeSplitRelativeTextOffset;
 			secondPart.DocumentLength = oldDocumentLength - relativeSplitRelativeTextOffset;
 			if (firstPart.TextRunProperties == null)
-				firstPart.TextRunProperties = TextRunProperties.Clone();
+				firstPart.TextRunProperties = TextRunProperties;
 			if (secondPart.TextRunProperties == null)
-				secondPart.TextRunProperties = TextRunProperties.Clone();
+				secondPart.TextRunProperties = TextRunProperties;
 			firstPart.BackgroundBrush = BackgroundBrush;
 			secondPart.BackgroundBrush = BackgroundBrush;
 		}

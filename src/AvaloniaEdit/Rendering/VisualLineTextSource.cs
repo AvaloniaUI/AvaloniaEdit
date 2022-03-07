@@ -18,16 +18,20 @@
 
 using System;
 using System.Diagnostics;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
+using JetBrains.Annotations;
+using ITextSource = Avalonia.Media.TextFormatting.ITextSource;
 
 namespace AvaloniaEdit.Rendering
 {
     /// <summary>
     /// TextSource implementation that creates TextRuns for a VisualLine.
     /// </summary>
-    internal sealed class VisualLineTextSource : TextSource, ITextRunConstructionContext
+    internal sealed class VisualLineTextSource : ITextSource, ITextRunConstructionContext
     {
         public VisualLineTextSource(VisualLine visualLine)
         {
@@ -37,9 +41,10 @@ namespace AvaloniaEdit.Rendering
         public VisualLine VisualLine { get; }
         public TextView TextView { get; set; }
         public TextDocument Document { get; set; }
-        public TextRunProperties GlobalTextRunProperties { get; set; }
+        public CustomTextRunProperties GlobalTextRunProperties { get; set; }
 
-        public override TextRun GetTextRun(int characterIndex)
+        [CanBeNull]
+        public TextRun GetTextRun(int characterIndex)
         {
             try
             {
@@ -52,9 +57,9 @@ namespace AvaloniaEdit.Rendering
                         var run = element.CreateTextRun(characterIndex, this);
                         if (run == null)
                             throw new ArgumentNullException(element.GetType().Name + ".CreateTextRun");
-                        if (run.Length == 0)
+                        if (run.TextSourceLength == 0)
                             throw new ArgumentException("The returned TextRun must not have length 0.", element.GetType().Name + ".Length");
-                        if (relativeOffset + run.Length > element.VisualLength)
+                        if (relativeOffset + run.TextSourceLength > element.VisualLength)
                             throw new ArgumentException("The returned TextRun is too long.", element.GetType().Name + ".CreateTextRun");
                         if (run is InlineObjectRun inlineRun)
                         {
@@ -105,20 +110,24 @@ namespace AvaloniaEdit.Rendering
             return new FormattedTextRun(new FormattedTextElement(TextView.CachedElements.GetTextForNonPrintableCharacter(newlineText, this), 0), GlobalTextRunProperties);
         }
 
-        private string _cachedString;
+        private ReadOnlySlice<char> _cachedString;
         private int _cachedStringOffset;
 
-        public StringSegment GetText(int offset, int length)
+        public ReadOnlySlice<char> GetText(int offset, int length)
         {
-            if (_cachedString != null)
+            if (!_cachedString.IsEmpty)
             {
                 if (offset >= _cachedStringOffset && offset + length <= _cachedStringOffset + _cachedString.Length)
                 {
-                    return new StringSegment(_cachedString, offset - _cachedStringOffset, length);
+                    return new ReadOnlySlice<char>(_cachedString.Buffer, offset, length, offset - _cachedStringOffset);
                 }
             }
+            
             _cachedStringOffset = offset;
-            return new StringSegment(_cachedString = Document.GetText(offset, length));
+
+            _cachedString = new ReadOnlySlice<char>(Document.GetText(offset, length).AsMemory(), offset, length);
+
+            return _cachedString;
         }
     }
 }

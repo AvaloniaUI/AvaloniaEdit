@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
+using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
 
@@ -40,14 +41,18 @@ namespace AvaloniaEdit.Rendering
             }
 
             var properties = context.GlobalTextRunProperties.Clone();
-            properties.ForegroundBrush = context.TextView.NonPrintableCharacterBrush;
+            
+            properties.SetForegroundBrush(context.TextView.NonPrintableCharacterBrush);
+            
             if (_formatter == null)
             {
-                _formatter = TextFormatterFactory.Create();
+                _formatter = TextFormatter.Current;
             }
 
             textLine = FormattedTextElement.PrepareText(_formatter, text, properties);
+            
             _nonPrintableCharacterTexts[text] = textLine;
+            
             return textLine;
         }
     }

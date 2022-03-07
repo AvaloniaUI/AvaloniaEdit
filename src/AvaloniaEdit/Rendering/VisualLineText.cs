@@ -18,8 +18,11 @@
 
 using System;
 using System.Collections.Generic;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Text;
+using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -59,8 +62,10 @@ namespace AvaloniaEdit.Rendering
 				throw new ArgumentNullException(nameof(context));
 			
 			var relativeOffset = startVisualColumn - VisualColumn;
+			
 			var text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset, DocumentLength - relativeOffset);
-			return new TextCharacters(text.Text, text.Offset, text.Count, TextRunProperties);
+			
+			return new TextCharacters(text, TextRunProperties);
 		}
 		
 		/// <inheritdoc/>
@@ -71,15 +76,16 @@ namespace AvaloniaEdit.Rendering
 		}
 		
 		/// <inheritdoc/>
-		public override StringRange GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
+		public override ReadOnlySlice<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
 		{
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 			
 			var relativeOffset = visualColumnLimit - VisualColumn;
+			
 			var text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset, relativeOffset);
-			var range = new StringRange(text.Text, text.Offset, text.Count);
-			return range;
+
+			return text;
 		}
 		
 		/// <inheritdoc/>

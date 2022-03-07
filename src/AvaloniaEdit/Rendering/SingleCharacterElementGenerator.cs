@@ -21,9 +21,11 @@ using System.Diagnostics.CodeAnalysis;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
+using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
+using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -76,9 +78,9 @@ namespace AvaloniaEdit.Rendering
             var endLine = CurrentContext.VisualLine.LastDocumentLine;
             var relevantText = CurrentContext.GetText(startOffset, endLine.EndOffset - startOffset);
 
-            for (var i = 0; i < relevantText.Count; i++)
+            for (var i = 0; i < relevantText.Length; i++)
             {
-                var c = relevantText.Text[relevantText.Offset + i];
+                var c = relevantText[i];
                 switch (c)
                 {
                     case ' ':
@@ -114,8 +116,10 @@ namespace AvaloniaEdit.Rendering
             if (ShowBoxForControlCharacters && char.IsControl(c))
             {
                 var p = CurrentContext.GlobalTextRunProperties.Clone();
-                p.ForegroundBrush = Brushes.White;
-                var textFormatter = TextFormatterFactory.Create();
+                
+                p.SetForegroundBrush(Brushes.White);
+
+                var textFormatter = TextFormatter.Current;
                 var text = FormattedTextElement.PrepareText(textFormatter,
                     TextUtilities.GetControlCharacterName(c), p);
                 return new SpecialCharacterBoxElement(text);
@@ -158,7 +162,7 @@ namespace AvaloniaEdit.Rendering
                 if (startVisualColumn == VisualColumn)
                     return new TabGlyphRun(this, TextRunProperties);
                 if (startVisualColumn == VisualColumn + 1)
-                    return new TextCharacters("\t", TextRunProperties);
+                    return new TextCharacters("\t".AsMemory(), TextRunProperties);
                 throw new ArgumentOutOfRangeException(nameof(startVisualColumn));
             }
 
@@ -187,9 +191,7 @@ namespace AvaloniaEdit.Rendering
 
             public override bool HasFixedSize => true;
 
-            public override StringRange StringRange => default(StringRange);
-
-            public override int Length => 1;
+            public override int TextSourceLength => 1;
 
             public override TextRunProperties Properties { get; }
 

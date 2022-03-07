@@ -16,9 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System.Globalization;
+using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
 using AvaloniaEdit.Document;
-using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
+
+#nullable enable
 
 namespace AvaloniaEdit.Rendering
 {
@@ -45,7 +50,7 @@ namespace AvaloniaEdit.Rendering
 		/// <summary>
 		/// Gets the global text run properties.
 		/// </summary>
-		TextRunProperties GlobalTextRunProperties { get; }
+		CustomTextRunProperties GlobalTextRunProperties { get; }
 		
 		/// <summary>
 		/// Gets a piece of text from the document.
@@ -56,6 +61,75 @@ namespace AvaloniaEdit.Rendering
 		/// This method should be the preferred text access method in the text transformation pipeline, as it can avoid repeatedly allocating string instances
 		/// for text within the same line.
 		/// </remarks>
-		StringSegment GetText(int offset, int length);
+		ReadOnlySlice<char> GetText(int offset, int length);
+	}
+
+	public class CustomTextRunProperties : TextRunProperties
+	{
+		private Typeface _typeface;
+		private double _fontRenderingEmSize;
+		private TextDecorationCollection? _textDecorations;
+		private IBrush? _foregroundBrush;
+		private IBrush? _backgroundBrush;
+		private CultureInfo? _cultureInfo;
+		private BaselineAlignment _baselineAlignment;
+
+		internal CustomTextRunProperties(Typeface typeface, double fontRenderingEmSize,
+			TextDecorationCollection? textDecorations, IBrush? foregroundBrush, IBrush? backgroundBrush,
+			CultureInfo? cultureInfo, BaselineAlignment baselineAlignment)
+		{
+			_typeface = typeface;
+			_fontRenderingEmSize = fontRenderingEmSize;
+			_textDecorations = textDecorations;
+			_foregroundBrush = foregroundBrush;
+			_backgroundBrush = backgroundBrush;
+			_cultureInfo = cultureInfo;
+			_baselineAlignment = baselineAlignment;
+		}
+
+		public override Typeface Typeface => _typeface;
+
+		public override double FontRenderingEmSize => _fontRenderingEmSize;
+
+		public override TextDecorationCollection? TextDecorations => _textDecorations;
+
+		public override IBrush? ForegroundBrush => _foregroundBrush;
+
+		public override IBrush? BackgroundBrush => _backgroundBrush;
+
+		public override CultureInfo? CultureInfo => _cultureInfo;
+
+		public override BaselineAlignment BaselineAlignment => _baselineAlignment;
+
+		public CustomTextRunProperties Clone()
+		{
+			return new CustomTextRunProperties(Typeface, FontRenderingEmSize, TextDecorations, ForegroundBrush,
+				BackgroundBrush, CultureInfo, BaselineAlignment);
+		}
+
+		public void SetForegroundBrush(IBrush foregroundBrush)
+		{
+			_foregroundBrush = foregroundBrush;
+		}
+
+		public void SetBackgroundBrush(IBrush backgroundBrush)
+		{
+			_backgroundBrush = backgroundBrush;
+		}
+
+		public void SetTypeface(Typeface typeface)
+		{
+			_typeface = typeface;
+		}
+
+		public void SetFontSize(int colorFontSize)
+		{
+			_fontRenderingEmSize = colorFontSize;
+		}
+
+		public void SetTextDecorations(TextDecorationCollection textDecorations)
+		{
+			_textDecorations = textDecorations;
+		}
 	}
 }

@@ -19,8 +19,10 @@
 using System;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
+using JetBrains.Annotations;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -63,11 +65,12 @@ namespace AvaloniaEdit.Rendering
         }
 
         /// <inheritdoc/>
+        [CanBeNull]
         public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
         {
             if (TextLine == null)
             {
-                var formatter = TextFormatterFactory.Create();
+                var formatter = TextFormatter.Current;
                 TextLine = PrepareText(formatter, Text, TextRunProperties);
                 Text = null;
             }
@@ -86,15 +89,14 @@ namespace AvaloniaEdit.Rendering
             if (properties == null)
                 throw new ArgumentNullException(nameof(properties));
             return formatter.FormatLine(
-                new SimpleTextSource(text, properties),
+                new SimpleTextSource(text.AsMemory(), properties),
                 0,
                 32000,
-                new TextParagraphProperties
-                {
-                    DefaultTextRunProperties = properties,
-                    TextWrapping = TextWrapping.NoWrap,
-                    DefaultIncrementalTab = 40
-                });
+
+                //DefaultIncrementalTab = 40
+
+                new GenericTextParagraphProperties(FlowDirection.LeftToRight, TextAlignment.Left, true, false,
+                    properties, TextWrapping.NoWrap, 0, 0));
         }
     }
 
@@ -118,10 +120,7 @@ namespace AvaloniaEdit.Rendering
         public FormattedTextElement Element { get; }
 
         /// <inheritdoc/>
-        public override StringRange StringRange => default(StringRange);
-
-        /// <inheritdoc/>
-        public override int Length => Element.VisualLength;
+        public override int TextSourceLength => Element.VisualLength;
 
         /// <inheritdoc/>
         public override bool HasFixedSize => true;
@@ -132,11 +131,14 @@ namespace AvaloniaEdit.Rendering
         public override Size GetSize(double remainingParagraphWidth)
         {
             var formattedText = Element.FormattedText;
+            
             if (formattedText != null)
             {
-                return formattedText.Bounds.Size;
+                return new Size(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
             }
+            
             var text = Element.TextLine;
+            
             return new Size(text.WidthIncludingTrailingWhitespace,
                 text.Height);
         }
@@ -153,7 +155,7 @@ namespace AvaloniaEdit.Rendering
             if (Element.FormattedText != null)
             {
                 //origin = origin.WithY(origin.Y - Element.formattedText.Baseline);
-                drawingContext.DrawText(null, origin, Element.FormattedText);
+                drawingContext.DrawText(Element.FormattedText, origin);
             }
             else
             {

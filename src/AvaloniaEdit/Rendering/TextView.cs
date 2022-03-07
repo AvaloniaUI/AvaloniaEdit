@@ -32,6 +32,7 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
@@ -142,7 +143,7 @@ namespace AvaloniaEdit.Rendering
             if (newValue != null)
             {
                 TextDocumentWeakEventManager.Changing.AddHandler(newValue, OnChanging);
-                _formatter = TextFormatterFactory.Create();
+                _formatter = TextFormatter.Current;
                 InvalidateDefaultTextMetrics(); // measuring DefaultLineHeight depends on formatter
                 _heightTree = new HeightTree(newValue, DefaultLineHeight);
                 CachedElements = new TextViewCachedElements();
@@ -1058,30 +1059,41 @@ namespace AvaloniaEdit.Rendering
         private TextFormatter _formatter;
         internal TextViewCachedElements CachedElements;
 
-        private TextRunProperties CreateGlobalTextRunProperties()
+        private CustomTextRunProperties CreateGlobalTextRunProperties()
         {
-            var properties = new TextRunProperties
-            {
-                FontSize = FontSize,
-                Typeface = new Typeface(TextBlock.GetFontFamily(this), TextBlock.GetFontStyle(this), TextBlock.GetFontWeight(this)),
-                ForegroundBrush = TextBlock.GetForeground(this),
-                CultureInfo = CultureInfo.CurrentCulture
-            };
+            var properties = new CustomTextRunProperties
+            (
+                new Typeface(TextBlock.GetFontFamily(this), TextBlock.GetFontStyle(this),
+                    TextBlock.GetFontWeight(this)),
+                FontSize,
+                null,
+                TextBlock.GetForeground(this),
+                null,
+                cultureInfo: CultureInfo.CurrentCulture,
+                BaselineAlignment.Baseline
+            );
+            
             return properties;
         }
 
-        private TextParagraphProperties CreateParagraphProperties(TextRunProperties defaultTextRunProperties)
+        private GenericTextParagraphProperties CreateParagraphProperties(TextRunProperties defaultTextRunProperties)
         {
-            return new TextParagraphProperties
-            {
-                DefaultTextRunProperties = defaultTextRunProperties,
-                TextWrapping = _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
-                DefaultIncrementalTab = Options.IndentationSize * WideSpaceWidth
-            };
+            return new GenericTextParagraphProperties
+            (
+                FlowDirection.LeftToRight,
+                TextAlignment.Left,
+                true,
+                false,
+                defaultTextRunProperties,
+                _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
+                0,
+                0/*,
+                DefaultIncrementalTab = Options.IndentationSize * WideSpaceWidth*/
+            );
         }
 
         private VisualLine BuildVisualLine(DocumentLine documentLine,
-                                   TextRunProperties globalTextRunProperties,
+                                   CustomTextRunProperties globalTextRunProperties,
                                    TextParagraphProperties paragraphProperties,
                                    VisualLineElementGenerator[] elementGeneratorsArray,
                                    IVisualLineTransformer[] lineTransformersArray,
@@ -1091,6 +1103,7 @@ namespace AvaloniaEdit.Rendering
                 throw new InvalidOperationException("Trying to build visual line from collapsed line");
 
             var visualLine = new VisualLine(this, documentLine);
+            
             var textSource = new VisualLineTextSource(visualLine)
             {
                 Document = _document,
@@ -1121,8 +1134,6 @@ namespace AvaloniaEdit.Rendering
             // now construct textLines:
             var textOffset = 0;
             var textLines = new List<TextLine>();
-            paragraphProperties.Indent = 0;
-            paragraphProperties.FirstLineInParagraph = true;
             while (textOffset <= visualLine.VisualLengthWithEndOfLineMarker)
             {
                 var textLine = _formatter.FormatLine(
@@ -1132,7 +1143,7 @@ namespace AvaloniaEdit.Rendering
                     paragraphProperties
                 );
                 textLines.Add(textLine);
-                textOffset += textLine.Length;
+                textOffset += textLine.TextRange.Length;
 
                 // exit loop so that we don't do the indentation calculation if there's only a single line
                 if (textOffset >= visualLine.VisualLengthWithEndOfLineMarker)
@@ -1140,7 +1151,7 @@ namespace AvaloniaEdit.Rendering
 
                 if (paragraphProperties.FirstLineInParagraph)
                 {
-                    paragraphProperties.FirstLineInParagraph = false;
+                    //paragraphProperties.FirstLineInParagraph = false;
 
                     var options = Options;
                     double indentation = 0;
@@ -1150,13 +1161,15 @@ namespace AvaloniaEdit.Rendering
                         var indentVisualColumn = GetIndentationVisualColumn(visualLine);
                         if (indentVisualColumn > 0 && indentVisualColumn < textOffset)
                         {
-                            indentation = textLine.GetDistanceFromCharacter(indentVisualColumn, 0);
+                            indentation = textLine.GetDistanceFromCharacterHit(new CharacterHit(indentVisualColumn));
                         }
                     }
                     indentation += options.WordWrapIndentation;
                     // apply the calculated indentation unless it's more than half of the text editor size:
                     if (indentation > 0 && indentation * 2 < availableSize.Width)
-                        paragraphProperties.Indent = indentation;
+                    {
+                        //paragraphProperties.Indent = indentation;
+                    }
                 }
             }
             visualLine.SetTextLines(textLines);
@@ -1226,16 +1239,20 @@ namespace AvaloniaEdit.Rendering
                     var offset = 0;
                     foreach (var textLine in visualLine.TextLines)
                     {
-                        foreach (var span in textLine.GetTextRuns())
+                        foreach (var span in textLine.TextRuns)
                         {
                             var inline = span as InlineObjectRun;
+                            
                             if (inline?.VisualLine != null)
                             {
                                 Debug.Assert(_inlineObjects.Contains(inline));
-                                var distance = textLine.GetDistanceFromCharacter(offset, 0);
+                                
+                                var distance = textLine.GetDistanceFromCharacterHit(new CharacterHit(offset));
+                                
                                 inline.Element.Arrange(new Rect(new Point(pos.X + distance, pos.Y), inline.Element.DesiredSize));
                             }
-                            offset += span.Length;
+                            
+                            offset += span.TextSourceLength;
                         }
                         pos = new Point(pos.X, pos.Y + textLine.Height);
                     }
@@ -1516,10 +1533,12 @@ namespace AvaloniaEdit.Rendering
             if (_formatter != null)
             {
                 var textRunProperties = CreateGlobalTextRunProperties();
+                
                 var line = _formatter.FormatLine(
-                    new SimpleTextSource("x", textRunProperties),
+                    new SimpleTextSource("x".AsMemory(), textRunProperties),
                     0, 32000,
-                    new TextParagraphProperties { DefaultTextRunProperties = textRunProperties });
+                    new GenericTextParagraphProperties(textRunProperties));
+                
                 _wideSpaceWidth = Math.Max(1, line.WidthIncludingTrailingWhitespace);
                 _defaultBaseline = Math.Max(1, line.Baseline);
                 _defaultLineHeight = Math.Max(1, line.Height);

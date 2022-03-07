@@ -24,9 +24,11 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
+using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -362,9 +364,9 @@ namespace AvaloniaEdit.Rendering
                 return TextLines[TextLines.Count - 1];
             foreach (var line in TextLines)
             {
-                if (isAtEndOfLine ? visualColumn <= line.Length : visualColumn < line.Length)
+                if (isAtEndOfLine ? visualColumn <= line.TextRange.Length : visualColumn < line.TextRange.Length)
                     return line;
-                visualColumn -= line.Length;
+                visualColumn -= line.TextRange.Length;
             }
             throw new InvalidOperationException("Shouldn't happen (VisualLength incorrect?)");
         }
@@ -416,7 +418,7 @@ namespace AvaloniaEdit.Rendering
             if (!TextLines.Contains(textLine))
                 throw new ArgumentException("textLine is not a line in this VisualLine");
 
-            return TextLines.TakeWhile(tl => tl != textLine).Sum(tl => tl.Length);
+            return TextLines.TakeWhile(tl => tl != textLine).Sum(tl => tl.TextRange.Length);
         }
 
         /// <summary>
@@ -465,12 +467,15 @@ namespace AvaloniaEdit.Rendering
         {
             if (textLine == null)
                 throw new ArgumentNullException(nameof(textLine));
-            var xPos = textLine.GetDistanceFromCharacter(
-                Math.Min(visualColumn, VisualLengthWithEndOfLineMarker), 0);
+            
+            var xPos = textLine.GetDistanceFromCharacterHit(new CharacterHit(Math.Min(visualColumn,
+                VisualLengthWithEndOfLineMarker)));
+            
             if (visualColumn > VisualLengthWithEndOfLineMarker)
             {
                 xPos += (visualColumn - VisualLengthWithEndOfLineMarker) * _textView.WideSpaceWidth;
             }
+            
             return xPos;
         }
 
@@ -496,7 +501,7 @@ namespace AvaloniaEdit.Rendering
         {
             var textLine = GetTextLineByVisualYPosition(point.Y);
             var vc = GetVisualColumn(textLine, point.X, allowVirtualSpace);
-            isAtEndOfLine = (vc >= GetTextLineVisualStartColumn(textLine) + textLine.Length);
+            isAtEndOfLine = (vc >= GetTextLineVisualStartColumn(textLine) + textLine.TextRange.Length);
             return vc;
         }
 
@@ -515,8 +520,9 @@ namespace AvaloniaEdit.Rendering
                 }
             }
 
-            var ch = textLine.GetCharacterFromDistance(xPos);
-            return ch.firstIndex + ch.trailingLength;
+            var ch = textLine.GetCharacterHitFromDistance(xPos);
+            
+            return ch.FirstCharacterIndex + ch.TrailingLength;
         }
 
         /// <summary>
@@ -584,12 +590,14 @@ namespace AvaloniaEdit.Rendering
                 // GetCharacterHitFromDistance returns a hit with FirstCharacterIndex=last character in line
                 // and TrailingLength=1 when clicking behind the line, so the floor function needs to handle this case
                 // specially and return the line's end column instead.
-                return GetTextLineVisualStartColumn(textLine) + textLine.Length;
+                return GetTextLineVisualStartColumn(textLine) + textLine.TextRange.Length;
             }
 
             isAtEndOfLine = false;
-            var ch = textLine.GetCharacterFromDistance(point.X);
-            return ch.firstIndex;
+            
+            var ch = textLine.GetCharacterHitFromDistance(point.X);
+            
+            return ch.FirstCharacterIndex;
         }
 
         /// <summary>

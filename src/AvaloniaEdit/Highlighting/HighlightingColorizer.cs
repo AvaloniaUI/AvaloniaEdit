@@ -18,6 +18,7 @@
 
 using System;
 using System.Diagnostics;
+using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Utils;
@@ -260,7 +261,7 @@ namespace AvaloniaEdit.Highlighting
             {
                 var b = color.Foreground.GetBrush(context);
                 if (b != null)
-                    element.TextRunProperties.ForegroundBrush = b;
+                    element.TextRunProperties.SetForegroundBrush(b);
             }
             if (color.Background != null)
             {
@@ -271,18 +272,44 @@ namespace AvaloniaEdit.Highlighting
             if (color.FontStyle != null || color.FontWeight != null || color.FontFamily != null)
             {
                 var tf = element.TextRunProperties.Typeface;
-                element.TextRunProperties.Typeface = new Avalonia.Media.Typeface(
+                element.TextRunProperties.SetTypeface(new Avalonia.Media.Typeface(
                     color.FontFamily ?? tf.FontFamily,
                     color.FontStyle ?? tf.Style,
-                    color.FontWeight ?? tf.Weight
+                    color.FontWeight ?? tf.Weight)
                 );
             }
             if (color.FontSize.HasValue)
-                element.TextRunProperties.FontSize = color.FontSize.Value;
+                element.TextRunProperties.SetFontSize(color.FontSize.Value);
+
             if (color.Underline ?? false)
-                element.TextRunProperties.Underline = true;
+            {
+                element.TextRunProperties.SetTextDecorations(new TextDecorationCollection{new()
+                {
+                    Location = TextDecorationLocation.Underline
+                }});
+            }
+
             if (color.Strikethrough ?? false)
-                element.TextRunProperties.Strikethrough = true;
+            {
+                if (element.TextRunProperties.TextDecorations != null)
+                {
+                    element.TextRunProperties.TextDecorations.Add(new TextDecoration
+                    {
+                        Location = TextDecorationLocation.Strikethrough
+                    });
+                }
+                else
+                {
+                    element.TextRunProperties.SetTextDecorations(new TextDecorationCollection
+                    {
+                        new()
+                        {
+                            Location = TextDecorationLocation.Strikethrough
+                        }
+                    });
+                }
+                
+            }
         }
 
         /// <summary>

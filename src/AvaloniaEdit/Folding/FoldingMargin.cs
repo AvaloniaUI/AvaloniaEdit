@@ -26,6 +26,7 @@ using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 
 namespace AvaloniaEdit.Folding
 {
