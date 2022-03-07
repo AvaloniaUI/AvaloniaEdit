@@ -74,7 +74,8 @@ namespace AvaloniaEdit.Rendering
                 {
                     return CreateTextRunForNewLine();
                 }
-                return new TextEndOfParagraph(1);
+
+                return null;
             }
             catch (Exception ex)
             {

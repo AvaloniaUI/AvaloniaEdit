@@ -32,11 +32,16 @@ namespace AvaloniaEdit.Rendering
 			_properties = properties;
 		}
 		
-		public TextRun GetTextRun(int characterIndex)
+		public TextRun GetTextRun(int textSourceIndex)
 		{
-			if (characterIndex < _text.Length)
+			if (textSourceIndex < _text.Length)
 			{
-				return new TextCharacters(_text, characterIndex, _text.Length - characterIndex, _properties);
+				return new TextCharacters(_text, textSourceIndex, _text.Length - textSourceIndex, _properties);
+			}
+			
+			if (textSourceIndex > _text.Length)
+			{
+				return null;
 			}
 			
 		    return new TextEndOfParagraph(1);

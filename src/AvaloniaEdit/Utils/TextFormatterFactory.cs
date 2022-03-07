@@ -67,7 +67,17 @@ namespace AvaloniaEdit.Utils
 			
 			public TextRun GetTextRun(int textSourceIndex)
 			{
-				return new TextCharacters(_text, _defaultProperties);
+				if (textSourceIndex < _text.Length)
+				{
+					return new TextCharacters(_text, textSourceIndex, _text.Length - textSourceIndex, _defaultProperties);
+				}
+			
+				if (textSourceIndex > _text.Length)
+				{
+					return null;
+				}
+			
+				return new TextEndOfParagraph(1);
 			}
 		}
 	}
