@@ -66,7 +66,7 @@ namespace AvaloniaEdit.Rendering
 			
 			var text = context.GetText(offset, DocumentLength - relativeOffset);
 			
-			return new TextCharacters(new ReadOnlySlice<char>(text.AsMemory()), TextRunProperties);
+			return new TextCharacters(new ReadOnlySlice<char>(text.AsMemory(), offset, text.Length), TextRunProperties);
 		}
 		
 		/// <inheritdoc/>
