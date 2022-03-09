@@ -61,7 +61,7 @@ namespace AvaloniaEdit.Rendering
 		/// This method should be the preferred text access method in the text transformation pipeline, as it can avoid repeatedly allocating string instances
 		/// for text within the same line.
 		/// </remarks>
-		ReadOnlySlice<char> GetText(int offset, int length);
+		string GetText(int offset, int length);
 	}
 
 	public class CustomTextRunProperties : TextRunProperties

@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.999-cibuild0019122-beta" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.999-cibuild0019128-beta" />
     <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
     <ProjectReference Include="..\AvaloniaEdit.TextMate\AvaloniaEdit.TextMate.csproj" />
   </ItemGroup>

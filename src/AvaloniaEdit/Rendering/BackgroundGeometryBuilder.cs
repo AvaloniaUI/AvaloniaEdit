@@ -180,6 +180,11 @@ namespace AvaloniaEdit.Rendering
 
         private static IEnumerable<Rect> ProcessTextLines(TextView textView, VisualLine visualLine, int segmentStartVc, int segmentEndVc)
         {
+            if (visualLine.TextLines.Count == 0)
+            {
+                yield break;
+            }
+            
             var lastTextLine = visualLine.TextLines.Last();
             var scrollOffset = textView.ScrollOffset;
 

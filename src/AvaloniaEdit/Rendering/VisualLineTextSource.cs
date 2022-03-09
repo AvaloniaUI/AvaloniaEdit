@@ -115,22 +115,21 @@ namespace AvaloniaEdit.Rendering
             return new FormattedTextRun(new FormattedTextElement(TextView.CachedElements.GetTextForNonPrintableCharacter(newlineText, this), 0), GlobalTextRunProperties);
         }
 
-        private ReadOnlySlice<char> _cachedString;
+        private string _cachedString;
         private int _cachedStringOffset;
 
-        public ReadOnlySlice<char> GetText(int offset, int length)
+        public string GetText(int offset, int length)
         {
-            if (!_cachedString.IsEmpty)
+            if (_cachedString != null)
             {
                 if (offset >= _cachedStringOffset && offset + length <= _cachedStringOffset + _cachedString.Length)
                 {
-                    return new ReadOnlySlice<char>(_cachedString.Buffer, offset, length, offset - _cachedStringOffset);
+                    return _cachedString.Substring(offset - _cachedStringOffset, length);
                 }
             }
             
             _cachedStringOffset = offset;
-
-            _cachedString = new ReadOnlySlice<char>(Document.GetText(offset, length).AsMemory(), offset, length);
+            _cachedString = Document.GetText(offset, length);
 
             return _cachedString;
         }

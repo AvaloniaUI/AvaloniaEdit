@@ -82,7 +82,7 @@ namespace AvaloniaEdit.Editing
                     var textLine = TextFormatterFactory.FormatLine(text.AsMemory(),
                         Typeface,
                         EmSize,
-                        GetValue(TemplatedControl.ForegroundProperty)
+                        foreground
                     );
 
                     var y = line.TextLines.Count > 0

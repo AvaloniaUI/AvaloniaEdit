@@ -61,10 +61,12 @@ namespace AvaloniaEdit.Rendering
 				throw new ArgumentNullException(nameof(context));
 			
 			var relativeOffset = startVisualColumn - VisualColumn;
+
+			var offset = context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset;
 			
-			var text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset, DocumentLength - relativeOffset);
+			var text = context.GetText(offset, DocumentLength - relativeOffset);
 			
-			return new TextCharacters(text, TextRunProperties);
+			return new TextCharacters(new ReadOnlySlice<char>(text.AsMemory()), TextRunProperties);
 		}
 		
 		/// <inheritdoc/>
@@ -75,7 +77,7 @@ namespace AvaloniaEdit.Rendering
 		}
 		
 		/// <inheritdoc/>
-		public override ReadOnlySlice<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
+		public override string GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
 		{
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
