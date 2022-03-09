@@ -21,7 +21,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
-using AvaloniaEdit.Text;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -59,10 +58,8 @@ namespace AvaloniaEdit.Rendering
     /// <summary>
     /// A text run with an embedded UIElement.
     /// </summary>
-    public class InlineObjectRun : TextEmbeddedObject
+    public class InlineObjectRun : DrawableTextRun
     {
-        internal Size DesiredSize;
-
         /// <summary>
         /// Creates a new InlineObjectRun instance.
         /// </summary>
@@ -91,37 +88,19 @@ namespace AvaloniaEdit.Rendering
         public VisualLine VisualLine { get; internal set; }
 
         /// <inheritdoc/>
-        public override bool HasFixedSize => true;
-
-        /// <inheritdoc/>
         public override int TextSourceLength { get; }
 
         /// <inheritdoc/>
         public override TextRunProperties Properties { get; }
 
-        public override Size GetSize(double remainingParagraphWidth)
-        {
-            if (Element.IsMeasureValid)
-            {
-                return DesiredSize;
-            }
+        public override double Baseline => Element.DesiredSize.Height;
 
-            return Size.Empty;
-        }
-
-        public override Rect ComputeBoundingBox()
-        {
-            if (Element.IsMeasureValid)
-            {
-                var baseline = DesiredSize.Height;
-                return new Rect(DesiredSize);
-            }
-
-            return Rect.Empty;
-        }
+        public override Size Size => Element.IsMeasureValid ? Element.DesiredSize : Size.Empty;
+        public Size DesiredSize { get; set; }
 
         public override void Draw(DrawingContext drawingContext, Point origin)
         {
+            //noop
         }
     }
 }

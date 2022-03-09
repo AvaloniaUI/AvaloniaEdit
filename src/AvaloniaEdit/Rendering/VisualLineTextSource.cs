@@ -21,8 +21,6 @@ using System.Diagnostics;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Utilities;
 using AvaloniaEdit.Document;
-using AvaloniaEdit.Text;
-using AvaloniaEdit.Utils;
 using JetBrains.Annotations;
 using ITextSource = Avalonia.Media.TextFormatting.ITextSource;
 
@@ -46,6 +44,11 @@ namespace AvaloniaEdit.Rendering
         [CanBeNull]
         public TextRun GetTextRun(int characterIndex)
         {
+            if (characterIndex > VisualLine.VisualLengthWithEndOfLineMarker)
+            {
+                return null;
+            }
+            
             try
             {
                 foreach (var element in VisualLine.Elements)
@@ -70,12 +73,13 @@ namespace AvaloniaEdit.Rendering
                         return run;
                     }
                 }
+                
                 if (TextView.Options.ShowEndOfLine && characterIndex == VisualLine.VisualLength)
                 {
                     return CreateTextRunForNewLine();
                 }
 
-                return null;
+                return new TextEndOfLine(2);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,0 @@
-﻿namespace AvaloniaEdit.Text
-{
-
-}

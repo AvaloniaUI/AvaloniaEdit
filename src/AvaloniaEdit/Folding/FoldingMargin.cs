@@ -22,7 +22,6 @@ using System.Linq;
 using Avalonia;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
 using Avalonia.Controls;
 using Avalonia.Media;

@@ -37,7 +37,6 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
-using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Rendering
@@ -1134,7 +1133,7 @@ namespace AvaloniaEdit.Rendering
             // now construct textLines:
             var textOffset = 0;
             var textLines = new List<TextLine>();
-            while (textOffset <= visualLine.VisualLengthWithEndOfLineMarker)
+            while (textOffset < visualLine.VisualLengthWithEndOfLineMarker)
             {
                 var textLine = _formatter.FormatLine(
                     textSource,

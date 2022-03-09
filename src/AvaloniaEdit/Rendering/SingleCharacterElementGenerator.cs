@@ -23,8 +23,6 @@ using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
-using AvaloniaEdit.Text;
-using AvaloniaEdit.Utils;
 using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Rendering
@@ -179,7 +177,7 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
-        internal sealed class TabGlyphRun : TextEmbeddedObject
+        internal sealed class TabGlyphRun : DrawableTextRun
         {
             private readonly TabTextElement _element;
 
@@ -189,21 +187,13 @@ namespace AvaloniaEdit.Rendering
                 _element = element;
             }
 
-            public override bool HasFixedSize => true;
-
             public override int TextSourceLength => 1;
 
             public override TextRunProperties Properties { get; }
 
-            public override Size GetSize(double remainingParagraphWidth)
-            {
-                return new Size(0, _element.Text.Height);
-            }
+            public override double Baseline => _element.Text.Height;
 
-            public override Rect ComputeBoundingBox()
-            {
-                return new Rect(GetSize(double.PositiveInfinity));
-            }
+            public override Size Size => new(0, _element.Text.Height);
 
             public override void Draw(DrawingContext drawingContext, Point origin)
             {
@@ -239,16 +229,20 @@ namespace AvaloniaEdit.Rendering
             {
             }
 
-            public override Size GetSize(double remainingParagraphWidth)
+            public override Size Size
             {
-                var s = base.GetSize(remainingParagraphWidth);
-                return s.WithWidth(s.Width + BoxMargin);
+                get
+                {
+                    var s = base.Size;
+                    
+                    return s.WithWidth(s.Width + BoxMargin);
+                }
             }
 
             public override void Draw(DrawingContext drawingContext, Point origin)
             {
                 var newOrigin = new Point(origin.X + (BoxMargin / 2), origin.Y);
-                var metrics = GetSize(double.PositiveInfinity);
+                var metrics = Size;
                 var r = new Rect(origin.X, origin.Y, metrics.Width, metrics.Height);
                 drawingContext.FillRectangle(DarkGrayBrush, r, 2.5f);
                 base.Draw(drawingContext, newOrigin);

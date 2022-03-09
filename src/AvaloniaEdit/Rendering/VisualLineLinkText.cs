@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using AvaloniaEdit.Text;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Controls;

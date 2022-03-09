@@ -26,7 +26,6 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
-using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
 using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 

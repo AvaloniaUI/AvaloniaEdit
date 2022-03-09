@@ -20,8 +20,6 @@ using System;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
-using AvaloniaEdit.Text;
-using AvaloniaEdit.Utils;
 using JetBrains.Annotations;
 
 namespace AvaloniaEdit.Rendering
@@ -103,7 +101,7 @@ namespace AvaloniaEdit.Rendering
     /// <summary>
     /// This is the TextRun implementation used by the <see cref="FormattedTextElement"/> class.
     /// </summary>
-    public class FormattedTextRun : TextEmbeddedObject
+    public class FormattedTextRun : DrawableTextRun
     {
         /// <summary>
         /// Creates a new FormattedTextRun.
@@ -112,6 +110,8 @@ namespace AvaloniaEdit.Rendering
         {
             Properties = properties ?? throw new ArgumentNullException(nameof(properties));
             Element = element ?? throw new ArgumentNullException(nameof(element));
+
+            Size = GetSize();
         }
 
         /// <summary>
@@ -123,12 +123,14 @@ namespace AvaloniaEdit.Rendering
         public override int TextSourceLength => Element.VisualLength;
 
         /// <inheritdoc/>
-        public override bool HasFixedSize => true;
-
-        /// <inheritdoc/>
         public override TextRunProperties Properties { get; }
+        
+        public override Size Size { get; }
 
-        public override Size GetSize(double remainingParagraphWidth)
+        public override double Baseline =>
+            Element.FormattedText?.Baseline ?? Element.TextLine.Baseline;
+
+        private Size GetSize()
         {
             var formattedText = Element.FormattedText;
             
@@ -141,12 +143,6 @@ namespace AvaloniaEdit.Rendering
             
             return new Size(text.WidthIncludingTrailingWhitespace,
                 text.Height);
-        }
-
-        /// <inheritdoc/>
-        public override Rect ComputeBoundingBox()
-        {
-            return new Rect(GetSize(double.PositiveInfinity));
         }
 
         /// <inheritdoc/>

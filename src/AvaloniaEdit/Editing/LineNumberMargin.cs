@@ -84,10 +84,14 @@ namespace AvaloniaEdit.Editing
                         EmSize,
                         GetValue(TemplatedControl.ForegroundProperty)
                     );
-                    
-                    var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                    
-                    textLine.Draw(drawingContext, new Point(renderSize.Width - textLine.WidthIncludingTrailingWhitespace, y - textView.VerticalOffset));
+
+                    var y = line.TextLines.Count > 0
+                        ? line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop)
+                        : line.VisualTop;
+
+                    textLine.Draw(drawingContext,
+                        new Point(renderSize.Width - textLine.WidthIncludingTrailingWhitespace,
+                            y - textView.VerticalOffset));
                 }
             }
         }

@@ -16,13 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using AvaloniaEdit.Text;
-using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Utilities;
-using AvaloniaEdit.Rendering;
 using TextLine = Avalonia.Media.TextFormatting.TextLine;
 using TextRun = Avalonia.Media.TextFormatting.TextRun;
 using TextRunProperties = Avalonia.Media.TextFormatting.TextRunProperties;

@@ -20,8 +20,6 @@ using System;
 using System.Collections.Generic;
 using Avalonia;
 using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Text;
-using AvaloniaEdit.Utils;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
@@ -202,7 +200,7 @@ namespace AvaloniaEdit.Folding
 
             public override void Draw(DrawingContext drawingContext, Point origin)
             {
-                var metrics = GetSize(double.PositiveInfinity);
+                var metrics = Size;
                 var r = new Rect(origin.X, origin.Y, metrics.Width, metrics.Height);
                 drawingContext.DrawRectangle(new Pen(_textBrush), r);
                 base.Draw(drawingContext, origin);

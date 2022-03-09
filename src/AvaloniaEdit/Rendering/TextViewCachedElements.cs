@@ -18,8 +18,6 @@
 
 using System.Collections.Generic;
 using Avalonia.Media.TextFormatting;
-using AvaloniaEdit.Text;
-using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Rendering
 {
