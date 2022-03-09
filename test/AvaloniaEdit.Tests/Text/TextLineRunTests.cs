@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Platform;
 
 using AvaloniaEdit.AvaloniaMocks;
@@ -256,79 +257,16 @@ namespace AvaloniaEdit.Text
 
             Assert.AreEqual(10, run.Length);
         }
-
-        [Test]
-        public void Text_Line_Run_Should_Perform_Word_Wrap_Line_When_Space_Found()
-        {
-            using var app = UnitTestApplication.Start(new TestServices().With(
-                renderInterface: new MockPlatformRenderInterface(),
-                fontManagerImpl: new MockFontManagerImpl()));
-
-            SimpleTextSource s = new SimpleTextSource(
-                "0123456789 0123456789",
-                CreateDefaultTextProperties());
-
-            var paragraphProperties = CreateDefaultParagraphProperties();
-
-            TextLineRun run = TextLineRun.Create(s, 0, 0, MockGlyphTypeface.GlyphAdvance * 13, paragraphProperties);
-
-            Assert.AreEqual(11, run.Length);
-        }
-
-        [Test]
-        public void Text_Line_Run_Should_Perform_Character_Line_Wrapping_When_Space_Not_Found()
-        {
-            using var app = UnitTestApplication.Start(new TestServices().With(
-                renderInterface: new MockPlatformRenderInterface(),
-                fontManagerImpl: new MockFontManagerImpl(),
-                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
-
-            SimpleTextSource s = new SimpleTextSource(
-                "0123456789",
-                CreateDefaultTextProperties());
-
-            var paragraphProperties = CreateDefaultParagraphProperties();
-
-            TextLineRun run = TextLineRun.Create(s, 0, 0, MockGlyphTypeface.GlyphAdvance * 3, paragraphProperties);
-
-            Assert.AreEqual(3, run.Length);
-        }
-
-        [Test]
-        public void Text_Line_Run_Should_Update_StringRange_When_Word_Wrap()
-        {
-            using var app = UnitTestApplication.Start(new TestServices().With(
-                renderInterface: new MockPlatformRenderInterface(),
-                fontManagerImpl: new MockFontManagerImpl()));
-
-            SimpleTextSource s = new SimpleTextSource(
-                "0123456789 0123456789",
-                CreateDefaultTextProperties());
-
-            var paragraphProperties = CreateDefaultParagraphProperties();
-
-            TextLineRun run = TextLineRun.Create(s, 0, 0, MockGlyphTypeface.GlyphAdvance * 13, paragraphProperties);
-
-            Assert.AreEqual("0123456789 ", run.StringRange.ToString());
-        }
-
+        
         TextRunProperties CreateDefaultTextProperties()
         {
-            return new TextRunProperties()
-            {
-                Typeface = new Typeface("Default"),
-                FontSize = MockGlyphTypeface.DefaultFontSize,
-            };
+            return new CustomTextRunProperties(new Typeface("Default"), MockGlyphTypeface.DefaultFontSize);
         }
 
         TextParagraphProperties CreateDefaultParagraphProperties()
         {
-            return new TextParagraphProperties()
-            {
-                DefaultTextRunProperties = CreateDefaultTextProperties(),
-                DefaultIncrementalTab = 70,
-                Indent = 4,
-            };
+            return new CustomTextParagraphProperties(CreateDefaultTextProperties(), defaultIncrementalTab: 70,
+                indent: 4);
         }
     }
 }

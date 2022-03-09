@@ -74,7 +74,7 @@ namespace AvaloniaEdit.Rendering
 			var endOffset = CurrentContext.VisualLine.LastDocumentLine.EndOffset;
 			var relevantText = CurrentContext.GetText(startOffset, endOffset - startOffset);
 			var m = _linkRegex.Match(relevantText);
-			matchOffset = m.Success ? m.Index - startOffset : -1;
+			matchOffset = m.Success ? m.Index + startOffset : -1;
 			return m;
 		}
 		

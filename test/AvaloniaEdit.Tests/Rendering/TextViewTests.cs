@@ -1,10 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-
 using AvaloniaEdit.AvaloniaMocks;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Text;
 
 using NUnit.Framework;
 
@@ -34,8 +32,8 @@ namespace AvaloniaEdit.Tests.Rendering
             VisualLine visualLine = textView.GetOrConstructVisualLine(document.Lines[0]);
 
             Assert.AreEqual(2, visualLine.TextLines.Count);
-            Assert.AreEqual("hello ", ((TextLineImpl)visualLine.TextLines[0]).LineRuns[0].StringRange.ToString());
-            Assert.AreEqual("world", ((TextLineImpl)visualLine.TextLines[1]).LineRuns[0].StringRange.ToString());
+            Assert.AreEqual("hello ", new string(visualLine.TextLines[0].TextRuns[0].Text.Buffer.Span));
+            Assert.AreEqual("world", new string(visualLine.TextLines[1].TextRuns[0].Text.Buffer.Span));
 
             window.Close();
         }
@@ -61,7 +59,7 @@ namespace AvaloniaEdit.Tests.Rendering
             VisualLine visualLine = textView.GetOrConstructVisualLine(document.Lines[0]);
 
             Assert.AreEqual(1, visualLine.TextLines.Count);
-            Assert.AreEqual("hello world", ((TextLineImpl)visualLine.TextLines[0]).LineRuns[0].StringRange.ToString());
+            Assert.AreEqual("hello world", new string(visualLine.TextLines[0].TextRuns[0].Text.Buffer.Span));
 
             window.Close();
         }

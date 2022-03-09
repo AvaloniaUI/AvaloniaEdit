@@ -19,7 +19,6 @@
 using System.Globalization;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
-using Avalonia.Utilities;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Utils;
 
@@ -64,8 +63,10 @@ namespace AvaloniaEdit.Rendering
 		string GetText(int offset, int length);
 	}
 
-	public class CustomTextRunProperties : TextRunProperties
+	public sealed class CustomTextRunProperties : TextRunProperties
 	{
+		public const double DefaultFontRenderingEmSize = 12;
+		
 		private Typeface _typeface;
 		private double _fontRenderingEmSize;
 		private TextDecorationCollection? _textDecorations;
@@ -74,9 +75,13 @@ namespace AvaloniaEdit.Rendering
 		private CultureInfo? _cultureInfo;
 		private BaselineAlignment _baselineAlignment;
 
-		internal CustomTextRunProperties(Typeface typeface, double fontRenderingEmSize,
-			TextDecorationCollection? textDecorations, IBrush? foregroundBrush, IBrush? backgroundBrush,
-			CultureInfo? cultureInfo, BaselineAlignment baselineAlignment)
+		internal CustomTextRunProperties(Typeface typeface, 
+			double fontRenderingEmSize = 12,
+			TextDecorationCollection? textDecorations = null, 
+			IBrush? foregroundBrush = null,
+			IBrush? backgroundBrush = null,
+			CultureInfo? cultureInfo = null, 
+			BaselineAlignment baselineAlignment = BaselineAlignment.Baseline)
 		{
 			_typeface = typeface;
 			_fontRenderingEmSize = fontRenderingEmSize;
@@ -131,5 +136,39 @@ namespace AvaloniaEdit.Rendering
 		{
 			_textDecorations = textDecorations;
 		}
+	}
+
+	public sealed class CustomTextParagraphProperties : TextParagraphProperties
+	{
+		public const double DefaultIncrementalTabWidth = 4 * CustomTextRunProperties.DefaultFontRenderingEmSize;
+		
+		private TextWrapping _textWrapping;
+		private double _lineHeight;
+		private double _indent;
+		private double _defaultIncrementalTab;
+		private readonly bool _firstLineInParagraph;
+
+		public CustomTextParagraphProperties(TextRunProperties defaultTextRunProperties,
+			bool firstLineInParagraph = true,
+			TextWrapping textWrapping = TextWrapping.NoWrap,
+			double lineHeight = 0, 
+			double indent = 0, 
+			double defaultIncrementalTab = DefaultIncrementalTabWidth)
+		{
+			DefaultTextRunProperties = defaultTextRunProperties;
+			_firstLineInParagraph = firstLineInParagraph;
+			_textWrapping = textWrapping;
+			_lineHeight = lineHeight;
+			_indent = indent;
+			_defaultIncrementalTab = defaultIncrementalTab;
+		}
+
+		public override FlowDirection FlowDirection => FlowDirection.LeftToRight;
+		public override TextAlignment TextAlignment => TextAlignment.Left;
+		public override double LineHeight => _lineHeight;
+		public override bool FirstLineInParagraph => _firstLineInParagraph;
+		public override TextRunProperties DefaultTextRunProperties { get; }
+		public override TextWrapping TextWrapping => _textWrapping;
+		public override double Indent => _indent;
 	}
 }

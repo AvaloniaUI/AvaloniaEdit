@@ -65,7 +65,7 @@ namespace AvaloniaEdit.Rendering
 			var offset = context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset;
 			
 			var text = context.GetText(offset, DocumentLength - relativeOffset);
-			
+
 			return new TextCharacters(new ReadOnlySlice<char>(text.AsMemory(), offset, text.Length), TextRunProperties);
 		}
 		

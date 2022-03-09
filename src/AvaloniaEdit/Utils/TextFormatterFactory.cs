@@ -19,6 +19,7 @@
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Utilities;
+using AvaloniaEdit.Rendering;
 using TextLine = Avalonia.Media.TextFormatting.TextLine;
 using TextRun = Avalonia.Media.TextFormatting.TextRun;
 using TextRunProperties = Avalonia.Media.TextFormatting.TextRunProperties;
@@ -41,9 +42,8 @@ namespace AvaloniaEdit.Utils
 		/// <returns>A FormattedText object using the specified settings.</returns>
 		public static TextLine FormatLine(ReadOnlySlice<char> text, Typeface typeface, double emSize, IBrush foreground)
 	    {
-		    var defaultProperties = new GenericTextRunProperties(typeface, emSize, null, foreground);
-		    var paragraphProperties = new GenericTextParagraphProperties(FlowDirection.LeftToRight, TextAlignment.Left,
-			    true, false, defaultProperties, TextWrapping.NoWrap, 0, 0);
+		    var defaultProperties = new CustomTextRunProperties(typeface, emSize, null, foreground);
+		    var paragraphProperties = new CustomTextParagraphProperties(defaultProperties);
 		    
 		    var textSource = new SimpleTextSource(text, defaultProperties);
 
