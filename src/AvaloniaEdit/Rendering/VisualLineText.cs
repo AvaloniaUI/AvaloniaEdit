@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Utilities;
 using AvaloniaEdit.Document;
+using AvaloniaEdit.Utils;
 using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Rendering
@@ -61,32 +62,27 @@ namespace AvaloniaEdit.Rendering
 				throw new ArgumentNullException(nameof(context));
 			
 			var relativeOffset = startVisualColumn - VisualColumn;
-
-			var offset = context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset;
 			
-			var text = context.GetText(offset, DocumentLength - relativeOffset);
-
-			return new TextCharacters(new ReadOnlySlice<char>(text.AsMemory(), offset, text.Length), TextRunProperties);
+			StringSegment text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset, DocumentLength - relativeOffset);
+			return new TextCharacters(new ReadOnlySlice<char>(text.Text.AsMemory(), text.Offset, text.Count), this.TextRunProperties);
 		}
-		
+
 		/// <inheritdoc/>
 		public override bool IsWhitespace(int visualColumn)
 		{
 			var offset = visualColumn - VisualColumn + ParentVisualLine.FirstDocumentLine.Offset + RelativeTextOffset;
 			return char.IsWhiteSpace(ParentVisualLine.Document.GetCharAt(offset));
 		}
-		
+
 		/// <inheritdoc/>
-		public override string GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
+		public override ReadOnlySlice<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
 		{
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
-			
-			var relativeOffset = visualColumnLimit - VisualColumn;
-			
-			var text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset, relativeOffset);
 
-			return text;
+			int relativeOffset = visualColumnLimit - VisualColumn;
+			StringSegment text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset, relativeOffset);
+			return new ReadOnlySlice<char>(text.Text.AsMemory(), text.Offset, text.Count);
 		}
 		
 		/// <inheritdoc/>

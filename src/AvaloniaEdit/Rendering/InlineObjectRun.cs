@@ -22,85 +22,99 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 
+#nullable enable
+
 namespace AvaloniaEdit.Rendering
 {
     /// <summary>
-    /// A inline UIElement in the document.
-    /// </summary>
-    public class InlineObjectElement : VisualLineElement
-    {
-        /// <summary>
-        /// Gets the inline element that is displayed.
-        /// </summary>
-        public IControl Element { get; }
+	/// A inline UIElement in the document.
+	/// </summary>
+	public class InlineObjectElement : VisualLineElement
+	{
+		/// <summary>
+		/// Gets the inline element that is displayed.
+		/// </summary>
+		public Control Element { get; }
 
-        /// <summary>
-        /// Creates a new InlineObjectElement.
-        /// </summary>
-        /// <param name="documentLength">The length of the element in the document. Must be non-negative.</param>
-        /// <param name="element">The element to display.</param>
-        public InlineObjectElement(int documentLength, IControl element)
-            : base(1, documentLength)
-        {
-            Element = element ?? throw new ArgumentNullException(nameof(element));
-        }
+		/// <summary>
+		/// Creates a new InlineObjectElement.
+		/// </summary>
+		/// <param name="documentLength">The length of the element in the document. Must be non-negative.</param>
+		/// <param name="element">The element to display.</param>
+		public InlineObjectElement(int documentLength, Control element)
+			: base(1, documentLength)
+		{
+			Element = element ?? throw new ArgumentNullException(nameof(element));
+		}
 
-        /// <inheritdoc/>
-        public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
-        {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
+		/// <inheritdoc/>
+		public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
+		{
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
 
-            return new InlineObjectRun(1, TextRunProperties, Element);
-        }
-    }
+			return new InlineObjectRun(1, TextRunProperties, Element);
+		}
+	}
 
-    /// <summary>
-    /// A text run with an embedded UIElement.
-    /// </summary>
-    public class InlineObjectRun : DrawableTextRun
-    {
-        /// <summary>
-        /// Creates a new InlineObjectRun instance.
-        /// </summary>
-        /// <param name="length">The length of the TextRun.</param>
-        /// <param name="properties">The <see cref="TextRunProperties"/> to use.</param>
-        /// <param name="element">The <see cref="IControl"/> to display.</param>
-        public InlineObjectRun(int length, TextRunProperties properties, IControl element)
-        {
-            if (length <= 0)
-                throw new ArgumentOutOfRangeException(nameof(length), length, "Value must be positive");
+	/// <summary>
+	/// A text run with an embedded UIElement.
+	/// </summary>
+	public class InlineObjectRun : DrawableTextRun
+	{
+		internal Size DesiredSize;
 
-            TextSourceLength = length;
-            Properties = properties ?? throw new ArgumentNullException(nameof(properties));
-            Element = element ?? throw new ArgumentNullException(nameof(element));
-        }
+		/// <summary>
+		/// Creates a new InlineObjectRun instance.
+		/// </summary>
+		/// <param name="length">The length of the TextRun.</param>
+		/// <param name="properties">The <see cref="TextRunProperties"/> to use.</param>
+		/// <param name="element">The <see cref="Control"/> to display.</param>
+		public InlineObjectRun(int length, TextRunProperties? properties, Control element)
+		{
+			if (length <= 0)
+				throw new ArgumentOutOfRangeException(nameof(length), length, "Value must be positive");
 
-        /// <summary>
-        /// Gets the element displayed by the InlineObjectRun.
-        /// </summary>
-        public IControl Element { get; }
+			TextSourceLength = length;
+			Properties = properties ?? throw new ArgumentNullException(nameof(properties));
+			Element = element ?? throw new ArgumentNullException(nameof(element));
 
-        /// <summary>
-        /// Gets the VisualLine that contains this object. This property is only available after the object
-        /// was added to the text view.
-        /// </summary>
-        public VisualLine VisualLine { get; internal set; }
+			DesiredSize = element.DesiredSize;
+		}
 
-        /// <inheritdoc/>
-        public override int TextSourceLength { get; }
+		/// <summary>
+		/// Gets the element displayed by the InlineObjectRun.
+		/// </summary>
+		public Control Element { get; }
 
-        /// <inheritdoc/>
-        public override TextRunProperties Properties { get; }
+		/// <summary>
+		/// Gets the VisualLine that contains this object. This property is only available after the object
+		/// was added to the text view.
+		/// </summary>
+		public VisualLine? VisualLine { get; internal set; }
 
-        public override double Baseline => Element.DesiredSize.Height;
+		public override TextRunProperties? Properties { get; }
 
-        public override Size Size => Element.IsMeasureValid ? Element.DesiredSize : Size.Empty;
-        public Size DesiredSize { get; set; }
+		public override int TextSourceLength { get; }
 
-        public override void Draw(DrawingContext drawingContext, Point origin)
-        {
-            //noop
-        }
-    }
+		public override double Baseline
+		{
+			get
+			{
+				double baseline = TextBlock.GetBaselineOffset(Element);
+				if (double.IsNaN(baseline))
+					baseline = DesiredSize.Height;
+				return baseline;
+			}
+		}
+
+		/// <inheritdoc/>
+		public override Size Size => Element.IsArrangeValid ? Element.DesiredSize : Size.Empty;
+		
+		/// <inheritdoc/>
+		public override void Draw(DrawingContext drawingContext, Point origin)
+		{
+			// noop
+		}
+	}
 }

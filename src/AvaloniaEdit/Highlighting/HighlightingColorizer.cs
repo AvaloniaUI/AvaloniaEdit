@@ -255,62 +255,34 @@ namespace AvaloniaEdit.Highlighting
             ApplyColorToElement(element, color, CurrentContext);
         }
 
-        internal static void ApplyColorToElement(VisualLineElement element, HighlightingColor color, ITextRunConstructionContext context)
-        {
-            if (color.Foreground != null)
-            {
-                var b = color.Foreground.GetBrush(context);
-                if (b != null)
-                    element.TextRunProperties.SetForegroundBrush(b);
-            }
-            if (color.Background != null)
-            {
-                var b = color.Background.GetBrush(context);
-                if (b != null)
-                    element.BackgroundBrush = b;
-            }
-            if (color.FontStyle != null || color.FontWeight != null || color.FontFamily != null)
-            {
-                var tf = element.TextRunProperties.Typeface;
-                element.TextRunProperties.SetTypeface(new Avalonia.Media.Typeface(
-                    color.FontFamily ?? tf.FontFamily,
-                    color.FontStyle ?? tf.Style,
-                    color.FontWeight ?? tf.Weight)
-                );
-            }
-            if (color.FontSize.HasValue)
-                element.TextRunProperties.SetFontSize(color.FontSize.Value);
-
-            if (color.Underline ?? false)
-            {
-                element.TextRunProperties.SetTextDecorations(new TextDecorationCollection{new()
-                {
-                    Location = TextDecorationLocation.Underline
-                }});
-            }
-
-            if (color.Strikethrough ?? false)
-            {
-                if (element.TextRunProperties.TextDecorations != null)
-                {
-                    element.TextRunProperties.TextDecorations.Add(new TextDecoration
-                    {
-                        Location = TextDecorationLocation.Strikethrough
-                    });
-                }
-                else
-                {
-                    element.TextRunProperties.SetTextDecorations(new TextDecorationCollection
-                    {
-                        new()
-                        {
-                            Location = TextDecorationLocation.Strikethrough
-                        }
-                    });
-                }
-                
-            }
-        }
+		internal static void ApplyColorToElement(VisualLineElement element, HighlightingColor color, ITextRunConstructionContext context)
+		{
+			if (color.Foreground != null) {
+				var b = color.Foreground.GetBrush(context);
+				if (b != null)
+					element.TextRunProperties.SetForegroundBrush(b);
+			}
+			if (color.Background != null) {
+				var b = color.Background.GetBrush(context);
+				if (b != null)
+					element.BackgroundBrush = b;
+			}
+			if (color.FontStyle != null || color.FontWeight != null || color.FontFamily != null) {
+				var tf = element.TextRunProperties.Typeface;
+				element.TextRunProperties.SetTypeface(new Typeface(
+					color.FontFamily ?? tf.FontFamily,
+					color.FontStyle ?? tf.Style,
+					color.FontWeight ?? tf.Weight,
+					tf.Stretch
+				));
+			}
+			if (color.Underline ?? false)
+				element.TextRunProperties.SetTextDecorations(TextDecorations.Underline);
+			if (color.Strikethrough ?? false)
+				element.TextRunProperties.SetTextDecorations(TextDecorations.Strikethrough);
+			if (color.FontSize.HasValue)
+				element.TextRunProperties.SetFontRenderingEmSize(color.FontSize.Value);
+		}
 
         /// <summary>
         /// This method is responsible for telling the TextView to redraw lines when the highlighting state has changed.

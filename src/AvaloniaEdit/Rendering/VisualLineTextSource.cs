@@ -21,117 +21,112 @@ using System.Diagnostics;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Utilities;
 using AvaloniaEdit.Document;
+using AvaloniaEdit.Utils;
 using JetBrains.Annotations;
 using ITextSource = Avalonia.Media.TextFormatting.ITextSource;
 
 namespace AvaloniaEdit.Rendering
 {
-    /// <summary>
-    /// TextSource implementation that creates TextRuns for a VisualLine.
-    /// </summary>
-    internal sealed class VisualLineTextSource : ITextSource, ITextRunConstructionContext
-    {
-        public VisualLineTextSource(VisualLine visualLine)
-        {
-            VisualLine = visualLine;
-        }
+   /// <summary>
+	/// WPF TextSource implementation that creates TextRuns for a VisualLine.
+	/// </summary>
+   internal sealed class VisualLineTextSource : ITextSource, ITextRunConstructionContext
+	{
+		public VisualLineTextSource(VisualLine visualLine)
+		{
+			VisualLine = visualLine;
+		}
 
-        public VisualLine VisualLine { get; }
-        public TextView TextView { get; set; }
-        public TextDocument Document { get; set; }
-        public CustomTextRunProperties GlobalTextRunProperties { get; set; }
+		public VisualLine VisualLine { get; private set; }
+		public TextView TextView { get; set; }
+		public TextDocument Document { get; set; }
+		public TextRunProperties GlobalTextRunProperties { get; set; }
 
-        [CanBeNull]
-        public TextRun GetTextRun(int characterIndex)
-        {
-            if (characterIndex > VisualLine.VisualLengthWithEndOfLineMarker)
-            {
-                return null;
-            }
-            
-            try
-            {
-                foreach (var element in VisualLine.Elements)
-                {
-                    if (characterIndex >= element.VisualColumn
-                        && characterIndex < element.VisualColumn + element.VisualLength)
-                    {
-                        var relativeOffset = characterIndex - element.VisualColumn;
-                        var run = element.CreateTextRun(characterIndex, this);
-                        if (run == null)
-                            throw new ArgumentNullException(element.GetType().Name + ".CreateTextRun");
-                        if (run.TextSourceLength == 0)
-                            throw new ArgumentException("The returned TextRun must not have length 0.", element.GetType().Name + ".Length");
-                        if (relativeOffset + run.TextSourceLength > element.VisualLength)
-                            throw new ArgumentException("The returned TextRun is too long.", element.GetType().Name + ".CreateTextRun");
-                        if (run is InlineObjectRun inlineRun)
-                        {
-                            inlineRun.VisualLine = VisualLine;
-                            VisualLine.HasInlineObjects = true;
-                            TextView.AddInlineObject(inlineRun);
-                        }
-                        return run;
-                    }
-                }
-                
-                if (TextView.Options.ShowEndOfLine && characterIndex == VisualLine.VisualLength)
-                {
-                    return CreateTextRunForNewLine();
-                }
+		public TextRun GetTextRun(int textSourceCharacterIndex)
+		{
+			try {
+				foreach (VisualLineElement element in VisualLine.Elements) {
+					if (textSourceCharacterIndex >= element.VisualColumn
+						&& textSourceCharacterIndex < element.VisualColumn + element.VisualLength) {
+						int relativeOffset = textSourceCharacterIndex - element.VisualColumn;
+						TextRun run = element.CreateTextRun(textSourceCharacterIndex, this);
+						if (run == null)
+							throw new ArgumentNullException(element.GetType().Name + ".CreateTextRun");
+						if (run.TextSourceLength == 0)
+							throw new ArgumentException("The returned TextRun must not have length 0.", element.GetType().Name + ".Length");
+						if (relativeOffset + run.TextSourceLength > element.VisualLength)
+							throw new ArgumentException("The returned TextRun is too long.", element.GetType().Name + ".CreateTextRun");
+						if (run is InlineObjectRun inlineRun) {
+							inlineRun.VisualLine = VisualLine;
+							VisualLine.HasInlineObjects = true;
+							TextView.AddInlineObject(inlineRun);
+						}
+						return run;
+					}
+				}
+				if (TextView.Options.ShowEndOfLine && textSourceCharacterIndex == VisualLine.VisualLength) {
+					return CreateTextRunForNewLine();
+				}
+				return new TextEndOfParagraph(1);
+			} catch (Exception ex) {
+				Debug.WriteLine(ex.ToString());
+				throw;
+			}
+		}
 
-                return new TextEndOfLine(2);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.ToString());
-                throw;
-            }
-        }
+		private TextRun CreateTextRunForNewLine()
+		{
+			string newlineText = "";
+			DocumentLine lastDocumentLine = VisualLine.LastDocumentLine;
+			if (lastDocumentLine.DelimiterLength == 2) {
+				newlineText = "¶";
+			} else if (lastDocumentLine.DelimiterLength == 1) {
+				char newlineChar = Document.GetCharAt(lastDocumentLine.Offset + lastDocumentLine.Length);
+				if (newlineChar == '\r')
+					newlineText = "\\r";
+				else if (newlineChar == '\n')
+					newlineText = "\\n";
+				else
+					newlineText = "?";
+			}
+			return new FormattedTextRun(new FormattedTextElement(TextView.CachedElements.GetTextForNonPrintableCharacter(newlineText, this), 0), GlobalTextRunProperties);
+		}
 
-        private TextRun CreateTextRunForNewLine()
-        {
-            var newlineText = "";
-            var lastDocumentLine = VisualLine.LastDocumentLine;
-            if (lastDocumentLine.DelimiterLength == 2)
-            {
-                newlineText = "¶";
-            }
-            else if (lastDocumentLine.DelimiterLength == 1)
-            {
-                var newlineChar = Document.GetCharAt(lastDocumentLine.Offset + lastDocumentLine.Length);
-                switch (newlineChar)
-                {
-                    case '\r':
-                        newlineText = "\\r";
-                        break;
-                    case '\n':
-                        newlineText = "\\n";
-                        break;
-                    default:
-                        newlineText = "?";
-                        break;
-                }
-            }
-            return new FormattedTextRun(new FormattedTextElement(TextView.CachedElements.GetTextForNonPrintableCharacter(newlineText, this), 0), GlobalTextRunProperties);
-        }
+		public ReadOnlySlice<char> GetPrecedingText(int textSourceCharacterIndexLimit)
+		{
+			try {
+				foreach (VisualLineElement element in VisualLine.Elements) {
+					if (textSourceCharacterIndexLimit > element.VisualColumn
+						&& textSourceCharacterIndexLimit <= element.VisualColumn + element.VisualLength) {
+						var span = element.GetPrecedingText(textSourceCharacterIndexLimit, this);
+						if (span.IsEmpty)
+							break;
+						int relativeOffset = textSourceCharacterIndexLimit - element.VisualColumn;
+						if (span.Length > relativeOffset)
+							throw new ArgumentException("The returned TextSpan is too long.", element.GetType().Name + ".GetPrecedingText");
+						return span;
+					}
+				}
+				
+				return ReadOnlySlice<char>.Empty;
+			} catch (Exception ex) {
+				Debug.WriteLine(ex.ToString());
+				throw;
+			}
+		}
 
-        private string _cachedString;
-        private int _cachedStringOffset;
+		private string _cachedString;
+		private int _cachedStringOffset;
 
-        public string GetText(int offset, int length)
-        {
-            if (_cachedString != null)
-            {
-                if (offset >= _cachedStringOffset && offset + length <= _cachedStringOffset + _cachedString.Length)
-                {
-                    return _cachedString.Substring(offset - _cachedStringOffset, length);
-                }
-            }
-            
-            _cachedStringOffset = offset;
-            _cachedString = Document.GetText(offset, length);
-
-            return _cachedString;
-        }
-    }
+		public StringSegment GetText(int offset, int length)
+		{
+			if (_cachedString != null) {
+				if (offset >= _cachedStringOffset && offset + length <= _cachedStringOffset + _cachedString.Length) {
+					return new StringSegment(_cachedString, offset - _cachedStringOffset, length);
+				}
+			}
+			_cachedStringOffset = offset;
+			return new StringSegment(_cachedString = Document.GetText(offset, length));
+		}
+	}
 }

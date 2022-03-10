@@ -72,19 +72,19 @@ namespace AvaloniaEdit.Rendering
 		
 		/// <summary>
 		/// Gets the text run properties.
-		/// A unique <see cref="TextRunProperties"/> instance is used for each
+		/// A unique <see cref="VisualLineElementTextRunProperties"/> instance is used for each
 		/// <see cref="VisualLineElement"/>; colorizing code may assume that modifying the
-		/// <see cref="TextRunProperties"/> will affect only this
+		/// <see cref="VisualLineElementTextRunProperties"/> will affect only this
 		/// <see cref="VisualLineElement"/>.
 		/// </summary>
-		public CustomTextRunProperties TextRunProperties { get; private set; }
-		
+		public VisualLineElementTextRunProperties TextRunProperties { get; private set; }
+
 		/// <summary>
 		/// Gets/sets the brush used for the background of this <see cref="VisualLineElement" />.
 		/// </summary>
 		public IBrush BackgroundBrush { get; set; }
-		
-		internal void SetTextRunProperties(CustomTextRunProperties p)
+
+		internal void SetTextRunProperties(VisualLineElementTextRunProperties p)
 		{
 			TextRunProperties = p;
 		}
@@ -106,9 +106,9 @@ namespace AvaloniaEdit.Rendering
 		/// Retrieves the text span immediately before the visual column.
 		/// </summary>
 		/// <remarks>This method is used for word-wrapping in bidirectional text.</remarks>
-		public virtual string GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
+		public virtual ReadOnlySlice<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
 		{
-			return string.Empty;
+			return ReadOnlySlice<char>.Empty;
 		}
 		
 		/// <summary>
@@ -162,13 +162,13 @@ namespace AvaloniaEdit.Rendering
 			firstPart.DocumentLength = relativeSplitRelativeTextOffset;
 			secondPart.DocumentLength = oldDocumentLength - relativeSplitRelativeTextOffset;
 			if (firstPart.TextRunProperties == null)
-				firstPart.TextRunProperties = TextRunProperties;
+				firstPart.TextRunProperties = TextRunProperties.Clone();
 			if (secondPart.TextRunProperties == null)
-				secondPart.TextRunProperties = TextRunProperties;
+				secondPart.TextRunProperties = TextRunProperties.Clone();
 			firstPart.BackgroundBrush = BackgroundBrush;
 			secondPart.BackgroundBrush = BackgroundBrush;
 		}
-		
+
 		/// <summary>
 		/// Gets the visual column of a text location inside this element.
 		/// The text offset is given relative to the visual line start.

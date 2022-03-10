@@ -156,7 +156,7 @@ namespace AvaloniaEdit.Demo
 
         private void AddControlButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me" }));
+            _generator.controls.Add(new KeyValuePair<int, Control>(_textEditor.CaretOffset, new Button() { Content = "Click me" }));
             _textEditor.TextArea.TextView.Redraw();
         }
 
@@ -290,9 +290,9 @@ namespace AvaloniaEdit.Demo
             }
         }
 
-        class ElementGenerator : VisualLineElementGenerator, IComparer<Pair>
+        class ElementGenerator : VisualLineElementGenerator, IComparer<KeyValuePair<int, Control>>
         {
-            public List<Pair> controls = new List<Pair>();
+            public List<KeyValuePair<int, Control>> controls = new List<KeyValuePair<int, Control>>();
 
             /// <summary>
             /// Gets the first interested offset using binary search
@@ -301,7 +301,7 @@ namespace AvaloniaEdit.Demo
             /// <param name="startOffset">Start offset.</param>
             public override int GetFirstInterestedOffset(int startOffset)
             {
-                int pos = controls.BinarySearch(new Pair(startOffset, null), this);
+                int pos = controls.BinarySearch(new KeyValuePair<int, Control>(startOffset, null), this);
                 if (pos < 0)
                     pos = ~pos;
                 if (pos < controls.Count)
@@ -312,14 +312,14 @@ namespace AvaloniaEdit.Demo
 
             public override VisualLineElement ConstructElement(int offset)
             {
-                int pos = controls.BinarySearch(new Pair(offset, null), this);
+                int pos = controls.BinarySearch(new KeyValuePair<int, Control>(offset, null), this);
                 if (pos >= 0)
                     return new InlineObjectElement(0, controls[pos].Value);
                 else
                     return null;
             }
 
-            int IComparer<Pair>.Compare(Pair x, Pair y)
+            int IComparer<KeyValuePair<int, Control>>.Compare(KeyValuePair<int, Control> x, KeyValuePair<int, Control> y)
             {
                 return x.Key.CompareTo(y.Key);
             }

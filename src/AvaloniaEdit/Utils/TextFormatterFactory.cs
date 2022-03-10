@@ -16,21 +16,27 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Globalization;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
-using Avalonia.Utilities;
-using AvaloniaEdit.Rendering;
-using TextLine = Avalonia.Media.TextFormatting.TextLine;
-using TextRun = Avalonia.Media.TextFormatting.TextRun;
-using TextRunProperties = Avalonia.Media.TextFormatting.TextRunProperties;
 
 namespace AvaloniaEdit.Utils
 {
     /// <summary>
-    /// Creates TextFormatter instances that with the correct TextFormattingMode, if running on .NET 4.0.
-    /// </summary>
-    public static class TextFormatterFactory
+	/// Creates TextFormatter instances that with the correct TextFormattingMode, if running on .NET 4.0.
+	/// </summary>
+	static class TextFormatterFactory
 	{
+		/// <summary>
+		/// Creates a <see cref="TextFormatter"/> using the formatting mode used by the specified owner object.
+		/// </summary>
+		public static TextFormatter Create(Control owner)
+		{
+			return TextFormatter.Current;
+		}
+
 		/// <summary>
 		/// Creates formatted text.
 		/// </summary>
@@ -40,41 +46,26 @@ namespace AvaloniaEdit.Utils
 		/// <param name="emSize">The font size. If this parameter is null, the font size of the <paramref name="element"/> will be used.</param>
 		/// <param name="foreground">The foreground color. If this parameter is null, the foreground of the <paramref name="element"/> will be used.</param>
 		/// <returns>A FormattedText object using the specified settings.</returns>
-		public static TextLine FormatLine(ReadOnlySlice<char> text, Typeface typeface, double emSize, IBrush foreground)
-	    {
-		    var defaultProperties = new CustomTextRunProperties(typeface, emSize, null, foreground);
-		    var paragraphProperties = new CustomTextParagraphProperties(defaultProperties);
-		    
-		    var textSource = new SimpleTextSource(text, defaultProperties);
-
-		    return TextFormatter.Current.FormatLine(textSource, 0, double.PositiveInfinity, paragraphProperties);
-	    }
-		
-		private readonly struct SimpleTextSource : ITextSource
+		public static FormattedText CreateFormattedText(Control element, string text, Typeface typeface, double? emSize, IBrush foreground)
 		{
-			private readonly ReadOnlySlice<char> _text;
-			private readonly TextRunProperties _defaultProperties;
-
-			public SimpleTextSource(ReadOnlySlice<char> text, TextRunProperties defaultProperties)
-			{
-				_text = text;
-				_defaultProperties = defaultProperties;
-			}
+			if (element == null)
+				throw new ArgumentNullException(nameof(element));
+			if (text == null)
+				throw new ArgumentNullException(nameof(text));
+			if (typeface == default)
+				typeface = element.CreateTypeface();
+			if (emSize == null)
+				emSize = TextBlock.GetFontSize(element);
+			if (foreground == null)
+				foreground = TextBlock.GetForeground(element);
 			
-			public TextRun GetTextRun(int textSourceIndex)
-			{
-				if (textSourceIndex < _text.Length)
-				{
-					return new TextCharacters(_text, textSourceIndex, _text.Length - textSourceIndex, _defaultProperties);
-				}
-			
-				if (textSourceIndex > _text.Length)
-				{
-					return null;
-				}
-			
-				return new TextEndOfParagraph(1);
-			}
+			return new FormattedText(
+				text,
+				CultureInfo.CurrentCulture,
+				FlowDirection.LeftToRight,
+				typeface,
+				emSize.Value,
+				foreground);
 		}
 	}
 }
