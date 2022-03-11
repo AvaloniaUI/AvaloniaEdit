@@ -165,7 +165,7 @@ namespace AvaloniaEdit.Rendering
 			while (offset + askInterestOffset <= currentLineEnd) {
 				var textPieceEndOffset = currentLineEnd;
 				foreach (var g in generators) {
-                    g.CachedInterest = (lineLength > LENGTH_LIMIT) ? -1: g.GetFirstInterestedOffset(offset + askInterestOffset);
+                    g.CachedInterest = g.GetFirstInterestedOffset(offset + askInterestOffset);
 					if (g.CachedInterest != -1) {
 						if (g.CachedInterest < offset)
 							throw new ArgumentOutOfRangeException(g.GetType().Name + ".GetFirstInterestedOffset",
@@ -179,24 +179,9 @@ namespace AvaloniaEdit.Rendering
 				if (textPieceEndOffset > offset) {
 					var textPieceLength = textPieceEndOffset - offset;
                     
-                    int remaining = textPieceLength;
-                    
-                    while (true)
-                    {
-                        if (remaining > LENGTH_LIMIT)
-                        {
-                            // split in chunks of LENGTH_LIMIT
-                            _elements.Add(new VisualLineText(this, LENGTH_LIMIT));
-                            remaining -= LENGTH_LIMIT;
-                        }
-                        else
-                        {
-                            _elements.Add(new VisualLineText(this, remaining));
-                            break;
-                        }
-                    }
-                    
-					offset = textPieceEndOffset;
+                    _elements.Add(new VisualLineText(this, textPieceLength));
+
+                    offset = textPieceEndOffset;
 				}
 				// If no elements constructed / only zero-length elements constructed:
 				// do not asking the generators again for the same location (would cause endless loop)

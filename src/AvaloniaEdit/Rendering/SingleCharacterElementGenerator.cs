@@ -201,8 +201,7 @@ namespace AvaloniaEdit.Rendering
 
 			public override void Draw(DrawingContext drawingContext, Point origin)
 			{
-				var y = origin.Y - _element.Text.Baseline;
-				_element.Text.Draw(drawingContext, origin.WithY(y));
+				_element.Text.Draw(drawingContext, origin);
 			}
 		}
 

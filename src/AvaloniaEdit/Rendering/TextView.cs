@@ -1115,6 +1115,7 @@ namespace AvaloniaEdit.Rendering
             TextLineBreak lastLineBreak = null;
             var textOffset = 0;
             var textLines = new List<TextLine>();
+            
             while (textOffset <= visualLine.VisualLengthWithEndOfLineMarker)
             {
                 var textLine = _formatter.FormatLine(
@@ -1124,6 +1125,7 @@ namespace AvaloniaEdit.Rendering
                     paragraphProperties,
                     lastLineBreak
                 );
+                
                 textLines.Add(textLine);
                 textOffset += textLine.TextRange.Length;
 
