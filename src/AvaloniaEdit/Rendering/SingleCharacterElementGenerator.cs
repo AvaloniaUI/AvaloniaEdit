@@ -22,6 +22,7 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Utils;
 using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
@@ -153,7 +154,7 @@ namespace AvaloniaEdit.Rendering
 				if (startVisualColumn == VisualColumn)
 					return new TabGlyphRun(this, TextRunProperties);
 				else if (startVisualColumn == VisualColumn + 1)
-					return new TextCharacters("\t".AsMemory(), 0, 1, TextRunProperties);
+					return new TextCharacters(new ReadOnlySlice<char>("\t".AsMemory(), RelativeTextOffset, 1), TextRunProperties);
 				else
 					throw new ArgumentOutOfRangeException(nameof(startVisualColumn));
 			}

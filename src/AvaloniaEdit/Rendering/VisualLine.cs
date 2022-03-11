@@ -156,15 +156,16 @@ namespace AvaloniaEdit.Rendering
 
 		void PerformVisualElementConstruction(VisualLineElementGenerator[] generators)
 		{
-			TextDocument document = this.Document;
-			int offset = FirstDocumentLine.Offset;
-			int currentLineEnd = offset + FirstDocumentLine.Length;
+            var lineLength = FirstDocumentLine.Length;
+            var offset = FirstDocumentLine.Offset;
+			var currentLineEnd = offset + lineLength;
 			LastDocumentLine = FirstDocumentLine;
-			int askInterestOffset = 0; // 0 or 1
+			var askInterestOffset = 0; // 0 or 1
+            
 			while (offset + askInterestOffset <= currentLineEnd) {
-				int textPieceEndOffset = currentLineEnd;
-				foreach (VisualLineElementGenerator g in generators) {
-					g.CachedInterest = g.GetFirstInterestedOffset(offset + askInterestOffset);
+				var textPieceEndOffset = currentLineEnd;
+				foreach (var g in generators) {
+                    g.CachedInterest = (lineLength > LENGTH_LIMIT) ? -1: g.GetFirstInterestedOffset(offset + askInterestOffset);
 					if (g.CachedInterest != -1) {
 						if (g.CachedInterest < offset)
 							throw new ArgumentOutOfRangeException(g.GetType().Name + ".GetFirstInterestedOffset",
@@ -176,16 +177,33 @@ namespace AvaloniaEdit.Rendering
 				}
 				Debug.Assert(textPieceEndOffset >= offset);
 				if (textPieceEndOffset > offset) {
-					int textPieceLength = textPieceEndOffset - offset;
-					_elements.Add(new VisualLineText(this, textPieceLength));
+					var textPieceLength = textPieceEndOffset - offset;
+                    
+                    int remaining = textPieceLength;
+                    
+                    while (true)
+                    {
+                        if (remaining > LENGTH_LIMIT)
+                        {
+                            // split in chunks of LENGTH_LIMIT
+                            _elements.Add(new VisualLineText(this, LENGTH_LIMIT));
+                            remaining -= LENGTH_LIMIT;
+                        }
+                        else
+                        {
+                            _elements.Add(new VisualLineText(this, remaining));
+                            break;
+                        }
+                    }
+                    
 					offset = textPieceEndOffset;
 				}
 				// If no elements constructed / only zero-length elements constructed:
 				// do not asking the generators again for the same location (would cause endless loop)
 				askInterestOffset = 1;
-				foreach (VisualLineElementGenerator g in generators) {
+				foreach (var g in generators) {
 					if (g.CachedInterest == offset) {
-						VisualLineElement element = g.ConstructElement(offset);
+						var element = g.ConstructElement(offset);
 						if (element != null) {
 							_elements.Add(element);
 							if (element.DocumentLength > 0) {
@@ -193,7 +211,7 @@ namespace AvaloniaEdit.Rendering
 								askInterestOffset = 0;
 								offset += element.DocumentLength;
 								if (offset > currentLineEnd) {
-									DocumentLine newEndLine = document.GetLineByOffset(offset);
+									var newEndLine = Document.GetLineByOffset(offset);
 									currentLineEnd = newEndLine.Offset + newEndLine.Length;
 									this.LastDocumentLine = newEndLine;
 									if (currentLineEnd < offset) {

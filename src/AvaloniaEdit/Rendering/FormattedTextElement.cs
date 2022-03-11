@@ -20,6 +20,7 @@ using System;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
 using AvaloniaEdit.Utils;
 using JetBrains.Annotations;
 
@@ -93,8 +94,7 @@ namespace AvaloniaEdit.Rendering
 					defaultTextRunProperties = properties,
 					textWrapping = TextWrapping.NoWrap,
 					tabSize = 40
-				},
-				null);
+				});
 		}
 	}
 
@@ -112,12 +112,16 @@ namespace AvaloniaEdit.Rendering
 				throw new ArgumentNullException(nameof(properties));
 			Properties = properties;
 			Element = element ?? throw new ArgumentNullException(nameof(element));
+			Text = new ReadOnlySlice<char>(new string(' ', element.VisualLength).AsMemory(), element.RelativeTextOffset,
+				element.VisualLength);
 		}
 
 		/// <summary>
 		/// Gets the element for which the FormattedTextRun was created.
 		/// </summary>
 		public FormattedTextElement Element { get; }
+
+		public override ReadOnlySlice<char> Text { get; }
 
 		/// <inheritdoc/>
 		public override TextRunProperties Properties { get; }

@@ -62,9 +62,16 @@ namespace AvaloniaEdit.Rendering
 				throw new ArgumentNullException(nameof(context));
 			
 			var relativeOffset = startVisualColumn - VisualColumn;
+
+			var offset = context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset;
+
+			var text = context.GetText(
+				offset,
+				DocumentLength - relativeOffset);
 			
-			StringSegment text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset, DocumentLength - relativeOffset);
-			return new TextCharacters(new ReadOnlySlice<char>(text.Text.AsMemory(), text.Offset, text.Count), this.TextRunProperties);
+			return new TextCharacters(
+				new ReadOnlySlice<char>(text.Text.AsMemory(), RelativeTextOffset, text.Count,
+					text.Offset), TextRunProperties);
 		}
 
 		/// <inheritdoc/>
@@ -80,8 +87,10 @@ namespace AvaloniaEdit.Rendering
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
 
-			int relativeOffset = visualColumnLimit - VisualColumn;
-			StringSegment text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset, relativeOffset);
+			var relativeOffset = visualColumnLimit - VisualColumn;
+			
+			var text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset, relativeOffset);
+			
 			return new ReadOnlySlice<char>(text.Text.AsMemory(), text.Offset, text.Count);
 		}
 		
