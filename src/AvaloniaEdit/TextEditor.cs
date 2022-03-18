@@ -282,20 +282,26 @@ namespace AvaloniaEdit
 
         #region TextArea / ScrollViewer properties
         private readonly TextArea textArea;
-        
+        private SearchPanel searchPanel;
+
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
             ScrollViewer = (ScrollViewer)e.NameScope.Find("PART_ScrollViewer");
             ScrollViewer.Content = TextArea;
 
-            SearchPanel.Install(this);
+            searchPanel = SearchPanel.Install(this);
         }
 
         /// <summary>
         /// Gets the text area.
         /// </summary>
         public TextArea TextArea => textArea;
+
+        /// <summary>
+        /// Gets the search panel.
+        /// </summary>
+        public SearchPanel SearchPanel => searchPanel;
 
         /// <summary>
         /// Gets the scroll viewer used by the text editor.
