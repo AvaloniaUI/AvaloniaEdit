@@ -32,6 +32,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Data;
 using AvaloniaEdit.Search;
@@ -283,6 +284,7 @@ namespace AvaloniaEdit
         #region TextArea / ScrollViewer properties
         private readonly TextArea textArea;
         private SearchPanel searchPanel;
+        private bool wasSearchPanelOpened;
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
@@ -291,6 +293,27 @@ namespace AvaloniaEdit
             ScrollViewer.Content = TextArea;
 
             searchPanel = SearchPanel.Install(this);
+        }
+
+        protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToLogicalTree(e);
+
+            if (searchPanel != null && wasSearchPanelOpened)
+            {
+                searchPanel.Open();
+            }
+        }
+
+        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromLogicalTree(e);
+
+            if (searchPanel != null)
+            {
+                wasSearchPanelOpened = !searchPanel.IsClosed;
+                searchPanel.Close();
+            }
         }
 
         /// <summary>
