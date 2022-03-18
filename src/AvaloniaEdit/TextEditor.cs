@@ -311,8 +311,9 @@ namespace AvaloniaEdit
 
             if (searchPanel != null)
             {
-                wasSearchPanelOpened = !searchPanel.IsClosed;
-                searchPanel.Close();
+                wasSearchPanelOpened = searchPanel.IsOpened;
+                if (searchPanel.IsOpened)
+                    searchPanel.Close();
             }
         }
 
