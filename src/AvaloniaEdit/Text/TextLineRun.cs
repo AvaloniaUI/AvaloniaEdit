@@ -206,6 +206,11 @@ namespace AvaloniaEdit.Text
 
             var tf = linerun.Typeface;
 
+            var useCheapGlyphMeasurement =
+                    run.Length >= VisualLine.LENGTH_LIMIT &&
+                    tf.GlyphTypeface.IsFixedPitch;
+
+
             var line = TextFormatterFactory.CreateTextLine(
                                text.ToString(),
                                new Typeface(tf.FontFamily, tf.Style, tf.Weight),
@@ -220,7 +225,7 @@ namespace AvaloniaEdit.Text
 
             linerun.Width = size.Width;
 
-            linerun._glyphWidths = new CharacterWidths(line, text.Length);
+            linerun._glyphWidths = new CharacterWidths(line, text.Length, useCheapGlyphMeasurement);
 
             return linerun;
         }
@@ -363,12 +368,23 @@ namespace AvaloniaEdit.Text
             private double[] _width;
             private bool _isMeasured;
 
-            public CharacterWidths(Avalonia.Media.TextFormatting.TextLine measure, int length)
+            public CharacterWidths(Avalonia.Media.TextFormatting.TextLine measure, int length, bool useCheapGlyphMeasurement)
             {
                 _measure = measure;
                 _width = new double[length];
                 Count = length;
                 _isMeasured = false;
+
+                if (useCheapGlyphMeasurement)
+                {
+                    _isMeasured = true;
+
+                    var hit = _measure.GetNextCaretCharacterHit(new CharacterHit(0));
+                    var firstCharWid = _measure.GetDistanceFromCharacterHit(hit);
+
+                    for (var i = 0; i < Count; ++i)
+                        _width[i] = firstCharWid;
+                }
             }
 
 
