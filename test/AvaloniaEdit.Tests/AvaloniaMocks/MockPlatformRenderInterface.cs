@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Platform;
@@ -12,38 +13,19 @@ namespace AvaloniaEdit.AvaloniaMocks
 {
     public class MockPlatformRenderInterface : IPlatformRenderInterface
     {
-        public IEnumerable<string> InstalledFontNames => throw new NotImplementedException();
-
-        public bool SupportsIndividualRoundRects => throw new NotImplementedException();
-
-        public AlphaFormat DefaultAlphaFormat => throw new NotImplementedException();
-
-        public PixelFormat DefaultPixelFormat => throw new NotImplementedException();
-
-        public IFormattedTextImpl CreateFormattedText(
-            string text,
-            Typeface typeface,
-            TextAlignment textAlignment,
-            TextWrapping wrapping,
-            Size constraint,
-            IReadOnlyList<FormattedTextStyleSpan> spans)
-        {
-            return Mock.Of<IFormattedTextImpl>();
-        }
-
         public IGeometryImpl CreateEllipseGeometry(Rect rect)
         {
-            throw new NotImplementedException();
+            return Mock.Of<IGeometryImpl>();
         }
 
         public IGeometryImpl CreateLineGeometry(Point p1, Point p2)
         {
-            throw new NotImplementedException();
+            return Mock.Of<IGeometryImpl>();
         }
 
         public IGeometryImpl CreateRectangleGeometry(Rect rect)
         {
-            throw new NotImplementedException();
+            return Mock.Of<IGeometryImpl>(x => x.Bounds == rect);
         }
 
         public IRenderTarget CreateRenderTarget(IEnumerable<object> surfaces)
@@ -51,18 +33,9 @@ namespace AvaloniaEdit.AvaloniaMocks
             return Mock.Of<IRenderTarget>();
         }
 
-        public IRenderTargetBitmapImpl CreateRenderTargetBitmap(
-            int width,
-            int height,
-            double dpiX,
-            double dpiY)
-        {
-            return Mock.Of<IRenderTargetBitmapImpl>();
-        }
-
         public IRenderTargetBitmapImpl CreateRenderTargetBitmap(PixelSize size, Vector dpi)
         {
-            throw new NotImplementedException();
+            return Mock.Of<IRenderTargetBitmapImpl>();
         }
 
         public IStreamGeometryImpl CreateStreamGeometry()
@@ -70,7 +43,21 @@ namespace AvaloniaEdit.AvaloniaMocks
             return new MockStreamGeometryImpl();
         }
 
-        public IWriteableBitmapImpl CreateWriteableBitmap(PixelSize size, Vector dpi, PixelFormat? format = null)
+        public IGeometryImpl CreateGeometryGroup(FillRule fillRule, IReadOnlyList<Geometry> children)
+        {
+            return Mock.Of<IGeometryImpl>();
+        }
+
+        public IGeometryImpl CreateCombinedGeometry(GeometryCombineMode combineMode, Geometry g1, Geometry g2)
+        {
+            return Mock.Of<IGeometryImpl>();
+        }
+
+        public IWriteableBitmapImpl CreateWriteableBitmap(
+            PixelSize size,
+            Vector dpi,
+            PixelFormat format,
+            AlphaFormat alphaFormat)
         {
             throw new NotImplementedException();
         }
@@ -80,42 +67,14 @@ namespace AvaloniaEdit.AvaloniaMocks
             return Mock.Of<IBitmapImpl>();
         }
 
-        public IBitmapImpl LoadBitmap(string fileName)
-        {
-            return Mock.Of<IBitmapImpl>();
-        }
-
-        public IBitmapImpl LoadBitmap(PixelFormat format, IntPtr data, PixelSize size, Vector dpi, int stride)
+        public IWriteableBitmapImpl LoadWriteableBitmapToWidth(Stream stream, int width,
+            BitmapInterpolationMode interpolationMode = BitmapInterpolationMode.HighQuality)
         {
             throw new NotImplementedException();
         }
 
-        public IFormattedTextImpl CreateFormattedText(string text, Typeface typeface, double fontSize, TextAlignment textAlignment, TextWrapping wrapping, Size constraint, IReadOnlyList<FormattedTextStyleSpan> spans)
-        {
-            return Mock.Of<IFormattedTextImpl>();
-        }
-
-        public IGeometryImpl CreateGeometryGroup(FillRule fillRule, IReadOnlyList<Geometry> children)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGeometryImpl CreateCombinedGeometry(GeometryCombineMode combineMode, Geometry g1, Geometry g2)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IWriteableBitmapImpl CreateWriteableBitmap(PixelSize size, Vector dpi, PixelFormat format, AlphaFormat alphaFormat)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IWriteableBitmapImpl LoadWriteableBitmapToWidth(Stream stream, int width, BitmapInterpolationMode interpolationMode = BitmapInterpolationMode.HighQuality)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IWriteableBitmapImpl LoadWriteableBitmapToHeight(Stream stream, int height, BitmapInterpolationMode interpolationMode = BitmapInterpolationMode.HighQuality)
+        public IWriteableBitmapImpl LoadWriteableBitmapToHeight(Stream stream, int height,
+            BitmapInterpolationMode interpolationMode = BitmapInterpolationMode.HighQuality)
         {
             throw new NotImplementedException();
         }
@@ -130,29 +89,46 @@ namespace AvaloniaEdit.AvaloniaMocks
             throw new NotImplementedException();
         }
 
+        public IBitmapImpl LoadBitmap(string fileName)
+        {
+            return Mock.Of<IBitmapImpl>();
+        }
+
         public IBitmapImpl LoadBitmapToWidth(Stream stream, int width, BitmapInterpolationMode interpolationMode = BitmapInterpolationMode.HighQuality)
         {
-            throw new NotImplementedException();
+            return Mock.Of<IBitmapImpl>();
         }
 
         public IBitmapImpl LoadBitmapToHeight(Stream stream, int height, BitmapInterpolationMode interpolationMode = BitmapInterpolationMode.HighQuality)
         {
-            throw new NotImplementedException();
+            return Mock.Of<IBitmapImpl>();
         }
 
         public IBitmapImpl ResizeBitmap(IBitmapImpl bitmapImpl, PixelSize destinationSize, BitmapInterpolationMode interpolationMode = BitmapInterpolationMode.HighQuality)
         {
-            throw new NotImplementedException();
+            return Mock.Of<IBitmapImpl>();
         }
 
-        public IBitmapImpl LoadBitmap(PixelFormat format, AlphaFormat alphaFormat, IntPtr data, PixelSize size, Vector dpi, int stride)
+        public IBitmapImpl LoadBitmap(
+            PixelFormat format,
+            AlphaFormat alphaFormat,
+            IntPtr data,
+            PixelSize size,
+            Vector dpi,
+            int stride)
         {
             throw new NotImplementedException();
         }
 
-        public IGlyphRunImpl CreateGlyphRun(GlyphRun glyphRun, out double width)
+        public IGlyphRunImpl CreateGlyphRun(GlyphRun glyphRun)
         {
-            throw new NotImplementedException();
+            return Mock.Of<IGlyphRunImpl>();
         }
+
+        public bool SupportsIndividualRoundRects { get; set; }
+
+        public AlphaFormat DefaultAlphaFormat => AlphaFormat.Premul;
+
+        public PixelFormat DefaultPixelFormat => PixelFormat.Rgba8888;
     }
 }

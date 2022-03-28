@@ -19,7 +19,7 @@ namespace AvaloniaEdit.Text
             using var app = UnitTestApplication.Start(new TestServices().With(
                 renderInterface: new MockPlatformRenderInterface(),
                 fontManagerImpl: new MockFontManagerImpl(),
-                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+                textShaperImpl: new MockTextShaperImpl()));
 
             SimpleTextSource textSource = new SimpleTextSource("hello", CreateDefaultTextProperties());
 
@@ -36,8 +36,7 @@ namespace AvaloniaEdit.Text
         {
             using var app = UnitTestApplication.Start(new TestServices().With(
                 renderInterface: new MockPlatformRenderInterface(),
-                fontManagerImpl: new MockFontManagerImpl(),
-                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+                fontManagerImpl: new MockFontManagerImpl()));
 
             SimpleTextSource s = new SimpleTextSource(
                 "\t\t",
@@ -60,7 +59,7 @@ namespace AvaloniaEdit.Text
             using var app = UnitTestApplication.Start(new TestServices().With(
                 renderInterface: new MockPlatformRenderInterface(),
                 fontManagerImpl: new MockFontManagerImpl(),
-                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+                textShaperImpl: new MockTextShaperImpl()));
 
             SimpleTextSource s = new SimpleTextSource(
                 "\t\t    ",
@@ -84,7 +83,7 @@ namespace AvaloniaEdit.Text
             using var app = UnitTestApplication.Start(new TestServices().With(
                 renderInterface: new MockPlatformRenderInterface(),
                 fontManagerImpl: new MockFontManagerImpl(),
-                formattedTextImpl: Mock.Of<IFormattedTextImpl>()));
+                textShaperImpl: new MockTextShaperImpl()));
 
             SimpleTextSource s = new SimpleTextSource(
                 "    hello",
@@ -97,6 +96,52 @@ namespace AvaloniaEdit.Text
 
             Assert.AreEqual("    hello", textLine.LineRuns[0].StringRange.ToString());
             Assert.IsTrue(textLine.LineRuns[1].IsEnd);
+        }
+
+        [Test]
+        public void Space_Plus_Tab_Should_Split_Runs()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                textShaperImpl: new MockTextShaperImpl()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                " \t ",
+                CreateDefaultTextProperties());
+
+            TextLineImpl textLine = TextLineImpl.Create(
+                CreateDefaultParagraphProperties(), 0, 9, s);
+
+            Assert.AreEqual(4, textLine.LineRuns.Length);
+
+            Assert.AreEqual(" ", textLine.LineRuns[0].StringRange.ToString());
+            Assert.IsTrue(textLine.LineRuns[1].IsTab);
+            Assert.AreEqual(" ", textLine.LineRuns[2].StringRange.ToString());
+            Assert.IsTrue(textLine.LineRuns[3].IsEnd);
+        }
+
+        [Test]
+        public void Chars_Plus_Tab_Should_Split_Runs()
+        {
+            using var app = UnitTestApplication.Start(new TestServices().With(
+                renderInterface: new MockPlatformRenderInterface(),
+                fontManagerImpl: new MockFontManagerImpl(),
+                textShaperImpl: new MockTextShaperImpl()));
+
+            SimpleTextSource s = new SimpleTextSource(
+                "a\ta",
+                CreateDefaultTextProperties());
+
+            TextLineImpl textLine = TextLineImpl.Create(
+                CreateDefaultParagraphProperties(), 0, 9, s);
+
+            Assert.AreEqual(4, textLine.LineRuns.Length);
+
+            Assert.AreEqual("a", textLine.LineRuns[0].StringRange.ToString());
+            Assert.IsTrue(textLine.LineRuns[1].IsTab);
+            Assert.AreEqual("a", textLine.LineRuns[2].StringRange.ToString());
+            Assert.IsTrue(textLine.LineRuns[3].IsEnd);
         }
 
         TextParagraphProperties CreateDefaultParagraphProperties()
