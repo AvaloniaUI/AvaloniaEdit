@@ -375,6 +375,8 @@ namespace AvaloniaEdit.Text
                 Count = length;
                 _isMeasured = false;
 
+                // TODO: This is not perfect implementation, It don't distinguish between sigle-byte width and double-byte width.
+                // This implementation is intended to reduce processing when very long characters are entered.
                 if (useCheapGlyphMeasurement)
                 {
                     _isMeasured = true;
