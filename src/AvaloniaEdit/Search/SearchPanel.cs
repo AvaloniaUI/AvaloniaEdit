@@ -484,6 +484,11 @@ namespace AvaloniaEdit.Search
         public bool IsClosed { get; private set; }
 
         /// <summary>
+        /// Gets whether the Panel is currently opened.
+        /// </summary>
+        public bool IsOpened => !IsClosed;
+
+        /// <summary>
         /// Closes the SearchPanel.
         /// </summary>
         public void Close()
