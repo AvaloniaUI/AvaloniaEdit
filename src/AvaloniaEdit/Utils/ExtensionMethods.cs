@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Xml;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Documents;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.VisualTree;
@@ -97,10 +98,10 @@ namespace AvaloniaEdit.Utils
         /// </summary>
         public static Typeface CreateTypeface(this Control fe)
         {
-            return new Typeface(fe.GetValue(TextBlock.FontFamilyProperty),
-                fe.GetValue(TextBlock.FontStyleProperty),
-                fe.GetValue(TextBlock.FontWeightProperty),
-                fe.GetValue(TextBlock.FontStretchProperty));
+            return new Typeface(fe.GetValue(TextElement.FontFamilyProperty),
+                fe.GetValue(TextElement.FontStyleProperty),
+                fe.GetValue(TextElement.FontWeightProperty),
+                fe.GetValue(TextElement.FontStretchProperty));
         }
         #endregion
 

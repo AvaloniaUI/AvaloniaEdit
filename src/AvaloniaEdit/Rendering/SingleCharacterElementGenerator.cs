@@ -102,10 +102,13 @@ namespace AvaloniaEdit.Rendering
 		public override VisualLineElement ConstructElement(int offset)
 		{
 			var c = CurrentContext.Document.GetCharAt(offset);
+
+			VisualLineElement element = null;
+
 			if (ShowSpaces && c == ' ') {
-				return new SpaceTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter("\u00B7", CurrentContext));
+				element = new SpaceTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter("\u00B7", CurrentContext));
 			} else if (ShowTabs && c == '\t') {
-				return new TabTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter("\u00BB", CurrentContext));
+				element = new TabTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter("\u00BB", CurrentContext));
 			} else if (ShowBoxForControlCharacters && char.IsControl(c)) {
 				var p = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
 				p.SetForegroundBrush(Brushes.White);
@@ -113,9 +116,16 @@ namespace AvaloniaEdit.Rendering
 				var text = FormattedTextElement.PrepareText(textFormatter,
 															TextUtilities.GetControlCharacterName(c), p);
 				return new SpecialCharacterBoxElement(text);
-			} else {
-				return null;
 			}
+
+			if(element == null)
+            {
+				return null;
+            }
+
+			element.RelativeTextOffset = offset;
+
+			return element;
 		}
 
 		private sealed class SpaceTextElement : FormattedTextElement
@@ -154,7 +164,7 @@ namespace AvaloniaEdit.Rendering
 				if (startVisualColumn == VisualColumn)
 					return new TabGlyphRun(this, TextRunProperties);
 				else if (startVisualColumn == VisualColumn + 1)
-					return new TextCharacters(new ReadOnlySlice<char>("\t".AsMemory(), RelativeTextOffset, 1), TextRunProperties);
+					return new TextCharacters(new ReadOnlySlice<char>("\t".AsMemory(), VisualColumn + 1, 1), TextRunProperties);
 				else
 					throw new ArgumentOutOfRangeException(nameof(startVisualColumn));
 			}
@@ -185,19 +195,13 @@ namespace AvaloniaEdit.Rendering
 				_element = element;
 			}
 
-			public override TextRunProperties Properties { get; }
+			public override ReadOnlySlice<char> Text { get; }
+
+            public override TextRunProperties Properties { get; }
 
 			public override double Baseline => _element.Text.Baseline;
 
-			public override Size Size
-			{
-				get
-				{
-					var width = Math.Min(0, _element.Text.WidthIncludingTrailingWhitespace - 1);
-					
-					return new Size(width, _element.Text.Height);
-				}
-			}
+			public override Size Size => Size.Empty;
 
 			public override void Draw(DrawingContext drawingContext, Point origin)
 			{

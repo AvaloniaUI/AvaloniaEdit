@@ -19,6 +19,7 @@
 using System;
 using System.Globalization;
 using Avalonia.Controls;
+using Avalonia.Controls.Documents;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 
@@ -55,9 +56,9 @@ namespace AvaloniaEdit.Utils
 			if (typeface == default)
 				typeface = element.CreateTypeface();
 			if (emSize == null)
-				emSize = TextBlock.GetFontSize(element);
+				emSize = TextElement.GetFontSize(element);
 			if (foreground == null)
-				foreground = TextBlock.GetForeground(element);
+				foreground = TextElement.GetForeground(element);
 			
 			return new FormattedText(
 				text,

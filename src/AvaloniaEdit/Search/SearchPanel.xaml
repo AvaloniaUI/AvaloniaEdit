@@ -44,7 +44,7 @@
                 BorderBrush="{TemplateBinding BorderBrush}"
                 Background="{TemplateBinding Background}"
                 HorizontalAlignment="Right"
-                VerticalAlignment="Top" TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="10">
+                VerticalAlignment="Top" TextElement.FontFamily="Segoi UI" TextElement.FontSize="10">
                     <Grid ColumnDefinitions="Auto,Auto,Auto"
                 RowDefinitions="Auto,Auto">
                         <Popup Name="PART_MessageView"

@@ -19,7 +19,7 @@ using TextMateSharp.Grammars;
 
 namespace AvaloniaEdit.Demo
 {
-    using Pair = KeyValuePair<int, IControl>;
+    using Pair = KeyValuePair<int, Control>;
 
     public class MainWindow : Window
     {
@@ -57,6 +57,9 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.Options.ShowBoxForControlCharacters = true;
+            _textEditor.Options.ShowTabs = true;
+            //_textEditor.Options.ShowSpaces = true;
+            //_textEditor.Options.ShowEndOfLine = true;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy(_textEditor.Options);
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
@@ -154,13 +157,13 @@ namespace AvaloniaEdit.Demo
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void AddControlButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void AddControlButton_Click(object sender, RoutedEventArgs e)
         {
-            _generator.controls.Add(new KeyValuePair<int, Control>(_textEditor.CaretOffset, new Button() { Content = "Click me" }));
+            _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me" }));
             _textEditor.TextArea.TextView.Redraw();
         }
 
-        private void ClearControlButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void ClearControlButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: delete elements using back key
             _generator.controls.Clear();
@@ -290,9 +293,9 @@ namespace AvaloniaEdit.Demo
             }
         }
 
-        class ElementGenerator : VisualLineElementGenerator, IComparer<KeyValuePair<int, Control>>
+        class ElementGenerator : VisualLineElementGenerator, IComparer<Pair>
         {
-            public List<KeyValuePair<int, Control>> controls = new List<KeyValuePair<int, Control>>();
+            public List<Pair> controls = new List<Pair>();
 
             /// <summary>
             /// Gets the first interested offset using binary search
@@ -301,7 +304,7 @@ namespace AvaloniaEdit.Demo
             /// <param name="startOffset">Start offset.</param>
             public override int GetFirstInterestedOffset(int startOffset)
             {
-                int pos = controls.BinarySearch(new KeyValuePair<int, Control>(startOffset, null), this);
+                int pos = controls.BinarySearch(new Pair(startOffset, null), this);
                 if (pos < 0)
                     pos = ~pos;
                 if (pos < controls.Count)
@@ -312,14 +315,14 @@ namespace AvaloniaEdit.Demo
 
             public override VisualLineElement ConstructElement(int offset)
             {
-                int pos = controls.BinarySearch(new KeyValuePair<int, Control>(offset, null), this);
+                int pos = controls.BinarySearch(new Pair(offset, null), this);
                 if (pos >= 0)
                     return new InlineObjectElement(0, controls[pos].Value);
                 else
                     return null;
             }
 
-            int IComparer<KeyValuePair<int, Control>>.Compare(KeyValuePair<int, Control> x, KeyValuePair<int, Control> y)
+            int IComparer<Pair>.Compare(Pair x, Pair y)
             {
                 return x.Key.CompareTo(y.Key);
             }

@@ -89,7 +89,12 @@ namespace AvaloniaEdit.Rendering
 				else
 					newlineText = "?";
 			}
-			return new FormattedTextRun(new FormattedTextElement(TextView.CachedElements.GetTextForNonPrintableCharacter(newlineText, this), 0), GlobalTextRunProperties);
+
+			var textElement = new FormattedTextElement(TextView.CachedElements.GetTextForNonPrintableCharacter(newlineText, this), 0);
+
+			textElement.RelativeTextOffset = lastDocumentLine.Offset + lastDocumentLine.Length;
+
+			return new FormattedTextRun(textElement, GlobalTextRunProperties);
 		}
 
 		public ReadOnlySlice<char> GetPrecedingText(int textSourceCharacterIndexLimit)

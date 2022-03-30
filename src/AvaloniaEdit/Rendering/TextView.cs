@@ -920,9 +920,10 @@ namespace AvaloniaEdit.Rendering
 			foreach (var layer in Layers) {
 				layer.Measure(availableSize);
 			}
-			MeasureInlineObjects();
-
+			
 			InvalidateVisual(); // = InvalidateArrange+InvalidateRender
+
+            MeasureInlineObjects();
 
             double maxWidth;
             if (_document == null)
@@ -1060,7 +1061,7 @@ namespace AvaloniaEdit.Rendering
 			var p = new GlobalTextRunProperties();
 			p.typeface = this.CreateTypeface();
 			p.fontRenderingEmSize = FontSize;
-			p.foregroundBrush = GetValue(TextBlock.ForegroundProperty);
+			p.foregroundBrush = GetValue(TextElement.ForegroundProperty);
 			ExtensionMethods.CheckIsFrozen(p.foregroundBrush);
 			p.cultureInfo = CultureInfo.CurrentCulture;
 			return p;
@@ -1599,7 +1600,7 @@ namespace AvaloniaEdit.Rendering
         #region Visual element pointer handling
 
         [ThreadStatic] private static bool _invalidCursor;
-        private VisualLineElement _currentHoveredElement;
+        //private VisualLineElement _currentHoveredElement;
 
         /// <summary>
         /// Updates the pointe cursor, but with background priority.
@@ -1635,15 +1636,15 @@ namespace AvaloniaEdit.Rendering
         {
             base.OnPointerMoved(e);
 
-            var element = GetVisualLineElementFromPosition(e.GetPosition(this) + _scrollOffset);
+            //var element = GetVisualLineElementFromPosition(e.GetPosition(this) + _scrollOffset);
 
-            // Change back to default if hover on a different element
-            if (_currentHoveredElement != element)
-            {
-                Cursor = Parent.Cursor; // uses TextArea's ContentPresenter cursor
-                _currentHoveredElement = element;
-            }
-            element?.OnQueryCursor(e);
+            //// Change back to default if hover on a different element
+            //if (_currentHoveredElement != element)
+            //{
+            //    Cursor = Parent.Cursor; // uses TextArea's ContentPresenter cursor
+            //    _currentHoveredElement = element;
+            //}
+            //element?.OnQueryCursor(e);
         }
 
         protected override void OnPointerPressed(PointerPressedEventArgs e)

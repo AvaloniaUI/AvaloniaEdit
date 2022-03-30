@@ -109,7 +109,7 @@ namespace AvaloniaEdit.Rendering
 		}
 
 		/// <inheritdoc/>
-		public override Size Size => Element.IsArrangeValid ? Element.DesiredSize : Size.Empty;
+		public override Size Size => DesiredSize;
 		
 		/// <inheritdoc/>
 		public override void Draw(DrawingContext drawingContext, Point origin)
