@@ -109,10 +109,10 @@ namespace AvaloniaEdit.TextMate
             try
             {
                 int startLine = _document.GetLineByOffset(e.Offset).LineNumber - 1;
-
+                int endLine = startLine;
                 if (e.InsertionLength > 0)
                 {
-                    int endLine = _document.GetLineByOffset(e.Offset + e.InsertionLength).LineNumber - 1;
+                    endLine = _document.GetLineByOffset(e.Offset + e.InsertionLength).LineNumber - 1;
 
                     for (int i = startLine; i < endLine; i++)
                     {
@@ -124,13 +124,14 @@ namespace AvaloniaEdit.TextMate
 
                 if (startLine == 0)
                 {
-                    InvalidateLine(startLine);
+                    InvalidateLineRange(startLine, endLine);
                     return;
                 }
 
                 // some grammars (JSON, csharp, ...)
                 // need to invalidate the previous line too
-                InvalidateLineRange(startLine - 1, startLine);
+
+                InvalidateLineRange(startLine - 1, endLine);
             }
             catch (Exception ex)
             {
