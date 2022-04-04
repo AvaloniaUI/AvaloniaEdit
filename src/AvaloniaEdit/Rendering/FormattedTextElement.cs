@@ -112,8 +112,6 @@ namespace AvaloniaEdit.Rendering
 				throw new ArgumentNullException(nameof(properties));
 			Properties = properties;
 			Element = element ?? throw new ArgumentNullException(nameof(element));
-			Text = new ReadOnlySlice<char>(new string(' ', element.VisualLength).AsMemory(), element.RelativeTextOffset,
-				element.VisualLength);
 		}
 
 		/// <summary>
@@ -140,7 +138,7 @@ namespace AvaloniaEdit.Rendering
 				}
 
 				var text = Element.TextLine;
-				return new Size( text.WidthIncludingTrailingWhitespace, text.Height);
+				return new Size(text.WidthIncludingTrailingWhitespace, text.Height);
 			}
 		}
 

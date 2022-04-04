@@ -68,11 +68,9 @@ namespace AvaloniaEdit.Rendering
 			var text = context.GetText(
 				offset,
 				DocumentLength - relativeOffset);
-			
-			return new TextCharacters(
-				new ReadOnlySlice<char>(text.Text.AsMemory(), startVisualColumn, text.Count,
-					text.Offset), TextRunProperties);
-		}
+
+            return new TextCharacters(text.Text.AsMemory(), RelativeTextOffset, text.Count, TextRunProperties);
+        }
 
 		/// <inheritdoc/>
 		public override bool IsWhitespace(int visualColumn)

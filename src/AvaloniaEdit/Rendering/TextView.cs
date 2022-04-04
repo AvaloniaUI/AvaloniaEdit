@@ -1128,7 +1128,7 @@ namespace AvaloniaEdit.Rendering
                 );
                 
                 textLines.Add(textLine);
-                textOffset += textLine.TextRange.Length;
+                textOffset += textLine.Length;
 
 				// exit loop so that we don't do the indentation calculation if there's only a single line
 				if (textOffset >= visualLine.VisualLengthWithEndOfLineMarker)

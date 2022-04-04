@@ -341,9 +341,9 @@ namespace AvaloniaEdit.Rendering
                 return TextLines[TextLines.Count - 1];
             foreach (var line in TextLines)
             {
-                if (isAtEndOfLine ? visualColumn <= line.TextRange.Length : visualColumn < line.TextRange.Length)
+                if (isAtEndOfLine ? visualColumn <= line.Length : visualColumn < line.Length)
                     return line;
-                visualColumn -= line.TextRange.Length;
+                visualColumn -= line.Length;
             }
             throw new InvalidOperationException("Shouldn't happen (VisualLength incorrect?)");
         }
@@ -395,7 +395,7 @@ namespace AvaloniaEdit.Rendering
             if (!TextLines.Contains(textLine))
                 throw new ArgumentException("textLine is not a line in this VisualLine");
 
-            return TextLines.TakeWhile(tl => tl != textLine).Sum(tl => tl.TextRange.Length);
+            return TextLines.TakeWhile(tl => tl != textLine).Sum(tl => tl.Length);
         }
 
         /// <summary>
@@ -478,7 +478,7 @@ namespace AvaloniaEdit.Rendering
         {
             var textLine = GetTextLineByVisualYPosition(point.Y);
             var vc = GetVisualColumn(textLine, point.X, allowVirtualSpace);
-            isAtEndOfLine = (vc >= GetTextLineVisualStartColumn(textLine) + textLine.TextRange.Length);
+            isAtEndOfLine = (vc >= GetTextLineVisualStartColumn(textLine) + textLine.Length);
             return vc;
         }
 
@@ -567,7 +567,7 @@ namespace AvaloniaEdit.Rendering
                 // GetCharacterHitFromDistance returns a hit with FirstCharacterIndex=last character in line
                 // and TrailingLength=1 when clicking behind the line, so the floor function needs to handle this case
                 // specially and return the line's end column instead.
-                return GetTextLineVisualStartColumn(textLine) + textLine.TextRange.Length;
+                return GetTextLineVisualStartColumn(textLine) + textLine.Length;
             }
 
             isAtEndOfLine = false;

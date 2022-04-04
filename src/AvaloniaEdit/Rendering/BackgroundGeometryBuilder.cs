@@ -198,7 +198,7 @@ namespace AvaloniaEdit.Rendering
 				TextLine line = visualLine.TextLines[i];
 				double y = visualLine.GetTextLineVisualYPosition(line, VisualYPosition.LineTop);
 				int visualStartCol = visualLine.GetTextLineVisualStartColumn(line);
-				int visualEndCol = visualStartCol + line.TextRange.Length;
+				int visualEndCol = visualStartCol + line.Length;
 				if (line == lastTextLine)
 					visualEndCol -= 1; // 1 position for the TextEndOfParagraph
 				else

@@ -191,7 +191,7 @@ namespace AvaloniaEdit.Editing
                 return SimpleSegment.Invalid;
             var tl = vl.GetTextLineByVisualYPosition(pos.Y);
             var visualStartColumn = vl.GetTextLineVisualStartColumn(tl);
-            var visualEndColumn = visualStartColumn + tl.TextRange.Length;
+            var visualEndColumn = visualStartColumn + tl.Length;
             var relStart = vl.FirstDocumentLine.Offset;
             var startOffset = vl.GetRelativeOffset(visualStartColumn) + relStart;
             var endOffset = vl.GetRelativeOffset(visualEndColumn) + relStart;

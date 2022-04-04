@@ -103,12 +103,10 @@ namespace AvaloniaEdit.Rendering
 		{
 			var c = CurrentContext.Document.GetCharAt(offset);
 
-			VisualLineElement element = null;
-
 			if (ShowSpaces && c == ' ') {
-				element = new SpaceTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter("\u00B7", CurrentContext));
+				return new SpaceTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter("\u00B7", CurrentContext));
 			} else if (ShowTabs && c == '\t') {
-				element = new TabTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter("\u00BB", CurrentContext));
+				return new TabTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter("\u00BB", CurrentContext));
 			} else if (ShowBoxForControlCharacters && char.IsControl(c)) {
 				var p = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
 				p.SetForegroundBrush(Brushes.White);
@@ -118,14 +116,7 @@ namespace AvaloniaEdit.Rendering
 				return new SpecialCharacterBoxElement(text);
 			}
 
-			if(element == null)
-            {
-				return null;
-            }
-
-			element.RelativeTextOffset = offset;
-
-			return element;
+            return null;
 		}
 
 		private sealed class SpaceTextElement : FormattedTextElement
@@ -194,8 +185,6 @@ namespace AvaloniaEdit.Rendering
 				Properties = properties;
 				_element = element;
 			}
-
-			public override ReadOnlySlice<char> Text { get; }
 
             public override TextRunProperties Properties { get; }
 
