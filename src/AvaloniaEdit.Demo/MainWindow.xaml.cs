@@ -16,7 +16,7 @@ using AvaloniaEdit.Folding;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Grammars;
-
+using Avalonia.Diagnostics;
 namespace AvaloniaEdit.Demo
 {
     using Pair = KeyValuePair<int, Control>;
@@ -39,6 +39,7 @@ namespace AvaloniaEdit.Demo
 
         public MainWindow()
         {
+            
             InitializeComponent();
 
             _textEditor = this.FindControl<TextEditor>("Editor");
@@ -57,9 +58,6 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.Options.ShowBoxForControlCharacters = true;
-            _textEditor.Options.ShowTabs = true;
-            //_textEditor.Options.ShowSpaces = true;
-            //_textEditor.Options.ShowEndOfLine = true;
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy(_textEditor.Options);
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
