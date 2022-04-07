@@ -9,7 +9,7 @@ using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
 {
-    public class TextEditorModel : AbstractLineList
+    public class TextEditorModel : AbstractLineList, IDisposable
     {
         private readonly TextDocument _document;
         private readonly TextView _textView;
@@ -153,7 +153,10 @@ namespace AvaloniaEdit.TextMate
 
             // we're in a document change, store the max invalid range
             if (_invalidRange == null)
+            {
                 _invalidRange = new InvalidLineRange(startLine, endLine);
+                return;
+            }
 
             _invalidRange.SetInvalidRange(startLine, endLine);
         }
@@ -163,8 +166,14 @@ namespace AvaloniaEdit.TextMate
             if (_invalidRange == null)
                 return;
 
-            InvalidateLineRange(_invalidRange.StartLine, _invalidRange.EndLine);
-            _invalidRange = null;
+            try
+            {
+                InvalidateLineRange(_invalidRange.StartLine, _invalidRange.EndLine);
+            }
+            finally
+            {
+                _invalidRange = null;
+            }
         }
 
         private void TokenizeViewPort()
@@ -183,8 +192,8 @@ namespace AvaloniaEdit.TextMate
 
         internal class InvalidLineRange
         {
-            internal int StartLine { get; set; }
-            internal int EndLine { get; set; }
+            internal int StartLine { get; private set; }
+            internal int EndLine { get; private set; }
 
             internal InvalidLineRange(int startLine, int endLine)
             {
