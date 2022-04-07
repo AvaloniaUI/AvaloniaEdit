@@ -164,6 +164,7 @@ namespace AvaloniaEdit.Tests.TextMate
             textEditorModel.ForEach((m) => count++);
 
             Assert.AreEqual(document.LineCount, count);
+            textEditorModel.Dispose();
         }
 
         [Test]
@@ -183,6 +184,7 @@ namespace AvaloniaEdit.Tests.TextMate
             textEditorModel.ForEach((m) => count++);
 
             Assert.AreEqual(document.LineCount, count);
+            textEditorModel.Dispose();
         }
 
         [Test]
@@ -204,6 +206,7 @@ namespace AvaloniaEdit.Tests.TextMate
             textEditorModel.ForEach((m) => count++);
 
             Assert.AreEqual(document.LineCount, count);
+            textEditorModel.Dispose();
         }
 
         [Test]
@@ -220,6 +223,7 @@ namespace AvaloniaEdit.Tests.TextMate
             document.Replace(0, 1, "P");
 
             Assert.AreEqual("Puppy", textEditorModel.GetLineText(0));
+            textEditorModel.Dispose();
         }
 
         [Test]
@@ -236,6 +240,7 @@ namespace AvaloniaEdit.Tests.TextMate
             document.Replace(0, 1, "\n");
 
             Assert.AreEqual("", textEditorModel.GetLineText(0));
+            textEditorModel.Dispose();
         }
 
         [Test]
@@ -253,6 +258,7 @@ namespace AvaloniaEdit.Tests.TextMate
             document.Text = string.Empty;
             Assert.AreEqual(1, textEditorModel.GetNumberOfLines());
             Assert.AreEqual(string.Empty, textEditorModel.GetLineText(0));
+            textEditorModel.Dispose();
         }
 
         [Test]
@@ -274,6 +280,78 @@ namespace AvaloniaEdit.Tests.TextMate
             Assert.AreEqual("two", textEditorModel.GetLineText(1));
             Assert.AreEqual("three", textEditorModel.GetLineText(2));
             Assert.AreEqual("four", textEditorModel.GetLineText(3));
+            textEditorModel.Dispose();
+        }
+
+        [Test]
+        public void Batch_Document_Changes_Should_Invalidate_Lines()
+        {
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            TextEditorModel textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "puppy\npuppy\npuppy";
+
+            document.BeginUpdate();
+
+            document.Insert(0, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine);
+            Assert.AreEqual(0, textEditorModel.InvalidRange.EndLine);
+
+            document.Insert(7, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine);
+            Assert.AreEqual(1, textEditorModel.InvalidRange.EndLine);
+
+            document.Insert(14, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine);
+            Assert.AreEqual(2, textEditorModel.InvalidRange.EndLine);
+
+            document.EndUpdate();
+            Assert.IsNull(textEditorModel.InvalidRange);
+
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(0));
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(1));
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(2));
+            textEditorModel.Dispose();
+        }
+
+        [Test]
+        public void Nested_Batch_Document_Changes_Should_Invalidate_Lines()
+        {
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            TextEditorModel textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "puppy\npuppy\npuppy";
+
+            document.BeginUpdate();
+
+            document.Insert(0, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine);
+            Assert.AreEqual(0, textEditorModel.InvalidRange.EndLine);
+
+            document.BeginUpdate();
+            document.Insert(7, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine);
+            Assert.AreEqual(1, textEditorModel.InvalidRange.EndLine);
+
+            document.Insert(14, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine);
+            Assert.AreEqual(2, textEditorModel.InvalidRange.EndLine);
+
+            document.EndUpdate();
+            Assert.IsNotNull(textEditorModel.InvalidRange);
+            document.EndUpdate();
+            Assert.IsNull(textEditorModel.InvalidRange);
+
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(0));
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(1));
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(2));
+            textEditorModel.Dispose();
         }
     }
 }

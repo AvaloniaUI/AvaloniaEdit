@@ -15,8 +15,10 @@ namespace AvaloniaEdit.TextMate
         private readonly TextView _textView;
         private DocumentSnapshot _documentSnapshot;
         private Action<Exception> _exceptionHandler;
+        private InvalidLineRange _invalidRange;
 
         public DocumentSnapshot DocumentSnapshot { get { return _documentSnapshot; } }
+        internal InvalidLineRange InvalidRange { get { return _invalidRange; } }
 
         public TextEditorModel(TextView textView, TextDocument document, Action<Exception> exceptionHandler)
         {
@@ -150,19 +152,19 @@ namespace AvaloniaEdit.TextMate
             }
 
             // we're in a document change, store the max invalid range
-            if (mInvalidRange == null)
-                mInvalidRange = new InvalidateRange(startLine, endLine);
+            if (_invalidRange == null)
+                _invalidRange = new InvalidLineRange(startLine, endLine);
 
-            mInvalidRange.SetInvalidRange(startLine, endLine);
+            _invalidRange.SetInvalidRange(startLine, endLine);
         }
 
         void DocumentOnUpdateFinished(object sender, EventArgs e)
         {
-            if (mInvalidRange == null)
+            if (_invalidRange == null)
                 return;
 
-            InvalidateLineRange(mInvalidRange.StartLine, mInvalidRange.EndLine);
-            mInvalidRange = null;
+            InvalidateLineRange(_invalidRange.StartLine, _invalidRange.EndLine);
+            _invalidRange = null;
         }
 
         void TokenizeViewPort()
@@ -179,14 +181,12 @@ namespace AvaloniaEdit.TextMate
             }, DispatcherPriority.MinValue);
         }
 
-        InvalidateRange mInvalidRange;
-
-        class InvalidateRange
+        internal class InvalidLineRange
         {
             internal int StartLine { get; set; }
             internal int EndLine { get; set; }
 
-            internal InvalidateRange(int startLine, int endLine)
+            internal InvalidLineRange(int startLine, int endLine)
             {
                 StartLine = startLine;
                 EndLine = endLine;
