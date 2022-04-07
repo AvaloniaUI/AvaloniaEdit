@@ -143,7 +143,7 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        void SetInvalidRange(int startLine, int endLine)
+        private void SetInvalidRange(int startLine, int endLine)
         {
             if (!_document.IsInUpdate)
             {
@@ -167,7 +167,7 @@ namespace AvaloniaEdit.TextMate
             _invalidRange = null;
         }
 
-        void TokenizeViewPort()
+        private void TokenizeViewPort()
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
