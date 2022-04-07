@@ -31,6 +31,7 @@ namespace AvaloniaEdit.TextMate
 
             _document.Changing += DocumentOnChanging;
             _document.Changed += DocumentOnChanged;
+            _document.UpdateFinished += DocumentOnUpdateFinished;
             _textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
         }
 
@@ -38,6 +39,7 @@ namespace AvaloniaEdit.TextMate
         {
             _document.Changing -= DocumentOnChanging;
             _document.Changed -= DocumentOnChanged;
+            _document.UpdateFinished -= DocumentOnUpdateFinished;
             _textView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
         }
 
@@ -124,19 +126,43 @@ namespace AvaloniaEdit.TextMate
 
                 if (startLine == 0)
                 {
-                    InvalidateLineRange(startLine, endLine);
+                    SetInvalidRange(startLine, endLine);
                     return;
                 }
 
                 // some grammars (JSON, csharp, ...)
                 // need to invalidate the previous line too
 
-                InvalidateLineRange(startLine - 1, endLine);
+                SetInvalidRange(startLine - 1, endLine);
             }
             catch (Exception ex)
             {
                 _exceptionHandler?.Invoke(ex);
             }
+        }
+
+        void SetInvalidRange(int startLine, int endLine)
+        {
+            if (!_document.IsInUpdate)
+            {
+                InvalidateLineRange(startLine, endLine);
+                return;
+            }
+
+            // we're in a document change, store the max invalid range
+            if (mInvalidRange == null)
+                mInvalidRange = new InvalidateRange(startLine, endLine);
+
+            mInvalidRange.SetInvalidRange(startLine, endLine);
+        }
+
+        void DocumentOnUpdateFinished(object sender, EventArgs e)
+        {
+            if (mInvalidRange == null)
+                return;
+
+            InvalidateLineRange(mInvalidRange.StartLine, mInvalidRange.EndLine);
+            mInvalidRange = null;
         }
 
         void TokenizeViewPort()
@@ -151,6 +177,29 @@ namespace AvaloniaEdit.TextMate
                     _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
                     _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
             }, DispatcherPriority.MinValue);
+        }
+
+        InvalidateRange mInvalidRange;
+
+        class InvalidateRange
+        {
+            internal int StartLine { get; set; }
+            internal int EndLine { get; set; }
+
+            internal InvalidateRange(int startLine, int endLine)
+            {
+                StartLine = startLine;
+                EndLine = endLine;
+            }
+
+            internal void SetInvalidRange(int startLine, int endLine)
+            {
+                if (startLine < StartLine)
+                    StartLine = startLine;
+
+                if (endLine > EndLine)
+                    EndLine = endLine;
+            }
         }
     }
 }
