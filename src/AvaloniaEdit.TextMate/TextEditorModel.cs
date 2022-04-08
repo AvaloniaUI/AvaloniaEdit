@@ -9,14 +9,16 @@ using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
 {
-    public class TextEditorModel : AbstractLineList
+    public class TextEditorModel : AbstractLineList, IDisposable
     {
         private readonly TextDocument _document;
         private readonly TextView _textView;
         private DocumentSnapshot _documentSnapshot;
         private Action<Exception> _exceptionHandler;
+        private InvalidLineRange _invalidRange;
 
         public DocumentSnapshot DocumentSnapshot { get { return _documentSnapshot; } }
+        internal InvalidLineRange InvalidRange { get { return _invalidRange; } }
 
         public TextEditorModel(TextView textView, TextDocument document, Action<Exception> exceptionHandler)
         {
@@ -31,6 +33,7 @@ namespace AvaloniaEdit.TextMate
 
             _document.Changing += DocumentOnChanging;
             _document.Changed += DocumentOnChanged;
+            _document.UpdateFinished += DocumentOnUpdateFinished;
             _textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
         }
 
@@ -38,6 +41,7 @@ namespace AvaloniaEdit.TextMate
         {
             _document.Changing -= DocumentOnChanging;
             _document.Changed -= DocumentOnChanged;
+            _document.UpdateFinished -= DocumentOnUpdateFinished;
             _textView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
         }
 
@@ -124,14 +128,14 @@ namespace AvaloniaEdit.TextMate
 
                 if (startLine == 0)
                 {
-                    InvalidateLineRange(startLine, endLine);
+                    SetInvalidRange(startLine, endLine);
                     return;
                 }
 
                 // some grammars (JSON, csharp, ...)
                 // need to invalidate the previous line too
 
-                InvalidateLineRange(startLine - 1, endLine);
+                SetInvalidRange(startLine - 1, endLine);
             }
             catch (Exception ex)
             {
@@ -139,7 +143,40 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        void TokenizeViewPort()
+        private void SetInvalidRange(int startLine, int endLine)
+        {
+            if (!_document.IsInUpdate)
+            {
+                InvalidateLineRange(startLine, endLine);
+                return;
+            }
+
+            // we're in a document change, store the max invalid range
+            if (_invalidRange == null)
+            {
+                _invalidRange = new InvalidLineRange(startLine, endLine);
+                return;
+            }
+
+            _invalidRange.SetInvalidRange(startLine, endLine);
+        }
+
+        void DocumentOnUpdateFinished(object sender, EventArgs e)
+        {
+            if (_invalidRange == null)
+                return;
+
+            try
+            {
+                InvalidateLineRange(_invalidRange.StartLine, _invalidRange.EndLine);
+            }
+            finally
+            {
+                _invalidRange = null;
+            }
+        }
+
+        private void TokenizeViewPort()
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -151,6 +188,27 @@ namespace AvaloniaEdit.TextMate
                     _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
                     _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
             }, DispatcherPriority.MinValue);
+        }
+
+        internal class InvalidLineRange
+        {
+            internal int StartLine { get; private set; }
+            internal int EndLine { get; private set; }
+
+            internal InvalidLineRange(int startLine, int endLine)
+            {
+                StartLine = startLine;
+                EndLine = endLine;
+            }
+
+            internal void SetInvalidRange(int startLine, int endLine)
+            {
+                if (startLine < StartLine)
+                    StartLine = startLine;
+
+                if (endLine > EndLine)
+                    EndLine = endLine;
+            }
         }
     }
 }

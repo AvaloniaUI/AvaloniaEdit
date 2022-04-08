@@ -15,7 +15,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -29,7 +29,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -45,7 +45,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -63,7 +63,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -79,7 +79,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -98,7 +98,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -117,7 +117,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\r\npussy\r\nbirdie";
@@ -136,7 +136,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -153,7 +153,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -172,7 +172,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -191,7 +191,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -212,7 +212,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -228,7 +228,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -244,7 +244,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -261,7 +261,7 @@ namespace AvaloniaEdit.Tests.TextMate
             TextView textView = new TextView();
             TextDocument document = new TextDocument();
 
-            TextEditorModel textEditorModel = new TextEditorModel(
+            using var textEditorModel = new TextEditorModel(
                 textView, document, null);
 
             document.Text = "puppy\npussy\nbirdie";
@@ -274,6 +274,90 @@ namespace AvaloniaEdit.Tests.TextMate
             Assert.AreEqual("two", textEditorModel.GetLineText(1));
             Assert.AreEqual("three", textEditorModel.GetLineText(2));
             Assert.AreEqual("four", textEditorModel.GetLineText(3));
+        }
+
+        [Test]
+        public void Batch_Document_Changes_Should_Invalidate_Lines()
+        {
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            using var textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "puppy\npuppy\npuppy";
+
+            document.BeginUpdate();
+
+            document.Insert(0, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine,
+                "Wrong InvalidRange.StartLine 1");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.EndLine,
+                "Wrong InvalidRange.EndLine 1");
+
+            document.Insert(7, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine,
+                "Wrong InvalidRange.StartLine 2");
+            Assert.AreEqual(1, textEditorModel.InvalidRange.EndLine,
+                "Wrong InvalidRange.EndLine 2");
+
+            document.Insert(14, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine,
+                "Wrong InvalidRange.StartLine 3");
+            Assert.AreEqual(2, textEditorModel.InvalidRange.EndLine,
+                "Wrong InvalidRange.EndLine 3");
+
+            document.EndUpdate();
+            Assert.IsNull(textEditorModel.InvalidRange,
+                "InvalidRange should be null");
+
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(0));
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(1));
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(2));
+        }
+
+        [Test]
+        public void Nested_Batch_Document_Changes_Should_Invalidate_Lines()
+        {
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            using var textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "puppy\npuppy\npuppy";
+
+            document.BeginUpdate();
+
+            document.Insert(0, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine,
+                "Wrong InvalidRange.StartLine 1");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.EndLine,
+                "Wrong InvalidRange.EndLine 1");
+
+            document.BeginUpdate();
+            document.Insert(7, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine,
+                "Wrong InvalidRange.StartLine 2");
+            Assert.AreEqual(1, textEditorModel.InvalidRange.EndLine,
+                "Wrong InvalidRange.EndLine 2");
+
+            document.Insert(14, "*");
+            Assert.AreEqual(0, textEditorModel.InvalidRange.StartLine,
+                "Wrong InvalidRange.StartLine 3");
+            Assert.AreEqual(2, textEditorModel.InvalidRange.EndLine,
+                "Wrong InvalidRange.EndLine 3");
+
+            document.EndUpdate();
+            Assert.IsNotNull(textEditorModel.InvalidRange,
+                "InvalidRange should not be null");
+            document.EndUpdate();
+            Assert.IsNull(textEditorModel.InvalidRange,
+                "InvalidRange should be null");
+
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(0));
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(1));
+            Assert.AreEqual("*puppy", textEditorModel.GetLineText(2));
         }
     }
 }
