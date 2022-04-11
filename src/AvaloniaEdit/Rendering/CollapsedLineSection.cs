@@ -33,7 +33,7 @@ namespace AvaloniaEdit.Rendering
 		internal string Id;
 		private static int _nextId;
 #else
-		const string ID = "";
+		const string Id = "";
 #endif
 
 		internal CollapsedLineSection(HeightTree heightTree, DocumentLine start, DocumentLine end)
