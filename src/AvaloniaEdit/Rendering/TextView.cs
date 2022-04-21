@@ -167,7 +167,7 @@ namespace AvaloniaEdit.Rendering
             // Unfortunately the "easy" approach (just use DispatcherPriority.Background) here makes the editor twice as slow because
             // the caret position change forces an immediate redraw, and the text input then forces a background redraw.
             // When fixing this, make sure performance on the SharpDevelop "type text in C# comment" stress test doesn't get significantly worse.
-            Redraw(e.Offset, e.RemovalLength);
+            Redraw(e.Offset, e.RemovalLength, DispatcherPriority.Normal);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -628,7 +628,7 @@ namespace AvaloniaEdit.Rendering
         /// <summary>
         /// Causes the text editor to regenerate the specified visual line.
         /// </summary>
-        public void Redraw(VisualLine visualLine, DispatcherPriority redrawPriority = DispatcherPriority.Normal)
+        public void Redraw(VisualLine visualLine, DispatcherPriority redrawPriority)
         {
             VerifyAccess();
             if (_allVisualLines.Remove(visualLine))
@@ -641,7 +641,7 @@ namespace AvaloniaEdit.Rendering
         /// <summary>
         /// Causes the text editor to redraw all lines overlapping with the specified segment.
         /// </summary>
-        public void Redraw(int offset, int length, DispatcherPriority redrawPriority = DispatcherPriority.Normal)
+        public void Redraw(int offset, int length, DispatcherPriority redrawPriority)
         {
             VerifyAccess();
             var changedSomethingBeforeOrInLine = false;
@@ -698,7 +698,7 @@ namespace AvaloniaEdit.Rendering
         /// Causes the text editor to redraw all lines overlapping with the specified segment.
         /// Does nothing if segment is null.
         /// </summary>
-        public void Redraw(ISegment segment, DispatcherPriority redrawPriority = DispatcherPriority.Normal)
+        public void Redraw(ISegment segment, DispatcherPriority redrawPriority)
         {
             if (segment != null)
             {
@@ -1931,7 +1931,7 @@ namespace AvaloniaEdit.Rendering
         }
 
         /// <inheritdoc/>
-        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             base.OnPropertyChanged(change);        
 

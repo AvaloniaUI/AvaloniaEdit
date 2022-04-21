@@ -119,7 +119,7 @@ namespace AvaloniaEdit.Folding
         internal void Redraw(FoldingSection fs)
         {
             foreach (var textView in TextViews)
-                textView.Redraw(fs);
+                textView.Redraw(fs, DispatcherPriority.Normal);
         }
         #endregion
 

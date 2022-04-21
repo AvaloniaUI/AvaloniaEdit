@@ -19,6 +19,7 @@
 using System;
 using System.Diagnostics;
 using Avalonia.Media;
+using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Utils;
@@ -353,7 +354,7 @@ namespace AvaloniaEdit.Highlighting
 
             if (fromLineNumber == toLineNumber)
             {
-                _textView.Redraw(_textView.Document.GetLineByNumber(fromLineNumber));
+                _textView.Redraw(_textView.Document.GetLineByNumber(fromLineNumber), DispatcherPriority.Normal);
             }
             else
             {
@@ -364,7 +365,7 @@ namespace AvaloniaEdit.Highlighting
                 var fromLine = _textView.Document.GetLineByNumber(fromLineNumber);
                 var toLine = _textView.Document.GetLineByNumber(toLineNumber);
                 var startOffset = fromLine.Offset;
-                _textView.Redraw(startOffset, toLine.EndOffset - startOffset);
+                _textView.Redraw(startOffset, toLine.EndOffset - startOffset, DispatcherPriority.Normal);
             }
 
             /*
