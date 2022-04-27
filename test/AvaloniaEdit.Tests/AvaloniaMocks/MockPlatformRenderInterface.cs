@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia.Visuals.Media.Imaging;
 
 using Moq;
 

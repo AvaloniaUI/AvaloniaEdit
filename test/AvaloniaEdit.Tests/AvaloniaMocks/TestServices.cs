@@ -93,6 +93,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             WindowingPlatform = windowingPlatform;
             PlatformHotkeyConfiguration = platformHotkeyConfiguration;
             FontManagerImpl = fontManagerImpl;
+            TextShaperImpl = textShaperImpl;
         }
 
         public IAssetLoader AssetLoader { get; }
