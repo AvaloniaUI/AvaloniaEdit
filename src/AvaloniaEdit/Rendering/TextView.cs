@@ -1232,6 +1232,8 @@ namespace AvaloniaEdit.Rendering
                                 var distance = textLine.GetDistanceFromCharacterHit(new CharacterHit(offset));
                                 
                                 inline.Element.Arrange(new Rect(new Point(pos.X + distance, pos.Y), inline.Element.DesiredSize));
+
+                                Debug.WriteLine(distance);
                             }
                             
                             offset += span.TextSourceLength;
