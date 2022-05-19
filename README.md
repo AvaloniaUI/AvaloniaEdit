@@ -2,17 +2,22 @@
 [![Current stable version](https://img.shields.io/nuget/v/Avalonia.AvaloniaEdit.svg)](https://www.nuget.org/packages/Avalonia.AvaloniaEdit)
 # AvaloniaEdit
 
-This project is a port of [AvalonEdit](https://github.com/icsharpcode/AvalonEdit) WPF-based text editor for [Avalonia](https://github.com/AvaloniaUI/Avalonia).
+This project is a port of [AvalonEdit](https://github.com/icsharpcode/AvalonEdit), a WPF-based text editor for [Avalonia](https://github.com/AvaloniaUI/Avalonia).
 
 AvaloniaEdit supports features like:
 
-  * Syntax highlighting using [TextMate](https://github.com/danipen/TextMateSharp) grammars
-  * Line numeration
-  * Rectangular selection
-  * Intra-column adornments
-  * Word wrapping
-  * Scrolling below document
-  * Hyperlinks
+  * Syntax highlighting using [TextMate](https://github.com/danipen/TextMateSharp) grammars and themes.
+  * Code folding.
+  * Code completion.
+  * Fully customizable and extensible.
+  * Line numeration.
+  * Display whitespaces EOLs and tabs.
+  * Line virtualization.
+  * Multi-caret edition.
+  * Intra-column adornments.
+  * Word wrapping.
+  * Scrolling below document.
+  * Hyperlinks.
 
   and many,many more!
   
@@ -41,6 +46,6 @@ var _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
 _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registryOptions.GetLanguageByExtension(".cs").Id));
 ```
   
-![image](https://user-images.githubusercontent.com/53405089/147930720-b388df7e-9b83-4ade-9338-6d311b334814.png)
+![avaloniaedit-demo](https://user-images.githubusercontent.com/501613/169226248-946e716d-dea3-4c6d-9ae9-6148b2a51f03.gif)
 
 
