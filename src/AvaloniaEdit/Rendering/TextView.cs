@@ -545,7 +545,7 @@ namespace AvaloniaEdit.Rendering
         /// NonPrintableCharacterBrush dependency property.
         /// </summary>
         public static readonly StyledProperty<IBrush> NonPrintableCharacterBrushProperty =
-            AvaloniaProperty.Register<TextView, IBrush>("NonPrintableCharacterBrush", Brushes.LightGray);
+            AvaloniaProperty.Register<TextView, IBrush>("NonPrintableCharacterBrush", new SolidColorBrush(Color.FromArgb(145, 128, 128, 128)));
 
         /// <summary>
         /// Gets/sets the Brush used for displaying non-printable characters.

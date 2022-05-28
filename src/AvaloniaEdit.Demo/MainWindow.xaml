@@ -29,7 +29,7 @@
             <TextBlock Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
-                               FontFamily="Consolas,Menlo,Monospace"
+                               FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
                                Margin="30"
                                Foreground="#D4D4D4"
                                HorizontalScrollBarVisibility="Auto"
