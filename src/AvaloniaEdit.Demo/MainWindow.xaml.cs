@@ -250,15 +250,21 @@ namespace AvaloniaEdit.Demo
                     int indexOfUnderline = lineText.IndexOf("underline");
                     int indexOfStrikeThrough = lineText.IndexOf("strikethrough");
 
-                    ChangeLinePart(
-                        line.Offset + indexOfUnderline,
-                        line.Offset + indexOfUnderline + "underline".Length,
-                        visualLine => visualLine.TextRunProperties.Underline = true);
+                    if (indexOfUnderline != -1)
+                    {
+                        ChangeLinePart(
+                            line.Offset + indexOfUnderline,
+                            line.Offset + indexOfUnderline + "underline".Length,
+                            visualLine => visualLine.TextRunProperties.Underline = true);
+                    }
 
-                    ChangeLinePart(
-                        line.Offset + indexOfStrikeThrough,
-                        line.Offset + indexOfStrikeThrough + "strikethrough".Length,
-                        visualLine => visualLine.TextRunProperties.Strikethrough = true);
+                    if (indexOfStrikeThrough != -1)
+                    {
+                        ChangeLinePart(
+                            line.Offset + indexOfStrikeThrough,
+                            line.Offset + indexOfStrikeThrough + "strikethrough".Length,
+                            visualLine => visualLine.TextRunProperties.Strikethrough = true);
+                    }
                 }
             }
         }
