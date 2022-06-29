@@ -311,9 +311,15 @@ namespace AvaloniaEdit.Text
 
                 if (TextRun.Properties.Strikethrough)
                 {
-                    var pen = new Pen(TextRun.Properties.ForegroundBrush, glyphTypeface.StrikethroughThickness * scale);
+                    double penThickness = glyphTypeface.StrikethroughThickness == 0 ?
+                        0.5 :
+                        glyphTypeface.StrikethroughThickness * scale;
 
-                    var posY = baseline + glyphTypeface.StrikethroughPosition * scale;
+                    var pen = new Pen(TextRun.Properties.ForegroundBrush, penThickness);
+
+                    var posY = glyphTypeface.StrikethroughPosition == 0
+                        ? glyphTypeface.LineHeight * scale / 2
+                        : baseline + glyphTypeface.StrikethroughPosition * scale;
 
                     drawingContext.DrawLine(pen,
                         new Point(x, posY),
