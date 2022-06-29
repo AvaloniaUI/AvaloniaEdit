@@ -247,7 +247,6 @@ namespace AvaloniaEdit.Demo
         {
             protected override void ColorizeLine(DocumentLine line)
             {
-                
                 if (line.LineNumber == 2)
                 {
                     string lineText = this.CurrentContext.Document.GetText(line);
