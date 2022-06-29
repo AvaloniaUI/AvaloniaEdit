@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -88,8 +89,10 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.Document = new TextDocument(
                 "// AvaloniaEdit supports displaying control chars: \a or \b or \v" + Environment.NewLine +
+                "// AvaloniaEdit supports displaying underline and strikethrough" + Environment.NewLine +
                 ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(csharpLanguage.Id));
+            _textEditor.TextArea.TextView.LineTransformers.Add(new CustomFormatTransformer());
 
             _statusTextBlock = this.Find<TextBlock>("StatusText");
 
@@ -117,6 +120,14 @@ namespace AvaloniaEdit.Demo
 
         private void SyntaxModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            for (int i = _textEditor.TextArea.TextView.LineTransformers.Count - 1; i >= 0; i--)
+            {
+                if (_textEditor.TextArea.TextView.LineTransformers[i] is CustomFormatTransformer)
+                {
+                    _textEditor.TextArea.TextView.LineTransformers.RemoveAt(i);
+                }
+            }
+
             Language language = (Language)_syntaxModeCombo.SelectedItem;
 
             if (_foldingManager != null)
@@ -224,6 +235,31 @@ namespace AvaloniaEdit.Demo
                 });
 
                 _insightWindow.Show();
+            }
+        }
+
+        class CustomFormatTransformer : DocumentColorizingTransformer
+        {
+            protected override void ColorizeLine(DocumentLine line)
+            {
+                
+                if (line.LineNumber == 2)
+                {
+                    string lineText = this.CurrentContext.Document.GetText(line);
+
+                    int indexOfUnderline = lineText.IndexOf("underline");
+                    int indexOfStrikeThrough = lineText.IndexOf("strikethrough");
+
+                    ChangeLinePart(
+                        line.Offset + indexOfUnderline,
+                        line.Offset + indexOfUnderline + "underline".Length,
+                        visualLine => visualLine.TextRunProperties.Underline = true);
+
+                    ChangeLinePart(
+                        line.Offset + indexOfStrikeThrough,
+                        line.Offset + indexOfStrikeThrough + "strikethrough".Length,
+                        visualLine => visualLine.TextRunProperties.Strikethrough = true);
+                }
             }
         }
 
