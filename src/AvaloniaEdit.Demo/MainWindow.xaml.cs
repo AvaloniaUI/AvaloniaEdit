@@ -92,7 +92,7 @@ namespace AvaloniaEdit.Demo
                 "// AvaloniaEdit supports displaying underline and strikethrough" + Environment.NewLine +
                 ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(csharpLanguage.Id));
-            _textEditor.TextArea.TextView.LineTransformers.Add(new CustomFormatTransformer());
+            _textEditor.TextArea.TextView.LineTransformers.Add(new UnderlineAndStrikeThroughTransformer());
 
             _statusTextBlock = this.Find<TextBlock>("StatusText");
 
@@ -120,13 +120,7 @@ namespace AvaloniaEdit.Demo
 
         private void SyntaxModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            for (int i = _textEditor.TextArea.TextView.LineTransformers.Count - 1; i >= 0; i--)
-            {
-                if (_textEditor.TextArea.TextView.LineTransformers[i] is CustomFormatTransformer)
-                {
-                    _textEditor.TextArea.TextView.LineTransformers.RemoveAt(i);
-                }
-            }
+            RemoveUnderlineAndStrikethroughTransformer();
 
             Language language = (Language)_syntaxModeCombo.SelectedItem;
 
@@ -149,6 +143,17 @@ namespace AvaloniaEdit.Demo
                 var strategy = new XmlFoldingStrategy();
                 strategy.UpdateFoldings(_foldingManager, _textEditor.Document);
                 return;
+            }
+        }
+
+        private void RemoveUnderlineAndStrikethroughTransformer()
+        {
+            for (int i = _textEditor.TextArea.TextView.LineTransformers.Count - 1; i >= 0; i--)
+            {
+                if (_textEditor.TextArea.TextView.LineTransformers[i] is UnderlineAndStrikeThroughTransformer)
+                {
+                    _textEditor.TextArea.TextView.LineTransformers.RemoveAt(i);
+                }
             }
         }
 
@@ -238,7 +243,7 @@ namespace AvaloniaEdit.Demo
             }
         }
 
-        class CustomFormatTransformer : DocumentColorizingTransformer
+        class UnderlineAndStrikeThroughTransformer : DocumentColorizingTransformer
         {
             protected override void ColorizeLine(DocumentLine line)
             {
