@@ -76,6 +76,7 @@ namespace AvaloniaEdit.Editing
             AddBinding(EditingCommands.TabForward, KeyModifiers.None, Key.Tab, OnTab);
             AddBinding(EditingCommands.TabBackward, KeyModifiers.Shift, Key.Tab, OnShiftTab);
 
+            AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.None), CanDelete);
             AddBinding(ApplicationCommands.Copy, OnCopy, CanCutOrCopy);
             AddBinding(ApplicationCommands.Cut, OnCut, CanCutOrCopy);
             AddBinding(ApplicationCommands.Paste, OnPaste, CanPaste);
