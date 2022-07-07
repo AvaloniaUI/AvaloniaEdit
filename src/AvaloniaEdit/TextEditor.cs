@@ -587,7 +587,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void Copy()
         {
-            if (ApplicationCommands.Copy.CanExecute(null, TextArea))
+            if (CanCopy)
             {
                 ApplicationCommands.Copy.Execute(null, TextArea);
             }
@@ -598,7 +598,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void Cut()
         {
-            if (ApplicationCommands.Cut.CanExecute(null, TextArea))
+            if (CanCut)
             {
                 ApplicationCommands.Cut.Execute(null, TextArea);
             }
@@ -618,7 +618,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void Delete()
         {
-            if(ApplicationCommands.Delete.CanExecute(null, TextArea))
+            if(CanDelete)
             {
                 ApplicationCommands.Delete.Execute(null, TextArea);
             }
@@ -709,7 +709,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void Paste()
         {
-            if (ApplicationCommands.Paste.CanExecute(null, TextArea))
+            if (CanPaste)
             {
                 ApplicationCommands.Paste.Execute(null, TextArea);
             }
@@ -772,7 +772,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void SelectAll()
         {
-            if (ApplicationCommands.SelectAll.CanExecute(null, TextArea))
+            if (CanSelectAll)
             {
                 ApplicationCommands.SelectAll.Execute(null, TextArea);
             }
@@ -806,6 +806,54 @@ namespace AvaloniaEdit
         public bool CanUndo
         {
             get { return ApplicationCommands.Undo.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text in editor can be copied
+        /// </summary>
+        public bool CanCopy
+        {
+            get { return ApplicationCommands.Copy.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text in editor can be cut
+        /// </summary>
+        public bool CanCut
+        {
+            get { return ApplicationCommands.Cut.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text in editor can be pasted
+        /// </summary>
+        public bool CanPaste
+        {
+            get { return ApplicationCommands.Paste.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if selected text in editor can be deleted
+        /// </summary>
+        public bool CanDelete
+        {
+            get { return ApplicationCommands.Delete.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text the editor can select all
+        /// </summary>
+        public bool CanSelectAll
+        {
+            get { return ApplicationCommands.SelectAll.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text editor can activate the search panel
+        /// </summary>
+        public bool CanSearch
+        {
+            get { return searchPanel != null; }
         }
 
         /// <summary>

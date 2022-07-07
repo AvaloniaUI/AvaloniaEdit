@@ -76,8 +76,9 @@ namespace AvaloniaEdit.Editing
             AddBinding(EditingCommands.TabForward, KeyModifiers.None, Key.Tab, OnTab);
             AddBinding(EditingCommands.TabBackward, KeyModifiers.Shift, Key.Tab, OnShiftTab);
 
-            AddBinding(ApplicationCommands.Copy, OnCopy, CanCutOrCopy);
-            AddBinding(ApplicationCommands.Cut, OnCut, CanCutOrCopy);
+            AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.None), CanDelete);
+            AddBinding(ApplicationCommands.Copy, OnCopy, CanCopy);
+            AddBinding(ApplicationCommands.Cut, OnCut, CanCut);
             AddBinding(ApplicationCommands.Paste, OnPaste, CanPaste);
 
             AddBinding(AvaloniaEditCommands.ToggleOverstrike, OnToggleOverstrike);
@@ -341,7 +342,18 @@ namespace AvaloniaEdit.Editing
 
         #region Clipboard commands
 
-        private static void CanCutOrCopy(object target, CanExecuteRoutedEventArgs args)
+        private static void CanCut(object target, CanExecuteRoutedEventArgs args)
+        {
+            // HasSomethingSelected for copy and cut commands
+            var textArea = GetTextArea(target);
+            if (textArea?.Document != null)
+            {
+                args.CanExecute = (textArea.Options.CutCopyWholeLine || !textArea.Selection.IsEmpty) && !textArea.IsReadOnly;
+                args.Handled = true;
+            }
+        }
+
+        private static void CanCopy(object target, CanExecuteRoutedEventArgs args)
         {
             // HasSomethingSelected for copy and cut commands
             var textArea = GetTextArea(target);
