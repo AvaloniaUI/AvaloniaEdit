@@ -24,9 +24,10 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
-using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
+using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -144,95 +145,73 @@ namespace AvaloniaEdit.Rendering
                 g.FinishGeneration();
             }
 
-            var globalTextRunProperties = context.GlobalTextRunProperties;
-            foreach (var element in _elements)
-            {
-                element.SetTextRunProperties(globalTextRunProperties.Clone());
-            }
-            Elements = new ReadOnlyCollection<VisualLineElement>(_elements);
-            CalculateOffsets();
-            _phase = LifetimePhase.Transforming;
-        }
+			var globalTextRunProperties = context.GlobalTextRunProperties;
+			foreach (var element in _elements) {
+				element.SetTextRunProperties(new VisualLineElementTextRunProperties(globalTextRunProperties));
+			}
+			this.Elements = new ReadOnlyCollection<VisualLineElement>(_elements);
+			CalculateOffsets();
+			_phase = LifetimePhase.Transforming;
+		}
 
-        private void PerformVisualElementConstruction(VisualLineElementGenerator[] generators)
-        {
-            var document = Document;
+		void PerformVisualElementConstruction(VisualLineElementGenerator[] generators)
+		{
             var lineLength = FirstDocumentLine.Length;
             var offset = FirstDocumentLine.Offset;
-            var currentLineEnd = offset + FirstDocumentLine.Length;
-            LastDocumentLine = FirstDocumentLine;
-            var askInterestOffset = 0; // 0 or 1
-            while (offset + askInterestOffset <= currentLineEnd)
-            {
-                var textPieceEndOffset = currentLineEnd;
-                foreach (var g in generators)
-                {
-                    g.CachedInterest = (lineLength > LENGTH_LIMIT) ? -1: g.GetFirstInterestedOffset(offset + askInterestOffset);
-                    if (g.CachedInterest != -1)
-                    {
-                        if (g.CachedInterest < offset)
-                            throw new ArgumentOutOfRangeException(g.GetType().Name + ".GetFirstInterestedOffset",
-                                                                  g.CachedInterest,
-                                                                  "GetFirstInterestedOffset must not return an offset less than startOffset. Return -1 to signal no interest.");
-                        if (g.CachedInterest < textPieceEndOffset)
-                            textPieceEndOffset = g.CachedInterest;
-                    }
-                }
-                Debug.Assert(textPieceEndOffset >= offset);
-                if (textPieceEndOffset > offset)
-                {
-                    var textPieceLength = textPieceEndOffset - offset;
-                    int remaining = textPieceLength;
-                    while (true)
-                    {
-                        if (remaining > LENGTH_LIMIT)
-                        {
-                            // split in chunks of LENGTH_LIMIT
-                            _elements.Add(new VisualLineText(this, LENGTH_LIMIT));
-                            remaining -= LENGTH_LIMIT;
-                        }
-                        else
-                        {
-                            _elements.Add(new VisualLineText(this, remaining));
-                            break;
-                        }
-                    }
+			var currentLineEnd = offset + lineLength;
+			LastDocumentLine = FirstDocumentLine;
+			var askInterestOffset = 0; // 0 or 1
+            
+			while (offset + askInterestOffset <= currentLineEnd) {
+				var textPieceEndOffset = currentLineEnd;
+				foreach (var g in generators) {
+                    g.CachedInterest = g.GetFirstInterestedOffset(offset + askInterestOffset);
+					if (g.CachedInterest != -1) {
+						if (g.CachedInterest < offset)
+							throw new ArgumentOutOfRangeException(g.GetType().Name + ".GetFirstInterestedOffset",
+																  g.CachedInterest,
+																  "GetFirstInterestedOffset must not return an offset less than startOffset. Return -1 to signal no interest.");
+						if (g.CachedInterest < textPieceEndOffset)
+							textPieceEndOffset = g.CachedInterest;
+					}
+				}
+				Debug.Assert(textPieceEndOffset >= offset);
+				if (textPieceEndOffset > offset) {
+					var textPieceLength = textPieceEndOffset - offset;
+                    
+                    _elements.Add(new VisualLineText(this, textPieceLength));
+
                     offset = textPieceEndOffset;
-                }
-                // If no elements constructed / only zero-length elements constructed:
-                // do not asking the generators again for the same location (would cause endless loop)
-                askInterestOffset = 1;
-                foreach (var g in generators)
-                {
-                    if (g.CachedInterest == offset)
-                    {
-                        var element = g.ConstructElement(offset);
-                        if (element != null)
-                        {
-                            _elements.Add(element);
-                            if (element.DocumentLength > 0)
-                            {
-                                // a non-zero-length element was constructed
-                                askInterestOffset = 0;
-                                offset += element.DocumentLength;
-                                if (offset > currentLineEnd)
-                                {
-                                    var newEndLine = document.GetLineByOffset(offset);
-                                    currentLineEnd = newEndLine.Offset + newEndLine.Length;
-                                    LastDocumentLine = newEndLine;
-                                    if (currentLineEnd < offset)
-                                    {
-                                        throw new InvalidOperationException(
-                                            $"The VisualLineElementGenerator {g.GetType().Name} produced an element which ends within the line delimiter");
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+				}
+				// If no elements constructed / only zero-length elements constructed:
+				// do not asking the generators again for the same location (would cause endless loop)
+				askInterestOffset = 1;
+				foreach (var g in generators) {
+					if (g.CachedInterest == offset) {
+						var element = g.ConstructElement(offset);
+						if (element != null) {
+							_elements.Add(element);
+							if (element.DocumentLength > 0) {
+								// a non-zero-length element was constructed
+								askInterestOffset = 0;
+								offset += element.DocumentLength;
+								if (offset > currentLineEnd) {
+									var newEndLine = Document.GetLineByOffset(offset);
+									currentLineEnd = newEndLine.Offset + newEndLine.Length;
+									this.LastDocumentLine = newEndLine;
+									if (currentLineEnd < offset) {
+										throw new InvalidOperationException(
+											"The VisualLineElementGenerator " + g.GetType().Name +
+											" produced an element which ends within the line delimiter");
+									}
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
 
         private void CalculateOffsets()
         {
@@ -465,12 +444,15 @@ namespace AvaloniaEdit.Rendering
         {
             if (textLine == null)
                 throw new ArgumentNullException(nameof(textLine));
-            var xPos = textLine.GetDistanceFromCharacter(
-                Math.Min(visualColumn, VisualLengthWithEndOfLineMarker), 0);
+            
+            var xPos = textLine.GetDistanceFromCharacterHit(new CharacterHit(Math.Min(visualColumn,
+                VisualLengthWithEndOfLineMarker)));
+            
             if (visualColumn > VisualLengthWithEndOfLineMarker)
             {
                 xPos += (visualColumn - VisualLengthWithEndOfLineMarker) * _textView.WideSpaceWidth;
             }
+            
             return xPos;
         }
 
@@ -515,8 +497,9 @@ namespace AvaloniaEdit.Rendering
                 }
             }
 
-            var ch = textLine.GetCharacterFromDistance(xPos);
-            return ch.firstIndex + ch.trailingLength;
+            var ch = textLine.GetCharacterHitFromDistance(xPos);
+            
+            return ch.FirstCharacterIndex + ch.TrailingLength;
         }
 
         /// <summary>
@@ -588,8 +571,10 @@ namespace AvaloniaEdit.Rendering
             }
 
             isAtEndOfLine = false;
-            var ch = textLine.GetCharacterFromDistance(point.X);
-            return ch.firstIndex;
+            
+            var ch = textLine.GetCharacterHitFromDistance(point.X);
+            
+            return ch.FirstCharacterIndex;
         }
 
         /// <summary>
@@ -762,7 +747,7 @@ namespace AvaloniaEdit.Rendering
         internal VisualLineDrawingVisual Render()
         {
             Debug.Assert(_phase == LifetimePhase.Live);
-            return _visual ?? (_visual = new VisualLineDrawingVisual(this));
+            return _visual ??= new VisualLineDrawingVisual(this);
         }
     }
 

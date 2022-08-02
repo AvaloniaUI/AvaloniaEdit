@@ -21,7 +21,10 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Xml;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Documents;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.VisualTree;
 
 namespace AvaloniaEdit.Utils
@@ -86,6 +89,19 @@ namespace AvaloniaEdit.Utils
         public static int CoerceValue(this int value, int minimum, int maximum)
         {
             return Math.Max(Math.Min(value, maximum), minimum);
+        }
+        #endregion
+        
+        #region CreateTypeface
+        /// <summary>
+        /// Creates typeface from the framework element.
+        /// </summary>
+        public static Typeface CreateTypeface(this Control fe)
+        {
+            return new Typeface(fe.GetValue(TextElement.FontFamilyProperty),
+                fe.GetValue(TextElement.FontStyleProperty),
+                fe.GetValue(TextElement.FontWeightProperty),
+                fe.GetValue(TextElement.FontStretchProperty));
         }
         #endregion
 

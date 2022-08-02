@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia.Visuals.Media.Imaging;
-
-using AvaloniaEdit.Tests.AvaloniaMocks;
 
 using Moq;
 
@@ -21,17 +19,6 @@ namespace AvaloniaEdit.AvaloniaMocks
         public AlphaFormat DefaultAlphaFormat => throw new NotImplementedException();
 
         public PixelFormat DefaultPixelFormat => throw new NotImplementedException();
-
-        public IFormattedTextImpl CreateFormattedText(
-            string text,
-            Typeface typeface,
-            TextAlignment textAlignment,
-            TextWrapping wrapping,
-            Size constraint,
-            IReadOnlyList<FormattedTextStyleSpan> spans)
-        {
-            return Mock.Of<IFormattedTextImpl>();
-        }
 
         public IGeometryImpl CreateEllipseGeometry(Rect rect)
         {
@@ -92,11 +79,6 @@ namespace AvaloniaEdit.AvaloniaMocks
             throw new NotImplementedException();
         }
 
-        public IFormattedTextImpl CreateFormattedText(string text, Typeface typeface, double fontSize, TextAlignment textAlignment, TextWrapping wrapping, Size constraint, IReadOnlyList<FormattedTextStyleSpan> spans)
-        {
-            return new MockFormattedTextImpl(text, typeface);
-        }
-
         public IGeometryImpl CreateGeometryGroup(FillRule fillRule, IReadOnlyList<Geometry> children)
         {
             throw new NotImplementedException();
@@ -152,7 +134,12 @@ namespace AvaloniaEdit.AvaloniaMocks
             throw new NotImplementedException();
         }
 
-        public IGlyphRunImpl CreateGlyphRun(GlyphRun glyphRun, out double width)
+        public IGlyphRunImpl CreateGlyphRun(GlyphRun glyphRun)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGeometryImpl BuildGlyphRunGeometry(GlyphRun glyphRun)
         {
             throw new NotImplementedException();
         }

@@ -16,31 +16,31 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
+using System.Globalization;
+using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
-using Avalonia.Utilities;
+
+#nullable enable
 
 namespace AvaloniaEdit.Rendering
 {
-	internal sealed class SimpleTextSource : ITextSource
+	internal sealed class GlobalTextRunProperties : TextRunProperties
 	{
-		private readonly string _text;
-		private readonly TextRunProperties _properties;
+		internal Typeface typeface;
+		internal double fontRenderingEmSize;
+		internal IBrush? foregroundBrush;
+		internal CultureInfo? cultureInfo;
 
-		public SimpleTextSource(string text, TextRunProperties properties)
-		{
-			_text = text;
-			_properties = properties;
-		}
+		public override Typeface Typeface => typeface;
 
-		public TextRun GetTextRun(int textSourceCharacterIndex)
-		{
-			if (textSourceCharacterIndex < _text.Length)
-				return new TextCharacters(
-					new ReadOnlySlice<char>(_text.AsMemory(), textSourceCharacterIndex,
-						_text.Length - textSourceCharacterIndex), _properties);
-			
-			return new TextEndOfParagraph(1);
-		}
-	}
+		public override double FontRenderingEmSize => fontRenderingEmSize;
+
+		//public override double FontHintingEmSize { get { return fontRenderingEmSize; } }
+		public override TextDecorationCollection? TextDecorations => null;
+		public override IBrush? ForegroundBrush => foregroundBrush;
+		public override IBrush? BackgroundBrush => null;
+
+		public override CultureInfo? CultureInfo => cultureInfo;
+		//public override TextEffectCollection TextEffects { get { return null; } }
+    }
 }

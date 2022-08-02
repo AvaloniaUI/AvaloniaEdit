@@ -33,7 +33,8 @@ namespace AvaloniaEdit.Editing
                 renderInterface: new MockPlatformRenderInterface(),
                 platform: new MockRuntimePlatform(),
                 platformHotkeyConfiguration: new MockPlatformHotkeyConfiguration(),
-                fontManagerImpl: new MockFontManagerImpl())))
+                fontManagerImpl: new MockFontManagerImpl(),
+                textShaperImpl: new MockTextShaperImpl())))
             {
                 TextArea textArea = new TextArea();
                 textArea.Document = new TextDocument("1\n2\n3\n4th line");
@@ -53,7 +54,8 @@ namespace AvaloniaEdit.Editing
                 renderInterface: new MockPlatformRenderInterface(),
                 platform: new MockRuntimePlatform(),
                 platformHotkeyConfiguration: new MockPlatformHotkeyConfiguration(),
-                fontManagerImpl: new MockFontManagerImpl())))
+                fontManagerImpl: new MockFontManagerImpl(),
+                textShaperImpl: new MockTextShaperImpl())))
             {
                 TextArea textArea = new TextArea();
                 textArea.Document = new TextDocument("1\n2\n3\n4th line");
@@ -73,7 +75,8 @@ namespace AvaloniaEdit.Editing
                 renderInterface: new MockPlatformRenderInterface(),
                 platform: new MockRuntimePlatform(),
                 platformHotkeyConfiguration: new MockPlatformHotkeyConfiguration(),
-                fontManagerImpl: new MockFontManagerImpl())))
+                fontManagerImpl: new MockFontManagerImpl(),
+                textShaperImpl: new MockTextShaperImpl())))
             {
                 TextArea textArea = new TextArea();
                 TextDocument newDocument = new TextDocument();

@@ -19,147 +19,139 @@
 using System;
 using Avalonia;
 using Avalonia.Media;
-using AvaloniaEdit.Text;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
 using AvaloniaEdit.Utils;
+using JetBrains.Annotations;
 
 namespace AvaloniaEdit.Rendering
 {
-    /// <summary>
-    /// Formatted text (not normal document text).
-    /// This is used as base class for various VisualLineElements that are displayed using a
-    /// FormattedText, for example newline markers or collapsed folding sections.
-    /// </summary>
-    public class FormattedTextElement : VisualLineElement
-    {
-        internal FormattedText FormattedText { get; }
-        internal string Text { get; set; }
-        internal TextLine TextLine { get; set; }
+  	/// <summary>
+	/// Formatted text (not normal document text).
+	/// This is used as base class for various VisualLineElements that are displayed using a
+	/// FormattedText, for example newline markers or collapsed folding sections.
+	/// </summary>
+	public class FormattedTextElement : VisualLineElement
+	{
+		internal readonly FormattedText FormattedText;
+		internal string Text;
+		internal TextLine TextLine;
 
-        /// <summary>
-        /// Creates a new FormattedTextElement that displays the specified text
-        /// and occupies the specified length in the document.
-        /// </summary>
-        public FormattedTextElement(string text, int documentLength) : base(1, documentLength)
-        {
-            Text = text ?? throw new ArgumentNullException(nameof(text));
-        }
+		/// <summary>
+		/// Creates a new FormattedTextElement that displays the specified text
+		/// and occupies the specified length in the document.
+		/// </summary>
+		public FormattedTextElement(string text, int documentLength) : base(1, documentLength)
+		{
+			Text = text ?? throw new ArgumentNullException(nameof(text));
+		}
 
-        /// <summary>
-        /// Creates a new FormattedTextElement that displays the specified text
-        /// and occupies the specified length in the document.
-        /// </summary>
-        internal FormattedTextElement(TextLine text, int documentLength) : base(1, documentLength)
-        {
-            TextLine = text ?? throw new ArgumentNullException(nameof(text));
-        }
+		/// <summary>
+		/// Creates a new FormattedTextElement that displays the specified text
+		/// and occupies the specified length in the document.
+		/// </summary>
+		public FormattedTextElement(TextLine text, int documentLength) : base(1, documentLength)
+		{
+			TextLine = text ?? throw new ArgumentNullException(nameof(text));
+		}
 
-        /// <summary>
-        /// Creates a new FormattedTextElement that displays the specified text
-        /// and occupies the specified length in the document.
-        /// </summary>
-        public FormattedTextElement(FormattedText text, int documentLength) : base(1, documentLength)
-        {
-            FormattedText = text ?? throw new ArgumentNullException(nameof(text));
-        }
+		/// <summary>
+		/// Creates a new FormattedTextElement that displays the specified text
+		/// and occupies the specified length in the document.
+		/// </summary>
+		public FormattedTextElement(FormattedText text, int documentLength) : base(1, documentLength)
+		{
+			FormattedText = text ?? throw new ArgumentNullException(nameof(text));
+		}
 
-        /// <inheritdoc/>
-        public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
-        {
-            if (TextLine == null)
-            {
-                var formatter = TextFormatterFactory.Create();
-                TextLine = PrepareText(formatter, Text, TextRunProperties);
-                Text = null;
-            }
-            return new FormattedTextRun(this, TextRunProperties);
-        }
+		/// <inheritdoc/>
+		public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
+		{
+			if (TextLine == null) {
+				var formatter = TextFormatterFactory.Create(context.TextView);
+				TextLine = PrepareText(formatter, Text, TextRunProperties);
+				Text = null;
+			}
+			return new FormattedTextRun(this, TextRunProperties);
+		}
 
-        /// <summary>
-        /// Constructs a TextLine from a simple text.
-        /// </summary>
-        internal static TextLine PrepareText(TextFormatter formatter, string text, TextRunProperties properties)
-        {
-            if (formatter == null)
-                throw new ArgumentNullException(nameof(formatter));
-            if (text == null)
-                throw new ArgumentNullException(nameof(text));
-            if (properties == null)
-                throw new ArgumentNullException(nameof(properties));
-            return formatter.FormatLine(
-                new SimpleTextSource(text, properties),
-                0,
-                32000,
-                new TextParagraphProperties
-                {
-                    DefaultTextRunProperties = properties,
-                    TextWrapping = TextWrapping.NoWrap,
-                    DefaultIncrementalTab = 40
-                });
-        }
-    }
+		/// <summary>
+		/// Constructs a TextLine from a simple text.
+		/// </summary>
+		public static TextLine PrepareText(TextFormatter formatter, string text, TextRunProperties properties)
+		{
+			if (formatter == null)
+				throw new ArgumentNullException(nameof(formatter));
+			if (text == null)
+				throw new ArgumentNullException(nameof(text));
+			if (properties == null)
+				throw new ArgumentNullException(nameof(properties));
+			return formatter.FormatLine(
+				new SimpleTextSource(text, properties),
+				0,
+				32000,
+				new VisualLineTextParagraphProperties {
+					defaultTextRunProperties = properties,
+					textWrapping = TextWrapping.NoWrap,
+					tabSize = 40
+				});
+		}
+	}
 
-    /// <summary>
-    /// This is the TextRun implementation used by the <see cref="FormattedTextElement"/> class.
-    /// </summary>
-    public class FormattedTextRun : TextEmbeddedObject
-    {
-        /// <summary>
-        /// Creates a new FormattedTextRun.
-        /// </summary>
-        public FormattedTextRun(FormattedTextElement element, TextRunProperties properties)
-        {
-            Properties = properties ?? throw new ArgumentNullException(nameof(properties));
-            Element = element ?? throw new ArgumentNullException(nameof(element));
-        }
+	/// <summary>
+	/// This is the TextRun implementation used by the <see cref="FormattedTextElement"/> class.
+	/// </summary>
+	public class FormattedTextRun : DrawableTextRun
+	{
+		/// <summary>
+		/// Creates a new FormattedTextRun.
+		/// </summary>
+		public FormattedTextRun(FormattedTextElement element, TextRunProperties properties)
+		{
+			if (properties == null)
+				throw new ArgumentNullException(nameof(properties));
+			Properties = properties;
+			Element = element ?? throw new ArgumentNullException(nameof(element));
+		}
 
-        /// <summary>
-        /// Gets the element for which the FormattedTextRun was created.
-        /// </summary>
-        public FormattedTextElement Element { get; }
+		/// <summary>
+		/// Gets the element for which the FormattedTextRun was created.
+		/// </summary>
+		public FormattedTextElement Element { get; }
 
-        /// <inheritdoc/>
-        public override StringRange StringRange => default(StringRange);
+		public override ReadOnlySlice<char> Text { get; }
 
-        /// <inheritdoc/>
-        public override int Length => Element.VisualLength;
+		/// <inheritdoc/>
+		public override TextRunProperties Properties { get; }
 
-        /// <inheritdoc/>
-        public override bool HasFixedSize => true;
+		public override double Baseline => Element.FormattedText?.Baseline ?? Element.TextLine.Baseline;
 
-        /// <inheritdoc/>
-        public override TextRunProperties Properties { get; }
+		/// <inheritdoc/>
+		public override Size Size
+		{
+			get
+			{
+				var formattedText = Element.FormattedText;
+				
+				if (formattedText != null) {
+					return new Size(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
+				}
 
-        public override Size GetSize(double remainingParagraphWidth)
-        {
-            var formattedText = Element.FormattedText;
-            if (formattedText != null)
-            {
-                return formattedText.Bounds.Size;
-            }
-            var text = Element.TextLine;
-            return new Size(text.WidthIncludingTrailingWhitespace,
-                text.Height);
-        }
+				var text = Element.TextLine;
+				return new Size(text.WidthIncludingTrailingWhitespace, text.Height);
+			}
+		}
 
-        /// <inheritdoc/>
-        public override Rect ComputeBoundingBox()
-        {
-            return new Rect(GetSize(double.PositiveInfinity));
-        }
-
-        /// <inheritdoc/>
-        public override void Draw(DrawingContext drawingContext, Point origin)
-        {
-            if (Element.FormattedText != null)
-            {
-                //origin = origin.WithY(origin.Y - Element.formattedText.Baseline);
-                drawingContext.DrawText(null, origin, Element.FormattedText);
-            }
-            else
-            {
-                //origin.Y -= element.textLine.Baseline;
-                Element.TextLine.Draw(drawingContext, origin);
-            }
-        }
-    }
+		/// <inheritdoc/>
+		public override void Draw(DrawingContext drawingContext, Point origin)
+		{
+			if (Element.FormattedText != null) {
+				//var y = origin.Y - Element.FormattedText.Baseline;
+				drawingContext.DrawText(Element.FormattedText, origin);
+			} else {
+				//var y = origin.Y - Element.TextLine.Baseline;
+				Element.TextLine.Draw(drawingContext, origin);
+			}
+		}
+	}
 }

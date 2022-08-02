@@ -17,11 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using AvaloniaEdit.Text;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Controls;
 using System.Diagnostics;
+using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -66,13 +67,15 @@ namespace AvaloniaEdit.Rendering
             RequireControlModifierForClick = true;
         }
 
-        /// <inheritdoc/>
-        public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
-        {
-            TextRunProperties.ForegroundBrush = context.TextView.LinkTextForegroundBrush;
-            TextRunProperties.BackgroundBrush = context.TextView.LinkTextBackgroundBrush;
-            return base.CreateTextRun(startVisualColumn, context);
-        }
+		/// <inheritdoc/>
+		public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
+		{
+			this.TextRunProperties.SetForegroundBrush(context.TextView.LinkTextForegroundBrush);
+			this.TextRunProperties.SetBackgroundBrush(context.TextView.LinkTextBackgroundBrush);
+			if (context.TextView.LinkTextUnderline)
+				this.TextRunProperties.SetTextDecorations(TextDecorations.Underline);
+			return base.CreateTextRun(startVisualColumn, context);
+		}
 
         /// <summary>
         /// Gets whether the link is currently clickable.

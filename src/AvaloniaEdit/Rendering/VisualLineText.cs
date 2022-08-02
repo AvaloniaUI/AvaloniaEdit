@@ -18,8 +18,11 @@
 
 using System;
 using System.Collections.Generic;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Utilities;
 using AvaloniaEdit.Document;
-using AvaloniaEdit.Text;
+using AvaloniaEdit.Utils;
+using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -59,27 +62,36 @@ namespace AvaloniaEdit.Rendering
 				throw new ArgumentNullException(nameof(context));
 			
 			var relativeOffset = startVisualColumn - VisualColumn;
-			var text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset, DocumentLength - relativeOffset);
-			return new TextCharacters(text.Text, text.Offset, text.Count, TextRunProperties);
-		}
-		
+
+			var offset = context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset;
+
+			var text = context.GetText(
+				offset,
+				DocumentLength - relativeOffset);
+
+			var textSlice = new ReadOnlySlice<char>(text.Text.AsMemory(), text.Offset, text.Count, RelativeTextOffset);
+
+            return new TextCharacters(textSlice, TextRunProperties);
+        }
+
 		/// <inheritdoc/>
 		public override bool IsWhitespace(int visualColumn)
 		{
 			var offset = visualColumn - VisualColumn + ParentVisualLine.FirstDocumentLine.Offset + RelativeTextOffset;
 			return char.IsWhiteSpace(ParentVisualLine.Document.GetCharAt(offset));
 		}
-		
+
 		/// <inheritdoc/>
-		public override StringRange GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
+		public override ReadOnlySlice<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
 		{
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
-			
+
 			var relativeOffset = visualColumnLimit - VisualColumn;
+			
 			var text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset, relativeOffset);
-			var range = new StringRange(text.Text, text.Offset, text.Count);
-			return range;
+			
+			return new ReadOnlySlice<char>(text.Text.AsMemory(), text.Offset, text.Count);
 		}
 		
 		/// <inheritdoc/>

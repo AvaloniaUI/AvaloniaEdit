@@ -26,28 +26,26 @@ namespace AvaloniaEdit.Rendering
 	/// <summary>
 	/// A node in the text view's height tree.
 	/// </summary>
-	sealed class HeightTreeNode
+	internal sealed class HeightTreeNode
 	{
 		internal readonly DocumentLine DocumentLine;
 		internal HeightTreeLineNode LineNode;
-		
-		internal HeightTreeNode Left;
-	    internal HeightTreeNode Right;
-	    internal HeightTreeNode Parent;
-	    internal bool Color;
-		
+
+		internal HeightTreeNode Left, Right, Parent;
+		internal bool Color;
+
 		internal HeightTreeNode()
 		{
 		}
-		
+
 		internal HeightTreeNode(DocumentLine documentLine, double height)
 		{
-			DocumentLine = documentLine;
-			TotalCount = 1;
-			LineNode = new HeightTreeLineNode(height);
-			TotalHeight = height;
+			this.DocumentLine = documentLine;
+			this.TotalCount = 1;
+			this.LineNode = new HeightTreeLineNode(height);
+			this.TotalHeight = height;
 		}
-		
+
 		internal HeightTreeNode LeftMost {
 			get {
 				HeightTreeNode node = this;
@@ -56,7 +54,7 @@ namespace AvaloniaEdit.Rendering
 				return node;
 			}
 		}
-		
+
 		internal HeightTreeNode RightMost {
 			get {
 				HeightTreeNode node = this;
@@ -65,7 +63,7 @@ namespace AvaloniaEdit.Rendering
 				return node;
 			}
 		}
-		
+
 		/// <summary>
 		/// Gets the inorder successor of the node.
 		/// </summary>
@@ -73,25 +71,26 @@ namespace AvaloniaEdit.Rendering
 			get {
 				if (Right != null) {
 					return Right.LeftMost;
+				} else {
+					HeightTreeNode node = this;
+					HeightTreeNode oldNode;
+					do {
+						oldNode = node;
+						node = node.Parent;
+						// go up until we are coming out of a left subtree
+					} while (node != null && node.Right == oldNode);
+					return node;
 				}
-			    HeightTreeNode node = this;
-			    HeightTreeNode oldNode;
-			    do {
-			        oldNode = node;
-			        node = node.Parent;
-			        // go up until we are coming out of a left subtree
-			    } while (node != null && node.Right == oldNode);
-			    return node;
 			}
 		}
-		
+
 		/// <summary>
 		/// The number of lines in this node and its child nodes.
 		/// Invariant:
 		///   totalCount = 1 + left.totalCount + right.totalCount
 		/// </summary>
 		internal int TotalCount;
-		
+
 		/// <summary>
 		/// The total height of this node and its child nodes, excluding directly collapsed nodes.
 		/// Invariant:
@@ -100,7 +99,7 @@ namespace AvaloniaEdit.Rendering
 		///               + right.IsDirectlyCollapsed ? 0 : right.totalHeight
 		/// </summary>
 		internal double TotalHeight;
-		
+
 		/// <summary>
 		/// List of the sections that hold this node collapsed.
 		/// Invariant 1:
@@ -113,10 +112,14 @@ namespace AvaloniaEdit.Rendering
 		///   documentLine (middle node).
 		/// </summary>
 		internal List<CollapsedLineSection> CollapsedSections;
-		
-		internal bool IsDirectlyCollapsed => CollapsedSections != null;
 
-	    internal void AddDirectlyCollapsed(CollapsedLineSection section)
+		internal bool IsDirectlyCollapsed {
+			get {
+				return CollapsedSections != null;
+			}
+		}
+
+		internal void AddDirectlyCollapsed(CollapsedLineSection section)
 		{
 			if (CollapsedSections == null) {
 				CollapsedSections = new List<CollapsedLineSection>();
@@ -125,8 +128,8 @@ namespace AvaloniaEdit.Rendering
 			Debug.Assert(!CollapsedSections.Contains(section));
 			CollapsedSections.Add(section);
 		}
-		
-		
+
+
 		internal void RemoveDirectlyCollapsed(CollapsedLineSection section)
 		{
 			Debug.Assert(CollapsedSections.Contains(section));
@@ -140,8 +143,8 @@ namespace AvaloniaEdit.Rendering
 					TotalHeight += Right.TotalHeight;
 			}
 		}
-		
-		#if DEBUG
+
+#if DEBUG
 		public override string ToString()
 		{
 			return "[HeightTreeNode "
@@ -151,16 +154,16 @@ namespace AvaloniaEdit.Rendering
 				+ " TotalHeight=" + TotalHeight
 				+ "]";
 		}
-		
+
 		static string GetCollapsedSections(List<CollapsedLineSection> list)
 		{
 			if (list == null)
 				return "{}";
 			return "{" +
 				string.Join(",",
-				            list.Select(cs=>cs.Id).ToArray())
+							list.ConvertAll(cs => cs.Id).ToArray())
 				+ "}";
 		}
-		#endif
+#endif
 	}
 }

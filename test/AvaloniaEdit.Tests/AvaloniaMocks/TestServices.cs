@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Layout;
-using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
-using Avalonia.Media;
 using Avalonia.Platform;
 using Avalonia.Rendering;
-using Avalonia.Shared.PlatformSupport;
 using Avalonia.Styling;
 using Avalonia.Themes.Default;
+using Avalonia.Themes.Fluent;
 using Moq;
 
 namespace AvaloniaEdit.AvaloniaMocks
@@ -28,7 +25,8 @@ namespace AvaloniaEdit.AvaloniaMocks
             theme: () => CreateDefaultTheme(),
             threadingInterface: Mock.Of<IPlatformThreadingInterface>(x => x.CurrentThreadIsLoopThread == true),
             windowingPlatform: new MockWindowingPlatform(),
-            fontManagerImpl: new MockFontManagerImpl());
+            fontManagerImpl: new MockFontManagerImpl(),
+            textShaperImpl: new MockTextShaperImpl());
 
         public static readonly TestServices MockPlatformRenderInterface = new TestServices(
             renderInterface: new MockPlatformRenderInterface());
@@ -74,7 +72,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             IWindowingPlatform windowingPlatform = null,
             PlatformHotkeyConfiguration platformHotkeyConfiguration = null,
             IFontManagerImpl fontManagerImpl = null,
-            IFormattedTextImpl formattedTextImpl = null)
+            ITextShaperImpl textShaperImpl = null)
         {
             AssetLoader = assetLoader;
             FocusManager = focusManager;
@@ -94,7 +92,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             WindowingPlatform = windowingPlatform;
             PlatformHotkeyConfiguration = platformHotkeyConfiguration;
             FontManagerImpl = fontManagerImpl;
-            FormattedTextImpl = formattedTextImpl;
+            TextShaperImpl = textShaperImpl;
         }
 
         public IAssetLoader AssetLoader { get; }
@@ -115,7 +113,8 @@ namespace AvaloniaEdit.AvaloniaMocks
         public IWindowingPlatform WindowingPlatform { get; }
         public PlatformHotkeyConfiguration PlatformHotkeyConfiguration { get; }
         public IFontManagerImpl FontManagerImpl { get; }
-        public IFormattedTextImpl FormattedTextImpl { get;  }
+
+        public ITextShaperImpl TextShaperImpl { get; }
 
         public TestServices With(
             IAssetLoader assetLoader = null,
@@ -137,7 +136,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             IWindowingPlatform windowingPlatform = null,
             PlatformHotkeyConfiguration platformHotkeyConfiguration = null,
             IFontManagerImpl fontManagerImpl = null,
-            IFormattedTextImpl formattedTextImpl = null)
+            ITextShaperImpl textShaperImpl = null)
         {
             return new TestServices(
                 assetLoader: assetLoader ?? AssetLoader,
@@ -158,14 +157,14 @@ namespace AvaloniaEdit.AvaloniaMocks
                 windowImpl: windowImpl ?? WindowImpl,
                 platformHotkeyConfiguration: platformHotkeyConfiguration ?? PlatformHotkeyConfiguration,
                 fontManagerImpl: fontManagerImpl ?? FontManagerImpl,
-                formattedTextImpl : formattedTextImpl ?? FormattedTextImpl);
+                textShaperImpl: textShaperImpl ?? TextShaperImpl);
         }
 
         private static Styles CreateDefaultTheme()
         {
             var result = new Styles
             {
-                new DefaultTheme(),
+                new StyleInclude(new Uri("avares://Avalonia.Themes.Default/DefaultTheme.xaml"))
             };
 
             return result;
@@ -174,14 +173,6 @@ namespace AvaloniaEdit.AvaloniaMocks
         private static IPlatformRenderInterface CreateRenderInterfaceMock()
         {
             return Mock.Of<IPlatformRenderInterface>(x =>
-                x.CreateFormattedText(
-                    It.IsAny<string>(),
-                    It.IsAny<Typeface>(),
-                    It.IsAny<double>(),
-                    It.IsAny<TextAlignment>(),
-                    It.IsAny<TextWrapping>(),
-                    It.IsAny<Size>(),
-                    It.IsAny<IReadOnlyList<FormattedTextStyleSpan>>()) == Mock.Of<IFormattedTextImpl>() &&
                 x.CreateStreamGeometry() == Mock.Of<IStreamGeometryImpl>(
                     y => y.Open() == Mock.Of<IStreamGeometryContextImpl>()));
         }

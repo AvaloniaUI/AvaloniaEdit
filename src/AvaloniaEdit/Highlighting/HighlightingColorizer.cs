@@ -18,6 +18,8 @@
 
 using System;
 using System.Diagnostics;
+using Avalonia.Media;
+using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Utils;
@@ -254,36 +256,34 @@ namespace AvaloniaEdit.Highlighting
             ApplyColorToElement(element, color, CurrentContext);
         }
 
-        internal static void ApplyColorToElement(VisualLineElement element, HighlightingColor color, ITextRunConstructionContext context)
-        {
-            if (color.Foreground != null)
-            {
-                var b = color.Foreground.GetBrush(context);
-                if (b != null)
-                    element.TextRunProperties.ForegroundBrush = b;
-            }
-            if (color.Background != null)
-            {
-                var b = color.Background.GetBrush(context);
-                if (b != null)
-                    element.BackgroundBrush = b;
-            }
-            if (color.FontStyle != null || color.FontWeight != null || color.FontFamily != null)
-            {
-                var tf = element.TextRunProperties.Typeface;
-                element.TextRunProperties.Typeface = new Avalonia.Media.Typeface(
-                    color.FontFamily ?? tf.FontFamily,
-                    color.FontStyle ?? tf.Style,
-                    color.FontWeight ?? tf.Weight
-                );
-            }
-            if (color.FontSize.HasValue)
-                element.TextRunProperties.FontSize = color.FontSize.Value;
-            if (color.Underline ?? false)
-                element.TextRunProperties.Underline = true;
-            if (color.Strikethrough ?? false)
-                element.TextRunProperties.Strikethrough = true;
-        }
+		internal static void ApplyColorToElement(VisualLineElement element, HighlightingColor color, ITextRunConstructionContext context)
+		{
+			if (color.Foreground != null) {
+				var b = color.Foreground.GetBrush(context);
+				if (b != null)
+					element.TextRunProperties.SetForegroundBrush(b);
+			}
+			if (color.Background != null) {
+				var b = color.Background.GetBrush(context);
+				if (b != null)
+					element.BackgroundBrush = b;
+			}
+			if (color.FontStyle != null || color.FontWeight != null || color.FontFamily != null) {
+				var tf = element.TextRunProperties.Typeface;
+				element.TextRunProperties.SetTypeface(new Typeface(
+					color.FontFamily ?? tf.FontFamily,
+					color.FontStyle ?? tf.Style,
+					color.FontWeight ?? tf.Weight,
+					tf.Stretch
+				));
+			}
+			if (color.Underline ?? false)
+				element.TextRunProperties.SetTextDecorations(TextDecorations.Underline);
+			if (color.Strikethrough ?? false)
+				element.TextRunProperties.SetTextDecorations(TextDecorations.Strikethrough);
+			if (color.FontSize.HasValue)
+				element.TextRunProperties.SetFontRenderingEmSize(color.FontSize.Value);
+		}
 
         /// <summary>
         /// This method is responsible for telling the TextView to redraw lines when the highlighting state has changed.
@@ -354,7 +354,7 @@ namespace AvaloniaEdit.Highlighting
 
             if (fromLineNumber == toLineNumber)
             {
-                _textView.Redraw(_textView.Document.GetLineByNumber(fromLineNumber));
+                _textView.Redraw(_textView.Document.GetLineByNumber(fromLineNumber), DispatcherPriority.Normal);
             }
             else
             {
@@ -365,7 +365,7 @@ namespace AvaloniaEdit.Highlighting
                 var fromLine = _textView.Document.GetLineByNumber(fromLineNumber);
                 var toLine = _textView.Document.GetLineByNumber(toLineNumber);
                 var startOffset = fromLine.Offset;
-                _textView.Redraw(startOffset, toLine.EndOffset - startOffset);
+                _textView.Redraw(startOffset, toLine.EndOffset - startOffset, DispatcherPriority.Normal);
             }
 
             /*
