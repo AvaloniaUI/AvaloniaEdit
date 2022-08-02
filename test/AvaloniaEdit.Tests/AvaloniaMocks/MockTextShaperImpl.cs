@@ -15,7 +15,7 @@ public class MockTextShaperImpl : ITextShaperImpl
     {
         var typeface = options.Typeface;
         var fontRenderingEmSize = options.FontRenderingEmSize;
-        var bidiLevel = options.BidLevel;
+        var bidiLevel = options.BidiLevel;
 
         var shapedBuffer = new ShapedBuffer(text, text.Length, typeface, fontRenderingEmSize, bidiLevel);
 

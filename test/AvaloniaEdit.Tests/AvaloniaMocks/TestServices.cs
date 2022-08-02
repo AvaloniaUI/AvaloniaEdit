@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Layout;
-using Avalonia.Media;
+using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Platform;
-using Avalonia.PlatformSupport;
 using Avalonia.Rendering;
 using Avalonia.Styling;
 using Avalonia.Themes.Default;
+using Avalonia.Themes.Fluent;
 using Moq;
 
 namespace AvaloniaEdit.AvaloniaMocks
@@ -114,7 +113,7 @@ namespace AvaloniaEdit.AvaloniaMocks
         public IWindowingPlatform WindowingPlatform { get; }
         public PlatformHotkeyConfiguration PlatformHotkeyConfiguration { get; }
         public IFontManagerImpl FontManagerImpl { get; }
-        
+
         public ITextShaperImpl TextShaperImpl { get; }
 
         public TestServices With(
@@ -165,7 +164,7 @@ namespace AvaloniaEdit.AvaloniaMocks
         {
             var result = new Styles
             {
-                new DefaultTheme(),
+                new StyleInclude(new Uri("avares://Avalonia.Themes.Default/DefaultTheme.xaml"))
             };
 
             return result;

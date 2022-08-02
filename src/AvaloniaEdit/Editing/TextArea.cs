@@ -971,8 +971,8 @@ namespace AvaloniaEdit.Editing
         private void AttachTypingEvents()
         {
             // Use the PreviewMouseMove event in case some other editor layer consumes the MouseMove event (e.g. SD's InsertionCursorLayer)
-            PointerEnter += delegate { ShowMouseCursor(); };
-            PointerLeave += delegate { ShowMouseCursor(); };
+            PointerEntered += delegate { ShowMouseCursor(); };
+            PointerExited += delegate { ShowMouseCursor(); };
         }
 
         private void ShowMouseCursor()

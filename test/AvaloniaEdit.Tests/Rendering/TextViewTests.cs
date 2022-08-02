@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using AvaloniaEdit.AvaloniaMocks;
 using AvaloniaEdit.Document;
@@ -18,27 +19,23 @@ namespace AvaloniaEdit.Tests.Rendering
 
             TextView textView = new TextView();
 
-            TextDocument document = new TextDocument("hello world".ToCharArray());
+            TextDocument document = new TextDocument("hello world".ToCharArray());   
 
             textView.Document = document;
-            textView.EnsureVisualLines();
+
             ((ILogicalScrollable)textView).CanHorizontallyScroll = false;
             textView.Width = MockGlyphTypeface.GlyphAdvance * 8;
 
-            Window window = new Window();
-            window.Content = textView;
-            window.Show();
+            textView.Measure(Size.Infinity);
 
             VisualLine visualLine = textView.GetOrConstructVisualLine(document.Lines[0]);
 
             Assert.AreEqual(2, visualLine.TextLines.Count);
-            Assert.AreEqual("hello ", new string(visualLine.TextLines[0].TextRuns[0].Text.Buffer.Span));
-            Assert.AreEqual("world", new string(visualLine.TextLines[1].TextRuns[0].Text.Buffer.Span));
-
-            window.Close();
+            Assert.AreEqual("hello ", new string(visualLine.TextLines[0].TextRuns[0].Text.Span));
+            Assert.AreEqual("world", new string(visualLine.TextLines[1].TextRuns[0].Text.Span));
         }
 
-        [Test]
+        [Test()]
         public void Visual_Line_Should_Create_One_Text_Lines_When_Not_Wrapping()
         {
             using var app = UnitTestApplication.Start(TestServices.StyledWindow);
@@ -52,16 +49,12 @@ namespace AvaloniaEdit.Tests.Rendering
             ((ILogicalScrollable)textView).CanHorizontallyScroll = false;
             textView.Width = MockGlyphTypeface.GlyphAdvance * 500;
 
-            Window window = new Window();
-            window.Content = textView;
-            window.Show();
+            textView.Measure(Size.Infinity);
 
             VisualLine visualLine = textView.GetOrConstructVisualLine(document.Lines[0]);
 
             Assert.AreEqual(1, visualLine.TextLines.Count);
             Assert.AreEqual("hello world", new string(visualLine.TextLines[0].TextRuns[0].Text.Buffer.Span));
-
-            window.Close();
         }
     }
 }

@@ -138,5 +138,10 @@ namespace AvaloniaEdit.AvaloniaMocks
         {
             throw new NotImplementedException();
         }
+
+        public IGeometryImpl BuildGlyphRunGeometry(GlyphRun glyphRun)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -46,9 +46,9 @@ namespace AvaloniaEdit.Rendering
         public PointerHoverLogic(IControl target)
         {
             _target = target ?? throw new ArgumentNullException(nameof(target));
-            _target.PointerLeave += OnPointerLeave;
+            _target.PointerExited += OnPointerLeave;
             _target.PointerMoved += OnPointerMoved;
-            _target.PointerEnter += OnPointerEnter;
+            _target.PointerEntered += OnPointerEnter;
         }
 
         private void OnPointerMoved(object sender, PointerEventArgs e)
@@ -141,9 +141,9 @@ namespace AvaloniaEdit.Rendering
         {
             if (!_disposed)
             {
-                _target.PointerLeave -= OnPointerLeave;
+                _target.PointerExited -= OnPointerLeave;
                 _target.PointerMoved -= OnPointerMoved;
-                _target.PointerEnter -= OnPointerEnter;
+                _target.PointerEntered -= OnPointerEnter;
             }
             _disposed = true;
         }
