@@ -5,6 +5,6 @@
     <AvaloniaVersion>0.10.999-cibuild0022712-beta</AvaloniaVersion>
     <TextMateSharpVersion>1.0.41</TextMateSharpVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
-    <Version>0.10.12.2</Version>
+    <Version>0.10.999-cibuild0022712-beta</Version>
   </PropertyGroup>
 </Project>
