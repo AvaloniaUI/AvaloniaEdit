@@ -587,7 +587,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void Copy()
         {
-            if (ApplicationCommands.Copy.CanExecute(null, TextArea))
+            if (CanCopy)
             {
                 ApplicationCommands.Copy.Execute(null, TextArea);
             }
@@ -598,7 +598,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void Cut()
         {
-            if (ApplicationCommands.Cut.CanExecute(null, TextArea))
+            if (CanCut)
             {
                 ApplicationCommands.Cut.Execute(null, TextArea);
             }
@@ -618,7 +618,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void Delete()
         {
-            if(ApplicationCommands.Delete.CanExecute(null, TextArea))
+            if(CanDelete)
             {
                 ApplicationCommands.Delete.Execute(null, TextArea);
             }
@@ -709,7 +709,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void Paste()
         {
-            if (ApplicationCommands.Paste.CanExecute(null, TextArea))
+            if (CanPaste)
             {
                 ApplicationCommands.Paste.Execute(null, TextArea);
             }
@@ -772,7 +772,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void SelectAll()
         {
-            if (ApplicationCommands.SelectAll.CanExecute(null, TextArea))
+            if (CanSelectAll)
             {
                 ApplicationCommands.SelectAll.Execute(null, TextArea);
             }
@@ -806,6 +806,54 @@ namespace AvaloniaEdit
         public bool CanUndo
         {
             get { return ApplicationCommands.Undo.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text in editor can be copied
+        /// </summary>
+        public bool CanCopy
+        {
+            get { return ApplicationCommands.Copy.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text in editor can be cut
+        /// </summary>
+        public bool CanCut
+        {
+            get { return ApplicationCommands.Cut.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text in editor can be pasted
+        /// </summary>
+        public bool CanPaste
+        {
+            get { return ApplicationCommands.Paste.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if selected text in editor can be deleted
+        /// </summary>
+        public bool CanDelete
+        {
+            get { return ApplicationCommands.Delete.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text the editor can select all
+        /// </summary>
+        public bool CanSelectAll
+        {
+            get { return ApplicationCommands.SelectAll.CanExecute(null, TextArea); }
+        }
+
+        /// <summary>
+        /// Gets if text editor can activate the search panel
+        /// </summary>
+        public bool CanSearch
+        {
+            get { return searchPanel != null; }
         }
 
         /// <summary>
@@ -1169,9 +1217,9 @@ namespace AvaloniaEdit
         /// </summary>
         public void ScrollTo(int line, int column)
         {
-            //const double MinimumScrollFraction = 0.3;
-            //ScrollTo(line, column, VisualYPosition.LineMiddle,
-            //    null != scrollViewer ? scrollViewer.ViewportHeight / 2 : 0.0, MinimumScrollFraction);
+            const double MinimumScrollFraction = 0.3;
+            ScrollTo(line, column, VisualYPosition.LineMiddle,
+                null != ScrollViewer ? ScrollViewer.Viewport.Height / 2 : 0.0, MinimumScrollFraction);
         }
 
         /// <summary>
@@ -1186,16 +1234,16 @@ namespace AvaloniaEdit
         public void ScrollTo(int line, int column, VisualYPosition yPositionMode,
             double referencedVerticalViewPortOffset, double minimumScrollFraction)
         {
-            /*TextView textView = textArea.TextView;
+            TextView textView = textArea.TextView;
             TextDocument document = textView.Document;
-            if (scrollViewer != null && document != null)
+            if (ScrollViewer != null && document != null)
             {
                 if (line < 1)
                     line = 1;
                 if (line > document.LineCount)
                     line = document.LineCount;
 
-                IScrollInfo scrollInfo = textView;
+                ILogicalScrollable scrollInfo = textView;
                 if (!scrollInfo.CanHorizontallyScroll)
                 {
                     // Word wrap is enabled. Ensure that we have up-to-date info about line height so that we scroll
@@ -1214,32 +1262,40 @@ namespace AvaloniaEdit
                     }
                 }
 
-                Point p = textArea.TextView.GetVisualPosition(new TextViewPosition(line, Math.Max(1, column)),
+                Point p = textArea.TextView.GetVisualPosition(
+                    new TextViewPosition(line, Math.Max(1, column)),
                     yPositionMode);
+
+                double targetX = ScrollViewer.Offset.X;
+                double targetY = ScrollViewer.Offset.Y;
+
                 double verticalPos = p.Y - referencedVerticalViewPortOffset;
-                if (Math.Abs(verticalPos - scrollViewer.VerticalOffset) >
-                    minimumScrollFraction * scrollViewer.ViewportHeight)
+                if (Math.Abs(verticalPos - ScrollViewer.Offset.Y) >
+                    minimumScrollFraction * ScrollViewer.Viewport.Height)
                 {
-                    scrollViewer.ScrollToVerticalOffset(Math.Max(0, verticalPos));
+                    targetY = Math.Max(0, verticalPos);
                 }
 
                 if (column > 0)
                 {
-                    if (p.X > scrollViewer.ViewportWidth - Caret.MinimumDistanceToViewBorder * 2)
+                    if (p.X > ScrollViewer.Viewport.Width - Caret.MinimumDistanceToViewBorder * 2)
                     {
-                        double horizontalPos = Math.Max(0, p.X - scrollViewer.ViewportWidth / 2);
-                        if (Math.Abs(horizontalPos - scrollViewer.HorizontalOffset) >
-                            minimumScrollFraction * scrollViewer.ViewportWidth)
+                        double horizontalPos = Math.Max(0, p.X - ScrollViewer.Viewport.Width / 2);
+                        if (Math.Abs(horizontalPos - ScrollViewer.Offset.X) >
+                            minimumScrollFraction * ScrollViewer.Viewport.Width)
                         {
-                            scrollViewer.ScrollToHorizontalOffset(horizontalPos);
+                            targetX = 0;
                         }
                     }
                     else
                     {
-                        scrollViewer.ScrollToHorizontalOffset(0);
+                        targetX = 0;
                     }
                 }
-            }*/
+
+                if (targetX != ScrollViewer.Offset.X || targetY != ScrollViewer.Offset.Y)
+                    ScrollViewer.Offset = new Vector(targetX, targetY);
+            }
         }
     }
 }

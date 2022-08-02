@@ -250,6 +250,14 @@ namespace AvaloniaEdit.Editing
         /// <inheritdoc/>
         public event EventHandler DocumentChanged;
 
+        /// <summary>
+        /// Gets if the the document displayed by the text editor is readonly
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get => ReadOnlySectionProvider == ReadOnlySectionDocument.Instance;
+        }
+
         private static void OnDocumentChanged(AvaloniaPropertyChangedEventArgs e)
         {
             (e.Sender as TextArea)?.OnDocumentChanged((TextDocument)e.OldValue, (TextDocument)e.NewValue);
