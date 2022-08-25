@@ -16,31 +16,31 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
+
+using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
-using Avalonia.Utilities;
 
 namespace AvaloniaEdit.Rendering
 {
-	internal sealed class SimpleTextSource : ITextSource
+	sealed class VisualLineTextParagraphProperties : TextParagraphProperties
 	{
-		private readonly string _text;
-		private readonly TextRunProperties _properties;
+		internal TextRunProperties defaultTextRunProperties;
+		internal TextWrapping textWrapping;
+		internal double tabSize;
+		internal double indent;
+		internal bool firstLineInParagraph;
 
-		public SimpleTextSource(string text, TextRunProperties properties)
-		{
-			_text = text;
-			_properties = properties;
-		}
+		public override double DefaultIncrementalTab => tabSize;
 
-		public TextRun GetTextRun(int textSourceCharacterIndex)
-		{
-			if (textSourceCharacterIndex < _text.Length)
-				return new TextCharacters(
-					new ReadOnlySlice<char>(_text.AsMemory(), textSourceCharacterIndex,
-						_text.Length - textSourceCharacterIndex), _properties);
-			
-			return new TextEndOfParagraph(1);
-		}
+		public override FlowDirection FlowDirection => FlowDirection.LeftToRight;
+		public override TextAlignment TextAlignment => TextAlignment.Left;
+		public override double LineHeight => DefaultTextRunProperties.FontRenderingEmSize * 1.35;
+		public override bool FirstLineInParagraph => firstLineInParagraph;
+		public override TextRunProperties DefaultTextRunProperties => defaultTextRunProperties;
+
+		public override TextWrapping TextWrapping => textWrapping;
+
+		//public override TextMarkerProperties TextMarkerProperties { get { return null; } }
+		public override double Indent => indent;
 	}
 }

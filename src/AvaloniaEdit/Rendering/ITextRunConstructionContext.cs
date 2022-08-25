@@ -16,9 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
-using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
+
+#nullable enable
 
 namespace AvaloniaEdit.Rendering
 {
@@ -31,22 +33,22 @@ namespace AvaloniaEdit.Rendering
 		/// Gets the text document.
 		/// </summary>
 		TextDocument Document { get; }
-		
+
 		/// <summary>
 		/// Gets the text view for which the construction runs.
 		/// </summary>
 		TextView TextView { get; }
-		
+
 		/// <summary>
 		/// Gets the visual line that is currently being constructed.
 		/// </summary>
 		VisualLine VisualLine { get; }
-		
+
 		/// <summary>
 		/// Gets the global text run properties.
 		/// </summary>
 		TextRunProperties GlobalTextRunProperties { get; }
-		
+
 		/// <summary>
 		/// Gets a piece of text from the document.
 		/// </summary>

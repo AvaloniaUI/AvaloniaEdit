@@ -45,11 +45,11 @@ namespace AvaloniaEdit.Editing
             _textView = textArea.TextView;
             _position = new TextViewPosition(1, 1, 0);
 
-            _caretAdorner = new CaretLayer(textArea);
-            _textView.InsertLayer(_caretAdorner, KnownLayer.Caret, LayerInsertionPosition.Replace);
-            _textView.VisualLinesChanged += TextView_VisualLinesChanged;
-            _textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
-        }
+			_caretAdorner = new CaretLayer(textArea);
+			_textView.InsertLayer(_caretAdorner, KnownLayer.Caret, LayerInsertionPosition.Replace);
+			_textView.VisualLinesChanged += TextView_VisualLinesChanged;
+			_textView.ScrollOffsetChanged += TextView_ScrollOffsetChanged;
+		}
 
         internal void UpdateIfVisible()
         {
@@ -402,41 +402,39 @@ namespace AvaloniaEdit.Editing
                             lineBottom - lineTop);
         }
 
-        private Rect CalcCaretOverstrikeRectangle(VisualLine visualLine)
-        {
-            if (!_visualColumnValid)
-            {
-                RevalidateVisualColumn(visualLine);
-            }
+		Rect CalcCaretOverstrikeRectangle(VisualLine visualLine)
+		{
+			if (!_visualColumnValid) {
+				RevalidateVisualColumn(visualLine);
+			}
 
-            var currentPos = _position.VisualColumn;
-            // The text being overwritten in overstrike mode is everything up to the next normal caret stop
-            var nextPos = visualLine.GetNextCaretPosition(currentPos, LogicalDirection.Forward, CaretPositioningMode.Normal, true);
-            var textLine = visualLine.GetTextLine(currentPos);
+			int currentPos = _position.VisualColumn;
+			// The text being overwritten in overstrike mode is everything up to the next normal caret stop
+			int nextPos = visualLine.GetNextCaretPosition(currentPos, LogicalDirection.Forward, CaretPositioningMode.Normal, true);
+			var textLine = visualLine.GetTextLine(currentPos);
 
-            Rect r;
-            if (currentPos < visualLine.VisualLength)
-            {
-                // If the caret is within the text, use GetTextBounds() for the text being overwritten.
-                // This is necessary to ensure the rectangle is calculated correctly in bidirectional text.
-                r = textLine.GetTextBounds(currentPos, nextPos - currentPos);
-                r = r.WithY(r.Y + visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.LineTop));
-            }
-            else
-            {
-                // If the caret is at the end of the line (or in virtual space),
-                // use the visual X position of currentPos and nextPos (one or more of which will be in virtual space)
-                var xPos = visualLine.GetTextLineVisualXPosition(textLine, currentPos);
-                var xPos2 = visualLine.GetTextLineVisualXPosition(textLine, nextPos);
-                var lineTop = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextTop);
-                var lineBottom = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextBottom);
-                r = new Rect(xPos, lineTop, xPos2 - xPos, lineBottom - lineTop);
-            }
-            // If the caret is too small (e.g. in front of zero-width character), ensure it's still visible
-            if (r.Width < CaretWidth)
-                r = r.WithWidth(CaretWidth);
-            return r;
-        }
+			Rect r;
+			if (currentPos < visualLine.VisualLength) {
+				// If the caret is within the text, use GetTextBounds() for the text being overwritten.
+				// This is necessary to ensure the rectangle is calculated correctly in bidirectional text.
+				var textBounds = textLine.GetTextBounds(currentPos, nextPos - currentPos)[0];
+				r = textBounds.Rectangle;
+				var y = r.Y + visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.LineTop);
+				r = r.WithY(y);
+			} else {
+				// If the caret is at the end of the line (or in virtual space),
+				// use the visual X position of currentPos and nextPos (one or more of which will be in virtual space)
+				double xPos = visualLine.GetTextLineVisualXPosition(textLine, currentPos);
+				double xPos2 = visualLine.GetTextLineVisualXPosition(textLine, nextPos);
+				double lineTop = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextTop);
+				double lineBottom = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextBottom);
+				r = new Rect(xPos, lineTop, xPos2 - xPos, lineBottom - lineTop);
+			}
+			// If the caret is too small (e.g. in front of zero-width character), ensure it's still visible
+			if (r.Width < CaretWidth)
+				r = r.WithWidth(CaretWidth);
+			return r;
+		}
 
         /// <summary>
         /// Returns the caret rectangle. The coordinate system is in device-independent pixels from the top of the document.

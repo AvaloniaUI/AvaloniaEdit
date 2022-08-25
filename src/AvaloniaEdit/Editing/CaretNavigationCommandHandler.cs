@@ -22,10 +22,11 @@ using System.Diagnostics;
 using Avalonia;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Text;
 using AvaloniaEdit.Utils;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
+using Avalonia.Media.TextFormatting;
+using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Editing
 {

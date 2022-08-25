@@ -18,11 +18,12 @@
 
 using System;
 using System.Text.RegularExpressions;
+using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Rendering
 {
 	// This class is public because it can be used as a base class for custom links.
-	
+
 	/// <summary>
 	/// Detects hyperlinks and makes them clickable.
 	/// </summary>
@@ -34,19 +35,19 @@ namespace AvaloniaEdit.Rendering
 	{
 		// a link starts with a protocol (or just with www), followed by 0 or more 'link characters', followed by a link end character
 		// (this allows accepting punctuation inside links but not at the end)
-		internal static readonly Regex DefaultLinkRegex = new Regex(@"\b(https?://|ftp://|www\.)[\w\d\._/\-~%@()+:?&=#!]*[\w\d/]");
-		
-		// try to detect email addresses
-		internal static readonly Regex DefaultMailRegex = new Regex(@"\b[\w\d\.\-]+\@[\w\d\.\-]+\.[a-z]{2,6}\b");
+		internal readonly static Regex DefaultLinkRegex = new Regex(@"\b(https?://|ftp://|www\.)[\w\d\._/\-~%@()+:?&=#!]*[\w\d/]");
 
-	    private readonly Regex _linkRegex;
-		
+		// try to detect email addresses
+		internal readonly static Regex DefaultMailRegex = new Regex(@"\b[\w\d\.\-]+\@[\w\d\.\-]+\.[a-z]{2,6}\b");
+
+		private readonly Regex _linkRegex;
+
 		/// <summary>
 		/// Gets/Sets whether the user needs to press Control to click the link.
 		/// The default value is true.
 		/// </summary>
 		public bool RequireControlModifierForClick { get; set; }
-		
+
 		/// <summary>
 		/// Creates a new LinkElementGenerator.
 		/// </summary>
@@ -55,21 +56,21 @@ namespace AvaloniaEdit.Rendering
 			_linkRegex = DefaultLinkRegex;
 			RequireControlModifierForClick = true;
 		}
-		
+
 		/// <summary>
 		/// Creates a new LinkElementGenerator using the specified regex.
 		/// </summary>
 		protected LinkElementGenerator(Regex regex) : this()
 		{
-            _linkRegex = regex ?? throw new ArgumentNullException(nameof(regex));
+			_linkRegex = regex ?? throw new ArgumentNullException(nameof(regex));
 		}
-		
+
 		void IBuiltinElementGenerator.FetchOptions(TextEditorOptions options)
 		{
 			RequireControlModifierForClick = options.RequireControlModifierForHyperlinkClick;
 		}
 
-	    private Match GetMatch(int startOffset, out int matchOffset)
+		private Match GetMatch(int startOffset, out int matchOffset)
 		{
 			var endOffset = CurrentContext.VisualLine.LastDocumentLine.EndOffset;
 			var relevantText = CurrentContext.GetText(startOffset, endOffset - startOffset);
@@ -77,24 +78,25 @@ namespace AvaloniaEdit.Rendering
 			matchOffset = m.Success ? m.Index - relevantText.Offset + startOffset : -1;
 			return m;
 		}
-		
+
 		/// <inheritdoc/>
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
 			GetMatch(startOffset, out var matchOffset);
 			return matchOffset;
 		}
-		
+
 		/// <inheritdoc/>
 		public override VisualLineElement ConstructElement(int offset)
 		{
 			var m = GetMatch(offset, out var matchOffset);
 			if (m.Success && matchOffset == offset) {
 				return ConstructElementFromMatch(m);
+			} else {
+				return null;
 			}
-		    return null;
 		}
-		
+
 		/// <summary>
 		/// Constructs a VisualLineElement that replaces the matched text.
 		/// The default implementation will create a <see cref="VisualLineLinkText"/>
@@ -105,14 +107,14 @@ namespace AvaloniaEdit.Rendering
 			var uri = GetUriFromMatch(m);
 			if (uri == null)
 				return null;
-		    var linkText = new VisualLineLinkText(CurrentContext.VisualLine, m.Length)
-		    {
-		        NavigateUri = uri,
-		        RequireControlModifierForClick = RequireControlModifierForClick
-		    };
-		    return linkText;
+			var linkText = new VisualLineLinkText(CurrentContext.VisualLine, m.Length)
+			{
+				NavigateUri = uri,
+				RequireControlModifierForClick = RequireControlModifierForClick
+			};
+			return linkText;
 		}
-		
+
 		/// <summary>
 		/// Fetches the URI from the regex match. Returns null if the URI format is invalid.
 		/// </summary>
@@ -121,15 +123,12 @@ namespace AvaloniaEdit.Rendering
 			var targetUrl = match.Value;
 			if (targetUrl.StartsWith("www.", StringComparison.Ordinal))
 				targetUrl = "http://" + targetUrl;
-			if (Uri.IsWellFormedUriString(targetUrl, UriKind.Absolute))
-				return new Uri(targetUrl);
-			
-			return null;
+			return Uri.IsWellFormedUriString(targetUrl, UriKind.Absolute) ? new Uri(targetUrl) : null;
 		}
 	}
-	
+
 	// This class is internal because it does not need to be accessed by the user - it can be configured using TextEditorOptions.
-	
+
 	/// <summary>
 	/// Detects e-mail addresses and makes them clickable.
 	/// </summary>
@@ -146,14 +145,11 @@ namespace AvaloniaEdit.Rendering
 			: base(DefaultMailRegex)
 		{
 		}
-		
+
 		protected override Uri GetUriFromMatch(Match match)
 		{
-			var	targetUrl =	"mailto:" +	match.Value;
-			if (Uri.IsWellFormedUriString(targetUrl, UriKind.Absolute))
-				return new Uri(targetUrl);
-
-			return null;
+			var targetUrl = "mailto:" + match.Value;
+			return Uri.IsWellFormedUriString(targetUrl, UriKind.Absolute) ? new Uri(targetUrl) : null;
 		}
 	}
 }

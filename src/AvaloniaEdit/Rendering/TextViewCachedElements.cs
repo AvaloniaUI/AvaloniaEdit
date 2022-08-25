@@ -17,38 +17,39 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
-using AvaloniaEdit.Text;
-using AvaloniaEdit.Utils;
+using Avalonia.Media.TextFormatting;
 
 namespace AvaloniaEdit.Rendering
 {
-    internal sealed class TextViewCachedElements
+    internal sealed class TextViewCachedElements /*: IDisposable*/
     {
-        private Dictionary<string, TextLine> _nonPrintableCharacterTexts;
         private TextFormatter _formatter;
+        private Dictionary<string, TextLine> _nonPrintableCharacterTexts;
 
         public TextLine GetTextForNonPrintableCharacter(string text, ITextRunConstructionContext context)
         {
             if (_nonPrintableCharacterTexts == null)
-            {
                 _nonPrintableCharacterTexts = new Dictionary<string, TextLine>();
+            TextLine textLine;
+            if (!_nonPrintableCharacterTexts.TryGetValue(text, out textLine)) {
+                var p = new VisualLineElementTextRunProperties(context.GlobalTextRunProperties);
+                p.SetForegroundBrush(context.TextView.NonPrintableCharacterBrush);
+                if (_formatter == null)
+                    _formatter = TextFormatter.Current;//TextFormatterFactory.Create(context.TextView);
+                textLine = FormattedTextElement.PrepareText(_formatter, text, p);
+                _nonPrintableCharacterTexts[text] = textLine;
             }
-
-            if (_nonPrintableCharacterTexts.TryGetValue(text, out var textLine))
-            {
-                return textLine;
-            }
-
-            var properties = context.GlobalTextRunProperties.Clone();
-            properties.ForegroundBrush = context.TextView.NonPrintableCharacterBrush;
-            if (_formatter == null)
-            {
-                _formatter = TextFormatterFactory.Create();
-            }
-
-            textLine = FormattedTextElement.PrepareText(_formatter, text, properties);
-            _nonPrintableCharacterTexts[text] = textLine;
             return textLine;
         }
+
+        /*public void Dispose()
+        {
+            if (nonPrintableCharacterTexts != null) {
+                foreach (TextLine line in nonPrintableCharacterTexts.Values)
+                    line.Dispose();
+            }
+            if (formatter != null)
+                formatter.Dispose();
+        }*/
     }
 }

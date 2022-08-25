@@ -37,13 +37,10 @@ namespace AvaloniaEdit.Rendering
 
         #region Properties
 
-        public int Line
-        {
+        public int Line {
             get { return _line; }
-            set
-            {
-                if (_line != value)
-                {
+            set {
+                if (_line != value) {
                     _line = value;
                     _textView.InvalidateLayer(Layer);
                 }
@@ -52,17 +49,21 @@ namespace AvaloniaEdit.Rendering
 
         public KnownLayer Layer => KnownLayer.Selection;
 
-        public IBrush BackgroundBrush { get; set; }
+        public IBrush BackgroundBrush {
+            get; set;
+        }
 
-        public Pen BorderPen { get; set; }
+        public IPen BorderPen {
+            get; set;
+        }
 
         #endregion
 
         public CurrentLineHighlightRenderer(TextView textView)
         {
-			BorderPen = new Pen(new ImmutableSolidColorBrush(DefaultBorder));
+            BorderPen = new ImmutablePen(new ImmutableSolidColorBrush(DefaultBorder), 1);
 
-			BackgroundBrush = new ImmutableSolidColorBrush(DefaultBackground);
+            BackgroundBrush = new ImmutableSolidColorBrush(DefaultBackground);
 
             _textView = textView ?? throw new ArgumentNullException(nameof(textView));
             _textView.BackgroundRenderers.Add(this);
@@ -75,7 +76,7 @@ namespace AvaloniaEdit.Rendering
             if (!_textView.Options.HighlightCurrentLine)
                 return;
 
-            BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
+            var builder = new BackgroundGeometryBuilder();
 
             var visualLine = _textView.GetVisualLine(_line);
             if (visualLine == null) return;
@@ -84,9 +85,8 @@ namespace AvaloniaEdit.Rendering
 
             builder.AddRectangle(textView, new Rect(0, linePosY, textView.Bounds.Width, visualLine.Height));
 
-            Geometry geometry = builder.CreateGeometry();
-            if (geometry != null)
-            {
+            var geometry = builder.CreateGeometry();
+            if (geometry != null) {
                 drawingContext.DrawGeometry(BackgroundBrush, BorderPen, geometry);
             }
         }

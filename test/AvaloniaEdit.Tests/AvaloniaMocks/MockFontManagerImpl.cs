@@ -6,6 +6,8 @@ using Moq;
 using System.Collections.Generic;
 using System.Globalization;
 
+#nullable enable
+
 namespace AvaloniaEdit.AvaloniaMocks
 {
     public class MockFontManagerImpl : IFontManagerImpl
@@ -27,12 +29,12 @@ namespace AvaloniaEdit.AvaloniaMocks
             return new[] { _defaultFamilyName };
         }
 
-        public bool TryMatchCharacter(int codepoint, FontStyle fontStyle, FontWeight fontWeight, FontFamily fontFamily,
-            CultureInfo culture, out Typeface fontKey)
+        public bool TryMatchCharacter(int codepoint, FontStyle fontStyle, FontWeight fontWeight, FontStretch fontStretch,
+            FontFamily? fontFamily, CultureInfo? culture, out Typeface typeface)
         {
-            fontKey = new Typeface(_defaultFamilyName);
+            typeface = new Typeface(_defaultFamilyName);
 
-            return false;
+            return true;
         }
 
         public IGlyphTypefaceImpl CreateGlyphTypeface(Typeface typeface)

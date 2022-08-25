@@ -17,10 +17,10 @@ using AvaloniaEdit.Folding;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Grammars;
-
+using Avalonia.Diagnostics;
 namespace AvaloniaEdit.Demo
 {
-    using Pair = KeyValuePair<int, IControl>;
+    using Pair = KeyValuePair<int, Control>;
 
     public class MainWindow : Window
     {
@@ -40,19 +40,20 @@ namespace AvaloniaEdit.Demo
 
         public MainWindow()
         {
+
             InitializeComponent();
 
             _textEditor = this.FindControl<TextEditor>("Editor");
             _textEditor.Background = Brushes.Transparent;
             _textEditor.ShowLineNumbers = true;
-            _textEditor.ContextMenu = new ContextMenu 
-            { 
-                Items = new List<MenuItem> 
-                { 
+            _textEditor.ContextMenu = new ContextMenu
+            {
+                Items = new List<MenuItem>
+                {
                     new MenuItem { Header = "Copy", InputGesture = new KeyGesture(Key.C, KeyModifiers.Control) },
                     new MenuItem { Header = "Paste", InputGesture = new KeyGesture(Key.V, KeyModifiers.Control) },
                     new MenuItem { Header = "Cut", InputGesture = new KeyGesture(Key.X, KeyModifiers.Control) }
-                } 
+                }
             };
             _textEditor.TextArea.Background = this.Background;
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
@@ -106,7 +107,7 @@ namespace AvaloniaEdit.Demo
 
         private void Caret_PositionChanged(object sender, EventArgs e)
         {
-            _statusTextBlock.Text = string.Format("Line {0} Column {1}", 
+            _statusTextBlock.Text = string.Format("Line {0} Column {1}",
                 _textEditor.TextArea.Caret.Line,
                 _textEditor.TextArea.Caret.Column);
         }
@@ -170,13 +171,13 @@ namespace AvaloniaEdit.Demo
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void AddControlButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void AddControlButton_Click(object sender, RoutedEventArgs e)
         {
             _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me" }));
             _textEditor.TextArea.TextView.Redraw();
         }
 
-        private void ClearControlButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void ClearControlButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: delete elements using back key
             _generator.controls.Clear();
@@ -259,7 +260,20 @@ namespace AvaloniaEdit.Demo
                         ChangeLinePart(
                             line.Offset + indexOfUnderline,
                             line.Offset + indexOfUnderline + "underline".Length,
-                            visualLine => visualLine.TextRunProperties.Underline = true);
+                            visualLine =>
+                            {
+                                if (visualLine.TextRunProperties.TextDecorations != null)
+                                {
+                                    var textDecorations = new TextDecorationCollection(visualLine.TextRunProperties.TextDecorations) { TextDecorations.Underline[0] };
+
+                                    visualLine.TextRunProperties.SetTextDecorations(textDecorations);
+                                }
+                                else
+                                {
+                                    visualLine.TextRunProperties.SetTextDecorations(TextDecorations.Underline);
+                                }
+                            }
+                        );
                     }
 
                     if (indexOfStrikeThrough != -1)
@@ -267,7 +281,20 @@ namespace AvaloniaEdit.Demo
                         ChangeLinePart(
                             line.Offset + indexOfStrikeThrough,
                             line.Offset + indexOfStrikeThrough + "strikethrough".Length,
-                            visualLine => visualLine.TextRunProperties.Strikethrough = true);
+                            visualLine =>
+                            {
+                                if (visualLine.TextRunProperties.TextDecorations != null)
+                                {
+                                    var textDecorations = new TextDecorationCollection(visualLine.TextRunProperties.TextDecorations) { TextDecorations.Strikethrough[0] };
+
+                                    visualLine.TextRunProperties.SetTextDecorations(textDecorations);
+                                }
+                                else
+                                {
+                                    visualLine.TextRunProperties.SetTextDecorations(TextDecorations.Strikethrough);
+                                }
+                            }
+                        );
                     }
                 }
             }
