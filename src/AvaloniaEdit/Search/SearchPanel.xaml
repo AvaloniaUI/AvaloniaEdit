@@ -50,10 +50,9 @@
                         <Popup Name="PART_MessageView"
                                Classes="ToolTip"
                                PlacementMode="Bottom"
-                               StaysOpen="True"
+                               IsLightDismissEnabled="False"
                                Focusable="False"
-                               IsOpen="False"
-                               ObeyScreenEdges="True">
+                               IsOpen="False">
                             <ContentPresenter Name="PART_MessageContent" />
                         </Popup>
                         <ToggleButton Classes="ExpanderToggle" Name="Expander" VerticalAlignment="Top" IsVisible="{Binding !_textEditor.IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}"
