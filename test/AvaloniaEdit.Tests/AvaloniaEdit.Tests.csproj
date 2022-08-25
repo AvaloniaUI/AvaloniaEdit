@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
 	<PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
-	<PackageReference Include="Avalonia.Themes.Default" Version="$(AvaloniaVersion)" />
+	<PackageReference Include="Avalonia.Themes.Simple" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="Moq" Version="4.10.1" />
     <PackageReference Include="NUnit" Version="3.11.0" />
