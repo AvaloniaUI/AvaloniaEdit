@@ -8,7 +8,7 @@ using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Platform;
 using Avalonia.Rendering;
 using Avalonia.Styling;
-using Avalonia.Themes.Default;
+using Avalonia.Themes.Simple;
 using Avalonia.Themes.Fluent;
 using Moq;
 
@@ -164,7 +164,7 @@ namespace AvaloniaEdit.AvaloniaMocks
         {
             var result = new Styles
             {
-                new StyleInclude(new Uri("avares://Avalonia.Themes.Default/DefaultTheme.xaml"))
+                new SimpleTheme()
             };
 
             return result;
