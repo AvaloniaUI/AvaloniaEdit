@@ -1,3 +1,5 @@
+using System;
+
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
@@ -6,9 +8,23 @@ namespace AvaloniaEdit.TextMate
 {
     public abstract class GenericLineTransformer : DocumentColorizingTransformer
     {
+        private Action<Exception> _exceptionHandler;
+
+        public GenericLineTransformer(Action<Exception> exceptionHandler)
+        {
+            _exceptionHandler = exceptionHandler;
+        }
+
         protected override void ColorizeLine(DocumentLine line)
         {
-            TransformLine(line, CurrentContext);
+            try
+            {
+                TransformLine(line, CurrentContext);
+            }
+            catch (Exception ex)
+            {
+                _exceptionHandler?.Invoke(ex);
+            }
         }
 
         protected abstract void TransformLine(DocumentLine line, ITextRunConstructionContext context);

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -9,7 +9,6 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-
 using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Demo.Resources;
 using AvaloniaEdit.Document;
@@ -17,7 +16,7 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Folding;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
-using AvaloniaEdit.TextMate.Grammars;
+using TextMateSharp.Grammars;
 
 namespace AvaloniaEdit.Demo
 {
@@ -90,8 +89,10 @@ namespace AvaloniaEdit.Demo
 
             _textEditor.Document = new TextDocument(
                 "// AvaloniaEdit supports displaying control chars: \a or \b or \v" + Environment.NewLine +
+                "// AvaloniaEdit supports displaying underline and strikethrough" + Environment.NewLine +
                 ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(csharpLanguage.Id));
+            _textEditor.TextArea.TextView.LineTransformers.Add(new UnderlineAndStrikeThroughTransformer());
 
             _statusTextBlock = this.Find<TextBlock>("StatusText");
 
@@ -119,6 +120,8 @@ namespace AvaloniaEdit.Demo
 
         private void SyntaxModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            RemoveUnderlineAndStrikethroughTransformer();
+
             Language language = (Language)_syntaxModeCombo.SelectedItem;
 
             if (_foldingManager != null)
@@ -129,6 +132,7 @@ namespace AvaloniaEdit.Demo
 
             string scopeName = _registryOptions.GetScopeByLanguageId(language.Id);
 
+            _textMateInstallation.SetGrammar(null);
             _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammar(scopeName);
 
@@ -139,6 +143,17 @@ namespace AvaloniaEdit.Demo
                 var strategy = new XmlFoldingStrategy();
                 strategy.UpdateFoldings(_foldingManager, _textEditor.Document);
                 return;
+            }
+        }
+
+        private void RemoveUnderlineAndStrikethroughTransformer()
+        {
+            for (int i = _textEditor.TextArea.TextView.LineTransformers.Count - 1; i >= 0; i--)
+            {
+                if (_textEditor.TextArea.TextView.LineTransformers[i] is UnderlineAndStrikeThroughTransformer)
+                {
+                    _textEditor.TextArea.TextView.LineTransformers.RemoveAt(i);
+                }
             }
         }
 
@@ -225,6 +240,36 @@ namespace AvaloniaEdit.Demo
                 });
 
                 _insightWindow.Show();
+            }
+        }
+
+        class UnderlineAndStrikeThroughTransformer : DocumentColorizingTransformer
+        {
+            protected override void ColorizeLine(DocumentLine line)
+            {
+                if (line.LineNumber == 2)
+                {
+                    string lineText = this.CurrentContext.Document.GetText(line);
+
+                    int indexOfUnderline = lineText.IndexOf("underline");
+                    int indexOfStrikeThrough = lineText.IndexOf("strikethrough");
+
+                    if (indexOfUnderline != -1)
+                    {
+                        ChangeLinePart(
+                            line.Offset + indexOfUnderline,
+                            line.Offset + indexOfUnderline + "underline".Length,
+                            visualLine => visualLine.TextRunProperties.Underline = true);
+                    }
+
+                    if (indexOfStrikeThrough != -1)
+                    {
+                        ChangeLinePart(
+                            line.Offset + indexOfStrikeThrough,
+                            line.Offset + indexOfStrikeThrough + "strikethrough".Length,
+                            visualLine => visualLine.TextRunProperties.Strikethrough = true);
+                    }
+                }
             }
         }
 

@@ -403,7 +403,7 @@ namespace AvaloniaEdit.Editing
             {
                 TextArea.Cursor = Cursor.Parse("IBeam");
 
-                var pointer = e.GetPointerPoint(TextArea);
+                var pointer = e.GetCurrentPoint(TextArea);
 
                 _mode = SelectionMode.None;
                 if (!e.Handled)

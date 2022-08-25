@@ -85,5 +85,57 @@ namespace AvaloniaEdit.Tests.TextMate
             Assert.AreEqual(7, documentSnaphot.GetTotalLineLength(1));
             Assert.AreEqual(6, documentSnaphot.GetTotalLineLength(2));
         }
+
+        [Test]
+        public void DocumentSnapshot_Should_Have_Correct_Line_Count_Before_Remove_All_Lines()
+        {
+            TextDocument document = new TextDocument();
+            document.Text = "puppy\r\npussy\r\nbirdie\r\ndoggie";
+
+            DocumentSnapshot documentSnaphot = new DocumentSnapshot(document);
+
+            documentSnaphot.RemoveLines(0, 3);
+
+            Assert.AreEqual(0, documentSnaphot.LineCount);
+        }
+
+        [Test]
+        public void DocumentSnapshot_Should_Have_Correct_Line_Count_Before_Remove_First_Line()
+        {
+            TextDocument document = new TextDocument();
+            document.Text = "puppy\r\npussy\r\nbirdie\r\ndoggie";
+
+            DocumentSnapshot documentSnaphot = new DocumentSnapshot(document);
+
+            documentSnaphot.RemoveLines(0, 0);
+
+            Assert.AreEqual(3, documentSnaphot.LineCount);
+        }
+
+        [Test]
+        public void DocumentSnapshot_Should_Have_Correct_Line_Count_Before_Remove_Two_First_Lines()
+        {
+            TextDocument document = new TextDocument();
+            document.Text = "puppy\r\npussy\r\nbirdie\r\ndoggie";
+
+            DocumentSnapshot documentSnaphot = new DocumentSnapshot(document);
+
+            documentSnaphot.RemoveLines(0, 1);
+
+            Assert.AreEqual(2, documentSnaphot.LineCount);
+        }
+
+        [Test]
+        public void DocumentSnapshot_Should_Have_Correct_Line_Count_Before_Remove_Last_Line()
+        {
+            TextDocument document = new TextDocument();
+            document.Text = "puppy\r\npussy\r\nbirdie\r\ndoggie";
+
+            DocumentSnapshot documentSnaphot = new DocumentSnapshot(document);
+
+            documentSnaphot.RemoveLines(3, 3);
+
+            Assert.AreEqual(3, documentSnaphot.LineCount);
+        }
     }
 }

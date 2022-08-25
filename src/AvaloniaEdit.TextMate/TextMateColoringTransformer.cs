@@ -23,6 +23,7 @@ namespace AvaloniaEdit.TextMate
         private TMModel _model;
         private TextDocument _document;
         private TextView _textView;
+        private Action<Exception> _exceptionHandler;
 
         private volatile int _firstVisibleLineIndex = -1;
         private volatile int _lastVisibleLineIndex = -1;
@@ -30,9 +31,14 @@ namespace AvaloniaEdit.TextMate
         private readonly Dictionary<int, IBrush> _brushes;
         private TextSegmentCollection<TextTransformation> _transformations;
 
-        public TextMateColoringTransformer(TextView textView)
+        public TextMateColoringTransformer(
+            TextView textView,
+            Action<Exception> exceptionHandler)
+            : base(exceptionHandler)
         {
             _textView = textView;
+            _exceptionHandler = exceptionHandler;
+
             _brushes = new Dictionary<int, IBrush>();
             _textView.VisualLinesChanged += TextView_VisualLinesChanged;
         }
@@ -51,11 +57,18 @@ namespace AvaloniaEdit.TextMate
 
         private void TextView_VisualLinesChanged(object sender, EventArgs e)
         {
-            if (!_textView.VisualLinesValid || _textView.VisualLines.Count == 0)
-                return;
+            try
+            {
+                if (!_textView.VisualLinesValid || _textView.VisualLines.Count == 0)
+                    return;
 
-            _firstVisibleLineIndex = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
-            _lastVisibleLineIndex = _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1;
+                _firstVisibleLineIndex = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
+                _lastVisibleLineIndex = _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1;
+            }
+            catch (Exception ex)
+            {
+                _exceptionHandler?.Invoke(ex);
+            }
         }
 
         public void Dispose()
@@ -103,21 +116,31 @@ namespace AvaloniaEdit.TextMate
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            int i = line.LineNumber;
-
-            var tokens = _model.GetLineTokens(i - 1);
-
-            if (tokens == null)
-                return;
-
-            RemoveLineTransformations(i);
-            ProcessTokens(i, tokens);
-
-            var transformsInLine = _transformations.FindOverlappingSegments(line);
-
-            foreach (var transform in transformsInLine)
+            try
             {
-                transform.Transform(this, line);
+                if (_model == null)
+                    return;
+
+                int i = line.LineNumber;
+
+                var tokens = _model.GetLineTokens(i - 1);
+
+                if (tokens == null)
+                    return;
+
+                RemoveLineTransformations(i);
+                ProcessTokens(i, tokens);
+
+                var transformsInLine = _transformations.FindOverlappingSegments(line);
+
+                foreach (var transform in transformsInLine)
+                {
+                    transform.Transform(this, line);
+                }
+            }
+            catch (Exception ex)
+            {
+                _exceptionHandler?.Invoke(ex);
             }
         }
 
@@ -154,7 +177,7 @@ namespace AvaloniaEdit.TextMate
                         fontStyle = themeRule.fontStyle;
                 }
 
-                _transformations.Add(new ForegroundTextTransformation(this, lineOffset + startIndex,
+                _transformations.Add(new ForegroundTextTransformation(this, _exceptionHandler, lineOffset + startIndex,
                     lineOffset + endIndex, foreground, background, fontStyle));
             }
         }
@@ -172,19 +195,19 @@ namespace AvaloniaEdit.TextMate
 
         public void ModelTokensChanged(ModelTokensChangedEvent e)
         {
-            if (e.ranges == null)
+            if (e.Ranges == null)
                 return;
 
-            if (_model.IsStopped)
+            if (_model == null || _model.IsStopped)
                 return;
 
             int firstChangedLineIndex = int.MaxValue;
             int lastChangedLineIndex = -1;
 
-            foreach (var range in e.ranges)
+            foreach (var range in e.Ranges)
             {
-                firstChangedLineIndex = Math.Min(range.fromLineNumber - 1, firstChangedLineIndex);
-                lastChangedLineIndex = Math.Max(range.toLineNumber - 1, lastChangedLineIndex);
+                firstChangedLineIndex = Math.Min(range.FromLineNumber - 1, firstChangedLineIndex);
+                lastChangedLineIndex = Math.Max(range.ToLineNumber - 1, lastChangedLineIndex);
             }
 
             bool changedLinesAreNotVisible =

@@ -13,7 +13,7 @@ jobs:
   - task: DotNetCoreCLI@2
     displayName: 'Pack AvaloniaEdit'
     inputs:
-      packagesToPack: 'src\AvaloniaEdit\AvaloniaEdit.csproj;src\AvaloniaEdit.TextMate\AvaloniaEdit.TextMate.csproj;src\AvaloniaEdit.TextMate.Grammars\AvaloniaEdit.TextMate.Grammars.csproj'
+      packagesToPack: 'src\AvaloniaEdit\AvaloniaEdit.csproj;src\AvaloniaEdit.TextMate\AvaloniaEdit.TextMate.csproj'
       command: pack
       outputDir: '$(Build.ArtifactStagingDirectory)/NuGet'
       verbosityPack: normal

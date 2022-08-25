@@ -6,7 +6,7 @@ namespace AvaloniaEdit.Text
     {
         public string String { get; }
 
-        public int Length { get; }
+        public int Length { get; set; }
 
         public static StringRange Empty => default(StringRange);
 
@@ -23,11 +23,12 @@ namespace AvaloniaEdit.Text
 
         public override string ToString()
         {
-            if (String == null) return string.Empty;
+            return ToString(String, OffsetToFirstChar, Length);
+        }
 
-            if (OffsetToFirstChar == 0 && Length == String.Length) return String;
-
-            return String.Substring(OffsetToFirstChar, Length);
+        public string ToString(int maxLength)
+        {
+            return ToString(String, OffsetToFirstChar, maxLength);
         }
 
         public bool Equals(StringRange other)
@@ -62,6 +63,20 @@ namespace AvaloniaEdit.Text
         public static bool operator !=(StringRange left, StringRange right)
         {
             return !left.Equals(right);
+        }
+
+        public StringRange WithLength(int length)
+        {
+            return new StringRange(String, OffsetToFirstChar, length);
+        }
+
+        static string ToString(string value, int offsetToFirstChar, int length)
+        {
+            if (value == null) return string.Empty;
+
+            if (offsetToFirstChar == 0 && length == value.Length) return value;
+
+            return value.Substring(offsetToFirstChar, length);
         }
     }
 }
