@@ -149,7 +149,7 @@ namespace AvaloniaEdit.Rendering
                 _heightTree = new HeightTree(newValue, DefaultLineHeight);
                 CachedElements = new TextViewCachedElements();
             }
-            InvalidateMeasure(DispatcherPriority.Normal);
+            InvalidateMeasure();
             DocumentChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -163,11 +163,7 @@ namespace AvaloniaEdit.Rendering
 
         private void OnChanging(object sender, DocumentChangeEventArgs e)
         {
-            // TODO: put redraw into background so that other input events can be handled before the redraw.
-            // Unfortunately the "easy" approach (just use DispatcherPriority.Background) here makes the editor twice as slow because
-            // the caret position change forces an immediate redraw, and the text input then forces a background redraw.
-            // When fixing this, make sure performance on the SharpDevelop "type text in C# comment" stress test doesn't get significantly worse.
-            Redraw(e.Offset, e.RemovalLength, DispatcherPriority.Normal);
+            Redraw(e.Offset, e.RemovalLength);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -612,36 +608,28 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public void Redraw()
         {
-            Redraw(DispatcherPriority.Normal);
-        }
-
-        /// <summary>
-        /// Causes the text editor to regenerate all visual lines.
-        /// </summary>
-        public void Redraw(DispatcherPriority redrawPriority)
-        {
             VerifyAccess();
             ClearVisualLines();
-            InvalidateMeasure(redrawPriority);
+            InvalidateMeasure();
         }
 
         /// <summary>
         /// Causes the text editor to regenerate the specified visual line.
         /// </summary>
-        public void Redraw(VisualLine visualLine, DispatcherPriority redrawPriority)
+        public void Redraw(VisualLine visualLine)
         {
             VerifyAccess();
             if (_allVisualLines.Remove(visualLine))
             {
                 DisposeVisualLine(visualLine);
-                InvalidateMeasure(redrawPriority);
+                InvalidateMeasure();
             }
         }
 
         /// <summary>
         /// Causes the text editor to redraw all lines overlapping with the specified segment.
         /// </summary>
-        public void Redraw(int offset, int length, DispatcherPriority redrawPriority)
+        public void Redraw(int offset, int length)
         {
             VerifyAccess();
             var changedSomethingBeforeOrInLine = false;
@@ -666,7 +654,7 @@ namespace AvaloniaEdit.Rendering
                 // Repaint not only when something in visible area was changed, but also when anything in front of it
                 // was changed. We might have to redraw the line number margin. Or the highlighting changed.
                 // However, we'll try to reuse the existing VisualLines.
-                InvalidateMeasure(redrawPriority);
+                InvalidateMeasure();
             }
         }
 
@@ -679,30 +667,18 @@ namespace AvaloniaEdit.Rendering
                                                          Justification = "This method is meant to invalidate only a specific layer - I just haven't figured out how to do that, yet.")]
         public void InvalidateLayer(KnownLayer knownLayer)
         {
-            InvalidateMeasure(DispatcherPriority.Normal);
-        }
-
-        /// <summary>
-        /// Causes a known layer to redraw.
-        /// This method does not invalidate visual lines;
-        /// use the <see cref="Redraw()"/> method to do that.
-        /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "knownLayer",
-                                                         Justification = "This method is meant to invalidate only a specific layer - I just haven't figured out how to do that, yet.")]
-        public void InvalidateLayer(KnownLayer knownLayer, DispatcherPriority priority)
-        {
-            InvalidateMeasure(priority);
+            InvalidateMeasure();
         }
 
         /// <summary>
         /// Causes the text editor to redraw all lines overlapping with the specified segment.
         /// Does nothing if segment is null.
         /// </summary>
-        public void Redraw(ISegment segment, DispatcherPriority redrawPriority)
+        public void Redraw(ISegment segment)
         {
             if (segment != null)
             {
-                Redraw(segment.Offset, segment.Length, redrawPriority);
+                Redraw(segment.Offset, segment.Length);
             }
         }
 
@@ -734,34 +710,6 @@ namespace AvaloniaEdit.Rendering
 
             visualLine.Dispose();
             RemoveInlineObjects(visualLine);
-        }
-        #endregion
-
-        #region InvalidateMeasure(DispatcherPriority)
-
-        private Task _invalidateMeasureOperation;
-
-        private void InvalidateMeasure(DispatcherPriority priority)
-        {
-            if (priority >= DispatcherPriority.Render)
-            {
-                _invalidateMeasureOperation = null;
-                InvalidateMeasure();
-            }
-            else
-            {
-                if (_invalidateMeasureOperation == null)
-                {
-                    _invalidateMeasureOperation = Dispatcher.UIThread.InvokeAsync(
-                        delegate
-                        {
-                            _invalidateMeasureOperation = null;
-                            base.InvalidateMeasure();
-                        },
-                        priority
-                    );
-                }
-            }
         }
         #endregion
 
@@ -880,7 +828,7 @@ namespace AvaloniaEdit.Rendering
             if (!VisualLinesValid)
             {
                 // increase priority for re-measure
-                InvalidateMeasure(DispatcherPriority.Normal);
+                InvalidateMeasure();
                 // force immediate re-measure
                 InvalidateVisual();
             }
@@ -1211,7 +1159,7 @@ namespace AvaloniaEdit.Rendering
 
             // Apply final view port and offset
             if (SetScrollData(_scrollViewport, _scrollExtent, new Vector(newScrollOffsetX, newScrollOffsetY)))
-                InvalidateMeasure(DispatcherPriority.Normal);
+                InvalidateMeasure();
 
             if (_visibleVisualLines != null)
             {
@@ -1594,7 +1542,7 @@ namespace AvaloniaEdit.Rendering
             {
                 SetScrollOffset(newScrollOffset);
                 OnScrollChange();
-                InvalidateMeasure(DispatcherPriority.Normal);
+                InvalidateMeasure();
             }
         }
         #endregion
@@ -2081,7 +2029,7 @@ namespace AvaloniaEdit.Rendering
                 {
                     _canHorizontallyScroll = value;
                     ClearVisualLines();
-                    InvalidateMeasure(DispatcherPriority.Normal);
+                    InvalidateMeasure();
                 }
             }
         }
@@ -2095,7 +2043,7 @@ namespace AvaloniaEdit.Rendering
                 {
                     _canVerticallyScroll = value;
                     ClearVisualLines();
-                    InvalidateMeasure(DispatcherPriority.Normal);
+                    InvalidateMeasure();
                 }
             }
         }
@@ -2124,13 +2072,9 @@ namespace AvaloniaEdit.Rendering
                     {
                         InvalidateVisual();
                         TextLayer.InvalidateVisual();
-                        InvalidateMeasure(DispatcherPriority.Normal);
                     }
 
-                    if (isY)
-                    {
-                        InvalidateMeasure(DispatcherPriority.Normal);
-                    }
+                    InvalidateMeasure();
                 }
             }
         }

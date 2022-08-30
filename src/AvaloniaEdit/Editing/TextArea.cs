@@ -449,22 +449,20 @@ namespace AvaloniaEdit.Editing
                             if (oldSegmentOffset != newSegmentOffset)
                             {
                                 TextView.Redraw(Math.Min(oldSegmentOffset, newSegmentOffset),
-                                                Math.Abs(oldSegmentOffset - newSegmentOffset),
-                                                DispatcherPriority.Render);
+                                                Math.Abs(oldSegmentOffset - newSegmentOffset));
                             }
                             var oldSegmentEndOffset = oldSegment.EndOffset;
                             var newSegmentEndOffset = newSegment.EndOffset;
                             if (oldSegmentEndOffset != newSegmentEndOffset)
                             {
                                 TextView.Redraw(Math.Min(oldSegmentEndOffset, newSegmentEndOffset),
-                                                Math.Abs(oldSegmentEndOffset - newSegmentEndOffset),
-                                                DispatcherPriority.Render);
+                                                Math.Abs(oldSegmentEndOffset - newSegmentEndOffset));
                             }
                         }
                         else
                         {
-                            TextView.Redraw(oldSegment, DispatcherPriority.Render);
-                            TextView.Redraw(newSegment, DispatcherPriority.Render);
+                            TextView.Redraw(oldSegment);
+                            TextView.Redraw(newSegment);
                         }
                     }
                     _selection = value;
