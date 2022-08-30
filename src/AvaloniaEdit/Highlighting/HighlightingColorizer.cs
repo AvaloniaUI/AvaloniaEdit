@@ -354,7 +354,7 @@ namespace AvaloniaEdit.Highlighting
 
             if (fromLineNumber == toLineNumber)
             {
-                _textView.Redraw(_textView.Document.GetLineByNumber(fromLineNumber), DispatcherPriority.Normal);
+                _textView.Redraw(_textView.Document.GetLineByNumber(fromLineNumber));
             }
             else
             {
@@ -365,7 +365,7 @@ namespace AvaloniaEdit.Highlighting
                 var fromLine = _textView.Document.GetLineByNumber(fromLineNumber);
                 var toLine = _textView.Document.GetLineByNumber(toLineNumber);
                 var startOffset = fromLine.Offset;
-                _textView.Redraw(startOffset, toLine.EndOffset - startOffset, DispatcherPriority.Normal);
+                _textView.Redraw(startOffset, toLine.EndOffset - startOffset);
             }
 
             /*

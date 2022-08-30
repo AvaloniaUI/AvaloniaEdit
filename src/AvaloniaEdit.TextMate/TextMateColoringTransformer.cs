@@ -232,7 +232,7 @@ namespace AvaloniaEdit.TextMate
 
                 _textView.Redraw(
                     firstLineToRedraw.Offset,
-                    (lastLineToRedraw.Offset + lastLineToRedraw.TotalLength) - firstLineToRedraw.Offset, DispatcherPriority.Normal);
+                    (lastLineToRedraw.Offset + lastLineToRedraw.TotalLength) - firstLineToRedraw.Offset);
             });
         }
 
