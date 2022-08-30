@@ -196,7 +196,7 @@ namespace AvaloniaEdit.Rendering
 
 			for (int i = 0; i < visualLine.TextLines.Count; i++) {
 				TextLine line = visualLine.TextLines[i];
-				double y = visualLine.GetTextLineVisualYPosition(line, VisualYPosition.LineTop);
+				double y = visualLine.GetTextLineVisualYPosition(line, VisualYPosition.TextTop);
 				int visualStartCol = visualLine.GetTextLineVisualStartColumn(line);
 				int visualEndCol = visualStartCol + line.Length;
 				if (line == lastTextLine)
