@@ -26,7 +26,7 @@ AvaloniaEdit currently consists of 2 packages
   * [AvaloniaEdit.TextMate](https://www.nuget.org/packages/AvaloniaEdit.TextMate/) package that adds TextMate integration to the AvaloniaEdit.
 
  ### How to set up TextMate theme and syntax highlighting for my project?
-First of all, if you want to use grammars supported by TextMateSharp, should install the following packages:
+First of all, if you want to use grammars supported by [TextMateSharp](https://github.com/danipen/TextMateSharp), should install the following packages:
 - [AvaloniaEdit.TextMate](https://www.nuget.org/packages/AvaloniaEdit.TextMate/) 
 - [TextMateSharp.Grammars](https://www.nuget.org/packages/TextMateSharp.Grammars/) 
  
