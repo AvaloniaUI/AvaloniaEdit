@@ -163,7 +163,7 @@ namespace AvaloniaEdit.Rendering
 
         private void OnChanging(object sender, DocumentChangeEventArgs e)
         {
-            Redraw(e.Offset, e.RemovalLength);
+            Redraw(e.Offset, e.RemovalLength, true);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -629,7 +629,7 @@ namespace AvaloniaEdit.Rendering
         /// <summary>
         /// Causes the text editor to redraw all lines overlapping with the specified segment.
         /// </summary>
-        public void Redraw(int offset, int length)
+        public void Redraw(int offset, int length, bool recreate = false)
         {
             VerifyAccess();
             var changedSomethingBeforeOrInLine = false;
@@ -641,7 +641,8 @@ namespace AvaloniaEdit.Rendering
                 if (offset <= lineEnd)
                 {
                     changedSomethingBeforeOrInLine = true;
-                    if (offset + length >= lineStart)
+
+                    if ( recreate && offset + length >= lineStart)
                     {
                         _allVisualLines.RemoveAt(i--);
                         DisposeVisualLine(visualLine);
@@ -678,7 +679,7 @@ namespace AvaloniaEdit.Rendering
         {
             if (segment != null)
             {
-                Redraw(segment.Offset, segment.Length);
+                Redraw(segment.Offset, segment.Length, true);
             }
         }
 
@@ -862,14 +863,17 @@ namespace AvaloniaEdit.Rendering
 				availableSize = availableSize.WithWidth(32000);
 
 			if (!_canHorizontallyScroll && !availableSize.Width.IsClose(_lastAvailableSize.Width))
-				ClearVisualLines();
+            {
+                ClearVisualLines();
+            }
+				
 			_lastAvailableSize = availableSize;
 
 			foreach (var layer in Layers) {
 				layer.Measure(availableSize);
 			}
 			
-			InvalidateVisual(); // = InvalidateArrange+InvalidateRender
+			//InvalidateVisual(); // = InvalidateArrange+InvalidateRender
 
             MeasureInlineObjects();
 
