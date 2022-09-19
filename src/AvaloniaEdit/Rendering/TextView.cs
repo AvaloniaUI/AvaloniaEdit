@@ -872,7 +872,7 @@ namespace AvaloniaEdit.Rendering
 			foreach (var layer in Layers) {
 				layer.Measure(availableSize);
 			}
-			
+
             MeasureInlineObjects();
 
             double maxWidth;
@@ -902,6 +902,8 @@ namespace AvaloniaEdit.Rendering
             maxWidth += AdditionalHorizontalScrollAmount;
             var heightTreeHeight = DocumentHeight;
             var options = Options;
+            double desiredHeight = Math.Min(availableSize.Height, heightTreeHeight);
+            double extraHeightToAllowScrollBelowDocument = 0;
             if (options.AllowScrollBelowDocument)
             {
                 if (!double.IsInfinity(_scrollViewport.Height))
@@ -909,22 +911,20 @@ namespace AvaloniaEdit.Rendering
                     // HACK: we need to keep at least Caret.MinimumDistanceToViewBorder visible so that we don't scroll back up when the user types after
                     // scrolling to the very bottom.
                     var minVisibleDocumentHeight = Math.Max(DefaultLineHeight, Caret.MinimumDistanceToViewBorder);
-                    // scrollViewportBottom: bottom of scroll view port, but clamped so that at least minVisibleDocumentHeight of the document stays visible.
-                    var scrollViewportBottom = Math.Min(heightTreeHeight - minVisibleDocumentHeight, _scrollOffset.Y) + _scrollViewport.Height;
                     // increase the extend height to allow scrolling below the document
-                    heightTreeHeight = Math.Max(heightTreeHeight, scrollViewportBottom);
+                    extraHeightToAllowScrollBelowDocument = desiredHeight - minVisibleDocumentHeight;
                 }
             }
 
             TextLayer.SetVisualLines(_visibleVisualLines);
 
             SetScrollData(availableSize,
-                          new Size(maxWidth, heightTreeHeight),
+                          new Size(maxWidth, heightTreeHeight + extraHeightToAllowScrollBelowDocument),
                           _scrollOffset);
 
             VisualLinesChanged?.Invoke(this, EventArgs.Empty);
 
-            return new Size(Math.Min(availableSize.Width, maxWidth), Math.Min(availableSize.Height, heightTreeHeight));
+            return new Size(Math.Min(availableSize.Width, maxWidth), desiredHeight);
         }
 
 		/// <summary>
