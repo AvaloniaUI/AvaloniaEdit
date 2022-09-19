@@ -116,7 +116,17 @@ namespace AvaloniaEdit.Rendering
             set => SetValue(DocumentProperty, value);
         }
 
-        internal double FontSize => GetValue(TextBlock.FontSizeProperty);
+        internal double FontSize
+        {
+            get => GetValue(TemplatedControl.FontSizeProperty);
+            set => SetValue(TemplatedControl.FontSizeProperty, value);
+        }
+
+        internal FontFamily FontFamily
+        {
+            get => GetValue(TemplatedControl.FontFamilyProperty);
+            set => SetValue(TemplatedControl.FontFamilyProperty, value);
+        }
 
         /// <summary>
         /// Occurs when the document property has changed.
@@ -872,8 +882,6 @@ namespace AvaloniaEdit.Rendering
 			foreach (var layer in Layers) {
 				layer.Measure(availableSize);
 			}
-			
-			//InvalidateVisual(); // = InvalidateArrange+InvalidateRender
 
             MeasureInlineObjects();
 
@@ -904,32 +912,29 @@ namespace AvaloniaEdit.Rendering
             maxWidth += AdditionalHorizontalScrollAmount;
             var heightTreeHeight = DocumentHeight;
             var options = Options;
+            double desiredHeight = Math.Min(availableSize.Height, heightTreeHeight);
+            double extraHeightToAllowScrollBelowDocument = 0;
             if (options.AllowScrollBelowDocument)
             {
                 if (!double.IsInfinity(_scrollViewport.Height))
                 {
                     // HACK: we need to keep at least Caret.MinimumDistanceToViewBorder visible so that we don't scroll back up when the user types after
                     // scrolling to the very bottom.
-                    var minVisibleDocumentHeight = Math.Max(DefaultLineHeight, Caret.MinimumDistanceToViewBorder);
-                    // scrollViewportBottom: bottom of scroll view port, but clamped so that at least minVisibleDocumentHeight of the document stays visible.
-                    var scrollViewportBottom = Math.Min(heightTreeHeight - minVisibleDocumentHeight, _scrollOffset.Y) + _scrollViewport.Height;
+                    var minVisibleDocumentHeight = DefaultLineHeight;
                     // increase the extend height to allow scrolling below the document
-                    heightTreeHeight = Math.Max(heightTreeHeight, scrollViewportBottom);
+                    extraHeightToAllowScrollBelowDocument = desiredHeight - minVisibleDocumentHeight;
                 }
             }
 
             TextLayer.SetVisualLines(_visibleVisualLines);
 
             SetScrollData(availableSize,
-                          new Size(maxWidth, heightTreeHeight),
+                          new Size(maxWidth, heightTreeHeight + extraHeightToAllowScrollBelowDocument),
                           _scrollOffset);
-
-            // Size of control (scorll viewport) might be changed during ArrageOverride. We only need document size for now.
-            _documentSize = new Size(maxWidth, heightTreeHeight);
 
             VisualLinesChanged?.Invoke(this, EventArgs.Empty);
 
-            return new Size(Math.Min(availableSize.Width, maxWidth), Math.Min(availableSize.Height, heightTreeHeight));
+            return new Size(Math.Min(availableSize.Width, maxWidth), desiredHeight);
         }
 
 		/// <summary>
@@ -1152,13 +1157,13 @@ namespace AvaloniaEdit.Rendering
             // validate scroll position
             var newScrollOffsetX = _scrollOffset.X;
             var newScrollOffsetY = _scrollOffset.Y;
-            if (_scrollOffset.X + finalSize.Width > _documentSize.Width)
+            if (_scrollOffset.X + finalSize.Width > _scrollExtent.Width)
             {
-                newScrollOffsetX = Math.Max(0, _documentSize.Width - finalSize.Width);
+                newScrollOffsetX = Math.Max(0, _scrollExtent.Width - finalSize.Width);
             }
-            if (_scrollOffset.Y + finalSize.Height > _documentSize.Height)
+            if (_scrollOffset.Y + finalSize.Height > _scrollExtent.Height)
             {
-                newScrollOffsetY = Math.Max(0, _documentSize.Height - finalSize.Height);
+                newScrollOffsetY = Math.Max(0, _scrollExtent.Height - finalSize.Height);
             }
 
             // Apply final view port and offset
@@ -1316,11 +1321,6 @@ namespace AvaloniaEdit.Rendering
         /// Size of the scroll, in pixels.
         /// </summary>
         private Size _scrollExtent;
-
-        /// <summary>
-        /// Size of the document, in pixels.
-        /// </summary>
-        private Size _documentSize;
 
         /// <summary>
         /// Offset of the scroll position.
@@ -2052,7 +2052,7 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
-        bool ILogicalScrollable.IsLogicalScrollEnabled => true;        
+        bool ILogicalScrollable.IsLogicalScrollEnabled => true;
 
         Size ILogicalScrollable.ScrollSize => new Size(10, 50);
 
