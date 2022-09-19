@@ -116,7 +116,17 @@ namespace AvaloniaEdit.Rendering
             set => SetValue(DocumentProperty, value);
         }
 
-        internal double FontSize => GetValue(TextBlock.FontSizeProperty);
+        internal double FontSize
+        {
+            get => GetValue(TemplatedControl.FontSizeProperty);
+            set => SetValue(TemplatedControl.FontSizeProperty, value);
+        }
+
+        internal FontFamily FontFamily
+        {
+            get => GetValue(TemplatedControl.FontFamilyProperty);
+            set => SetValue(TemplatedControl.FontFamilyProperty, value);
+        }
 
         /// <summary>
         /// Occurs when the document property has changed.
@@ -910,7 +920,7 @@ namespace AvaloniaEdit.Rendering
                 {
                     // HACK: we need to keep at least Caret.MinimumDistanceToViewBorder visible so that we don't scroll back up when the user types after
                     // scrolling to the very bottom.
-                    var minVisibleDocumentHeight = Math.Max(DefaultLineHeight, Caret.MinimumDistanceToViewBorder);
+                    var minVisibleDocumentHeight = DefaultLineHeight;
                     // increase the extend height to allow scrolling below the document
                     extraHeightToAllowScrollBelowDocument = desiredHeight - minVisibleDocumentHeight;
                 }

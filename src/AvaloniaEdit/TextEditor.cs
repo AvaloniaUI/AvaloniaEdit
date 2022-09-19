@@ -59,6 +59,8 @@ namespace AvaloniaEdit
             IsModifiedProperty.Changed.Subscribe(OnIsModifiedChanged);
             ShowLineNumbersProperty.Changed.Subscribe(OnShowLineNumbersChanged);
             LineNumbersForegroundProperty.Changed.Subscribe(OnLineNumbersForegroundChanged);
+            FontFamilyProperty.Changed.Subscribe(OnFontFamilyPropertyChanged);
+            FontSizeProperty.Changed.Subscribe(OnFontSizePropertyChanged);
         }
 
         /// <summary>
@@ -562,6 +564,21 @@ namespace AvaloniaEdit
 
             lineNumberMargin?.SetValue(ForegroundProperty, e.NewValue);
         }
+
+        private static void OnFontFamilyPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        {
+            var editor = e.Sender as TextEditor;
+
+            editor?.TextArea.TextView.SetValue(FontFamilyProperty, e.NewValue);
+        }
+
+        private static void OnFontSizePropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        {
+            var editor = e.Sender as TextEditor;
+
+            editor?.TextArea.TextView.SetValue(FontSizeProperty, e.NewValue);
+        }
+
         #endregion
 
         #region TextBoxBase-like methods
