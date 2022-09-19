@@ -873,8 +873,6 @@ namespace AvaloniaEdit.Rendering
 				layer.Measure(availableSize);
 			}
 			
-			//InvalidateVisual(); // = InvalidateArrange+InvalidateRender
-
             MeasureInlineObjects();
 
             double maxWidth;
@@ -923,9 +921,6 @@ namespace AvaloniaEdit.Rendering
             SetScrollData(availableSize,
                           new Size(maxWidth, heightTreeHeight),
                           _scrollOffset);
-
-            // Size of control (scorll viewport) might be changed during ArrageOverride. We only need document size for now.
-            _documentSize = new Size(maxWidth, heightTreeHeight);
 
             VisualLinesChanged?.Invoke(this, EventArgs.Empty);
 
@@ -1152,13 +1147,13 @@ namespace AvaloniaEdit.Rendering
             // validate scroll position
             var newScrollOffsetX = _scrollOffset.X;
             var newScrollOffsetY = _scrollOffset.Y;
-            if (_scrollOffset.X + finalSize.Width > _documentSize.Width)
+            if (_scrollOffset.X + finalSize.Width > _scrollExtent.Width)
             {
-                newScrollOffsetX = Math.Max(0, _documentSize.Width - finalSize.Width);
+                newScrollOffsetX = Math.Max(0, _scrollExtent.Width - finalSize.Width);
             }
-            if (_scrollOffset.Y + finalSize.Height > _documentSize.Height)
+            if (_scrollOffset.Y + finalSize.Height > _scrollExtent.Height)
             {
-                newScrollOffsetY = Math.Max(0, _documentSize.Height - finalSize.Height);
+                newScrollOffsetY = Math.Max(0, _scrollExtent.Height - finalSize.Height);
             }
 
             // Apply final view port and offset
@@ -1316,11 +1311,6 @@ namespace AvaloniaEdit.Rendering
         /// Size of the scroll, in pixels.
         /// </summary>
         private Size _scrollExtent;
-
-        /// <summary>
-        /// Size of the document, in pixels.
-        /// </summary>
-        private Size _documentSize;
 
         /// <summary>
         /// Offset of the scroll position.
@@ -2052,7 +2042,7 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
-        bool ILogicalScrollable.IsLogicalScrollEnabled => true;        
+        bool ILogicalScrollable.IsLogicalScrollEnabled => true;
 
         Size ILogicalScrollable.ScrollSize => new Size(10, 50);
 
