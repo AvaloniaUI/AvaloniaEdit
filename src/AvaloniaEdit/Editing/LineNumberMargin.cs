@@ -177,7 +177,7 @@ namespace AvaloniaEdit.Editing
                     {
                         ExtendSelection(currentSeg);
                     }
-                    TextArea.Caret.BringCaretToView(5.0);
+                    TextArea.Caret.BringCaretToView(0);
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace AvaloniaEdit.Editing
                 if (currentSeg == SimpleSegment.Invalid)
                     return;
                 ExtendSelection(currentSeg);
-                TextArea.Caret.BringCaretToView(5.0);
+                TextArea.Caret.BringCaretToView(0);
             }
             base.OnPointerMoved(e);
         }
