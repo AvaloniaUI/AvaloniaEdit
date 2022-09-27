@@ -726,7 +726,8 @@ namespace AvaloniaEdit.Editing
                 case SelectionMode.WholeWord:
                 case SelectionMode.WholeLine:
                 case SelectionMode.Rectangular:
-                    ExtendSelectionToMouse(e);
+                    if (TextArea.Options.ExtendSelectionOnMouseUp)
+                        ExtendSelectionToMouse(e);
                     break;
             }
             _mode = SelectionMode.None;
