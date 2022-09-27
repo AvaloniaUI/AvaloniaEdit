@@ -753,7 +753,7 @@ namespace AvaloniaEdit.Rendering
     }
 
     // TODO: can inherit from Layoutable, but dev tools crash
-    public class VisualLineDrawingVisual : Control
+    internal sealed class VisualLineDrawingVisual : Control
     {
         public VisualLine VisualLine { get; }
         public double LineHeight { get; }
