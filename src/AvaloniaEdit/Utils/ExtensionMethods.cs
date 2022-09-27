@@ -38,7 +38,7 @@ namespace AvaloniaEdit.Utils
         /// and there's no need to be too accurate (we're dealing with pixels here),
         /// so we will use the value 0.01.
         /// Previosly we used 1e-8 but that was causing issues:
-        /// http://community.sharpdevelop.net/forums/t/16048.aspx
+        /// https://community.sharpdevelop.net/forums/t/16048.aspx
         /// </summary>
         public const double Epsilon = 0.01;
 
