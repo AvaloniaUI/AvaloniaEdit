@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
@@ -747,7 +748,15 @@ namespace AvaloniaEdit.Rendering
         internal VisualLineDrawingVisual Render()
         {
             Debug.Assert(_phase == LifetimePhase.Live);
-            return _visual ??= new VisualLineDrawingVisual(this);
+
+            if (_visual == null)
+            {
+                _visual = new VisualLineDrawingVisual(this);
+
+                ((ISetLogicalParent)_visual).SetParent(_textView);
+            }
+
+            return _visual;
         }
     }
 
