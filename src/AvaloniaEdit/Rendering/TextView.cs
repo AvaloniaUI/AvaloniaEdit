@@ -25,6 +25,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
@@ -37,6 +38,7 @@ using Avalonia.Media.Immutable;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Utils;
@@ -63,8 +65,8 @@ namespace AvaloniaEdit.Rendering
             FocusableProperty.OverrideDefaultValue<TextView>(false);
             OptionsProperty.Changed.Subscribe(OnOptionsChanged);
 
-			DocumentProperty.Changed.Subscribe(OnDocumentChanged);
-		}
+            DocumentProperty.Changed.Subscribe(OnDocumentChanged);
+        }
 
         private readonly ColumnRulerRenderer _columnRulerRenderer;
         private readonly CurrentLineHighlightRenderer _currentLineHighlighRenderer;
@@ -94,7 +96,7 @@ namespace AvaloniaEdit.Rendering
             _hoverLogic.PointerHoverStopped += (sender, e) => RaiseHoverEventPair(e, PreviewPointerHoverStoppedEvent, PointerHoverStoppedEvent);
         }
 
-		#endregion
+        #endregion
 
         #region Document Property
         /// <summary>
@@ -433,12 +435,12 @@ namespace AvaloniaEdit.Rendering
 
         private readonly List<InlineObjectRun> _inlineObjects = new List<InlineObjectRun>();
 
-		/// <summary>
-		/// Adds a new inline object.
-		/// </summary>
-		internal void AddInlineObject(InlineObjectRun inlineObject)
-		{
-			Debug.Assert(inlineObject.VisualLine != null);
+        /// <summary>
+        /// Adds a new inline object.
+        /// </summary>
+        internal void AddInlineObject(InlineObjectRun inlineObject)
+        {
+            Debug.Assert(inlineObject.VisualLine != null);
 
             // Remove inline object if its already added, can happen e.g. when recreating textrun for word-wrapping
             var alreadyAdded = false;
@@ -652,7 +654,7 @@ namespace AvaloniaEdit.Rendering
                 {
                     changedSomethingBeforeOrInLine = true;
 
-                    if ( recreate && offset + length >= lineStart)
+                    if (recreate && offset + length >= lineStart)
                     {
                         _allVisualLines.RemoveAt(i--);
                         DisposeVisualLine(visualLine);
@@ -743,40 +745,43 @@ namespace AvaloniaEdit.Rendering
             return null;
         }
 
-		/// <summary>
-		/// Gets the visual line that contains the document line with the specified number.
-		/// If that line is outside the visible range, a new VisualLine for that document line is constructed.
-		/// </summary>
-		public VisualLine GetOrConstructVisualLine(DocumentLine documentLine)
-		{
-			if (documentLine == null)
-				throw new ArgumentNullException("documentLine");
-			if (!this.Document.Lines.Contains(documentLine))
-				throw new InvalidOperationException("Line belongs to wrong document");
-			VerifyAccess();
+        /// <summary>
+        /// Gets the visual line that contains the document line with the specified number.
+        /// If that line is outside the visible range, a new VisualLine for that document line is constructed.
+        /// </summary>
+        public VisualLine GetOrConstructVisualLine(DocumentLine documentLine)
+        {
+            if (documentLine == null)
+                throw new ArgumentNullException("documentLine");
+            if (!this.Document.Lines.Contains(documentLine))
+                throw new InvalidOperationException("Line belongs to wrong document");
+            VerifyAccess();
 
-			VisualLine l = GetVisualLine(documentLine.LineNumber);
-			if (l == null) {
-				TextRunProperties globalTextRunProperties = CreateGlobalTextRunProperties();
-				VisualLineTextParagraphProperties paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
+            VisualLine l = GetVisualLine(documentLine.LineNumber);
+            if (l == null)
+            {
+                TextRunProperties globalTextRunProperties = CreateGlobalTextRunProperties();
+                VisualLineTextParagraphProperties paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
 
-				while (_heightTree.GetIsCollapsed(documentLine.LineNumber)) {
-					documentLine = documentLine.PreviousLine;
-				}
+                while (_heightTree.GetIsCollapsed(documentLine.LineNumber))
+                {
+                    documentLine = documentLine.PreviousLine;
+                }
 
-				l = BuildVisualLine(documentLine,
-									globalTextRunProperties, paragraphProperties,
-									_elementGenerators.ToArray(), _lineTransformers.ToArray(),
-									_lastAvailableSize);
-				_allVisualLines.Add(l);
-				// update all visual top values (building the line might have changed visual top of other lines due to word wrapping)
-				foreach (var line in _allVisualLines) {
-					line.VisualTop = _heightTree.GetVisualPosition(line.FirstDocumentLine);
-				}
-			}
-			return l;
-		}
-		#endregion
+                l = BuildVisualLine(documentLine,
+                                    globalTextRunProperties, paragraphProperties,
+                                    _elementGenerators.ToArray(), _lineTransformers.ToArray(),
+                                    _lastAvailableSize);
+                _allVisualLines.Add(l);
+                // update all visual top values (building the line might have changed visual top of other lines due to word wrapping)
+                foreach (var line in _allVisualLines)
+                {
+                    line.VisualTop = _heightTree.GetVisualPosition(line.FirstDocumentLine);
+                }
+            }
+            return l;
+        }
+        #endregion
 
         #region Visual Lines (fields and properties)
 
@@ -855,33 +860,34 @@ namespace AvaloniaEdit.Rendering
         }
         #endregion
 
-		#region Measure
-		/// <summary>
-		/// Additonal amount that allows horizontal scrolling past the end of the longest line.
-		/// This is necessary to ensure the caret always is visible, even when it is at the end of the longest line.
-		/// </summary>
-		private const double AdditionalHorizontalScrollAmount = 3;
+        #region Measure
+        /// <summary>
+        /// Additonal amount that allows horizontal scrolling past the end of the longest line.
+        /// This is necessary to ensure the caret always is visible, even when it is at the end of the longest line.
+        /// </summary>
+        private const double AdditionalHorizontalScrollAmount = 3;
 
-		private Size _lastAvailableSize;
-		private bool _inMeasure;
+        private Size _lastAvailableSize;
+        private bool _inMeasure;
 
-		/// <inheritdoc/>
-		protected override Size MeasureOverride(Size availableSize)
-		{
-			// We don't support infinite available width, so we'll limit it to 32000 pixels.
-			if (availableSize.Width > 32000)
-				availableSize = availableSize.WithWidth(32000);
+        /// <inheritdoc/>
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            // We don't support infinite available width, so we'll limit it to 32000 pixels.
+            if (availableSize.Width > 32000)
+                availableSize = availableSize.WithWidth(32000);
 
-			if (!_canHorizontallyScroll && !availableSize.Width.IsClose(_lastAvailableSize.Width))
+            if (!_canHorizontallyScroll && !availableSize.Width.IsClose(_lastAvailableSize.Width))
             {
                 ClearVisualLines();
             }
-				
-			_lastAvailableSize = availableSize;
 
-			foreach (var layer in Layers) {
-				layer.Measure(availableSize);
-			}
+            _lastAvailableSize = availableSize;
+
+            foreach (var layer in Layers)
+            {
+                layer.Measure(availableSize);
+            }
 
             MeasureInlineObjects();
 
@@ -937,14 +943,14 @@ namespace AvaloniaEdit.Rendering
             return new Size(Math.Min(availableSize.Width, maxWidth), desiredHeight);
         }
 
-		/// <summary>
-		/// Build all VisualLines in the visible range.
-		/// </summary>
-		/// <returns>Width the longest line</returns>
-		private double CreateAndMeasureVisualLines(Size availableSize)
-		{
-			TextRunProperties globalTextRunProperties = CreateGlobalTextRunProperties();
-			VisualLineTextParagraphProperties paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
+        /// <summary>
+        /// Build all VisualLines in the visible range.
+        /// </summary>
+        /// <returns>Width the longest line</returns>
+        private double CreateAndMeasureVisualLines(Size availableSize)
+        {
+            TextRunProperties globalTextRunProperties = CreateGlobalTextRunProperties();
+            VisualLineTextParagraphProperties paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
 
             //Debug.WriteLine("Measure availableSize=" + availableSize + ", scrollOffset=" + _scrollOffset);
             var firstLineInView = _heightTree.GetLineByVisualPosition(_scrollOffset.Y);
@@ -1013,59 +1019,64 @@ namespace AvaloniaEdit.Rendering
         private TextFormatter _formatter;
         internal TextViewCachedElements CachedElements;
 
-		private TextRunProperties CreateGlobalTextRunProperties()
-		{
-			var p = new GlobalTextRunProperties();
-			p.typeface = this.CreateTypeface();
-			p.fontRenderingEmSize = FontSize;
-			p.foregroundBrush = GetValue(TextElement.ForegroundProperty);
-			ExtensionMethods.CheckIsFrozen(p.foregroundBrush);
-			p.cultureInfo = CultureInfo.CurrentCulture;
-			return p;
-		}
+        private TextRunProperties CreateGlobalTextRunProperties()
+        {
+            var p = new GlobalTextRunProperties();
+            p.typeface = this.CreateTypeface();
+            p.fontRenderingEmSize = FontSize;
+            p.foregroundBrush = GetValue(TextElement.ForegroundProperty);
+            ExtensionMethods.CheckIsFrozen(p.foregroundBrush);
+            p.cultureInfo = CultureInfo.CurrentCulture;
+            return p;
+        }
 
-		private VisualLineTextParagraphProperties CreateParagraphProperties(TextRunProperties defaultTextRunProperties)
-		{
-			return new VisualLineTextParagraphProperties {
-				defaultTextRunProperties = defaultTextRunProperties,
-				textWrapping = _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
-				tabSize = Options.IndentationSize * WideSpaceWidth
-			};
-		}
+        private VisualLineTextParagraphProperties CreateParagraphProperties(TextRunProperties defaultTextRunProperties)
+        {
+            return new VisualLineTextParagraphProperties
+            {
+                defaultTextRunProperties = defaultTextRunProperties,
+                textWrapping = _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
+                tabSize = Options.IndentationSize * WideSpaceWidth
+            };
+        }
 
-		private VisualLine BuildVisualLine(DocumentLine documentLine,
-								   TextRunProperties globalTextRunProperties,
-								   VisualLineTextParagraphProperties paragraphProperties,
-								   VisualLineElementGenerator[] elementGeneratorsArray,
-								   IVisualLineTransformer[] lineTransformersArray,
-								   Size availableSize)
-		{
-			if (_heightTree.GetIsCollapsed(documentLine.LineNumber))
-				throw new InvalidOperationException("Trying to build visual line from collapsed line");
+        private VisualLine BuildVisualLine(DocumentLine documentLine,
+                                   TextRunProperties globalTextRunProperties,
+                                   VisualLineTextParagraphProperties paragraphProperties,
+                                   VisualLineElementGenerator[] elementGeneratorsArray,
+                                   IVisualLineTransformer[] lineTransformersArray,
+                                   Size availableSize)
+        {
+            if (_heightTree.GetIsCollapsed(documentLine.LineNumber))
+                throw new InvalidOperationException("Trying to build visual line from collapsed line");
 
-			//Debug.WriteLine("Building line " + documentLine.LineNumber);
+            //Debug.WriteLine("Building line " + documentLine.LineNumber);
 
-			VisualLine visualLine = new VisualLine(this, documentLine);
-			VisualLineTextSource textSource = new VisualLineTextSource(visualLine) {
-				Document = _document,
-				GlobalTextRunProperties = globalTextRunProperties,
-				TextView = this
-			};
+            VisualLine visualLine = new VisualLine(this, documentLine);
+            VisualLineTextSource textSource = new VisualLineTextSource(visualLine)
+            {
+                Document = _document,
+                GlobalTextRunProperties = globalTextRunProperties,
+                TextView = this
+            };
 
-			visualLine.ConstructVisualElements(textSource, elementGeneratorsArray);
+            visualLine.ConstructVisualElements(textSource, elementGeneratorsArray);
 
-			if (visualLine.FirstDocumentLine != visualLine.LastDocumentLine) {
-				// Check whether the lines are collapsed correctly:
-				double firstLinePos = _heightTree.GetVisualPosition(visualLine.FirstDocumentLine.NextLine);
-				double lastLinePos = _heightTree.GetVisualPosition(visualLine.LastDocumentLine.NextLine ?? visualLine.LastDocumentLine);
-				if (!firstLinePos.IsClose(lastLinePos)) {
-					for (int i = visualLine.FirstDocumentLine.LineNumber + 1; i <= visualLine.LastDocumentLine.LineNumber; i++) {
-						if (!_heightTree.GetIsCollapsed(i))
-							throw new InvalidOperationException("Line " + i + " was skipped by a VisualLineElementGenerator, but it is not collapsed.");
-					}
-					throw new InvalidOperationException("All lines collapsed but visual pos different - height tree inconsistency?");
-				}
-			}
+            if (visualLine.FirstDocumentLine != visualLine.LastDocumentLine)
+            {
+                // Check whether the lines are collapsed correctly:
+                double firstLinePos = _heightTree.GetVisualPosition(visualLine.FirstDocumentLine.NextLine);
+                double lastLinePos = _heightTree.GetVisualPosition(visualLine.LastDocumentLine.NextLine ?? visualLine.LastDocumentLine);
+                if (!firstLinePos.IsClose(lastLinePos))
+                {
+                    for (int i = visualLine.FirstDocumentLine.LineNumber + 1; i <= visualLine.LastDocumentLine.LineNumber; i++)
+                    {
+                        if (!_heightTree.GetIsCollapsed(i))
+                            throw new InvalidOperationException("Line " + i + " was skipped by a VisualLineElementGenerator, but it is not collapsed.");
+                    }
+                    throw new InvalidOperationException("All lines collapsed but visual pos different - height tree inconsistency?");
+                }
+            }
 
             visualLine.RunTransformers(textSource, lineTransformersArray);
 
@@ -1073,7 +1084,7 @@ namespace AvaloniaEdit.Rendering
             TextLineBreak lastLineBreak = null;
             var textOffset = 0;
             var textLines = new List<TextLine>();
-            
+
             while (textOffset <= visualLine.VisualLengthWithEndOfLineMarker)
             {
                 var textLine = _formatter.FormatLine(
@@ -1083,38 +1094,41 @@ namespace AvaloniaEdit.Rendering
                     paragraphProperties,
                     lastLineBreak
                 );
-                
+
                 textLines.Add(textLine);
                 textOffset += textLine.Length;
 
-				// exit loop so that we don't do the indentation calculation if there's only a single line
-				if (textOffset >= visualLine.VisualLengthWithEndOfLineMarker)
-					break;
+                // exit loop so that we don't do the indentation calculation if there's only a single line
+                if (textOffset >= visualLine.VisualLengthWithEndOfLineMarker)
+                    break;
 
-				if (paragraphProperties.firstLineInParagraph) {
-					paragraphProperties.firstLineInParagraph = false;
+                if (paragraphProperties.firstLineInParagraph)
+                {
+                    paragraphProperties.firstLineInParagraph = false;
 
-					TextEditorOptions options = this.Options;
-					double indentation = 0;
-					if (options.InheritWordWrapIndentation) {
-						// determine indentation for next line:
-						int indentVisualColumn = GetIndentationVisualColumn(visualLine);
-						if (indentVisualColumn > 0 && indentVisualColumn < textOffset) {
-							indentation = textLine.GetDistanceFromCharacterHit(new CharacterHit(indentVisualColumn, 0));
-						}
-					}
-					indentation += options.WordWrapIndentation;
-					// apply the calculated indentation unless it's more than half of the text editor size:
-					if (indentation > 0 && indentation * 2 < availableSize.Width)
-						paragraphProperties.indent = indentation;
-				}
+                    TextEditorOptions options = this.Options;
+                    double indentation = 0;
+                    if (options.InheritWordWrapIndentation)
+                    {
+                        // determine indentation for next line:
+                        int indentVisualColumn = GetIndentationVisualColumn(visualLine);
+                        if (indentVisualColumn > 0 && indentVisualColumn < textOffset)
+                        {
+                            indentation = textLine.GetDistanceFromCharacterHit(new CharacterHit(indentVisualColumn, 0));
+                        }
+                    }
+                    indentation += options.WordWrapIndentation;
+                    // apply the calculated indentation unless it's more than half of the text editor size:
+                    if (indentation > 0 && indentation * 2 < availableSize.Width)
+                        paragraphProperties.indent = indentation;
+                }
 
-				lastLineBreak = textLine.TextLineBreak;
+                lastLineBreak = textLine.TextLineBreak;
             }
-			visualLine.SetTextLines(textLines);
-			_heightTree.SetHeight(visualLine.FirstDocumentLine, visualLine.Height);
-			return visualLine;
-		}
+            visualLine.SetTextLines(textLines);
+            _heightTree.SetHeight(visualLine.FirstDocumentLine, visualLine.Height);
+            return visualLine;
+        }
 
         private static int GetIndentationVisualColumn(VisualLine visualLine)
         {
@@ -1181,18 +1195,18 @@ namespace AvaloniaEdit.Rendering
                         foreach (var span in textLine.TextRuns)
                         {
                             var inline = span as InlineObjectRun;
-                            
+
                             if (inline?.VisualLine != null)
                             {
                                 Debug.Assert(_inlineObjects.Contains(inline));
-                                
+
                                 var distance = textLine.GetDistanceFromCharacterHit(new CharacterHit(offset));
-                                
+
                                 inline.Element.Arrange(new Rect(new Point(pos.X + distance, pos.Y), inline.Element.DesiredSize));
 
                                 Debug.WriteLine(distance);
                             }
-                            
+
                             offset += span.TextSourceLength;
                         }
                         pos = new Point(pos.X, pos.Y + textLine.Height);
@@ -1472,9 +1486,9 @@ namespace AvaloniaEdit.Rendering
                 var line = _formatter.FormatLine(
                     new SimpleTextSource("x", textRunProperties),
                     0, 32000,
-                    new VisualLineTextParagraphProperties {defaultTextRunProperties = textRunProperties},
+                    new VisualLineTextParagraphProperties { defaultTextRunProperties = textRunProperties },
                     null);
-                
+
                 _wideSpaceWidth = Math.Max(1, line.WidthIncludingTrailingWhitespace);
                 _defaultBaseline = Math.Max(1, line.Baseline);
                 _defaultLineHeight = Math.Max(1, line.Height);
@@ -1831,7 +1845,7 @@ namespace AvaloniaEdit.Rendering
             add => AddHandler(PointerHoverStoppedEvent, value);
             remove => RemoveHandler(PointerHoverStoppedEvent, value);
         }
-        
+
 
         private readonly PointerHoverLogic _hoverLogic;
 
@@ -1887,7 +1901,7 @@ namespace AvaloniaEdit.Rendering
         /// <inheritdoc/>
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
-            base.OnPropertyChanged(change);        
+            base.OnPropertyChanged(change);
 
             if (change.Property == TemplatedControl.ForegroundProperty
                      || change.Property == NonPrintableCharacterBrushProperty
