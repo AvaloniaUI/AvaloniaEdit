@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
@@ -747,7 +748,7 @@ namespace AvaloniaEdit.Rendering
         internal VisualLineDrawingVisual Render()
         {
             Debug.Assert(_phase == LifetimePhase.Live);
-            return _visual ??= new VisualLineDrawingVisual(this);
+            return _visual ??= new VisualLineDrawingVisual(this, _textView.Cursor);
         }
     }
 
@@ -758,10 +759,11 @@ namespace AvaloniaEdit.Rendering
         public double LineHeight { get; }
         internal bool IsAdded { get; set; }
 
-        public VisualLineDrawingVisual(VisualLine visualLine)
+        public VisualLineDrawingVisual(VisualLine visualLine, Cursor cursor)
         {
             VisualLine = visualLine;
             LineHeight = VisualLine.TextLines.Sum(textLine => textLine.Height);
+            Cursor = cursor;
         }
 
         public override void Render(DrawingContext context)
