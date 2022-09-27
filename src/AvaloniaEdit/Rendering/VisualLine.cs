@@ -748,22 +748,21 @@ namespace AvaloniaEdit.Rendering
         internal VisualLineDrawingVisual Render()
         {
             Debug.Assert(_phase == LifetimePhase.Live);
-            return _visual ??= new VisualLineDrawingVisual(this, _textView.Cursor);
+            return _visual ??= new VisualLineDrawingVisual(this);
         }
     }
 
     // TODO: can inherit from Layoutable, but dev tools crash
-    internal sealed class VisualLineDrawingVisual : Control
+    public class VisualLineDrawingVisual : Control
     {
         public VisualLine VisualLine { get; }
         public double LineHeight { get; }
         internal bool IsAdded { get; set; }
 
-        public VisualLineDrawingVisual(VisualLine visualLine, Cursor cursor)
+        public VisualLineDrawingVisual(VisualLine visualLine)
         {
             VisualLine = visualLine;
             LineHeight = VisualLine.TextLines.Sum(textLine => textLine.Height);
-            Cursor = cursor;
         }
 
         public override void Render(DrawingContext context)
