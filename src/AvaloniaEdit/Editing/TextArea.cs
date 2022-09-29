@@ -1173,7 +1173,7 @@ namespace AvaloniaEdit.Editing
 
             public IVisual TextViewVisual => _textArea;
 
-            public bool SupportsPreedit => true;
+            public bool SupportsPreedit => false;
 
             public bool SupportsSurroundingText => true;
 
