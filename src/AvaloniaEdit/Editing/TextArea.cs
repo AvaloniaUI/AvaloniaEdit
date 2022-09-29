@@ -753,18 +753,19 @@ namespace AvaloniaEdit.Editing
         protected override void OnGotFocus(GotFocusEventArgs e)
         {
             base.OnGotFocus(e);
-            // First activate IME, then show caret
-            //ime.OnGotKeyboardFocus(e);
+
             Caret.Show();
+
             _imClient.SetTextArea(this);
         }
 
         protected override void OnLostFocus(RoutedEventArgs e)
         {
             base.OnLostFocus(e);
+
             Caret.Hide();
+
             _imClient.SetTextArea(null);
-            //ime.OnLostKeyboardFocus(e);
         }
         #endregion
 
@@ -998,7 +999,6 @@ namespace AvaloniaEdit.Editing
         {
             if (_isMouseCursorHidden)
             {
-                //System.Windows.Forms.Cursor.Show();
                 _isMouseCursorHidden = false;
             }
         }
@@ -1008,7 +1008,6 @@ namespace AvaloniaEdit.Editing
             if (Options.HideCursorWhileTyping && !_isMouseCursorHidden && IsPointerOver)
             {
                 _isMouseCursorHidden = true;
-                //System.Windows.Forms.Cursor.Hide();
             }
         }
 
