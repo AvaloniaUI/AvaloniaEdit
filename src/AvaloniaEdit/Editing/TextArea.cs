@@ -22,6 +22,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
+using Avalonia.Input.TextInput;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -54,6 +55,8 @@ namespace AvaloniaEdit.Editing
 
         private ILogicalScrollable _logicalScrollable;
 
+        private readonly TextAreaTextInputMethodClient _imClient = new TextAreaTextInputMethodClient();
+
         #region Constructor
         static TextArea()
         {
@@ -65,6 +68,14 @@ namespace AvaloniaEdit.Editing
 
             AffectsArrange<TextArea>(OffsetProperty);
             AffectsRender<TextArea>(OffsetProperty);
+
+            TextInputMethodClientRequestedEvent.AddClassHandler<TextArea>((ta, e) =>
+            {
+                if (!ta.IsReadOnly)
+                {
+                    e.Client = ta._imClient;
+                }             
+            });
         }
 
         /// <summary>
@@ -742,16 +753,19 @@ namespace AvaloniaEdit.Editing
         protected override void OnGotFocus(GotFocusEventArgs e)
         {
             base.OnGotFocus(e);
-            // First activate IME, then show caret
-            //ime.OnGotKeyboardFocus(e);
+
             Caret.Show();
+
+            _imClient.SetTextArea(this);
         }
 
         protected override void OnLostFocus(RoutedEventArgs e)
         {
             base.OnLostFocus(e);
+
             Caret.Hide();
-            //ime.OnLostKeyboardFocus(e);
+
+            _imClient.SetTextArea(null);
         }
         #endregion
 
@@ -985,7 +999,6 @@ namespace AvaloniaEdit.Editing
         {
             if (_isMouseCursorHidden)
             {
-                //System.Windows.Forms.Cursor.Show();
                 _isMouseCursorHidden = false;
             }
         }
@@ -995,7 +1008,6 @@ namespace AvaloniaEdit.Editing
             if (Options.HideCursorWhileTyping && !_isMouseCursorHidden && IsPointerOver)
             {
                 _isMouseCursorHidden = true;
-                //System.Windows.Forms.Cursor.Hide();
             }
         }
 
@@ -1121,6 +1133,122 @@ namespace AvaloniaEdit.Editing
         public void RaiseScrollInvalidated(EventArgs e)
         {
             _logicalScrollable?.RaiseScrollInvalidated(e);
+        }
+
+        private class TextAreaTextInputMethodClient : ITextInputMethodClient
+        {
+            private TextArea _textArea;
+
+            public TextAreaTextInputMethodClient()
+            {
+
+            }
+
+            public event EventHandler CursorRectangleChanged;
+            public event EventHandler TextViewVisualChanged;
+            public event EventHandler SurroundingTextChanged;
+
+            public Rect CursorRectangle
+            {
+                get
+                {   
+                    if(_textArea == null)
+                    {
+                        return Rect.Empty;
+                    }
+
+                    var transform = _textArea.TextView.TransformToVisual(_textArea);
+
+                    if (transform == null)
+                    {
+                        return default;
+                    }
+
+                    var rect = _textArea.Caret.CalculateCaretRectangle().TransformToAABB(transform.Value);
+
+                    return rect;
+                }
+            }
+
+            public IVisual TextViewVisual => _textArea;
+
+            public bool SupportsPreedit => false;
+
+            public bool SupportsSurroundingText => true;
+
+            public TextInputMethodSurroundingText SurroundingText
+            {
+                get
+                {
+                    if(_textArea == null)
+                    {
+                        return default;
+                    }
+
+                    var selection = _textArea.Selection;
+
+                    var documentLine = _textArea.Document.GetLineByNumber(selection.StartPosition.Line);
+
+                    var text = _textArea.Document.GetText(documentLine.Offset, documentLine.Length);
+
+                    return new TextInputMethodSurroundingText
+                    {
+                        AnchorOffset = selection.StartPosition.Column,
+                        CursorOffset = selection.EndPosition.Column,
+                        Text = text
+                    };
+                }
+            }
+
+            public void SetTextArea(TextArea textArea)
+            {
+                if(_textArea != null)
+                {
+                    _textArea.Caret.PositionChanged -= Caret_PositionChanged;
+                    _textArea.SelectionChanged -= TextArea_SelectionChanged;
+                }
+
+                _textArea = textArea;
+
+                if(_textArea != null)
+                {
+                    _textArea.Caret.PositionChanged += Caret_PositionChanged;
+                    _textArea.SelectionChanged += TextArea_SelectionChanged;
+                }
+
+                TextViewVisualChanged?.Invoke(this, EventArgs.Empty);
+
+                CursorRectangleChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            private void Caret_PositionChanged(object sender, EventArgs e)
+            {
+                CursorRectangleChanged?.Invoke(this, e);
+            }
+
+            private void TextArea_SelectionChanged(object sender, EventArgs e)
+            {
+                SurroundingTextChanged?.Invoke(this, e);
+            }
+
+            public void SelectInSurroundingText(int start, int end)
+            {
+                if(_textArea == null)
+                {
+                    return;
+                }
+
+                var selection = _textArea.Selection;
+
+                _textArea.Selection = _textArea.Selection.StartSelectionOrSetEndpoint(
+                    new TextViewPosition(selection.StartPosition.Line, start), 
+                    new TextViewPosition(selection.StartPosition.Line, end));
+            }
+
+            public void SetPreeditText(string text)
+            {
+              
+            }
         }
     }
 
