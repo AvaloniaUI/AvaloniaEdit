@@ -173,7 +173,7 @@ namespace AvaloniaEdit.Demo
 
         private void AddControlButton_Click(object sender, RoutedEventArgs e)
         {
-            _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me" }));
+            _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me", Cursor = Cursor.Default }));
             _textEditor.TextArea.TextView.Redraw();
         }
 

@@ -11,7 +11,7 @@ namespace AvaloniaEdit.Utils
 {
     /// <summary>
     /// WeakEventManager base class. Inspired by the WPF WeakEventManager class and the code in 
-    /// http://social.msdn.microsoft.com/Forums/silverlight/en-US/34d85c3f-52ea-4adc-bb32-8297f5549042/command-binding-memory-leak?forum=silverlightbugs
+    /// https://social.msdn.microsoft.com/Forums/silverlight/en-US/34d85c3f-52ea-4adc-bb32-8297f5549042/command-binding-memory-leak?forum=silverlightbugs
     /// </summary>
     /// <remarks>Copied here from ReactiveUI due to bugs in its design (singleton instance for multiple events).</remarks>
     /// <typeparam name="TEventManager"></typeparam>
