@@ -558,5 +558,24 @@ namespace AvaloniaEdit
                 }
             }
         }
+
+        private bool _extendSelectionOnMouseUp = true;
+
+        /// <summary>
+        /// Gets/Sets if the mouse up event should extend the editor selection to the mouse position.
+        /// </summary>
+        [DefaultValue(true)]
+        public bool ExtendSelectionOnMouseUp
+        {
+            get { return _extendSelectionOnMouseUp; }
+            set
+            {
+                if (_extendSelectionOnMouseUp != value)
+                {
+                    _extendSelectionOnMouseUp = value;
+                    OnPropertyChanged("ExtendSelectionOnMouseUp");
+                }
+            }
+        }
     }
 }
