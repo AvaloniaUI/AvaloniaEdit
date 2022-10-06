@@ -17,6 +17,10 @@ jobs:
       command: pack
       outputDir: '$(Build.ArtifactStagingDirectory)/NuGet'
       verbosityPack: normal
+      versioningScheme: byBuildNumber
+      majorVersion: '11' # Required when versioningScheme == ByPrereleaseNumber
+      minorVersion: '0' # Required when versioningScheme == ByPrereleaseNumber
+      patchVersion: '0' # Required when versioningScheme == ByPrereleaseNumber
 
   - task: PublishBuildArtifacts@1
     inputs:
