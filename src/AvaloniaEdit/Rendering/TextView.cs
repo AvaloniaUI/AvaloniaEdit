@@ -1045,8 +1045,8 @@ namespace AvaloniaEdit.Rendering
         private VisualLine BuildVisualLine(DocumentLine documentLine,
                                    TextRunProperties globalTextRunProperties,
                                    VisualLineTextParagraphProperties paragraphProperties,
-                                   VisualLineElementGenerator[] elementGeneratorsArray,
-                                   IVisualLineTransformer[] lineTransformersArray,
+                                   IReadOnlyList<VisualLineElementGenerator> elementGeneratorsArray,
+                                   IReadOnlyList<IVisualLineTransformer> lineTransformersArray,
                                    Size availableSize)
         {
             if (_heightTree.GetIsCollapsed(documentLine.LineNumber))
