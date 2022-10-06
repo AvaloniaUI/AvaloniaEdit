@@ -132,7 +132,7 @@ namespace AvaloniaEdit.Rendering
             FirstDocumentLine = firstDocumentLine;
         }
 
-        internal void ConstructVisualElements(ITextRunConstructionContext context, VisualLineElementGenerator[] generators)
+        internal void ConstructVisualElements(ITextRunConstructionContext context, IReadOnlyList<VisualLineElementGenerator> generators)
         {
             Debug.Assert(_phase == LifetimePhase.Generating);
             foreach (var g in generators)
@@ -155,7 +155,7 @@ namespace AvaloniaEdit.Rendering
 			_phase = LifetimePhase.Transforming;
 		}
 
-		void PerformVisualElementConstruction(VisualLineElementGenerator[] generators)
+		void PerformVisualElementConstruction(IReadOnlyList<VisualLineElementGenerator> generators)
 		{
             var lineLength = FirstDocumentLine.Length;
             var offset = FirstDocumentLine.Offset;
@@ -229,7 +229,7 @@ namespace AvaloniaEdit.Rendering
             Debug.Assert(textOffset == LastDocumentLine.EndOffset - FirstDocumentLine.Offset);
         }
 
-        internal void RunTransformers(ITextRunConstructionContext context, IVisualLineTransformer[] transformers)
+        internal void RunTransformers(ITextRunConstructionContext context, IReadOnlyList<IVisualLineTransformer> transformers)
         {
             Debug.Assert(_phase == LifetimePhase.Transforming);
             foreach (var transformer in transformers)
@@ -631,10 +631,23 @@ namespace AvaloniaEdit.Rendering
         internal void Dispose()
         {
             if (_phase == LifetimePhase.Disposed)
+            {
                 return;
+            }
+                
             Debug.Assert(_phase == LifetimePhase.Live);
+
             _phase = LifetimePhase.Disposed;
-        }
+
+            if (_visual != null)
+            {
+                ((ISetLogicalParent)_visual).SetParent(null);
+            }
+
+            _visual = null;
+
+            _textLines = null;
+       }
 
         /// <summary>
         /// Gets the next possible caret position after visualColumn, or -1 if there is no caret position.
