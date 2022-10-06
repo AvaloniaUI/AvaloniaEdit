@@ -127,8 +127,7 @@ namespace AvaloniaEdit.TextMate
 
                 if (tokens == null)
                     return;
-
-                RemoveLineTransformations(i);
+          
                 ProcessTokens(i, tokens);
 
                 var transformsInLine = _transformations.FindOverlappingSegments(line);
@@ -136,6 +135,8 @@ namespace AvaloniaEdit.TextMate
                 foreach (var transform in transformsInLine)
                 {
                     transform.Transform(this, line);
+
+                    _transformations.Remove(transform);
                 }
             }
             catch (Exception ex)
@@ -179,17 +180,6 @@ namespace AvaloniaEdit.TextMate
 
                 _transformations.Add(new ForegroundTextTransformation(this, _exceptionHandler, lineOffset + startIndex,
                     lineOffset + endIndex, foreground, background, fontStyle));
-            }
-        }
-
-        private void RemoveLineTransformations(int lineNumber)
-        {
-            var line = _document.GetLineByNumber(lineNumber);
-            var transformsInLine = _transformations.FindOverlappingSegments(line);
-
-            foreach (var transform in transformsInLine)
-            {
-                _transformations.Remove(transform);
             }
         }
 
