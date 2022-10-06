@@ -1185,16 +1185,18 @@ namespace AvaloniaEdit.Editing
                         return default;
                     }
 
-                    var selection = _textArea.Selection;
+                    var lineIndex = _textArea.Caret.Line;
 
-                    var documentLine = _textArea.Document.GetLineByNumber(selection.StartPosition.Line);
+                    var position = _textArea.Caret.Position;
+
+                    var documentLine = _textArea.Document.GetLineByNumber(lineIndex);
 
                     var text = _textArea.Document.GetText(documentLine.Offset, documentLine.Length);
 
                     return new TextInputMethodSurroundingText
                     {
-                        AnchorOffset = selection.StartPosition.Column,
-                        CursorOffset = selection.EndPosition.Column,
+                        AnchorOffset = 0,
+                        CursorOffset = position.Column,
                         Text = text
                     };
                 }
