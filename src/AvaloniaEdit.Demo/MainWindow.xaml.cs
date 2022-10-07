@@ -44,6 +44,7 @@ namespace AvaloniaEdit.Demo
             InitializeComponent();
 
             _textEditor = this.FindControl<TextEditor>("Editor");
+            _textEditor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
             _textEditor.Background = Brushes.Transparent;
             _textEditor.ShowLineNumbers = true;
             _textEditor.ContextMenu = new ContextMenu
