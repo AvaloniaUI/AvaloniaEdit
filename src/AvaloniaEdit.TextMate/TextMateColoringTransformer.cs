@@ -1,5 +1,7 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
+
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Threading;
@@ -123,11 +125,23 @@ namespace AvaloniaEdit.TextMate
                 if (tokens == null)
                     return;
 
-                var transformsInLine = GetLineTransformations(i, tokens);
+                var transformsInLine = ArrayPool<ForegroundTextTransformation>.Shared.Rent(tokens.Count);
 
-                foreach (var transform in transformsInLine)
+                try
                 {
-                    transform.Transform(this, line);
+                    GetLineTransformations(i, tokens, transformsInLine);
+
+                    for (int j = 0; j < tokens.Count; j++)
+                    {
+                        if (transformsInLine[j] == null)
+                            continue;
+
+                        transformsInLine[j].Transform(this, line);
+                    }
+                }
+                finally
+                {
+                    ArrayPool<ForegroundTextTransformation>.Shared.Return(transformsInLine);
                 }
             }
             catch (Exception ex)
@@ -136,10 +150,8 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        private List<ForegroundTextTransformation> GetLineTransformations(int lineNumber, List<TMToken> tokens)
+        private void GetLineTransformations(int lineNumber, List<TMToken> tokens, ForegroundTextTransformation[] transformations)
         {
-            List<ForegroundTextTransformation> result = new List<ForegroundTextTransformation>();
-
             for (int i = 0; i < tokens.Count; i++)
             {
                 var token = tokens[i];
@@ -150,6 +162,7 @@ namespace AvaloniaEdit.TextMate
 
                 if (startIndex >= endIndex || token.Scopes == null || token.Scopes.Count == 0)
                 {
+                    transformations[i] = null;
                     continue;
                 }
 
@@ -162,7 +175,7 @@ namespace AvaloniaEdit.TextMate
                 foreach (var themeRule in _theme.Match(token.Scopes))
                 {
                     if (foreground == 0 && themeRule.foreground > 0)
-                        foreground =  themeRule.foreground;
+                        foreground = themeRule.foreground;
 
                     if (background == 0 && themeRule.background > 0)
                         background = themeRule.background;
@@ -171,12 +184,19 @@ namespace AvaloniaEdit.TextMate
                         fontStyle = themeRule.fontStyle;
                 }
 
-                result.Add(new ForegroundTextTransformation(this, _exceptionHandler, lineOffset + startIndex,
-                    lineOffset + endIndex, foreground, background, fontStyle));
-            }
+                if (transformations[i] == null)
+                    transformations[i] = new ForegroundTextTransformation();
 
-            return result;
+                transformations[i].ColorMap = this;
+                transformations[i].ExceptionHandler = _exceptionHandler;
+                transformations[i].StartOffset = lineOffset + startIndex;
+                transformations[i].EndOffset = lineOffset + endIndex;
+                transformations[i].ForegroundColor = foreground;
+                transformations[i].BackgroundColor = background;
+                transformations[i].FontStyle = fontStyle;
+            }
         }
+
 
         public void ModelTokensChanged(ModelTokensChangedEvent e)
         {
@@ -209,7 +229,7 @@ namespace AvaloniaEdit.TextMate
 
                 int totalLines = _document.Lines.Count - 1;
 
-                firstLineIndexToRedraw = Clamp(firstLineIndexToRedraw, 0,  totalLines);
+                firstLineIndexToRedraw = Clamp(firstLineIndexToRedraw, 0, totalLines);
                 lastLineIndexToRedrawLine = Clamp(lastLineIndexToRedrawLine, 0, totalLines);
 
                 DocumentLine firstLineToRedraw = _document.Lines[firstLineIndexToRedraw];
