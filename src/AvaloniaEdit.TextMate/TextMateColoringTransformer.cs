@@ -118,9 +118,9 @@ namespace AvaloniaEdit.TextMate
                 if (_model == null)
                     return;
 
-                int lineIndex = line.LineNumber;
+                int lineNumber = line.LineNumber;
 
-                var tokens = _model.GetLineTokens(lineIndex - 1);
+                var tokens = _model.GetLineTokens(lineNumber - 1);
 
                 if (tokens == null)
                     return;
@@ -129,7 +129,7 @@ namespace AvaloniaEdit.TextMate
 
                 try
                 {
-                    GetLineTransformations(lineIndex, tokens, transformsInLine);
+                    GetLineTransformations(lineNumber, tokens, transformsInLine);
 
                     for (int i = 0; i < tokens.Count; i++)
                     {
