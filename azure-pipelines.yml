@@ -1,3 +1,5 @@
+variables:
+  packageVersion: '11.0.999-cibuild00$(Build.BuildId)-beta'
 jobs:
 - job: Windows
   pool:
@@ -17,6 +19,8 @@ jobs:
       command: pack
       outputDir: '$(Build.ArtifactStagingDirectory)/NuGet'
       verbosityPack: normal
+      versioningScheme: byEnvVar
+      versionEnvVar: packageVersion
 
   - task: PublishBuildArtifacts@1
     inputs:
