@@ -6,5 +6,6 @@
     <TextMateSharpVersion>1.0.43</TextMateSharpVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <Version>11.0.999-cibuild0024032-beta</Version>
+    <VersionSuffix>beta</VersionSuffix>
   </PropertyGroup>
 </Project>

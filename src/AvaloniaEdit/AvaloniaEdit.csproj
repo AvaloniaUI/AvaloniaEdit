@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <WarningsNotAsErrors>0612,0618</WarningsNotAsErrors>
-	<PackageId>Avalonia.AvaloniaEdit</PackageId>
+	  <PackageId>Avalonia.AvaloniaEdit</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
