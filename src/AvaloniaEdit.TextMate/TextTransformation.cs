@@ -1,19 +1,13 @@
 using System;
 
-using Avalonia.Media;
-
 using AvaloniaEdit.Document;
+
+using AM = Avalonia.Media;
 
 namespace AvaloniaEdit.TextMate
 {
     public abstract class TextTransformation : TextSegment
     {
-        public TextTransformation(int startOffset, int endOffset)
-        {
-            StartOffset = startOffset;
-            EndOffset = endOffset;
-        }
-
         public abstract void Transform(GenericLineTransformer transformer, DocumentLine line);
     }
 
@@ -21,30 +15,14 @@ namespace AvaloniaEdit.TextMate
     {
         public interface IColorMap
         {
-            IBrush GetBrush(int color);
+            AM.IBrush GetBrush(int color);
         }
 
-        private IColorMap _colorMap;
-        private Action<Exception> _exceptionHandler;
-        private int _foreground;
-        private int _background;
-        private int _fontStyle;
-
-        public ForegroundTextTransformation(
-            IColorMap colorMap,
-            Action<Exception> exceptionHandler,
-            int startOffset,
-            int endOffset,
-            int foreground,
-            int background,
-            int fontStyle) : base(startOffset, endOffset)
-        {
-            _colorMap = colorMap;
-            _exceptionHandler = exceptionHandler;
-            _foreground = foreground;
-            _background = background;
-            _fontStyle = fontStyle;
-        }
+        public IColorMap ColorMap { get; set; }
+        public Action<Exception> ExceptionHandler { get; set; }
+        public int ForegroundColor { get; set; }
+        public int BackgroundColor { get; set; }
+        public int FontStyle { get; set; }
 
         public override void Transform(GenericLineTransformer transformer, DocumentLine line)
         {
@@ -69,40 +47,40 @@ namespace AvaloniaEdit.TextMate
                 }
 
                 transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset,
-                _colorMap.GetBrush(_foreground),
-                _colorMap.GetBrush(_background),
+                ColorMap.GetBrush(ForegroundColor),
+                ColorMap.GetBrush(BackgroundColor),
                 GetFontStyle(),
                 GetFontWeight(),
                 IsUnderline());
             }
             catch(Exception ex)
             {
-                _exceptionHandler?.Invoke(ex);
+                ExceptionHandler?.Invoke(ex);
             }
         }
 
-        FontStyle GetFontStyle()
+        AM.FontStyle GetFontStyle()
         {
-            if (_fontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
-                (_fontStyle & TextMateSharp.Themes.FontStyle.Italic) != 0)
-                return FontStyle.Italic;
+            if (FontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
+                (FontStyle & TextMateSharp.Themes.FontStyle.Italic) != 0)
+                return AM.FontStyle.Italic;
 
-            return FontStyle.Normal;
+            return AM.FontStyle.Normal;
         }
 
-        FontWeight GetFontWeight()
+        AM.FontWeight GetFontWeight()
         {
-            if (_fontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
-                (_fontStyle & TextMateSharp.Themes.FontStyle.Bold) != 0)
-                return FontWeight.Bold;
+            if (FontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
+                (FontStyle & TextMateSharp.Themes.FontStyle.Bold) != 0)
+                return AM.FontWeight.Bold;
 
-            return FontWeight.Regular;
+            return AM.FontWeight.Regular;
         }
 
         bool IsUnderline()
         {
-            if (_fontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
-                (_fontStyle & TextMateSharp.Themes.FontStyle.Underline) != 0)
+            if (FontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
+                (FontStyle & TextMateSharp.Themes.FontStyle.Underline) != 0)
                 return true;
 
             return false;

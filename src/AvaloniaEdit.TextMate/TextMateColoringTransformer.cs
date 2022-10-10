@@ -1,5 +1,7 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
+
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Threading;
@@ -29,7 +31,6 @@ namespace AvaloniaEdit.TextMate
         private volatile int _lastVisibleLineIndex = -1;
 
         private readonly Dictionary<int, IBrush> _brushes;
-        private TextSegmentCollection<TextTransformation> _transformations;
 
         public TextMateColoringTransformer(
             TextView textView,
@@ -47,7 +48,6 @@ namespace AvaloniaEdit.TextMate
         {
             _document = document;
             _model = model;
-            _transformations = new TextSegmentCollection<TextTransformation>(_document);
 
             if (_grammar != null)
             {
@@ -90,14 +90,11 @@ namespace AvaloniaEdit.TextMate
 
                 _brushes[id] = new ImmutableSolidColorBrush(Color.Parse(NormalizeColor(color)));
             }
-
-            _transformations?.Clear();
         }
 
         public void SetGrammar(IGrammar grammar)
         {
             _grammar = grammar;
-            _transformations?.Clear();
 
             if (_model != null)
             {
@@ -121,21 +118,30 @@ namespace AvaloniaEdit.TextMate
                 if (_model == null)
                     return;
 
-                int i = line.LineNumber;
+                int lineNumber = line.LineNumber;
 
-                var tokens = _model.GetLineTokens(i - 1);
+                var tokens = _model.GetLineTokens(lineNumber - 1);
 
                 if (tokens == null)
                     return;
 
-                RemoveLineTransformations(i);
-                ProcessTokens(i, tokens);
+                var transformsInLine = ArrayPool<ForegroundTextTransformation>.Shared.Rent(tokens.Count);
 
-                var transformsInLine = _transformations.FindOverlappingSegments(line);
-
-                foreach (var transform in transformsInLine)
+                try
                 {
-                    transform.Transform(this, line);
+                    GetLineTransformations(lineNumber, tokens, transformsInLine);
+
+                    for (int i = 0; i < tokens.Count; i++)
+                    {
+                        if (transformsInLine[i] == null)
+                            continue;
+
+                        transformsInLine[i].Transform(this, line);
+                    }
+                }
+                finally
+                {
+                    ArrayPool<ForegroundTextTransformation>.Shared.Return(transformsInLine);
                 }
             }
             catch (Exception ex)
@@ -144,7 +150,7 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        private void ProcessTokens(int lineNumber, List<TMToken> tokens)
+        private void GetLineTransformations(int lineNumber, List<TMToken> tokens, ForegroundTextTransformation[] transformations)
         {
             for (int i = 0; i < tokens.Count; i++)
             {
@@ -156,6 +162,7 @@ namespace AvaloniaEdit.TextMate
 
                 if (startIndex >= endIndex || token.Scopes == null || token.Scopes.Count == 0)
                 {
+                    transformations[i] = null;
                     continue;
                 }
 
@@ -168,7 +175,7 @@ namespace AvaloniaEdit.TextMate
                 foreach (var themeRule in _theme.Match(token.Scopes))
                 {
                     if (foreground == 0 && themeRule.foreground > 0)
-                        foreground =  themeRule.foreground;
+                        foreground = themeRule.foreground;
 
                     if (background == 0 && themeRule.background > 0)
                         background = themeRule.background;
@@ -177,21 +184,19 @@ namespace AvaloniaEdit.TextMate
                         fontStyle = themeRule.fontStyle;
                 }
 
-                _transformations.Add(new ForegroundTextTransformation(this, _exceptionHandler, lineOffset + startIndex,
-                    lineOffset + endIndex, foreground, background, fontStyle));
+                if (transformations[i] == null)
+                    transformations[i] = new ForegroundTextTransformation();
+
+                transformations[i].ColorMap = this;
+                transformations[i].ExceptionHandler = _exceptionHandler;
+                transformations[i].StartOffset = lineOffset + startIndex;
+                transformations[i].EndOffset = lineOffset + endIndex;
+                transformations[i].ForegroundColor = foreground;
+                transformations[i].BackgroundColor = background;
+                transformations[i].FontStyle = fontStyle;
             }
         }
 
-        private void RemoveLineTransformations(int lineNumber)
-        {
-            var line = _document.GetLineByNumber(lineNumber);
-            var transformsInLine = _transformations.FindOverlappingSegments(line);
-
-            foreach (var transform in transformsInLine)
-            {
-                _transformations.Remove(transform);
-            }
-        }
 
         public void ModelTokensChanged(ModelTokensChangedEvent e)
         {
@@ -224,7 +229,7 @@ namespace AvaloniaEdit.TextMate
 
                 int totalLines = _document.Lines.Count - 1;
 
-                firstLineIndexToRedraw = Clamp(firstLineIndexToRedraw, 0,  totalLines);
+                firstLineIndexToRedraw = Clamp(firstLineIndexToRedraw, 0, totalLines);
                 lastLineIndexToRedrawLine = Clamp(lastLineIndexToRedrawLine, 0, totalLines);
 
                 DocumentLine firstLineToRedraw = _document.Lines[firstLineIndexToRedraw];
