@@ -2,7 +2,7 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AvaloniaVersion>11.0.999-cibuild0024027-beta</AvaloniaVersion>
+    <AvaloniaVersion>11.0.0-preview2</AvaloniaVersion>
     <TextMateSharpVersion>1.0.43</TextMateSharpVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
     <VersionSuffix>beta</VersionSuffix>

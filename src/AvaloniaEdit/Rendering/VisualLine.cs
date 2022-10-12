@@ -657,10 +657,6 @@ namespace AvaloniaEdit.Rendering
             {
                 ((ISetLogicalParent)_visual).SetParent(null);
             }
-
-            _visual = null;
-
-            _textLines = null;
         }
 
         /// <summary>
