@@ -18,8 +18,10 @@
 
 using Avalonia;
 using Avalonia.Input;
+
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Utils;
+
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -527,7 +529,7 @@ namespace AvaloniaEdit.Editing
                 pos = pos.WithY(textView.Bounds.Height);
             pos += textView.ScrollOffset;
             var line = textView.GetVisualLineFromVisualTop(pos.Y);
-            if (line != null)
+            if (line != null && line.TextLines != null)
             {
                 var visualColumn = line.GetVisualColumn(pos, TextArea.Selection.EnableVirtualSpace);
                 var wordStartVc = line.GetNextCaretPosition(visualColumn + 1, LogicalDirection.Backward, CaretPositioningMode.WordStartOrSymbol, TextArea.Selection.EnableVirtualSpace);
@@ -558,7 +560,7 @@ namespace AvaloniaEdit.Editing
                 pos = pos.WithY(textView.Bounds.Height);
             pos += textView.ScrollOffset;
             var line = textView.GetVisualLineFromVisualTop(pos.Y);
-            return line != null
+            return line != null && line.TextLines != null
                 ? new SimpleSegment(line.StartOffset, line.LastDocumentLine.EndOffset - line.StartOffset)
                 : SimpleSegment.Invalid;
         }
@@ -581,7 +583,7 @@ namespace AvaloniaEdit.Editing
             if (pos.Y >= textView.DocumentHeight)
                 pos = pos.WithY(textView.DocumentHeight - ExtensionMethods.Epsilon);
             var line = textView.GetVisualLineFromVisualTop(pos.Y);
-            if (line != null)
+            if (line != null && line.TextLines != null)
             {
                 visualColumn = line.GetVisualColumn(pos, TextArea.Selection.EnableVirtualSpace, out isAtEndOfLine);
                 return line.GetRelativeOffset(visualColumn) + line.FirstDocumentLine.Offset;
@@ -603,7 +605,7 @@ namespace AvaloniaEdit.Editing
             if (pos.Y >= textView.DocumentHeight)
                 pos = pos.WithY(textView.DocumentHeight - ExtensionMethods.Epsilon);
             var line = textView.GetVisualLineFromVisualTop(pos.Y);
-            if (line != null)
+            if (line != null && line.TextLines != null)
             {
                 visualColumn = line.GetVisualColumn(line.TextLines.First(), pos.X, TextArea.Selection.EnableVirtualSpace);
                 return line.GetRelativeOffset(visualColumn) + line.FirstDocumentLine.Offset;
