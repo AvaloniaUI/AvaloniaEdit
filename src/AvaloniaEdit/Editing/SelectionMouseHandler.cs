@@ -463,10 +463,6 @@ namespace AvaloniaEdit.Editing
                         else
                         {
                             SimpleSegment startWord;
-
-                            _mode = SelectionMode.WholeWord;
-                            startWord = GetWordAtMousePosition(e);
-
                             if (e.ClickCount == 3)
                             {
                                 _mode = SelectionMode.WholeLine;
