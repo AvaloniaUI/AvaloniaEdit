@@ -210,7 +210,7 @@ namespace AvaloniaEdit.Rendering
 			}
 		}
 
-		public sealed class SpecialCharacterBoxElement : FormattedTextElement
+		private sealed class SpecialCharacterBoxElement : FormattedTextElement
 		{
 			public SpecialCharacterBoxElement(TextLine text) : base(text, 1)
 			{
