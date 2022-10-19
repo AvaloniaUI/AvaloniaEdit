@@ -105,28 +105,26 @@ namespace AvaloniaEdit.Rendering
 
             if (ShowSpaces && c == ' ')
             {
-                var p = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
-                p.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
-                return new SpaceTextElement(
-                    CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter(
+                var runProperties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
+                runProperties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
+                return new SpaceTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter(
                         CurrentContext.TextView.Options.ShowSpacesGlyph,
-                        p));
+                        runProperties));
             }
             else if (ShowTabs && c == '\t')
             {
-                var p = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
-                p.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
-                return new TabTextElement(
-                    CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter(
+                var runProperties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
+                runProperties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
+                return new TabTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter(
                         CurrentContext.TextView.Options.ShowTabsGlyph,
-                        p));
+                        runProperties));
             }
             else if (ShowBoxForControlCharacters && char.IsControl(c))
             {
-                var p = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
-                p.SetForegroundBrush(Brushes.White);
+                var runProperties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
+                runProperties.SetForegroundBrush(Brushes.White);
                 var textFormatter = TextFormatterFactory.Create(CurrentContext.TextView);
-                var text = FormattedTextElement.PrepareText(textFormatter, TextUtilities.GetControlCharacterName(c), p);
+                var text = FormattedTextElement.PrepareText(textFormatter, TextUtilities.GetControlCharacterName(c), runProperties);
                 return new SpecialCharacterBoxElement(text);
             }
 
