@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
-
 using Avalonia.Media.TextFormatting;
 
 namespace AvaloniaEdit.Rendering
