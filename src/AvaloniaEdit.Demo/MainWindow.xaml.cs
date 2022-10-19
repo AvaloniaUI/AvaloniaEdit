@@ -60,6 +60,7 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
             _textEditor.Options.ShowBoxForControlCharacters = true;
+            _textEditor.Options.ColumnRulerPositions = new List<int>() { 80, 100 };
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy(_textEditor.Options);
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
@@ -68,7 +69,7 @@ namespace AvaloniaEdit.Demo
             _addControlButton.Click += AddControlButton_Click;
 
             _clearControlButton = this.FindControl<Button>("clearControlBtn");
-            _clearControlButton.Click += ClearControlButton_Click; ;
+            _clearControlButton.Click += ClearControlButton_Click;
 
             _changeThemeButton = this.FindControl<Button>("changeThemeBtn");
             _changeThemeButton.Click += ChangeThemeButton_Click;
