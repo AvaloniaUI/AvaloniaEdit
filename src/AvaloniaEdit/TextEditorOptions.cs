@@ -81,7 +81,7 @@ namespace AvaloniaEdit
         private bool _showSpaces;
 
         /// <summary>
-        /// Gets/Sets whether to show · for spaces.
+        /// Gets/Sets whether to show a visible glyph for spaces. The glyph displayed can be set via <see cref="ShowSpacesGlyph" />
         /// </summary>
         /// <remarks>The default value is <c>false</c>.</remarks>
         [DefaultValue(false)]
@@ -98,10 +98,30 @@ namespace AvaloniaEdit
             }
         }
 
+        private string _showSpacesGlyph = "\u00B7";
+
+        /// <summary>
+        /// Gets/Sets the char to show when ShowSpaces option is enabled
+        /// </summary>
+        /// <remarks>The default value is <c>·</c>.</remarks>
+        [DefaultValue("\u00B7")]
+        public virtual string ShowSpacesGlyph
+        {
+            get { return _showSpacesGlyph; }
+            set
+            {
+                if (_showSpacesGlyph != value)
+                {
+                    _showSpacesGlyph = value;
+                    OnPropertyChanged("ShowSpacesGlyph");
+                }
+            }
+        }
+
         private bool _showTabs;
 
         /// <summary>
-        /// Gets/Sets whether to show » for tabs.
+        /// Gets/Sets whether to show a visible glyph for tab. The glyph displayed can be set via <see cref="ShowTabsGlyph" />
         /// </summary>
         /// <remarks>The default value is <c>false</c>.</remarks>
         [DefaultValue(false)]
@@ -118,10 +138,30 @@ namespace AvaloniaEdit
             }
         }
 
+        private string _showTabsGlyph = "\u2192";
+
+        /// <summary>
+        /// Gets/Sets the char to show when ShowTabs option is enabled
+        /// </summary>
+        /// <remarks>The default value is <c>→</c>.</remarks>
+        [DefaultValue("\u2192")]
+        public virtual string ShowTabsGlyph
+        {
+            get { return _showTabsGlyph; }
+            set
+            {
+                if (_showTabsGlyph != value)
+                {
+                    _showTabsGlyph = value;
+                    OnPropertyChanged("ShowTabsGlyph");
+                }
+            }
+        }
+
         private bool _showEndOfLine;
 
         /// <summary>
-        /// Gets/Sets whether to show ¶ at the end of lines.
+        /// Gets/Sets whether to show EOL char at the end of lines. The glyphs displayed can be set via <see cref="EndOfLineCRLFGlyph" />, <see cref="EndOfLineCRGlyph" /> and <see cref="EndOfLineLFGlyph" />.
         /// </summary>
         /// <remarks>The default value is <c>false</c>.</remarks>
         [DefaultValue(false)]
@@ -134,6 +174,66 @@ namespace AvaloniaEdit
                 {
                     _showEndOfLine = value;
                     OnPropertyChanged("ShowEndOfLine");
+                }
+            }
+        }
+
+        private string _endOfLineCRLFGlyph = "¶";
+
+        /// <summary>
+        /// Gets/Sets the char to show for CRLF (\r\n) when ShowEndOfLine option is enabled
+        /// </summary>
+        /// <remarks>The default value is <c>¶</c>.</remarks>
+        [DefaultValue("¶")]
+        public virtual string EndOfLineCRLFGlyph
+        {
+            get { return _endOfLineCRLFGlyph; }
+            set
+            {
+                if (_endOfLineCRLFGlyph != value)
+                {
+                    _endOfLineCRLFGlyph = value;
+                    OnPropertyChanged("CRLFGlyph");
+                }
+            }
+        }
+
+        private string _endOfLineCRGlyph = "\\r";
+
+        /// <summary>
+        /// Gets/Sets the char to show for CR (\r) when ShowEndOfLine option is enabled
+        /// </summary>
+        /// <remarks>The default value is <c>\r</c>.</remarks>
+        [DefaultValue("\\r")]
+        public virtual string EndOfLineCRGlyph
+        {
+            get { return _endOfLineCRGlyph; }
+            set
+            {
+                if (_endOfLineCRGlyph != value)
+                {
+                    _endOfLineCRGlyph = value;
+                    OnPropertyChanged("CRGlyph");
+                }
+            }
+        }
+
+        private string _endOfLineLFGlyph = "\\n";
+
+        /// <summary>
+        /// Gets/Sets the char to show for LF (\n) when ShowEndOfLine option is enabled
+        /// </summary>
+        /// <remarks>The default value is <c>\n</c>.</remarks>
+        [DefaultValue("\\n")]
+        public virtual string EndOfLineLFGlyph
+        {
+            get { return _endOfLineLFGlyph; }
+            set
+            {
+                if (_endOfLineLFGlyph != value)
+                {
+                    _endOfLineLFGlyph = value;
+                    OnPropertyChanged("LFGlyph");
                 }
             }
         }

@@ -18,6 +18,8 @@
 
 using System;
 using System.Diagnostics;
+
+using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Utilities;
 using AvaloniaEdit.Document;
@@ -74,30 +76,36 @@ namespace AvaloniaEdit.Rendering
 			}
 		}
 
-		private TextRun CreateTextRunForNewLine()
-		{
-			string newlineText = "";
-			DocumentLine lastDocumentLine = VisualLine.LastDocumentLine;
-			if (lastDocumentLine.DelimiterLength == 2) {
-				newlineText = "¶";
-			} else if (lastDocumentLine.DelimiterLength == 1) {
-				char newlineChar = Document.GetCharAt(lastDocumentLine.Offset + lastDocumentLine.Length);
-				if (newlineChar == '\r')
-					newlineText = "\\r";
-				else if (newlineChar == '\n')
-					newlineText = "\\n";
-				else
-					newlineText = "?";
-			}
+        private TextRun CreateTextRunForNewLine()
+        {
+            string newlineText = "";
+            DocumentLine lastDocumentLine = VisualLine.LastDocumentLine;
+            if (lastDocumentLine.DelimiterLength == 2)
+            {
+                newlineText = TextView.Options.EndOfLineCRLFGlyph;
+            }
+            else if (lastDocumentLine.DelimiterLength == 1)
+            {
+                char newlineChar = Document.GetCharAt(lastDocumentLine.Offset + lastDocumentLine.Length);
+                if (newlineChar == '\r')
+                    newlineText = TextView.Options.EndOfLineCRGlyph;
+                else if (newlineChar == '\n')
+                    newlineText = TextView.Options.EndOfLineLFGlyph;
+                else
+                    newlineText = "?";
+            }
 
-			var textElement = new FormattedTextElement(TextView.CachedElements.GetTextForNonPrintableCharacter(newlineText, this), 0);
+            var p = new VisualLineElementTextRunProperties(GlobalTextRunProperties);
+            p.SetForegroundBrush(TextView.NonPrintableCharacterBrush);
+            p.SetFontRenderingEmSize(GlobalTextRunProperties.FontRenderingEmSize - 2);
+            var textElement = new FormattedTextElement(TextView.CachedElements.GetTextForNonPrintableCharacter(newlineText, p), 0);
 
-			textElement.RelativeTextOffset = lastDocumentLine.Offset + lastDocumentLine.Length;
+            textElement.RelativeTextOffset = lastDocumentLine.Offset + lastDocumentLine.Length;
 
-			return new FormattedTextRun(textElement, GlobalTextRunProperties);
-		}
+            return new FormattedTextRun(textElement, GlobalTextRunProperties);
+        }
 
-		public ReadOnlySlice<char> GetPrecedingText(int textSourceCharacterIndexLimit)
+        public ReadOnlySlice<char> GetPrecedingText(int textSourceCharacterIndexLimit)
 		{
 			try {
 				foreach (VisualLineElement element in VisualLine.Elements) {
