@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -564,40 +565,39 @@ namespace AvaloniaEdit
             }
         }
 
-        private bool _showColumnRuler;
+        private bool _showColumnRulers;
 
         /// <summary>
-        /// Gets/Sets whether the column ruler should be shown.
+        /// Gets/Sets whether the column rulers should be shown.
         /// </summary>
         [DefaultValue(false)]
-        public virtual bool ShowColumnRuler
+        public virtual bool ShowColumnRulers
         {
-            get { return _showColumnRuler; }
+            get { return _showColumnRulers; }
             set
             {
-                if (_showColumnRuler != value)
+                if (_showColumnRulers != value)
                 {
-                    _showColumnRuler = value;
-                    OnPropertyChanged("ShowColumnRuler");
+                    _showColumnRulers = value;
+                    OnPropertyChanged("ShowColumnRulers");
                 }
             }
         }
 
-        private int _columnRulerPosition = 80;
+        private IEnumerable<int> _columnRulerPositions = new List<int>() { 80 };
 
         /// <summary>
-        /// Gets/Sets where the column ruler should be shown.
+        /// Gets/Sets the positions the column rulers should be shown.
         /// </summary>
-        [DefaultValue(80)]
-        public virtual int ColumnRulerPosition
+        public virtual IEnumerable<int> ColumnRulerPositions
         {
-            get { return _columnRulerPosition; }
+            get { return _columnRulerPositions; }
             set
             {
-                if (_columnRulerPosition != value)
+                if (_columnRulerPositions != value)
                 {
-                    _columnRulerPosition = value;
-                    OnPropertyChanged("ColumnRulerPosition");
+                    _columnRulerPositions = value;
+                    OnPropertyChanged("ColumnRulerPositions");
                 }
             }
         }
