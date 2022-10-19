@@ -213,10 +213,10 @@ namespace AvaloniaEdit.Rendering
         {
             OptionChanged?.Invoke(this, e);
 
-            if (Options.ShowColumnRuler)
-                _columnRulerRenderer.SetRuler(Options.ColumnRulerPosition, ColumnRulerPen);
+            if (Options.ShowColumnRulers)
+                _columnRulerRenderer.SetRuler(Options.ColumnRulerPositions, ColumnRulerPen);
             else
-                _columnRulerRenderer.SetRuler(-1, ColumnRulerPen);
+                _columnRulerRenderer.SetRuler(null, ColumnRulerPen);
 
             UpdateBuiltinElementGeneratorsFromOptions();
             Redraw();
@@ -1928,7 +1928,7 @@ namespace AvaloniaEdit.Rendering
             }
             if (change.Property == ColumnRulerPenProperty)
             {
-                _columnRulerRenderer.SetRuler(Options.ColumnRulerPosition, ColumnRulerPen);
+                _columnRulerRenderer.SetRuler(Options.ColumnRulerPositions, ColumnRulerPen);
             }
             if (change.Property == CurrentLineBorderProperty)
             {
@@ -1942,10 +1942,10 @@ namespace AvaloniaEdit.Rendering
 
         /// <summary>
         /// The pen used to draw the column ruler.
-        /// <seealso cref="TextEditorOptions.ShowColumnRuler"/>
+        /// <seealso cref="TextEditorOptions.ShowColumnRulers"/>
         /// </summary>
         public static readonly StyledProperty<IPen> ColumnRulerPenProperty =
-            AvaloniaProperty.Register<TextView, IPen>("ColumnRulerBrush", CreateFrozenPen(Brushes.LightGray));
+            AvaloniaProperty.Register<TextView, IPen>("ColumnRulerBrush", CreateFrozenPen(new SolidColorBrush(Color.FromArgb(145, 128, 128, 128))));
 
         private static ImmutablePen CreateFrozenPen(IBrush brush)
         {
@@ -1988,7 +1988,7 @@ namespace AvaloniaEdit.Rendering
 
         /// <summary>
         /// Gets/Sets the pen used to draw the column ruler.
-        /// <seealso cref="TextEditorOptions.ShowColumnRuler"/>
+        /// <seealso cref="TextEditorOptions.ShowColumnRulers"/>
         /// </summary>
         public IPen ColumnRulerPen
         {
