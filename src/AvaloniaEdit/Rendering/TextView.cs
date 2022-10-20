@@ -1945,7 +1945,7 @@ namespace AvaloniaEdit.Rendering
         /// <seealso cref="TextEditorOptions.ShowColumnRulers"/>
         /// </summary>
         public static readonly StyledProperty<IPen> ColumnRulerPenProperty =
-            AvaloniaProperty.Register<TextView, IPen>("ColumnRulerBrush", CreateFrozenPen(new SolidColorBrush(Color.FromArgb(145, 128, 128, 128))));
+            AvaloniaProperty.Register<TextView, IPen>("ColumnRulerBrush", CreateFrozenPen(new SolidColorBrush(Color.FromArgb(90, 128, 128, 128))));
 
         private static ImmutablePen CreateFrozenPen(IBrush brush)
         {

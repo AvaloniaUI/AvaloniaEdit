@@ -68,7 +68,10 @@ namespace AvaloniaEdit.Rendering
                 var start = new Point(markerXPos, 0);
                 var end = new Point(markerXPos, Math.Max(textView.DocumentHeight, textView.Bounds.Height));
 
-                drawingContext.DrawLine(_pen, start, end);
+                drawingContext.DrawLine(
+                    _pen,
+                    start.SnapToDevicePixels(textView),
+                    end.SnapToDevicePixels(textView));
             }
         }
     }

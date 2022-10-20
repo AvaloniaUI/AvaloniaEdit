@@ -213,6 +213,30 @@ namespace AvaloniaEdit.Utils
         }
         #endregion
 
+        #region Snap to device pixels
+        public static Point SnapToDevicePixels(this Point p, IVisual targetVisual)
+        {
+            var root = targetVisual.GetVisualRoot();
+
+            // Get the root control and its scaling
+            var scaling = new Vector(root.RenderScaling, root.RenderScaling);
+
+            // Create a matrix to translate from control coordinates to device coordinates.
+            var m = targetVisual.TransformToVisual((Control)root) * Matrix.CreateScale(scaling);
+
+            // Translate the point to device coordinates.
+            var devicePoint = p.Transform(m.Value);
+
+            // Snap the coordinate to the midpoint between device pixels.
+            devicePoint = new Point(((int)devicePoint.X) + 0.5, ((int)devicePoint.Y) + 0.5);
+
+            // Translate the point back to control coordinates.
+            var inv = m.Value.Invert();
+            Point result = devicePoint.Transform(inv);
+            return result;
+        }
+        #endregion
+
         public static IEnumerable<AvaloniaObject> VisualAncestorsAndSelf(this AvaloniaObject obj)
         {
             while (obj != null)
