@@ -20,6 +20,7 @@
             <ToggleButton Name="viewTabs" Content="View tabs" IsChecked="{Binding #Editor.Options.ShowTabs}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <ToggleButton Name="viewSpaces" Content="View spaces" IsChecked="{Binding #Editor.Options.ShowSpaces}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <ToggleButton Name="viewEOL" Content="View EOL" IsChecked="{Binding #Editor.Options.ShowEndOfLine}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+            <ToggleButton Name="viewColumnRules" Content="View columns rulers" IsChecked="{Binding #Editor.Options.ShowColumnRulers}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <Button Name="addControlBtn" Content="Add Button" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <Button Name="clearControlBtn" Content="Clear Buttons" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <ComboBox Name="syntaxModeCombo" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
