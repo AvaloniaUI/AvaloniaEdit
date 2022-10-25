@@ -224,6 +224,9 @@ namespace AvaloniaEdit.Utils
             // Create a matrix to translate from control coordinates to device coordinates.
             var m = targetVisual.TransformToVisual((Control)root) * Matrix.CreateScale(scaling);
 
+            if (m == null)
+                return p;
+
             // Translate the point to device coordinates.
             var devicePoint = p.Transform(m.Value);
 
