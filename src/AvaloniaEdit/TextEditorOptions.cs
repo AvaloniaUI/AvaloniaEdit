@@ -94,7 +94,7 @@ namespace AvaloniaEdit
                 if (_showSpaces != value)
                 {
                     _showSpaces = value;
-                    OnPropertyChanged("ShowSpaces");
+                    OnPropertyChanged(nameof(ShowSpaces));
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace AvaloniaEdit
                 if (_showSpacesGlyph != value)
                 {
                     _showSpacesGlyph = value;
-                    OnPropertyChanged("ShowSpacesGlyph");
+                    OnPropertyChanged(nameof(ShowSpacesGlyph));
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace AvaloniaEdit
                 if (_showTabs != value)
                 {
                     _showTabs = value;
-                    OnPropertyChanged("ShowTabs");
+                    OnPropertyChanged(nameof(ShowTabs));
                 }
             }
         }
@@ -154,7 +154,7 @@ namespace AvaloniaEdit
                 if (_showTabsGlyph != value)
                 {
                     _showTabsGlyph = value;
-                    OnPropertyChanged("ShowTabsGlyph");
+                    OnPropertyChanged(nameof(ShowTabsGlyph));
                 }
             }
         }
@@ -174,7 +174,7 @@ namespace AvaloniaEdit
                 if (_showEndOfLine != value)
                 {
                     _showEndOfLine = value;
-                    OnPropertyChanged("ShowEndOfLine");
+                    OnPropertyChanged(nameof(ShowEndOfLine));
                 }
             }
         }
@@ -194,7 +194,7 @@ namespace AvaloniaEdit
                 if (_endOfLineCRLFGlyph != value)
                 {
                     _endOfLineCRLFGlyph = value;
-                    OnPropertyChanged("CRLFGlyph");
+                    OnPropertyChanged(nameof(EndOfLineCRLFGlyph));
                 }
             }
         }
@@ -214,7 +214,7 @@ namespace AvaloniaEdit
                 if (_endOfLineCRGlyph != value)
                 {
                     _endOfLineCRGlyph = value;
-                    OnPropertyChanged("CRGlyph");
+                    OnPropertyChanged(nameof(EndOfLineCRGlyph));
                 }
             }
         }
@@ -234,7 +234,7 @@ namespace AvaloniaEdit
                 if (_endOfLineLFGlyph != value)
                 {
                     _endOfLineLFGlyph = value;
-                    OnPropertyChanged("LFGlyph");
+                    OnPropertyChanged(nameof(EndOfLineLFGlyph));
                 }
             }
         }
@@ -254,7 +254,7 @@ namespace AvaloniaEdit
                 if (_showBoxForControlCharacters != value)
                 {
                     _showBoxForControlCharacters = value;
-                    OnPropertyChanged("ShowBoxForControlCharacters");
+                    OnPropertyChanged(nameof(ShowBoxForControlCharacters));
                 }
             }
         }
@@ -277,7 +277,7 @@ namespace AvaloniaEdit
                 if (_enableHyperlinks != value)
                 {
                     _enableHyperlinks = value;
-                    OnPropertyChanged("EnableHyperlinks");
+                    OnPropertyChanged(nameof(EnableHyperlinks));
                 }
             }
         }
@@ -297,7 +297,7 @@ namespace AvaloniaEdit
                 if (_enableEmailHyperlinks != value)
                 {
                     _enableEmailHyperlinks = value;
-                    OnPropertyChanged("EnableEMailHyperlinks");
+                    OnPropertyChanged(nameof(EnableEmailHyperlinks));
                 }
             }
         }
@@ -318,7 +318,7 @@ namespace AvaloniaEdit
                 if (_requireControlModifierForHyperlinkClick != value)
                 {
                     _requireControlModifierForHyperlinkClick = value;
-                    OnPropertyChanged("RequireControlModifierForHyperlinkClick");
+                    OnPropertyChanged(nameof(RequireControlModifierForHyperlinkClick));
                 }
             }
         }
@@ -351,8 +351,8 @@ namespace AvaloniaEdit
                 if (_indentationSize != value)
                 {
                     _indentationSize = value;
-                    OnPropertyChanged("IndentationSize");
-                    OnPropertyChanged("IndentationString");
+                    OnPropertyChanged(nameof(IndentationSize));
+                    OnPropertyChanged(nameof(IndentationString));
                 }
             }
         }
@@ -372,8 +372,8 @@ namespace AvaloniaEdit
                 if (_convertTabsToSpaces != value)
                 {
                     _convertTabsToSpaces = value;
-                    OnPropertyChanged("ConvertTabsToSpaces");
-                    OnPropertyChanged("IndentationString");
+                    OnPropertyChanged(nameof(ConvertTabsToSpaces));
+                    OnPropertyChanged(nameof(IndentationString));
                 }
             }
         }
@@ -417,7 +417,7 @@ namespace AvaloniaEdit
                 if (_cutCopyWholeLine != value)
                 {
                     _cutCopyWholeLine = value;
-                    OnPropertyChanged("CutCopyWholeLine");
+                    OnPropertyChanged(nameof(CutCopyWholeLine));
                 }
             }
         }
@@ -437,7 +437,7 @@ namespace AvaloniaEdit
                 if (_allowScrollBelowDocument != value)
                 {
                     _allowScrollBelowDocument = value;
-                    OnPropertyChanged("AllowScrollBelowDocument");
+                    OnPropertyChanged(nameof(AllowScrollBelowDocument));
                 }
             }
         }
@@ -459,7 +459,7 @@ namespace AvaloniaEdit
                 if (value != _wordWrapIndentation)
                 {
                     _wordWrapIndentation = value;
-                    OnPropertyChanged("WordWrapIndentation");
+                    OnPropertyChanged(nameof(WordWrapIndentation));
                 }
             }
         }
@@ -480,7 +480,7 @@ namespace AvaloniaEdit
                 if (value != _inheritWordWrapIndentation)
                 {
                     _inheritWordWrapIndentation = value;
-                    OnPropertyChanged("InheritWordWrapIndentation");
+                    OnPropertyChanged(nameof(InheritWordWrapIndentation));
                 }
             }
         }
@@ -499,7 +499,7 @@ namespace AvaloniaEdit
                 if (_enableRectangularSelection != value)
                 {
                     _enableRectangularSelection = value;
-                    OnPropertyChanged("EnableRectangularSelection");
+                    OnPropertyChanged(nameof(EnableRectangularSelection));
                 }
             }
         }
@@ -518,7 +518,7 @@ namespace AvaloniaEdit
                 if (_enableTextDragDrop != value)
                 {
                     _enableTextDragDrop = value;
-                    OnPropertyChanged("EnableTextDragDrop");
+                    OnPropertyChanged(nameof(EnableTextDragDrop));
                 }
             }
         }
@@ -540,7 +540,7 @@ namespace AvaloniaEdit
                 if (_enableVirtualSpace != value)
                 {
                     _enableVirtualSpace = value;
-                    OnPropertyChanged("EnableVirtualSpace");
+                    OnPropertyChanged(nameof(EnableVirtualSpace));
                 }
             }
         }
@@ -560,7 +560,7 @@ namespace AvaloniaEdit
                 if (_enableImeSupport != value)
                 {
                     _enableImeSupport = value;
-                    OnPropertyChanged("EnableImeSupport");
+                    OnPropertyChanged(nameof(EnableImeSupport));
                 }
             }
         }
@@ -579,7 +579,7 @@ namespace AvaloniaEdit
                 if (_showColumnRulers != value)
                 {
                     _showColumnRulers = value;
-                    OnPropertyChanged("ShowColumnRulers");
+                    OnPropertyChanged(nameof(ShowColumnRulers));
                 }
             }
         }
@@ -597,7 +597,7 @@ namespace AvaloniaEdit
                 if (_columnRulerPositions != value)
                 {
                     _columnRulerPositions = value;
-                    OnPropertyChanged("ColumnRulerPositions");
+                    OnPropertyChanged(nameof(ColumnRulerPositions));
                 }
             }
         }
@@ -616,7 +616,7 @@ namespace AvaloniaEdit
                 if (_highlightCurrentLine != value)
                 {
                     _highlightCurrentLine = value;
-                    OnPropertyChanged("HighlightCurrentLine");
+                    OnPropertyChanged(nameof(HighlightCurrentLine));
                 }
             }
         }
@@ -635,7 +635,7 @@ namespace AvaloniaEdit
                 if (_hideCursorWhileTyping != value)
                 {
                     _hideCursorWhileTyping = value;
-                    OnPropertyChanged("HideCursorWhileTyping");
+                    OnPropertyChanged(nameof(HideCursorWhileTyping));
                 }
             }
         }
@@ -654,7 +654,7 @@ namespace AvaloniaEdit
                 if (_allowToggleOverstrikeMode != value)
                 {
                     _allowToggleOverstrikeMode = value;
-                    OnPropertyChanged("AllowToggleOverstrikeMode");
+                    OnPropertyChanged(nameof(AllowToggleOverstrikeMode));
                 }
             }
         }
@@ -673,7 +673,7 @@ namespace AvaloniaEdit
                 if (_extendSelectionOnMouseUp != value)
                 {
                     _extendSelectionOnMouseUp = value;
-                    OnPropertyChanged("ExtendSelectionOnMouseUp");
+                    OnPropertyChanged(nameof(ExtendSelectionOnMouseUp));
                 }
             }
         }
