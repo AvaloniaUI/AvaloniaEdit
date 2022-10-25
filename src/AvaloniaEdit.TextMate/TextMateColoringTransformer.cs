@@ -218,13 +218,15 @@ namespace AvaloniaEdit.TextMate
                 lastChangedLineIndex = Math.Max(range.ToLineNumber - 1, lastChangedLineIndex);
             }
 
-            bool changedLinesAreNotVisible =
-                _areVisualLinesValid &&
-                ((firstChangedLineIndex < _firstVisibleLineIndex && lastChangedLineIndex < _firstVisibleLineIndex) ||
-                (firstChangedLineIndex > _lastVisibleLineIndex && lastChangedLineIndex > _lastVisibleLineIndex));
+            if (_areVisualLinesValid)
+            {
+                bool changedLinesAreNotVisible =
+                    ((firstChangedLineIndex < _firstVisibleLineIndex && lastChangedLineIndex < _firstVisibleLineIndex) ||
+                    (firstChangedLineIndex > _lastVisibleLineIndex && lastChangedLineIndex > _lastVisibleLineIndex));
 
-            if (changedLinesAreNotVisible)
-                return;
+                if (changedLinesAreNotVisible)
+                    return;
+            }
 
             Dispatcher.UIThread.Post(() =>
             {
