@@ -27,6 +27,7 @@ namespace AvaloniaEdit.TextMate
         private TextView _textView;
         private Action<Exception> _exceptionHandler;
 
+        private volatile bool _areVisualLinesValid = false;
         private volatile int _firstVisibleLineIndex = -1;
         private volatile int _lastVisibleLineIndex = -1;
 
@@ -46,6 +47,7 @@ namespace AvaloniaEdit.TextMate
 
         public void SetModel(TextDocument document, TMModel model)
         {
+            _areVisualLinesValid = false;
             _document = document;
             _model = model;
 
@@ -62,6 +64,7 @@ namespace AvaloniaEdit.TextMate
                 if (!_textView.VisualLinesValid || _textView.VisualLines.Count == 0)
                     return;
 
+                _areVisualLinesValid = true;
                 _firstVisibleLineIndex = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
                 _lastVisibleLineIndex = _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1;
             }
@@ -215,12 +218,15 @@ namespace AvaloniaEdit.TextMate
                 lastChangedLineIndex = Math.Max(range.ToLineNumber - 1, lastChangedLineIndex);
             }
 
-            bool changedLinesAreNotVisible =
-                (firstChangedLineIndex < _firstVisibleLineIndex && lastChangedLineIndex < _firstVisibleLineIndex) ||
-                (firstChangedLineIndex > _lastVisibleLineIndex && lastChangedLineIndex > _lastVisibleLineIndex);
+            if (_areVisualLinesValid)
+            {
+                bool changedLinesAreNotVisible =
+                    ((firstChangedLineIndex < _firstVisibleLineIndex && lastChangedLineIndex < _firstVisibleLineIndex) ||
+                    (firstChangedLineIndex > _lastVisibleLineIndex && lastChangedLineIndex > _lastVisibleLineIndex));
 
-            if (changedLinesAreNotVisible)
-                return;
+                if (changedLinesAreNotVisible)
+                    return;
+            }
 
             Dispatcher.UIThread.Post(() =>
             {
