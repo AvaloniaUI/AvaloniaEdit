@@ -1,0 +1,154 @@
+﻿// rich configuration possible
+:icons: font
+:toc: left
+:sectnums:
+:source-highlighter: highlightjs
+:stem: latexmath
+
+= An h1 header
+
+Paragraphs are separated by a blank line.
+
+2nd paragraph. _Italic_, *bold*, and `monospace`. 
+Itemized lists
+look like:
+
+* this one
+** that one
+*** and that one
+* the other one
+
+Note that --- not considering the asterisk --- the actual text
+content starts at 4-columns in.
+
+> Block quotes are
+> written like so.
+>
+> They can span multiple paragraphs,
+> if you like.
+
+Use 2 dashes for an em-dash. 
+Three dots ... will be converted to an ellipsis.
+Unicode is supported. ☺
+
+NOTE: There are many more features, https://docs.asciidoctor.org/[check the docs]
+
+== An h2 header
+
+Here's a numbered list:
+
+. first item
+. second item
+.. a item
+... roman item
+. third item
+
+Here's a code sample, various syntax highlighters supported:
+
+[source,csharp]
+----
+// Let me re-iterate ...
+foreach (var item in items) { 
+    DoSomething(item); <1>
+} 
+----
+<1> Annotations possible, will not be copied with source -- very helpful
+
+
+=== An h3 header [[a_label]]
+
+Now a nested list:
+
+. First, get these ingredients:
+** carrots
+** celery
+** lentils
+. Boil some water.
+. Dump everything in the pot and follow
+this algorithm:
+
+----
+    find wooden spoon
+    uncover pot
+    stir
+    cover pot
+    balance wooden spoon precariously on pot handle
+    wait 10 minutes
+    goto first step (or shut off burner when done)
+
+Do not bump wooden spoon or it will fall.
+----
+
+Here's a link to http://foo.bar[a website], to a link:local-doc.html[local doc], and to a <<a_label,label>> in the current doc. 
+
+.Tables can look like this
+|===
+|size |material |color
+
+|9
+|leather
+|brown
+
+|10
+|hemp canvas
+|natural
+
+|11
+|glass
+a|
+* Render in cell:
+** transparent
+** opaque
+|===
+
+A horizontal rule follows:
+
+'''
+
+If graphics package is installed this will render, otherwise https://kroki.io/[Kroki] can be used as well:
+
+[plantuml]
+----
+@startuml
+hide empty methods
+
+class Foo
+{
+    -int _bar;
+
+    +void ToString()
+}
+
+class Baz {
+    +List<Foo> Foos
+}
+
+Foo "n" -r-- "1..4" Baz: has
+
+@enduml
+----
+
+Images can be specified inline image:example-image.jpg[image] and block like so:
+
+.with an optional label
+image::example-image.jpg[Block image]
+
+Inline math equations go in like so: stem:[\omega = d\phi / dt]. 
+Display math should get its own line:
+
+stem:[I = \int \rho R^{2} dV]
+
+Full stem:[\LaTeX] math support 🙃
+
+==== Even more
+
+.Some things not covered here (hidden in the collapsible block)
+[%collapsible]
+====
+Footers:: Generate in various ways or have none
+Sidebars:: Can contain any type of content, such as quotes, equations, and images
+Videos:: Include with `video::`
+
+====
+
+And there is even much morefootnote:[Like creating revealjs presentations].
