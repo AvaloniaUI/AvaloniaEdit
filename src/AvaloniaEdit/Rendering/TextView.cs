@@ -918,7 +918,8 @@ namespace AvaloniaEdit.Rendering
             RemoveInlineObjectsNow();
 
             maxWidth += AdditionalHorizontalScrollAmount;
-            var heightTreeHeight = DocumentHeight;
+            var documentHeight = DocumentHeight;
+            var heightTreeHeight = double.IsNaN(documentHeight) ? 0 : documentHeight;
             var options = Options;
             double desiredHeight = Math.Min(availableSize.Height, heightTreeHeight);
             double extraHeightToAllowScrollBelowDocument = 0;
