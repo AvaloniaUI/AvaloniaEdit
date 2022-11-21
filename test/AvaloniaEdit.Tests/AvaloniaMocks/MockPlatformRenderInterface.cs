@@ -25,6 +25,11 @@ namespace AvaloniaEdit.AvaloniaMocks
             throw new NotImplementedException();
         }
 
+        public IGlyphRunImpl CreateGlyphRun(IGlyphTypeface glyphTypeface, double fontRenderingEmSize, IReadOnlyList<ushort> glyphIndices, IReadOnlyList<double> glyphAdvances, IReadOnlyList<Vector> glyphOffsets)
+        {
+            throw new NotImplementedException();
+        }
+
         public IGeometryImpl CreateLineGeometry(Point p1, Point p2)
         {
             throw new NotImplementedException();
