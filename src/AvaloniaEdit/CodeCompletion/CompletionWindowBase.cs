@@ -217,16 +217,20 @@ namespace AvaloniaEdit.CodeCompletion
                 // prevents crash when typing deadchar while CC window is open
                 if (e.Key == Key.DeadCharProcessed)
                     return;
-                e.Handled = RaiseEventPair(Window, null, KeyDownEvent,
-                                           new KeyEventArgs { Device = e.Device, Key = e.Key });
+                var keyEventArgs = (KeyEventArgs)Activator.CreateInstance(typeof(KeyEventArgs), true);
+                keyEventArgs.Device = e.Device;
+                keyEventArgs.Key = e.Key;
+                e.Handled = RaiseEventPair(Window, null, KeyDownEvent, keyEventArgs);
             }
 
             public override void OnPreviewKeyUp(KeyEventArgs e)
             {
                 if (e.Key == Key.DeadCharProcessed)
                     return;
-                e.Handled = RaiseEventPair(Window, null, KeyUpEvent,
-                    new KeyEventArgs { Device = e.Device, Key = e.Key });
+                var keyEventArgs = (KeyEventArgs)Activator.CreateInstance(typeof(KeyEventArgs), true);
+                keyEventArgs.Device = e.Device;
+                keyEventArgs.Key = e.Key;
+                e.Handled = RaiseEventPair(Window, null, KeyUpEvent, keyEventArgs);
             }
         }
         #endregion

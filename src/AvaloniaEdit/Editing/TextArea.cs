@@ -829,11 +829,9 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public void PerformTextInput(string text)
         {
-            var e = new TextInputEventArgs
-            {
-                Text = text,
-                RoutedEvent = TextInputEvent
-            };
+            var e = (TextInputEventArgs)Activator.CreateInstance(typeof(TextInputEventArgs), true);
+            e.Text = text;
+            e.RoutedEvent = TextInputEvent;
             PerformTextInput(e);
         }
 

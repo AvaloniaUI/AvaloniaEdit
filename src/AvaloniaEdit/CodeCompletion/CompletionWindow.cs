@@ -173,8 +173,10 @@ namespace AvaloniaEdit.CodeCompletion
 
         private void TextArea_PreviewTextInput(object sender, TextInputEventArgs e)
         {
-            e.Handled = RaiseEventPair(this, null, TextInputEvent,
-                                       new TextInputEventArgs { Device = e.Device, Text = e.Text });
+            var textInputEventArgs = (TextInputEventArgs)Activator.CreateInstance(typeof(TextInputEventArgs), true);
+            textInputEventArgs.Device = e.Device;
+            textInputEventArgs.Text = e.Text;
+            e.Handled = RaiseEventPair(this, null, TextInputEvent, textInputEventArgs);
         }
 
         private void TextArea_MouseWheel(object sender, PointerWheelEventArgs e)
