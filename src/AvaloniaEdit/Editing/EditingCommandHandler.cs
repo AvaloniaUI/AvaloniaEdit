@@ -24,7 +24,6 @@ using Avalonia;
 using AvaloniaEdit.Document;
 using Avalonia.Input;
 using AvaloniaEdit.Utils;
-using System.Threading.Tasks;
 
 namespace AvaloniaEdit.Editing
 {

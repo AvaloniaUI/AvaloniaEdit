@@ -21,7 +21,6 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
-using Avalonia.Data;
 
 namespace AvaloniaEdit.Editing
 {

@@ -21,7 +21,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using Avalonia.Media;
-using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Highlighting

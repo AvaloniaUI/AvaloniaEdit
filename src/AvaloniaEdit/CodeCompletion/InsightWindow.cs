@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Avalonia.Controls.Platform;
 using AvaloniaEdit.Editing;
 
 namespace AvaloniaEdit.CodeCompletion

@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls.Primitives;
@@ -30,7 +29,7 @@ using Avalonia.Media.TextFormatting;
 
 namespace AvaloniaEdit.Rendering
 {
-   /// <summary>
+	/// <summary>
 	/// Helper for creating a PathGeometry.
 	/// </summary>
 	public sealed class BackgroundGeometryBuilder
