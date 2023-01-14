@@ -19,7 +19,6 @@
 using System;
 using System.Diagnostics;
 using Avalonia.Media;
-using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Utils;

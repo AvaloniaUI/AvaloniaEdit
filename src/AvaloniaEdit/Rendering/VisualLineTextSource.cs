@@ -18,21 +18,18 @@
 
 using System;
 using System.Diagnostics;
-
-using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Utilities;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Utils;
-using JetBrains.Annotations;
 using ITextSource = Avalonia.Media.TextFormatting.ITextSource;
 
 namespace AvaloniaEdit.Rendering
 {
-   /// <summary>
+	/// <summary>
 	/// WPF TextSource implementation that creates TextRuns for a VisualLine.
 	/// </summary>
-   internal sealed class VisualLineTextSource : ITextSource, ITextRunConstructionContext
+	internal sealed class VisualLineTextSource : ITextSource, ITextRunConstructionContext
 	{
 		public VisualLineTextSource(VisualLine visualLine)
 		{

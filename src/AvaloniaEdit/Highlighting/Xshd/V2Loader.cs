@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
-using Avalonia.Markup.Xaml.Converters;
 using Avalonia.Media;
 using AvaloniaEdit.Utils;
 

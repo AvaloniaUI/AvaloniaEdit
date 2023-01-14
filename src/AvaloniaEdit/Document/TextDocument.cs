@@ -25,7 +25,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using AvaloniaEdit.Utils;
-using Avalonia.Threading;
 using System.Threading;
 
 namespace AvaloniaEdit.Document

@@ -18,7 +18,6 @@
 
 using System;
 using System.Text.RegularExpressions;
-using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Rendering
 {
