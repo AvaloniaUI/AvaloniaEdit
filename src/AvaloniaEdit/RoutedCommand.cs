@@ -21,22 +21,29 @@ namespace AvaloniaEdit
 
         static RoutedCommand()
         {
-            CanExecuteEvent.AddClassHandler<IRoutedCommandBindable>(CanExecuteEventHandler);
-            ExecutedEvent.AddClassHandler<IRoutedCommandBindable>(ExecutedEventHandler);
+            CanExecuteEvent.AddClassHandler<Interactive>(CanExecuteEventHandler);
+            ExecutedEvent.AddClassHandler<Interactive>(ExecutedEventHandler);
         }
 
-        private static void CanExecuteEventHandler(IRoutedCommandBindable control, CanExecuteRoutedEventArgs args)
+        private static void CanExecuteEventHandler(Interactive control, CanExecuteRoutedEventArgs args)
         {
-            var binding = control.CommandBindings.Where(c => c != null)
-                .FirstOrDefault(c => c.Command == args.Command && c.DoCanExecute(control, args));
-            args.CanExecute = binding != null;
+            if (control is IRoutedCommandBindable bindable)
+            {
+                var binding = bindable.CommandBindings.Where(c => c != null)
+               .FirstOrDefault(c => c.Command == args.Command && c.DoCanExecute(control, args));
+                args.CanExecute = binding != null;
+            }
         }
 
-        private static void ExecutedEventHandler(IRoutedCommandBindable control, ExecutedRoutedEventArgs args)
+        private static void ExecutedEventHandler(Interactive control, ExecutedRoutedEventArgs args)
         {
-            // ReSharper disable once UnusedVariable
-            var binding = control.CommandBindings.Where(c => c != null)
-                .FirstOrDefault(c => c.Command == args.Command && c.DoExecuted(control, args));
+            if (control is IRoutedCommandBindable bindable)
+            {
+                // ReSharper disable once UnusedVariable
+                var binding = bindable.CommandBindings.Where(c => c != null)
+                    .FirstOrDefault(c => c.Command == args.Command && c.DoExecuted(control, args));
+
+            }
         }
 
         public static RoutedEvent<CanExecuteRoutedEventArgs> CanExecuteEvent { get; } = RoutedEvent.Register<CanExecuteRoutedEventArgs>(nameof(CanExecuteEvent), RoutingStrategies.Bubble, typeof(RoutedCommand));
@@ -79,7 +86,7 @@ namespace AvaloniaEdit
         }
     }
 
-    public interface IRoutedCommandBindable : IInteractive
+    public interface IRoutedCommandBindable
     {
         IList<RoutedCommandBinding> CommandBindings { get; }
     }

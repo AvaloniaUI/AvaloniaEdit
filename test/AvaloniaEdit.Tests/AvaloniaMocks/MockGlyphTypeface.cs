@@ -1,29 +1,26 @@
-﻿using Avalonia.Platform;
+﻿using Avalonia.Media;
 
 using System;
 
 namespace AvaloniaEdit.AvaloniaMocks
 {
-    public class MockGlyphTypeface : IGlyphTypefaceImpl
+    public class MockGlyphTypeface : IGlyphTypeface
     {
-        public const int GlyphAdvance = 8;
-        public const short DefaultFontSize = 10;
-        public const int GlyphAscent = 2;
-        public const int GlyphDescent = 10;
+        public FontMetrics Metrics => new FontMetrics
+        {
+            DesignEmHeight = 10,
+            Ascent = 2,
+            Descent = 10,
+            IsFixedPitch = true
+        };
 
-        public short DesignEmHeight => DefaultFontSize;
-        public int Ascent => GlyphAscent;
-        public int Descent => GlyphDescent;
-        public int LineGap { get; }
-        public int UnderlinePosition { get; }
-        public int UnderlineThickness { get; }
-        public int StrikethroughPosition { get; }
-        public int StrikethroughThickness { get; }
-        public bool IsFixedPitch { get; }
+        public int GlyphCount => 1337;
+
+        public FontSimulations FontSimulations => throw new NotImplementedException();
 
         public ushort GetGlyph(uint codepoint)
         {
-            return 0;
+            return (ushort)codepoint;
         }
 
         public ushort[] GetGlyphs(ReadOnlySpan<uint> codepoints)
@@ -33,7 +30,14 @@ namespace AvaloniaEdit.AvaloniaMocks
 
         public int GetGlyphAdvance(ushort glyph)
         {
-            return GlyphAdvance;
+            return 8;
+        }
+
+        public bool TryGetGlyph(uint codepoint, out ushort glyph)
+        {
+            glyph = 8;
+
+            return true;
         }
 
         public int[] GetGlyphAdvances(ReadOnlySpan<ushort> glyphs)
@@ -42,12 +46,29 @@ namespace AvaloniaEdit.AvaloniaMocks
 
             for (var i = 0; i < advances.Length; i++)
             {
-                advances[i] = GlyphAdvance;
+                advances[i] = 8;
             }
 
             return advances;
         }
 
         public void Dispose() { }
+
+        public bool TryGetTable(uint tag, out byte[] table)
+        {
+            table = null;
+            return false;
+        }
+
+        public bool TryGetGlyphMetrics(ushort glyph, out GlyphMetrics metrics)
+        {
+            metrics = new GlyphMetrics
+            {
+                Width = 10,
+                Height = 10
+            };
+
+            return true;
+        }
     }
 }

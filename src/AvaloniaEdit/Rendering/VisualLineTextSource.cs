@@ -51,9 +51,9 @@ namespace AvaloniaEdit.Rendering
 						TextRun run = element.CreateTextRun(textSourceCharacterIndex, this);
 						if (run == null)
 							throw new ArgumentNullException(element.GetType().Name + ".CreateTextRun");
-						if (run.TextSourceLength == 0)
+						if (run.Length == 0)
 							throw new ArgumentException("The returned TextRun must not have length 0.", element.GetType().Name + ".Length");
-						if (relativeOffset + run.TextSourceLength > element.VisualLength)
+						if (relativeOffset + run.Length > element.VisualLength)
 							throw new ArgumentException("The returned TextRun is too long.", element.GetType().Name + ".CreateTextRun");
 						if (run is InlineObjectRun inlineRun) {
 							inlineRun.VisualLine = VisualLine;
@@ -102,7 +102,7 @@ namespace AvaloniaEdit.Rendering
             return new FormattedTextRun(textElement, GlobalTextRunProperties);
         }
 
-        public ReadOnlySlice<char> GetPrecedingText(int textSourceCharacterIndexLimit)
+        public ReadOnlyMemory<char> GetPrecedingText(int textSourceCharacterIndexLimit)
 		{
 			try {
 				foreach (VisualLineElement element in VisualLine.Elements) {
@@ -118,7 +118,7 @@ namespace AvaloniaEdit.Rendering
 					}
 				}
 				
-				return ReadOnlySlice<char>.Empty;
+				return ReadOnlyMemory<char>.Empty;
 			} catch (Exception ex) {
 				Debug.WriteLine(ex.ToString());
 				throw;

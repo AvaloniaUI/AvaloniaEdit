@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Platform;
@@ -112,17 +113,10 @@ namespace AvaloniaEdit
         public static RoutedCommand Redo { get; } = new RoutedCommand(nameof(Redo), new KeyGesture(Key.Y, PlatformCommandKey));
         public static RoutedCommand Find { get; } = new RoutedCommand(nameof(Find), new KeyGesture(Key.F, PlatformCommandKey));
         public static RoutedCommand Replace { get; } = new RoutedCommand(nameof(Replace), GetReplaceKeyGesture());
-
-        private static OperatingSystemType GetOperatingSystemType()
-        {
-            return AvaloniaLocator.Current.GetService<IRuntimePlatform>().GetRuntimeInfo().OperatingSystem;
-        }
         
         private static KeyModifiers GetPlatformCommandKey()
-        {
-            var os = GetOperatingSystemType();
-            
-            if (os == OperatingSystemType.OSX)
+        {            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 return KeyModifiers.Meta;
             }
@@ -132,9 +126,7 @@ namespace AvaloniaEdit
 
         private static KeyGesture GetReplaceKeyGesture()
         {
-            var os = GetOperatingSystemType();
-
-            if (os == OperatingSystemType.OSX)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 return new KeyGesture(Key.F, KeyModifiers.Meta | KeyModifiers.Alt);
             }

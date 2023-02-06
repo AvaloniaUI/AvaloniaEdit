@@ -167,7 +167,7 @@ namespace AvaloniaEdit.Rendering
 				if (startVisualColumn == VisualColumn)
 					return new TabGlyphRun(this, TextRunProperties);
 				else if (startVisualColumn == VisualColumn + 1)
-					return new TextCharacters(new ReadOnlySlice<char>("\t".AsMemory(), VisualColumn + 1, 1), TextRunProperties);
+					return new TextCharacters("\t".AsMemory(), TextRunProperties);
 				else
 					throw new ArgumentOutOfRangeException(nameof(startVisualColumn));
 			}

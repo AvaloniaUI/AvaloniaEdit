@@ -4,6 +4,7 @@ using System.IO;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Platform;
 
 using Moq;
@@ -140,6 +141,21 @@ namespace AvaloniaEdit.AvaloniaMocks
         }
 
         public IGeometryImpl BuildGlyphRunGeometry(GlyphRun glyphRun)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGlyphRunImpl CreateGlyphRun(IGlyphTypeface glyphTypeface, double fontRenderingEmSize, IReadOnlyList<GlyphInfo> glyphInfos, Point baselineOrigin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IPlatformRenderInterfaceContext CreateBackendContext(IPlatformGraphicsContext graphicsApiContext)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsSupportedBitmapPixelFormat(PixelFormat format)
         {
             throw new NotImplementedException();
         }
