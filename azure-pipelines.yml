@@ -17,6 +17,7 @@ jobs:
     inputs:
       packagesToPack: 'src\AvaloniaEdit\AvaloniaEdit.csproj;src\AvaloniaEdit.TextMate\AvaloniaEdit.TextMate.csproj'
       command: pack
+      configuration: 'Release'
       outputDir: '$(Build.ArtifactStagingDirectory)/NuGet'
       verbosityPack: normal
       versioningScheme: byEnvVar
