@@ -68,8 +68,6 @@ namespace AvaloniaEdit.Rendering
 				offset,
 				DocumentLength - relativeOffset);
 
-            //var bufferOffset = RelativeTextOffset;
-
 			var textSlice = text.Text.AsMemory().Slice(text.Offset, text.Count);
 
             return new TextCharacters(textSlice, TextRunProperties);
