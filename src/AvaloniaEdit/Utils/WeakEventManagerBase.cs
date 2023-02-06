@@ -338,20 +338,20 @@ namespace AvaloniaEdit.Utils
                     }
                 }
             }
+        }
+    }
 
-            internal sealed class Disposable : IDisposable
-            {
-                private volatile Action _dispose;
-                public Disposable(Action dispose)
-                {
-                    _dispose = dispose;
-                }
-                public bool IsDisposed => _dispose == null;
-                public void Dispose()
-                {
-                    Interlocked.Exchange(ref _dispose, null)?.Invoke();
-                }
-            }
+    internal sealed class Disposable : IDisposable
+    {
+        private volatile Action _dispose;
+        public Disposable(Action dispose)
+        {
+            _dispose = dispose;
+        }
+        public bool IsDisposed => _dispose == null;
+        public void Dispose()
+        {
+            Interlocked.Exchange(ref _dispose, null)?.Invoke();
         }
     }
 }

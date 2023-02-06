@@ -40,13 +40,15 @@ namespace AvaloniaEdit.AvaloniaMocks
             return true;
         }
 
+        public static int GlyphAdvance => 8;
+
         public int[] GetGlyphAdvances(ReadOnlySpan<ushort> glyphs)
         {
             var advances = new int[glyphs.Length];
 
             for (var i = 0; i < advances.Length; i++)
             {
-                advances[i] = 8;
+                advances[i] = GlyphAdvance;
             }
 
             return advances;

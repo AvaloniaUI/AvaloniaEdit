@@ -54,7 +54,7 @@ namespace AvaloniaEdit.Tests.Rendering
             VisualLine visualLine = textView.GetOrConstructVisualLine(document.Lines[0]);
 
             Assert.AreEqual(1, visualLine.TextLines.Count);
-            Assert.AreEqual("hello world", new string(visualLine.TextLines[0].TextRuns[0].Text.Buffer.Span));
+            Assert.AreEqual("hello world", new string(visualLine.TextLines[0].TextRuns[0].Text.Span));
         }
     }
 }

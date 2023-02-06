@@ -6,7 +6,6 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Platform;
-
 using Moq;
 
 namespace AvaloniaEdit.AvaloniaMocks
@@ -147,7 +146,7 @@ namespace AvaloniaEdit.AvaloniaMocks
 
         public IGlyphRunImpl CreateGlyphRun(IGlyphTypeface glyphTypeface, double fontRenderingEmSize, IReadOnlyList<GlyphInfo> glyphInfos, Point baselineOrigin)
         {
-            throw new NotImplementedException();
+            return new MockGlyphRun(glyphInfos);
         }
 
         public IPlatformRenderInterfaceContext CreateBackendContext(IPlatformGraphicsContext graphicsApiContext)
