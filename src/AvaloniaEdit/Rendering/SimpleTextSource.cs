@@ -37,7 +37,7 @@ namespace AvaloniaEdit.Rendering
 		{
 			if (textSourceCharacterIndex < _text.Length)
 				return new TextCharacters(
-					new ReadOnlySlice<char>(_text.AsMemory(), textSourceCharacterIndex,
+					_text.AsMemory().Slice(textSourceCharacterIndex,
 						_text.Length - textSourceCharacterIndex), _properties);
 			
 			return new TextEndOfParagraph(1);

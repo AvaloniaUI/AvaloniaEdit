@@ -37,7 +37,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             return true;
         }
 
-        public IGlyphTypefaceImpl CreateGlyphTypeface(Typeface typeface)
+        public IGlyphTypeface CreateGlyphTypeface(Typeface typeface)
         {
             return new MockGlyphTypeface();
         }

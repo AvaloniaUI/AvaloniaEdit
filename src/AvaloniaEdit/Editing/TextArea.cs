@@ -128,13 +128,13 @@ namespace AvaloniaEdit.Editing
             }
         }
 
-        internal void AddChild(IVisual visual)
+        internal void AddChild(Visual visual)
         {
             VisualChildren.Add(visual);
             InvalidateArrange();
         }
 
-        internal void RemoveChild(IVisual visual)
+        internal void RemoveChild(Visual visual)
         {
             VisualChildren.Remove(visual);
         }
@@ -686,14 +686,14 @@ namespace AvaloniaEdit.Editing
             });
         }
 
-        public static readonly DirectProperty<TextArea, ObservableCollection<IControl>> LeftMarginsProperty
-            = AvaloniaProperty.RegisterDirect<TextArea, ObservableCollection<IControl>>(nameof(LeftMargins),
+        public static readonly DirectProperty<TextArea, ObservableCollection<Control>> LeftMarginsProperty
+            = AvaloniaProperty.RegisterDirect<TextArea, ObservableCollection<Control>>(nameof(LeftMargins),
                 c => c.LeftMargins);
 
         /// <summary>
         /// Gets the collection of margins displayed to the left of the text view.
         /// </summary>
-        public ObservableCollection<IControl> LeftMargins { get; } = new ObservableCollection<IControl>();
+        public ObservableCollection<Control> LeftMargins { get; } = new ObservableCollection<Control>();
 
         private void LeftMargins_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -1122,10 +1122,10 @@ namespace AvaloniaEdit.Editing
             }
         }
 
-        public bool BringIntoView(IControl target, Rect targetRect) =>
+        public bool BringIntoView(Control target, Rect targetRect) =>
             _logicalScrollable?.BringIntoView(target, targetRect) ?? default(bool);
 
-        IControl ILogicalScrollable.GetControlInDirection(NavigationDirection direction, IControl from)
+        Control ILogicalScrollable.GetControlInDirection(NavigationDirection direction, Control from)
             => _logicalScrollable?.GetControlInDirection(direction, from);
 
         public void RaiseScrollInvalidated(EventArgs e)
@@ -1168,7 +1168,7 @@ namespace AvaloniaEdit.Editing
                 }
             }
 
-            public IVisual TextViewVisual => _textArea;
+            public Visual TextViewVisual => _textArea;
 
             public bool SupportsPreedit => false;
 

@@ -68,14 +68,7 @@ namespace AvaloniaEdit.Rendering
 				offset,
 				DocumentLength - relativeOffset);
 
-            var bufferOffset = RelativeTextOffset;
-
-            if (bufferOffset + text.Count > text.Text.Length)
-            {
-                bufferOffset = 0;
-            }
-
-            var textSlice = new ReadOnlySlice<char>(text.Text.AsMemory(), text.Offset, text.Count, bufferOffset);
+			var textSlice = text.Text.AsMemory().Slice(text.Offset, text.Count);
 
             return new TextCharacters(textSlice, TextRunProperties);
         }
@@ -88,7 +81,7 @@ namespace AvaloniaEdit.Rendering
 		}
 
 		/// <inheritdoc/>
-		public override ReadOnlySlice<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
+		public override ReadOnlyMemory<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
 		{
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
@@ -97,7 +90,7 @@ namespace AvaloniaEdit.Rendering
 			
 			var text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset, relativeOffset);
 			
-			return new ReadOnlySlice<char>(text.Text.AsMemory(), text.Offset, text.Count);
+			return text.Text.AsMemory().Slice(text.Offset, text.Count);
 		}
 		
 		/// <inheritdoc/>

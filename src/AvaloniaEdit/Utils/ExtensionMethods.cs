@@ -25,6 +25,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Reactive;
 using Avalonia.VisualTree;
 
 namespace AvaloniaEdit.Utils
@@ -214,7 +215,7 @@ namespace AvaloniaEdit.Utils
         #endregion
 
         #region Snap to device pixels
-        public static Point SnapToDevicePixels(this Point p, IVisual targetVisual)
+        public static Point SnapToDevicePixels(this Point p, Visual targetVisual)
         {
             var root = targetVisual.GetVisualRoot();
 
@@ -300,6 +301,11 @@ namespace AvaloniaEdit.Utils
         public static T PeekOrDefault<T>(this ImmutableStack<T> stack)
         {
             return stack.IsEmpty ? default(T) : stack.Peek();
+        }
+
+        public static IDisposable Subscribe<T>(this IObservable<T> observable, Action<T> action)
+        {
+            return observable.Subscribe(new AnonymousObserver<T>(action));
         }
     }
 }

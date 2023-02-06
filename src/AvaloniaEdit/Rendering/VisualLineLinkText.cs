@@ -110,7 +110,12 @@ namespace AvaloniaEdit.Rendering
             if (!e.Handled && LinkIsClickable(e.KeyModifiers))
             {
                 var eventArgs = new OpenUriRoutedEventArgs(NavigateUri) { RoutedEvent = OpenUriEvent };
-                e.Source.RaiseEvent(eventArgs);
+
+                if(e.Source is Interactive interactive)
+                {
+                    interactive.RaiseEvent(eventArgs);
+                }
+
                 e.Handled = true;
             }
         }

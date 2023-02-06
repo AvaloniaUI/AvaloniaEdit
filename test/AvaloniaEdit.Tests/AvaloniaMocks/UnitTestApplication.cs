@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Reactive.Concurrency;
-using System.Reactive.Disposables;
 using System.Reflection;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Layout;
 using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.AvaloniaMocks
 {
@@ -30,7 +28,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             AvaloniaLocator.CurrentMutable.BindToSelf<Application>(app);
             var updateServices = Dispatcher.UIThread.GetType().GetMethod("UpdateServices", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             updateServices?.Invoke(Dispatcher.UIThread, null);
-            return Disposable.Create(() =>
+            return new Disposable(() =>
             {
                 updateServices?.Invoke(Dispatcher.UIThread, null);
                 AvaloniaLocator.CurrentMutable = null;
@@ -52,9 +50,7 @@ namespace AvaloniaEdit.AvaloniaMocks
                 .Bind<IRuntimePlatform>().ToConstant(Services.Platform)
                 .Bind<IPlatformRenderInterface>().ToConstant(Services.RenderInterface)
                 .Bind<IPlatformThreadingInterface>().ToConstant(Services.ThreadingInterface)
-                .Bind<IScheduler>().ToConstant(Services.Scheduler)
                 .Bind<ICursorFactory>().ToConstant(Services.StandardCursorFactory)
-                .Bind<IStyler>().ToConstant(Services.Styler)
                 .Bind<IWindowingPlatform>().ToConstant(Services.WindowingPlatform)
                 .Bind<PlatformHotkeyConfiguration>().ToConstant(Services.PlatformHotkeyConfiguration)
                 .Bind<IFontManagerImpl>().ToConstant(Services.FontManagerImpl)

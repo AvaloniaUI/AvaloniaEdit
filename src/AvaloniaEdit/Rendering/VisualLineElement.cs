@@ -106,9 +106,9 @@ namespace AvaloniaEdit.Rendering
 		/// Retrieves the text span immediately before the visual column.
 		/// </summary>
 		/// <remarks>This method is used for word-wrapping in bidirectional text.</remarks>
-		public virtual ReadOnlySlice<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
+		public virtual ReadOnlyMemory<char> GetPrecedingText(int visualColumnLimit, ITextRunConstructionContext context)
 		{
-			return ReadOnlySlice<char>.Empty;
+			return ReadOnlyMemory<char>.Empty;
 		}
 		
 		/// <summary>

@@ -33,7 +33,7 @@ namespace AvaloniaEdit.Rendering
         private const double PointerHoverHeight = 2;
         private static readonly TimeSpan PointerHoverTime = TimeSpan.FromMilliseconds(400);
 
-        private readonly IControl _target;
+        private readonly Control _target;
 
         private DispatcherTimer _timer;
         private Point _hoverStartPoint;
@@ -43,7 +43,7 @@ namespace AvaloniaEdit.Rendering
         /// <summary>
         /// Creates a new instance and attaches itself to the <paramref name="target" /> UIElement.
         /// </summary>
-        public PointerHoverLogic(IControl target)
+        public PointerHoverLogic(Control target)
         {
             _target = target ?? throw new ArgumentNullException(nameof(target));
             _target.PointerExited += OnPointerLeave;

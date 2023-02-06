@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive.Concurrency;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
@@ -21,7 +20,6 @@ namespace AvaloniaEdit.AvaloniaMocks
             platform: new AppBuilder().RuntimePlatform,
             renderInterface: new MockPlatformRenderInterface(),
             standardCursorFactory: Mock.Of<ICursorFactory>(),
-            styler: new Styler(),
             theme: () => CreateDefaultTheme(),
             threadingInterface: Mock.Of<IPlatformThreadingInterface>(x => x.CurrentThreadIsLoopThread == true),
             windowingPlatform: new MockWindowingPlatform(),
@@ -33,9 +31,6 @@ namespace AvaloniaEdit.AvaloniaMocks
 
         public static readonly TestServices MockPlatformWrapper = new TestServices(
             platform: Mock.Of<IRuntimePlatform>());
-
-        public static readonly TestServices MockStyler = new TestServices(
-            styler: Mock.Of<IStyler>());
 
         public static readonly TestServices MockThreadingInterface = new TestServices(
             threadingInterface: Mock.Of<IPlatformThreadingInterface>(x => x.CurrentThreadIsLoopThread == true));
@@ -49,9 +44,6 @@ namespace AvaloniaEdit.AvaloniaMocks
             keyboardNavigation: new KeyboardNavigationHandler(),
             inputManager: new InputManager());
 
-        public static readonly TestServices RealStyler = new TestServices(
-            styler: new Styler());
-
         public TestServices(
             IAssetLoader assetLoader = null,
             IFocusManager focusManager = null,
@@ -63,9 +55,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             IRuntimePlatform platform = null,
             IPlatformRenderInterface renderInterface = null,
             IRenderLoop renderLoop = null,
-            IScheduler scheduler = null,
             ICursorFactory standardCursorFactory = null,
-            IStyler styler = null,
             Func<Styles> theme = null,
             IPlatformThreadingInterface threadingInterface = null,
             IWindowImpl windowImpl = null,
@@ -83,9 +73,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             MouseDevice = mouseDevice;
             Platform = platform;
             RenderInterface = renderInterface;
-            Scheduler = scheduler;
             StandardCursorFactory = standardCursorFactory;
-            Styler = styler;
             Theme = theme;
             ThreadingInterface = threadingInterface;
             WindowImpl = windowImpl;
@@ -104,9 +92,7 @@ namespace AvaloniaEdit.AvaloniaMocks
         public Func<IMouseDevice> MouseDevice { get; }
         public IRuntimePlatform Platform { get; }
         public IPlatformRenderInterface RenderInterface { get; }
-        public IScheduler Scheduler { get; }
         public ICursorFactory StandardCursorFactory { get; }
-        public IStyler Styler { get; }
         public Func<Styles> Theme { get; }
         public IPlatformThreadingInterface ThreadingInterface { get; }
         public IWindowImpl WindowImpl { get; }
@@ -127,9 +113,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             IRuntimePlatform platform = null,
             IPlatformRenderInterface renderInterface = null,
             IRenderLoop renderLoop = null,
-            IScheduler scheduler = null,
             ICursorFactory standardCursorFactory = null,
-            IStyler styler = null,
             Func<Styles> theme = null,
             IPlatformThreadingInterface threadingInterface = null,
             IWindowImpl windowImpl = null,
@@ -148,9 +132,7 @@ namespace AvaloniaEdit.AvaloniaMocks
                 mouseDevice: mouseDevice ?? MouseDevice,
                 platform: platform ?? Platform,
                 renderInterface: renderInterface ?? RenderInterface,
-                scheduler: scheduler ?? Scheduler,
                 standardCursorFactory: standardCursorFactory ?? StandardCursorFactory,
-                styler: styler ?? Styler,
                 theme: theme ?? Theme,
                 threadingInterface: threadingInterface ?? ThreadingInterface,
                 windowingPlatform: windowingPlatform ?? WindowingPlatform,

@@ -75,7 +75,7 @@ namespace AvaloniaEdit.Rendering
 			if (length <= 0)
 				throw new ArgumentOutOfRangeException(nameof(length), length, "Value must be positive");
 
-			TextSourceLength = length;
+			Length = length;
 			Properties = properties ?? throw new ArgumentNullException(nameof(properties));
 			Element = element ?? throw new ArgumentNullException(nameof(element));
 
@@ -95,7 +95,7 @@ namespace AvaloniaEdit.Rendering
 
 		public override TextRunProperties? Properties { get; }
 
-		public override int TextSourceLength { get; }
+		public override int Length { get; }
 
 		public override double Baseline
 		{

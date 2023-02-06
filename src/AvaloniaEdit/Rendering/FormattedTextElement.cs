@@ -118,7 +118,7 @@ namespace AvaloniaEdit.Rendering
 		/// </summary>
 		public FormattedTextElement Element { get; }
 
-		public override ReadOnlySlice<char> Text { get; }
+		public override ReadOnlyMemory<char> Text { get; }
 
 		/// <inheritdoc/>
 		public override TextRunProperties Properties { get; }
