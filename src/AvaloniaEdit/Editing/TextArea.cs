@@ -47,8 +47,6 @@ namespace AvaloniaEdit.Editing
     /// </summary>
     public class TextArea : TemplatedControl, ITextEditorComponent, IRoutedCommandBindable, ILogicalScrollable
     {
-		private ITextEditable _textEditable;
-
         /// <summary>
         /// This is the extra scrolling space that occurs after the last line.
         /// </summary>
@@ -1138,6 +1136,7 @@ namespace AvaloniaEdit.Editing
 
         private class TextAreaTextInputMethodClient : ITextInputMethodClient
         {
+            private ITextEditable _textEditable;
             private TextArea _textArea;
 
             public TextAreaTextInputMethodClient()
