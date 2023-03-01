@@ -139,7 +139,16 @@
     <value>Match whole words</value>
   </data>
   <data name="SearchNoMatchesFoundText" xml:space="preserve">
-    <value>No matches found!</value>
+    <value>No matches found</value>
+  </data>
+  <data name="Search1Match" xml:space="preserve">
+    <value>1 match</value>
+  </data>
+  <data name="SearchXMatches" xml:space="preserve">
+    <value>{0} matches</value>
+  </data>
+  <data name="SearchXOfY" xml:space="preserve">
+    <value>{0} of {1}</value>
   </data>
   <data name="SearchReplaceAll" xml:space="preserve">
     <value>Replace all (Alt+A)</value>

@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
@@ -44,6 +43,7 @@ namespace AvaloniaEdit.Search
         private TextBox _searchTextBox;
         private TextEditor _textEditor { get; set; }
         private Border _border;
+        private int _currentSearchResultIndex = -1;
 
         #region DependencyProperties
         /// <summary>
@@ -330,7 +330,9 @@ namespace AvaloniaEdit.Search
                          _renderer.CurrentResults.FirstSegment;
             if (result != null)
             {
+                _currentSearchResultIndex = GetSearchResultIndex(_renderer.CurrentResults, result);
                 SelectResult(result);
+                UpdateSearchLabel();
             }
         }
 
@@ -346,7 +348,9 @@ namespace AvaloniaEdit.Search
                 result = _renderer.CurrentResults.LastSegment;
             if (result != null)
             {
+                _currentSearchResultIndex = GetSearchResultIndex(_renderer.CurrentResults, result);
                 SelectResult(result);
+                UpdateSearchLabel();
             }
         }
 
@@ -389,6 +393,7 @@ namespace AvaloniaEdit.Search
             if (IsClosed)
                 return;
             _renderer.CurrentResults.Clear();
+            _currentSearchResultIndex = -1;
 
             if (!string.IsNullOrEmpty(SearchPattern))
             {
@@ -399,29 +404,55 @@ namespace AvaloniaEdit.Search
                 }
 
                 // We cast from ISearchResult to SearchResult; this is safe because we always use the built-in strategy
-                foreach (var result in _strategy.FindAll(_textArea.Document, 0, _textArea.Document.TextLength).Cast<SearchResult>())
+                foreach (var result in _strategy.FindAll(_textArea.Document, 0, _textArea.Document.TextLength)
+                             .Cast<SearchResult>())
                 {
+                    _renderer.CurrentResults.Add(result);
                     if (changeSelection && result.StartOffset >= offset)
                     {
                         SelectResult(result);
+                        _currentSearchResultIndex = _renderer.CurrentResults.Count - 1;
                         changeSelection = false;
                     }
-                    _renderer.CurrentResults.Add(result);
                 }
             }
 
-            if (_messageView != null)
+            UpdateSearchLabel();
+            _textArea.TextView.InvalidateLayer(KnownLayer.Selection);
+        }
+
+        void UpdateSearchLabel()
+        {
+            if (_messageView == null || _messageViewContent == null)
+                return;
+
+            _messageView.IsVisible = true;
+
+            if (!_renderer.CurrentResults.Any())
             {
-                if (!_renderer.CurrentResults.Any())
+                _messageViewContent.Text = SR.SearchNoMatchesFoundText;
+            }
+            else
+            {
+                if (_currentSearchResultIndex == -1)
                 {
-                    _messageViewContent.Text = SR.SearchNoMatchesFoundText;
-                    _messageView.IsVisible = true;
+                    if (_renderer.CurrentResults.Count == 1)
+                    {
+                        _messageViewContent.Text = SR.Search1Match;
+                    }
+                    else
+                    {
+                        _messageViewContent.Text = string.Format(SR.SearchXMatches,
+                            _renderer.CurrentResults.Count);                        
+                    }
                 }
                 else
-                    _messageView.IsVisible = false;
+                {
+                    _messageViewContent.Text = string.Format(SR.SearchXOfY,
+                        _currentSearchResultIndex + 1,
+                        _renderer.CurrentResults.Count);
+                }
             }
-
-            _textArea.TextView.InvalidateLayer(KnownLayer.Selection);
         }
 
         private void SelectResult(TextSegment result)
@@ -454,7 +485,7 @@ namespace AvaloniaEdit.Search
                     }
                     if (_searchTextBox != null)
                     {
-                        if (_validationError != null)
+                        if (_validationError != null && _messageView != null && _messageViewContent != null)
                         {
                             _messageViewContent.Text = SR.SearchErrorText + " " + _validationError;
                             _messageView.IsVisible = true;
@@ -491,6 +522,7 @@ namespace AvaloniaEdit.Search
 
             // Clear existing search results so that the segments don't have to be maintained
             _renderer.CurrentResults.Clear();
+            _currentSearchResultIndex = -1;
 
             _textArea.Focus();
         }
@@ -527,6 +559,20 @@ namespace AvaloniaEdit.Search
             e.Handled = true;
 
             base.OnGotFocus(e);
+        }
+        
+        int GetSearchResultIndex(TextSegmentCollection<SearchResult> searchResults, SearchResult match)
+        {
+            int index = 0;
+            foreach (SearchResult searchResult in searchResults)
+            {
+                if (searchResult.Equals(match))
+                    return index;
+                
+                index++;
+            }
+
+            return -1;
         }
 
         /// <summary>
