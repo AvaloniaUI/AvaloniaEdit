@@ -404,8 +404,7 @@ namespace AvaloniaEdit.Search
                 }
 
                 // We cast from ISearchResult to SearchResult; this is safe because we always use the built-in strategy
-                foreach (var result in _strategy.FindAll(_textArea.Document, 0, _textArea.Document.TextLength)
-                             .Cast<SearchResult>())
+                foreach (var result in _strategy.FindAll(_textArea.Document, 0, _textArea.Document.TextLength).Cast<SearchResult>())
                 {
                     _renderer.CurrentResults.Add(result);
                     if (changeSelection && result.StartOffset >= offset)
@@ -561,7 +560,7 @@ namespace AvaloniaEdit.Search
             base.OnGotFocus(e);
         }
         
-        int GetSearchResultIndex(TextSegmentCollection<SearchResult> searchResults, SearchResult match)
+        private static int GetSearchResultIndex(TextSegmentCollection<SearchResult> searchResults, SearchResult match)
         {
             int index = 0;
             foreach (SearchResult searchResult in searchResults)
