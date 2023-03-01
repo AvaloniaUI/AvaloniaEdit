@@ -24,15 +24,17 @@ using AvaloniaEdit.Rendering;
 
 namespace AvaloniaEdit.Search
 {
+    using Avalonia.Media.Immutable;
+
     internal class SearchResultBackgroundRenderer : IBackgroundRenderer
     {
         public TextSegmentCollection<SearchResult> CurrentResults { get; } = new TextSegmentCollection<SearchResult>();
 
         public KnownLayer Layer => KnownLayer.Background;
 
-        public SearchResultBackgroundRenderer()
+        public SearchResultBackgroundRenderer(IBrush brush)
         {
-            _markerBrush = Brushes.LightGreen;
+            _markerBrush = brush;
             _markerPen = new Pen(_markerBrush);
         }
 
@@ -72,7 +74,7 @@ namespace AvaloniaEdit.Search
                 {
                     AlignToWholePixels = true,
                     BorderThickness = _markerPen?.Thickness ?? 0,
-                    CornerRadius = 3
+                    CornerRadius = 0
                 };
                 geoBuilder.AddSegment(textView, result);
                 var geometry = geoBuilder.CreateGeometry();

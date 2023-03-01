@@ -109,6 +109,7 @@ namespace AvaloniaEdit.Search
         public static readonly StyledProperty<bool> IsReplaceModeProperty =
             AvaloniaProperty.Register<SearchPanel, bool>(nameof(IsReplaceMode));
 
+        
         /// <summary>
         /// Checks if replacemode is allowed
         /// </summary>
@@ -134,12 +135,11 @@ namespace AvaloniaEdit.Search
             set => SetValue(ReplacePatternProperty, value);
         }
 
-
         /// <summary>
         /// Dependency property for <see cref="MarkerBrush"/>.
         /// </summary>
         public static readonly StyledProperty<IBrush> MarkerBrushProperty =
-            AvaloniaProperty.Register<SearchPanel, IBrush>(nameof(MarkerBrush), Brushes.LightGreen);
+            AvaloniaProperty.Register<SearchPanel, IBrush>(nameof(MarkerBrush), new SolidColorBrush(Color.FromRgb(81, 92, 106)));
 
         /// <summary>
         /// Gets/sets the Brush used for marking search results in the TextView.
@@ -177,7 +177,7 @@ namespace AvaloniaEdit.Search
             // if no results are found, the "no matches found" message should not flicker.
             // if results are found by the next run, the message will be hidden inside DoSearch ...
             if (_renderer.CurrentResults.Any())
-                _messageView.IsOpen = false;
+                _messageView.IsVisible = false;
             _strategy = SearchStrategyFactory.Create(SearchPattern ?? "", !MatchCase, WholeWords, UseRegex ? SearchMode.RegEx : SearchMode.Normal);
             OnSearchOptionsChanged(new SearchOptionsChangedEventArgs(SearchPattern, MatchCase, UseRegex, WholeWords));
             DoSearch(true);
@@ -191,13 +191,6 @@ namespace AvaloniaEdit.Search
             SearchPatternProperty.Changed.Subscribe(SearchPatternChangedCallback);
 
             MarkerBrushProperty.Changed.Subscribe(MarkerBrushChangedCallback);
-        }
-
-        /// <summary>
-        /// Creates a new SearchPanel.
-        /// </summary>
-        private SearchPanel()
-        {
         }
 
         /// <summary>
@@ -251,7 +244,7 @@ namespace AvaloniaEdit.Search
         {
             _textArea = textArea;
 
-            _renderer = new SearchResultBackgroundRenderer();
+            _renderer = new SearchResultBackgroundRenderer(MarkerBrush);
             _currentDocument = textArea.Document;
             if (_currentDocument != null)
                 _currentDocument.TextChanged += TextArea_Document_TextChanged;
@@ -296,8 +289,8 @@ namespace AvaloniaEdit.Search
             base.OnApplyTemplate(e);
             _border = e.NameScope.Find<Border>("PART_Border");
             _searchTextBox = e.NameScope.Find<TextBox>("PART_searchTextBox");
-            _messageView = e.NameScope.Find<Popup>("PART_MessageView");
-            _messageViewContent = e.NameScope.Find<ContentPresenter>("PART_MessageContent");
+            _messageView = e.NameScope.Find<Panel>("PART_MessageView");
+            _messageViewContent = e.NameScope.Find<TextBlock>("PART_MessageContent");
         }
 
         private void ValidateSearchText()
@@ -387,8 +380,8 @@ namespace AvaloniaEdit.Search
             }
         }
 
-        private Popup _messageView;
-        private ContentPresenter _messageViewContent;
+        private Panel _messageView;
+        private TextBlock _messageViewContent;
         private string _validationError;
 
         private void DoSearch(bool changeSelection)
@@ -421,12 +414,11 @@ namespace AvaloniaEdit.Search
             {
                 if (!_renderer.CurrentResults.Any())
                 {
-                    _messageViewContent.Content = SR.SearchNoMatchesFoundText;
-                    _messageView.PlacementTarget = _searchTextBox;
-                    _messageView.IsOpen = true;
+                    _messageViewContent.Text = SR.SearchNoMatchesFoundText;
+                    _messageView.IsVisible = true;
                 }
                 else
-                    _messageView.IsOpen = false;
+                    _messageView.IsVisible = false;
             }
 
             _textArea.TextView.InvalidateLayer(KnownLayer.Selection);
@@ -464,9 +456,8 @@ namespace AvaloniaEdit.Search
                     {
                         if (_validationError != null)
                         {
-                            _messageViewContent.Content = SR.SearchErrorText + " " + _validationError;
-                            _messageView.PlacementTarget = _searchTextBox;
-                            _messageView.IsOpen = true;
+                            _messageViewContent.Text = SR.SearchErrorText + " " + _validationError;
+                            _messageView.IsVisible = true;
                         }
                     }
                     break;
@@ -493,7 +484,7 @@ namespace AvaloniaEdit.Search
         public void Close()
         {
             _textArea.RemoveChild(this);
-            _messageView.IsOpen = false;
+            _messageView.IsVisible = false;
             _textArea.TextView.BackgroundRenderers.Remove(_renderer);
             
             IsClosed = true;
