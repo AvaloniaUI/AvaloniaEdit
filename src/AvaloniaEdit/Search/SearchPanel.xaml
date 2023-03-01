@@ -37,6 +37,12 @@
         </Setter>
     </Style>
 
+    <Style Selector="search|SearchPanel ToggleButton.TextBoxButton">
+        <Setter Property="Padding" Value="4"></Setter>
+        <Setter Property="MinWidth" Value="22"></Setter>
+        <Setter Property="MinHeight" Value="20"></Setter>
+    </Style>
+
     <Style Selector="search|SearchPanel ToggleButton.ExpanderToggle:checked /template/ Path">
         <Setter Property="RenderTransform">
             <TransformGroup>
@@ -87,61 +93,64 @@
                         <StackPanel Orientation="Horizontal"
                                     Grid.Column="2"
                                     Grid.Row="0">
-                            <TextBox Watermark="{x:Static ae:SR.SearchLabel}"
-                                     Name="PART_searchTextBox"
-                                     Grid.Column="1"
-                                     Grid.Row="0"
-                                     Width="150"
-                                     Margin="0,0,0,0"
-                                     Text="{Binding SearchPattern, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <ToggleButton
-                                IsChecked="{Binding MatchCase, RelativeSource={RelativeSource TemplatedParent}}"
-                                ToolTip.Tip="{x:Static ae:SR.SearchMatchCaseText}"
-                                MinWidth="34"
-                                Margin="5,0,0,0"
-                                VerticalAlignment="Stretch">
-                                <Path
-                                    Data="{StaticResource CaseSensitiveIconPath}"
-                                    Stretch="UniformToFill"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Width="16"
-                                    Fill="{DynamicResource ButtonForeground}"
-                                    Stroke="{DynamicResource ButtonForeground}"
-                                    StrokeThickness="1" />
-                            </ToggleButton>
-                            <ToggleButton
-                                IsChecked="{Binding WholeWords, RelativeSource={RelativeSource TemplatedParent}}"
-                                ToolTip.Tip="{x:Static ae:SR.SearchMatchWholeWordsText}"
-                                Margin="3,0,0,0"
-                                MinWidth="34"
-                                VerticalAlignment="Stretch">
-                                <Path
-                                    Data="{StaticResource CompleteWordIconPath}"
-                                    Stretch="Uniform"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Width="16"
-                                    Fill="{DynamicResource ButtonForeground}"
-                                    Stroke="{DynamicResource ButtonForeground}"
-                                    StrokeThickness="1" />
-                            </ToggleButton>
-                            <ToggleButton
-                                IsChecked="{Binding UseRegex, RelativeSource={RelativeSource TemplatedParent}}"
-                                ToolTip.Tip="{x:Static ae:SR.SearchUseRegexText}"
-                                Margin="3,0,0,0"
-                                MinWidth="34"
-                                VerticalAlignment="Stretch">
-                                <Path
-                                    Data="{StaticResource RegularExpressionIconPath}"
-                                    Stretch="Uniform"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Width="16"
-                                    Fill="{DynamicResource ButtonForeground}"
-                                    Stroke="{DynamicResource ButtonForeground}"
-                                    StrokeThickness="1" />
-                            </ToggleButton>
+                                <TextBox Watermark="{x:Static ae:SR.SearchLabel}"
+                                         Name="PART_searchTextBox"
+                                         Grid.Column="1"
+                                         Grid.Row="0"
+                                         Width="265"
+                                         Margin="0,0,0,0"
+                                         Text="{Binding SearchPattern, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <TextBox.InnerRightContent>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ToggleButton
+                                                Classes="TextBoxButton"
+                                                IsChecked="{Binding $parent[search:SearchPanel].MatchCase}"
+                                                ToolTip.Tip="{x:Static ae:SR.SearchMatchCaseText}"
+                                                VerticalAlignment="Center">
+                                                <Path Data="{StaticResource CaseSensitiveIconPath}"
+                                                      Stretch="UniformToFill"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      Width="12"
+                                                      Fill="{DynamicResource ButtonForeground}"
+                                                      Stroke="{DynamicResource ButtonForeground}"
+                                                      StrokeThickness="1" />
+                                            </ToggleButton>
+                                            <ToggleButton
+                                                Classes="TextBoxButton"
+                                                IsChecked="{Binding $parent[search:SearchPanel].WholeWords}"
+                                                ToolTip.Tip="{x:Static ae:SR.SearchMatchWholeWordsText}"
+                                                Margin="3,0,0,0"
+                                                VerticalAlignment="Center">
+                                                <Path
+                                                    Data="{StaticResource CompleteWordIconPath}"
+                                                    Stretch="Uniform"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Width="14"
+                                                    Fill="{DynamicResource ButtonForeground}"
+                                                    Stroke="{DynamicResource ButtonForeground}"
+                                                    StrokeThickness="1" />
+                                            </ToggleButton>
+                                            <ToggleButton
+                                                Classes="TextBoxButton"
+                                                IsChecked="{Binding $parent[search:SearchPanel].UseRegex}"
+                                                ToolTip.Tip="{x:Static ae:SR.SearchUseRegexText}"
+                                                Margin="3,0,5,0"
+                                                VerticalAlignment="Center">
+                                                <Path
+                                                    Data="{StaticResource RegularExpressionIconPath}"
+                                                    Stretch="Uniform"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Width="12"
+                                                    Fill="{DynamicResource ButtonForeground}"
+                                                    Stroke="{DynamicResource ButtonForeground}"
+                                                    StrokeThickness="1" />
+                                            </ToggleButton>
+                                        </StackPanel>
+                                    </TextBox.InnerRightContent>
+                                </TextBox>
                             <Button Margin="3,0,0,0"
                                     MinWidth="34"
                                     VerticalAlignment="Stretch"
@@ -200,7 +209,7 @@
                                      IsVisible="{Binding IsReplaceMode, RelativeSource={RelativeSource TemplatedParent}}"
                                      Grid.Column="1"
                                      Grid.Row="1"
-                                     Width="150"
+                                     Width="265"
                                      Margin="0 0 0 0"
                                      Text="{Binding ReplacePattern, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Button Margin="5, 0, 0, 0"
