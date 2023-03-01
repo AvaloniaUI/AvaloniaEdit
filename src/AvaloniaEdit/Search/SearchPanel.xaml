@@ -151,7 +151,7 @@
                                         </StackPanel>
                                     </TextBox.InnerRightContent>
                                 </TextBox>
-                            <Button Margin="3,0,0,0"
+                            <Button Margin="5,0,0,0"
                                     MinWidth="34"
                                     VerticalAlignment="Stretch"
                                     Command="{x:Static search:SearchCommands.FindPrevious}">
