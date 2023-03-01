@@ -152,6 +152,8 @@ namespace AvaloniaEdit.Search
 
         #endregion
 
+        public TextEditor TextEditor => _textEditor;
+
         private static void MarkerBrushChangedCallback(AvaloniaPropertyChangedEventArgs e)
         {
             if (e.Sender is SearchPanel panel)

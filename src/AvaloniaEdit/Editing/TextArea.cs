@@ -24,6 +24,7 @@ using Avalonia.Input;
 using Avalonia.Input.TextInput;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
@@ -46,6 +47,8 @@ namespace AvaloniaEdit.Editing
     /// </summary>
     public class TextArea : TemplatedControl, ITextEditorComponent, IRoutedCommandBindable, ILogicalScrollable
     {
+		private ITextEditable _textEditable;
+
         /// <summary>
         /// This is the extra scrolling space that occurs after the last line.
         /// </summary>
@@ -1200,6 +1203,12 @@ namespace AvaloniaEdit.Editing
                 }
             }
 
+            public ITextEditable TextEditable
+            {
+                get => _textEditable;
+                set => _textEditable = value;
+            }
+
             public void SetTextArea(TextArea textArea)
             {
                 if(_textArea != null)
@@ -1248,6 +1257,11 @@ namespace AvaloniaEdit.Editing
             public void SetPreeditText(string text)
             {
               
+            }
+
+            public void SetComposingRegion(TextRange? region)
+            {
+                //ToDo
             }
         }
     }
