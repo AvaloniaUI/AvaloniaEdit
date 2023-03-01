@@ -104,7 +104,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <ToggleButton
                                                 Classes="TextBoxButton"
-												                        IsChecked="{Binding $parent[search:SearchPanel].MatchCase, Mode=TwoWay}"
+                                                IsChecked="{Binding $parent[search:SearchPanel].MatchCase, Mode=TwoWay}"
                                                 ToolTip.Tip="{x:Static ae:SR.SearchMatchCaseText}"
                                                 VerticalAlignment="Center">
                                                 <Path Data="{StaticResource CaseSensitiveIconPath}"
