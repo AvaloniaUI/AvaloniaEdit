@@ -61,6 +61,7 @@ namespace AvaloniaEdit
             LineNumbersForegroundProperty.Changed.Subscribe(OnLineNumbersForegroundChanged);
             FontFamilyProperty.Changed.Subscribe(OnFontFamilyPropertyChanged);
             FontSizeProperty.Changed.Subscribe(OnFontSizePropertyChanged);
+            SearchResultsBrushProperty.Changed.Subscribe(SearchResultsBrushChangedCallback);
         }
 
         /// <summary>
@@ -507,6 +508,21 @@ namespace AvaloniaEdit
             set => SetValue(ShowLineNumbersProperty, value);
         }
 
+        /// <summary>
+        /// Dependency property for <see cref="SearchResultsBrush"/>.
+        /// </summary>
+        public static readonly StyledProperty<IBrush> SearchResultsBrushProperty =
+            AvaloniaProperty.Register<TextEditor, IBrush>(nameof(SearchResultsBrush), new SolidColorBrush(Color.FromRgb(81, 92, 106)));
+
+        /// <summary>
+        /// Gets/sets the Brush used for marking search results in the TextView.
+        /// </summary>
+        public IBrush SearchResultsBrush
+        {
+            get => GetValue(SearchResultsBrushProperty);
+            set => SetValue(SearchResultsBrushProperty, value);
+        }
+
         private static void OnShowLineNumbersChanged(AvaloniaPropertyChangedEventArgs e)
         {
             var editor = e.Sender as TextEditor;
@@ -577,6 +593,13 @@ namespace AvaloniaEdit
             var editor = e.Sender as TextEditor;
 
             editor?.TextArea.TextView.SetValue(FontSizeProperty, e.NewValue);
+        }
+
+        private static void SearchResultsBrushChangedCallback(AvaloniaPropertyChangedEventArgs e)
+        {
+            var editor = e.Sender as TextEditor;
+
+            editor?.SearchPanel?.SetSearchResultsBrush(e.GetNewValue<IBrush>());
         }
 
         #endregion

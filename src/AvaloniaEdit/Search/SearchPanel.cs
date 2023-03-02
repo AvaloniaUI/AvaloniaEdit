@@ -24,6 +24,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
+
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
@@ -135,31 +136,17 @@ namespace AvaloniaEdit.Search
             set => SetValue(ReplacePatternProperty, value);
         }
 
-        /// <summary>
-        /// Dependency property for <see cref="MarkerBrush"/>.
-        /// </summary>
-        public static readonly StyledProperty<IBrush> MarkerBrushProperty =
-            AvaloniaProperty.Register<SearchPanel, IBrush>(nameof(MarkerBrush), new SolidColorBrush(Color.FromRgb(81, 92, 106)));
-
-        /// <summary>
-        /// Gets/sets the Brush used for marking search results in the TextView.
-        /// </summary>
-        public IBrush MarkerBrush
-        {
-            get => GetValue(MarkerBrushProperty);
-            set => SetValue(MarkerBrushProperty, value);
-        }
-
         #endregion
 
         public TextEditor TextEditor => _textEditor;
 
-        private static void MarkerBrushChangedCallback(AvaloniaPropertyChangedEventArgs e)
+        public void SetSearchResultsBrush(IBrush brush)
         {
-            if (e.Sender is SearchPanel panel)
-            {
-                panel._renderer.MarkerBrush = (IBrush)e.NewValue;
-            }
+            if (_renderer == null)
+                return;
+
+            _renderer.MarkerBrush = brush;
+            _textEditor.TextArea.TextView.InvalidateVisual();
         }
 
         private ISearchStrategy _strategy;
@@ -191,8 +178,6 @@ namespace AvaloniaEdit.Search
             MatchCaseProperty.Changed.Subscribe(SearchPatternChangedCallback);
             WholeWordsProperty.Changed.Subscribe(SearchPatternChangedCallback);
             SearchPatternProperty.Changed.Subscribe(SearchPatternChangedCallback);
-
-            MarkerBrushProperty.Changed.Subscribe(MarkerBrushChangedCallback);
         }
 
         /// <summary>
@@ -202,23 +187,15 @@ namespace AvaloniaEdit.Search
         public static SearchPanel Install(TextEditor editor)
         {
             if (editor == null) throw new ArgumentNullException(nameof(editor));
-            SearchPanel searchPanel = Install(editor.TextArea);
-            searchPanel._textEditor = editor;
-            return searchPanel;
-        }
+            if (editor.TextArea == null) throw new ArgumentNullException(nameof(editor.TextArea));
 
-        /// <summary>
-        /// Creates a SearchPanel and installs it to the TextArea.
-        /// </summary>
-        public static SearchPanel Install(TextArea textArea)
-        {
-            if (textArea == null) throw new ArgumentNullException(nameof(textArea));
+            TextArea textArea = editor.TextArea;
+
             var panel = new SearchPanel();
-            panel.AttachInternal(textArea);
+            panel.AttachInternal(editor);
             panel._handler = new SearchInputHandler(textArea, panel);
             textArea.DefaultInputHandler.NestedInputHandlers.Add(panel._handler);
             ((ISetLogicalParent)panel).SetParent(textArea);
-
             return panel;
         }
 
@@ -242,15 +219,16 @@ namespace AvaloniaEdit.Search
             _textArea.DefaultInputHandler.NestedInputHandlers.Remove(_handler);
         }
 
-        private void AttachInternal(TextArea textArea)
+        private void AttachInternal(TextEditor textEditor)
         {
-            _textArea = textArea;
+            _textEditor = textEditor;
+            _textArea = textEditor.TextArea;
 
-            _renderer = new SearchResultBackgroundRenderer(MarkerBrush);
-            _currentDocument = textArea.Document;
+            _renderer = new SearchResultBackgroundRenderer(textEditor.SearchResultsBrush);
+            _currentDocument = _textArea.Document;
             if (_currentDocument != null)
                 _currentDocument.TextChanged += TextArea_Document_TextChanged;
-            textArea.DocumentChanged += TextArea_DocumentChanged;
+            _textArea.DocumentChanged += TextArea_DocumentChanged;
             KeyDown += SearchLayerKeyDown;
 
             CommandBindings.Add(new RoutedCommandBinding(SearchCommands.FindNext, (sender, e) => FindNext()));
