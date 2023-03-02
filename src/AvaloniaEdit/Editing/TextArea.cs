@@ -24,6 +24,7 @@ using Avalonia.Input;
 using Avalonia.Input.TextInput;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
@@ -1135,6 +1136,7 @@ namespace AvaloniaEdit.Editing
 
         private class TextAreaTextInputMethodClient : ITextInputMethodClient
         {
+            private ITextEditable _textEditable;
             private TextArea _textArea;
 
             public TextAreaTextInputMethodClient()
@@ -1200,6 +1202,12 @@ namespace AvaloniaEdit.Editing
                 }
             }
 
+            public ITextEditable TextEditable
+            {
+                get => _textEditable;
+                set => _textEditable = value;
+            }
+
             public void SetTextArea(TextArea textArea)
             {
                 if(_textArea != null)
@@ -1248,6 +1256,11 @@ namespace AvaloniaEdit.Editing
             public void SetPreeditText(string text)
             {
               
+            }
+
+            public void SetComposingRegion(TextRange? region)
+            {
+                //ToDo
             }
         }
     }

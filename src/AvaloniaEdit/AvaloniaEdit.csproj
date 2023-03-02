@@ -13,26 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Search\Assets\CaseSensitive.png" />
-    <None Remove="Search\Assets\CompleteWord.png" />
-    <None Remove="Search\Assets\FindNext.png" />
-    <None Remove="Search\Assets\FindPrevious.png" />
-    <None Remove="Search\Assets\RegularExpression.png" />
-    <None Remove="Search\Assets\ReplaceAll.png" />
-    <None Remove="Search\Assets\ReplaceNext.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Search\Assets\CaseSensitive.png" />
-    <EmbeddedResource Include="Search\Assets\CompleteWord.png" />
-    <EmbeddedResource Include="Search\Assets\FindNext.png" />
-    <EmbeddedResource Include="Search\Assets\FindPrevious.png" />
-    <EmbeddedResource Include="Search\Assets\RegularExpression.png" />
-    <EmbeddedResource Include="Search\Assets\ReplaceAll.png" />
-    <EmbeddedResource Include="Search\Assets\ReplaceNext.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="System.Collections.Immutable" Version="1.6.0" />
   </ItemGroup>
