@@ -35,11 +35,9 @@ namespace AvaloniaEdit.Search
         public SearchResultBackgroundRenderer(IBrush brush)
         {
             _markerBrush = brush;
-            _markerPen = new Pen(_markerBrush);
         }
 
         private IBrush _markerBrush;
-        private Pen _markerPen;
 
         public IBrush MarkerBrush
         {
@@ -47,7 +45,6 @@ namespace AvaloniaEdit.Search
             set
             {
                 _markerBrush = value;
-                _markerPen = new Pen(_markerBrush);
             }
         }
 
@@ -73,14 +70,13 @@ namespace AvaloniaEdit.Search
                 var geoBuilder = new BackgroundGeometryBuilder
                 {
                     AlignToWholePixels = true,
-                    BorderThickness = _markerPen?.Thickness ?? 0,
                     CornerRadius = 0
                 };
                 geoBuilder.AddSegment(textView, result);
                 var geometry = geoBuilder.CreateGeometry();
                 if (geometry != null)
                 {
-                    drawingContext.DrawGeometry(_markerBrush, _markerPen, geometry);
+                    drawingContext.DrawGeometry(_markerBrush, null, geometry);
                 }
             }
         }
