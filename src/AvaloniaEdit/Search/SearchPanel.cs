@@ -165,11 +165,19 @@ namespace AvaloniaEdit.Search
             // only reset as long as there are results
             // if no results are found, the "no matches found" message should not flicker.
             // if results are found by the next run, the message will be hidden inside DoSearch ...
-            if (_renderer.CurrentResults.Any())
-                _messageView.IsVisible = false;
-            _strategy = SearchStrategyFactory.Create(SearchPattern ?? "", !MatchCase, WholeWords, UseRegex ? SearchMode.RegEx : SearchMode.Normal);
-            OnSearchOptionsChanged(new SearchOptionsChangedEventArgs(SearchPattern, MatchCase, UseRegex, WholeWords));
-            DoSearch(true);
+            try
+            {
+                if (_renderer.CurrentResults.Any())
+                    _messageView.IsVisible = false;
+                _strategy = SearchStrategyFactory.Create(SearchPattern ?? "", !MatchCase, WholeWords, UseRegex ? SearchMode.RegEx : SearchMode.Normal);
+                OnSearchOptionsChanged(new SearchOptionsChangedEventArgs(SearchPattern, MatchCase, UseRegex, WholeWords));
+                DoSearch(true);
+            }
+            catch (SearchPatternException)
+            {
+                CleanSearchResults();
+                UpdateSearchLabel();
+            }
         }
 
         static SearchPanel()
@@ -278,15 +286,7 @@ namespace AvaloniaEdit.Search
             if (_searchTextBox == null)
                 return;
 
-            try
-            {
-                UpdateSearch();
-                _validationError = null;
-            }
-            catch (SearchPatternException ex)
-            {
-                _validationError = ex.Message;
-            }
+            UpdateSearch();
         }
 
         /// <summary>
@@ -366,14 +366,13 @@ namespace AvaloniaEdit.Search
 
         private Panel _messageView;
         private TextBlock _messageViewContent;
-        private string _validationError;
 
         private void DoSearch(bool changeSelection)
         {
             if (IsClosed)
                 return;
-            _renderer.CurrentResults.Clear();
-            _currentSearchResultIndex = -1;
+
+            CleanSearchResults();
 
             if (!string.IsNullOrEmpty(SearchPattern))
             {
@@ -398,6 +397,12 @@ namespace AvaloniaEdit.Search
 
             UpdateSearchLabel();
             _textArea.TextView.InvalidateLayer(KnownLayer.Selection);
+        }
+
+        void CleanSearchResults()
+        {
+            _renderer.CurrentResults.Clear();
+            _currentSearchResultIndex = -1;
         }
 
         void UpdateSearchLabel()
@@ -461,14 +466,6 @@ namespace AvaloniaEdit.Search
                     else
                     {
                         FindNext();
-                    }
-                    if (_searchTextBox != null)
-                    {
-                        if (_validationError != null && _messageView != null && _messageViewContent != null)
-                        {
-                            _messageViewContent.Text = SR.SearchErrorText + " " + _validationError;
-                            _messageView.IsVisible = true;
-                        }
                     }
                     break;
                 case Key.Escape:
