@@ -60,12 +60,12 @@
     <Style Selector="search|SearchPanel">
         <Setter Property="BorderThickness" Value="1 0 1 1" />
         <Setter Property="CornerRadius" Value="0 0 4 4" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SearchPanelBorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SearchPanelBackgroundBrush}" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="Margin" Value="0 0 18 0" />
-        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource SearchPanelFontSize}" />
+        <Setter Property="FontFamily" Value="{DynamicResource SearchPanelFontFamily}" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Name="PART_Border"
