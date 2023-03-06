@@ -31,7 +31,6 @@
         <AvalonEdit:TextEditor Name="Editor"
                                FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
                                Margin="30"
-                               Foreground="#D4D4D4"
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
                                FontWeight="Light"
