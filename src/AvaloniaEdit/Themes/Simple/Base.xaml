@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="using:System">
+    <StaticResource x:Key="SearchPanelFontSize" ResourceKey="FontSizeNormal" />
+    <StaticResource x:Key="SearchPanelFontFamily" ResourceKey="ContentControlThemeFontFamily" />
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <SolidColorBrush x:Key="SearchPanelBackgroundBrush" Color="{DynamicResource ThemeBackgroundColor}" />
+            <SolidColorBrush x:Key="SearchPanelBorderBrush" Color="{DynamicResource ThemeBorderLowColor}" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="SearchPanelBackgroundBrush" Color="{DynamicResource ThemeBackgroundColor}" />
+            <SolidColorBrush x:Key="SearchPanelBorderBrush" Color="{DynamicResource ThemeBorderLowColor}" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

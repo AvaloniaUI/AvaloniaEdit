@@ -30,8 +30,8 @@
                           VerticalAlignment="Center"
                           HorizontalAlignment="Center"
                           Height="13"
-                          Fill="{DynamicResource TextControlButtonForeground}"
-                          Stroke="{DynamicResource TextControlButtonForeground}"
+                          Fill="{TemplateBinding Foreground}"
+                          Stroke="{TemplateBinding Foreground}"
                           StrokeThickness="1" />
                 </Border>
             </ControlTemplate>
@@ -60,12 +60,12 @@
     <Style Selector="search|SearchPanel">
         <Setter Property="BorderThickness" Value="1 0 1 1" />
         <Setter Property="CornerRadius" Value="0 0 4 4" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SearchPanelBorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SearchPanelBackgroundBrush}" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="Margin" Value="0 0 18 0" />
-        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource SearchPanelFontSize}" />
+        <Setter Property="FontFamily" Value="{DynamicResource SearchPanelFontFamily}" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Name="PART_Border"
@@ -113,8 +113,8 @@
                                                       HorizontalAlignment="Center"
                                                       VerticalAlignment="Center"
                                                       Width="12"
-                                                      Fill="{DynamicResource ButtonForeground}"
-                                                      Stroke="{DynamicResource ButtonForeground}"
+                                                      Fill="{Binding $parent.Foreground}"
+                                                      Stroke="{Binding $parent.Foreground}"
                                                       StrokeThickness="1" />
                                             </ToggleButton>
                                             <ToggleButton
@@ -129,8 +129,8 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Width="14"
-                                                    Fill="{DynamicResource ButtonForeground}"
-                                                    Stroke="{DynamicResource ButtonForeground}"
+                                                    Fill="{Binding $parent.Foreground}"
+                                                    Stroke="{Binding $parent.Foreground}"
                                                     StrokeThickness="1" />
                                             </ToggleButton>
                                             <ToggleButton
@@ -145,8 +145,8 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Width="12"
-                                                    Fill="{DynamicResource ButtonForeground}"
-                                                    Stroke="{DynamicResource ButtonForeground}"
+                                                    Fill="{Binding $parent.Foreground}"
+                                                    Stroke="{Binding $parent.Foreground}"
                                                     StrokeThickness="1" />
                                             </ToggleButton>
                                         </StackPanel>
@@ -164,8 +164,8 @@
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Center"
                                       Width="16"
-                                      Fill="{DynamicResource ButtonForeground}"
-                                      Stroke="{DynamicResource ButtonForeground}"
+                                      Fill="{Binding $parent.Foreground}"
+                                      Stroke="{Binding $parent.Foreground}"
                                       StrokeThickness="1" />
                             </Button>
                             <Button Margin="3,0,0,0"
@@ -180,8 +180,8 @@
                                       VerticalAlignment="Center"
                                       Stretch="Uniform"
                                       Width="16"
-                                      Fill="{DynamicResource ButtonForeground}"
-                                      Stroke="{DynamicResource ButtonForeground}"
+                                      Fill="{Binding $parent.Foreground}"
+                                      Stroke="{Binding $parent.Foreground}"
                                       StrokeThickness="1" />
                             </Button>
                             <Button Margin="3,0,0,0"
@@ -195,8 +195,8 @@
                                     VerticalAlignment="Center"
                                     Stretch="Uniform"
                                     Width="12"
-                                    Fill="{DynamicResource ButtonForeground}"
-                                    Stroke="{DynamicResource ButtonForeground}"
+                                    Fill="{Binding $parent.Foreground}"
+                                    Stroke="{Binding $parent.Foreground}"
                                     StrokeThickness="1" />
                             </Button>
                         </StackPanel>
@@ -226,7 +226,7 @@
                                     VerticalAlignment="Center"
                                     Stretch="Uniform"
                                     Width="12"
-                                    Fill="{DynamicResource ButtonForeground}"
+                                    Fill="{Binding $parent.Foreground}"
                                     StrokeThickness="1" />
                             </Button>
                             <Button Margin="3, 0, 0, 0"
@@ -242,7 +242,7 @@
                                     VerticalAlignment="Center"
                                     Stretch="Uniform"
                                     Width="18"
-                                    Fill="{DynamicResource ButtonForeground}" />
+                                    Fill="{Binding $parent.Foreground}" />
                             </Button>
                         </StackPanel>
                         <StackPanel Name="PART_MessageView"
