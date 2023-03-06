@@ -436,10 +436,15 @@ namespace AvaloniaEdit
         {
             if (e.Sender is TextEditor editor)
             {
-                if ((bool)e.NewValue)
-                    editor.TextArea.ReadOnlySectionProvider = ReadOnlySectionDocument.Instance;
-                else
-                    editor.TextArea.ReadOnlySectionProvider = NoReadOnlySections.Instance;
+                bool isReadonly = e.GetNewValue<bool>();
+
+                editor.TextArea.ReadOnlySectionProvider = isReadonly ?
+                    ReadOnlySectionDocument.Instance :
+                    NoReadOnlySections.Instance;
+
+                if (editor.SearchPanel != null)
+                    editor.SearchPanel.IsReplaceMode = isReadonly ?
+                        false : editor.SearchPanel.IsReplaceMode;
             }
         }
         #endregion
