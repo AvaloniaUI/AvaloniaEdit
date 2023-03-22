@@ -202,7 +202,7 @@ namespace AvaloniaEdit.Rendering
 
 			public override double Baseline => _element.Text.Baseline;
 
-			public override Size Size => Size.Empty;
+			public override Size Size => default;
 
 			public override void Draw(DrawingContext drawingContext, Point origin)
 			{

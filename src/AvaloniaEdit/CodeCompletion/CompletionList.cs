@@ -86,7 +86,7 @@ namespace AvaloniaEdit.CodeCompletion
             _listBox = e.NameScope.Find("PART_ListBox") as CompletionListBox;
             if (_listBox != null)
             {
-                _listBox.Items = _completionData;
+                _listBox.ItemsSource = _completionData;
             }
         }
 
@@ -294,7 +294,7 @@ namespace AvaloniaEdit.CodeCompletion
 
             _currentList = listBoxItems;
             //_listBox.Items = null; Makes no sense? Tooltip disappeared because of this
-            _listBox.Items = listBoxItems;
+            _listBox.ItemsSource = listBoxItems;
             SelectIndexCentered(bestIndex);
         }
 
