@@ -14,6 +14,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             IsFixedPitch = true
         };
 
+        public FontStretch Stretch { get; }
         public int GlyphCount => 1337;
 
         public FontSimulations FontSimulations => throw new NotImplementedException();
@@ -61,6 +62,10 @@ namespace AvaloniaEdit.AvaloniaMocks
             table = null;
             return false;
         }
+
+        public string FamilyName => "";
+        public FontWeight Weight => FontWeight.Normal;
+        public FontStyle Style => FontStyle.Normal;
 
         public bool TryGetGlyphMetrics(ushort glyph, out GlyphMetrics metrics)
         {

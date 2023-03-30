@@ -86,7 +86,7 @@ namespace AvaloniaEdit.CodeCompletion
             StartOffset = EndOffset = TextArea.Caret.Offset;
 
             PlacementTarget = TextArea.TextView;
-            PlacementMode = PlacementMode.AnchorAndGravity;
+            Placement = PlacementMode.AnchorAndGravity;
             PlacementAnchor = Avalonia.Controls.Primitives.PopupPositioning.PopupAnchor.TopLeft;
             PlacementGravity = Avalonia.Controls.Primitives.PopupPositioning.PopupGravity.BottomRight;
 

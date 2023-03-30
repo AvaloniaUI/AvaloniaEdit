@@ -5,6 +5,7 @@ using Moq;
 
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 
 #nullable enable
 
@@ -24,7 +25,7 @@ namespace AvaloniaEdit.AvaloniaMocks
             return _defaultFamilyName;
         }
 
-        public IEnumerable<string> GetInstalledFontFamilyNames(bool checkForUpdates = false)
+        public string[] GetInstalledFontFamilyNames(bool checkForUpdates = false)
         {
             return new[] { _defaultFamilyName };
         }
@@ -37,9 +38,17 @@ namespace AvaloniaEdit.AvaloniaMocks
             return true;
         }
 
-        public IGlyphTypeface CreateGlyphTypeface(Typeface typeface)
+        public bool TryCreateGlyphTypeface(string familyName, FontStyle style, FontWeight weight,
+                                           FontStretch stretch, out IGlyphTypeface glyphTypeface)
         {
-            return new MockGlyphTypeface();
+            glyphTypeface = new MockGlyphTypeface();
+            return true;
+        }
+
+        public bool TryCreateGlyphTypeface(Stream stream, out IGlyphTypeface glyphTypeface)
+        {
+            glyphTypeface = new MockGlyphTypeface();
+            return true;
         }
     }
 }

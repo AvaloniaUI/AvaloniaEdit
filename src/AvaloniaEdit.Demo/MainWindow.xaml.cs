@@ -49,7 +49,7 @@ namespace AvaloniaEdit.Demo
             _textEditor.ShowLineNumbers = true;
             _textEditor.ContextMenu = new ContextMenu
             {
-                Items = new List<MenuItem>
+                ItemsSource = new List<MenuItem>
                 {
                     new MenuItem { Header = "Copy", InputGesture = new KeyGesture(Key.C, KeyModifiers.Control) },
                     new MenuItem { Header = "Paste", InputGesture = new KeyGesture(Key.V, KeyModifiers.Control) },
@@ -84,7 +84,7 @@ namespace AvaloniaEdit.Demo
             Language csharpLanguage = _registryOptions.GetLanguageByExtension(".cs");
 
             _syntaxModeCombo = this.FindControl<ComboBox>("syntaxModeCombo");
-            _syntaxModeCombo.Items = _registryOptions.GetAvailableLanguages();
+            _syntaxModeCombo.ItemsSource = _registryOptions.GetAvailableLanguages();
             _syntaxModeCombo.SelectedItem = csharpLanguage;
             _syntaxModeCombo.SelectionChanged += SyntaxModeCombo_SelectionChanged;
 

@@ -62,7 +62,7 @@ namespace AvaloniaEdit.CodeCompletion
             {
                 IsLightDismissEnabled = true,
                 PlacementTarget = this,
-                PlacementMode = PlacementMode.Right,
+                Placement = PlacementMode.Right,
                 Child = _toolTipContent,
             };
 

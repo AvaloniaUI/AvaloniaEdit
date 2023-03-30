@@ -446,7 +446,7 @@ namespace AvaloniaEdit.Editing
                 var visualLine = _textView.GetOrConstructVisualLine(_textView.Document.GetLineByNumber(_position.Line));
                 return _textArea.OverstrikeMode ? CalcCaretOverstrikeRectangle(visualLine) : CalcCaretRectangle(visualLine);
             }
-            return Rect.Empty;
+            return default;
         }
 
         /// <summary>
@@ -465,7 +465,7 @@ namespace AvaloniaEdit.Editing
         public void BringCaretToView(double border)
         {
             var caretRectangle = CalculateCaretRectangle();
-            if (!caretRectangle.IsEmpty)
+            if (caretRectangle != default)
             {
                 caretRectangle = caretRectangle.Inflate(border);
                 _textView.MakeVisible(caretRectangle);

@@ -210,7 +210,7 @@ namespace AvaloniaEdit.Rendering
 				int segmentStartVcInLine = Math.Max(segmentStartVc, visualStartCol);
 				int segmentEndVcInLine = Math.Min(segmentEndVc, visualEndCol);
 				y -= scrollOffset.Y;
-				Rect lastRect = Rect.Empty;
+				Rect lastRect = default;
 				if (segmentStartVcInLine == segmentEndVcInLine) {
 					// GetTextBounds crashes for length=0, so we'll handle this case with GetDistanceFromCharacterHit
 					// We need to return a rectangle to ensure empty lines are still visible
@@ -229,7 +229,7 @@ namespace AvaloniaEdit.Rendering
 						foreach (var b in line.GetTextBounds(segmentStartVcInLine, segmentEndVcInLine - segmentStartVcInLine)) {
 							double left = b.Rectangle.Left - scrollOffset.X;
 							double right = b.Rectangle.Right - scrollOffset.X;
-							if (!lastRect.IsEmpty)
+							if (lastRect != default)
 								yield return lastRect;
 							// left>right is possible in RTL languages
 							lastRect = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
@@ -261,7 +261,7 @@ namespace AvaloniaEdit.Rendering
 						right = visualLine.GetTextLineVisualXPosition(lastTextLine, segmentEndVc);
 					}
 					Rect extendSelection = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
-					if (!lastRect.IsEmpty) {
+					if (lastRect != default) {
 						if (extendSelection.Intersects(lastRect)) {
 							lastRect.Union(extendSelection);
 							yield return lastRect;
