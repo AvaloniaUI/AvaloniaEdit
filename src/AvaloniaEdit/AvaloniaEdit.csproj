@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <WarningsNotAsErrors>0612,0618</WarningsNotAsErrors>
-	  <PackageId>Avalonia.AvaloniaEdit</PackageId>
+    <PackageId>Avalonia.AvaloniaEdit</PackageId>
+    <Description>This project is a port of AvalonEdit, a WPF-based text editor for Avalonia.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
