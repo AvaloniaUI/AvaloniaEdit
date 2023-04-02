@@ -6,6 +6,7 @@
     <PackageId>Avalonia.AvaloniaEdit</PackageId>
     <Description>This project is a port of AvalonEdit, a WPF-based text editor for Avalonia.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
