@@ -13,7 +13,7 @@
         <ControlTemplate>
           <cc:CompletionListBox Name="PART_ListBox" Background="Gray" BorderThickness="1" BorderBrush="LightGray" >
             <cc:CompletionListBox.ItemTemplate>
-              <DataTemplate>
+              <DataTemplate x:DataType="cc:ICompletionData">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="18">
                   <Image Source="{Binding Image}"
                          Width="15"
