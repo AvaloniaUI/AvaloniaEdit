@@ -36,6 +36,12 @@ namespace AvaloniaEdit.Utils
     {
         private readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
+        public ServiceContainer()
+        {
+            _services.Add(typeof(IServiceProvider), this);
+            _services.Add(typeof(IServiceContainer), this);
+        }
+
         public object GetService(Type serviceType)
         {
             _services.TryGetValue(serviceType, out var service);
