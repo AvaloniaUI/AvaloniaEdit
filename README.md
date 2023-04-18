@@ -25,6 +25,30 @@ AvaloniaEdit currently consists of 2 packages
   * [Avalonia.AvaloniaEdit](https://www.nuget.org/packages/Avalonia.AvaloniaEdit) well-known package that incudes text editor itself.
   * [AvaloniaEdit.TextMate](https://www.nuget.org/packages/AvaloniaEdit.TextMate/) package that adds TextMate integration to the AvaloniaEdit.
 
+## Getting started
+
+ ### How to set up a new project that displays an AvaloniaEdit editor?
+* Create an [empty Avalonia application](https://docs.avaloniaui.net/docs/getting-started).
+* Add a the [nuget reference](https://www.nuget.org/packages/Avalonia.AvaloniaEdit/#versions-body-tab) to the latest version:
+`<PackageReference Include="Avalonia.AvaloniaEdit" Version="x.y.z.t" />`
+* Include the *needed styles* into your `<Application.Styles>` in your `App.xaml`: 
+  * If you're using `0.10.x.y` based versions, include `<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />`
+  * If you're `11.x.y` based versions, include `<StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />`
+* Finally, add the AvaloniaEdit editor into your window:
+```xaml
+<Window xmlns="https://github.com/avaloniaui"
+        ...
+        xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        ...>
+  ...
+  <AvaloniaEdit:TextEditor Text="Hello AvaloniaEdit!"
+                           ShowLineNumbers="True"
+                           FontFamily="Cascadia Code,Consolas,Menlo,Monospace"/>
+  ...
+</Window>
+```
+You can see the [Demo Application](https://github.com/AvaloniaUI/AvaloniaEdit/tree/master/src/AvaloniaEdit.Demo) as a reference.
+
  ### How to set up TextMate theme and syntax highlighting for my project?
 First of all, if you want to use grammars supported by [TextMateSharp](https://github.com/danipen/TextMateSharp), should install the following packages:
 - [AvaloniaEdit.TextMate](https://www.nuget.org/packages/AvaloniaEdit.TextMate/) 
