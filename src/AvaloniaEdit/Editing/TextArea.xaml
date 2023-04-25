@@ -15,7 +15,7 @@
                 <DockPanel Focusable="False" Background="{TemplateBinding Background}">
                     <ItemsControl DockPanel.Dock="Left"
                                   Focusable="False"
-                                  Items="{TemplateBinding LeftMargins}">
+                                  ItemsSource="{TemplateBinding LeftMargins}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal" />

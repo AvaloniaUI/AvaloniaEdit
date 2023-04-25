@@ -24,6 +24,7 @@ using Avalonia;
 using AvaloniaEdit.Document;
 using Avalonia.Input;
 using AvaloniaEdit.Utils;
+using Avalonia.Controls;
 
 namespace AvaloniaEdit.Editing
 {
@@ -415,17 +416,17 @@ namespace AvaloniaEdit.Editing
             var text = textArea.Selection.GetText();
             text = TextUtilities.NormalizeNewLines(text, Environment.NewLine);
 
-            SetClipboardText(text);
+            SetClipboardText(text, textArea);
 
             textArea.OnTextCopied(new TextEventArgs(text));
             return true;
         }
 
-        private static void SetClipboardText(string text)
+        private static void SetClipboardText(string text, Visual visual)
         {
             try
             {
-                Application.Current.Clipboard.SetTextAsync(text).GetAwaiter().GetResult();
+                TopLevel.GetTopLevel(visual)?.Clipboard?.SetTextAsync(text).GetAwaiter().GetResult();
             }
             catch (Exception)
             {
@@ -470,7 +471,7 @@ namespace AvaloniaEdit.Editing
             //if (copyingEventArgs.CommandCancelled)
             //    return false;
 
-            SetClipboardText(text);
+            SetClipboardText(text, textArea);
 
             textArea.OnTextCopied(new TextEventArgs(text));
             return true;
@@ -496,7 +497,7 @@ namespace AvaloniaEdit.Editing
                 string text = null;
                 try
                 {
-                     text = await Application.Current.Clipboard.GetTextAsync();
+                    text = await TopLevel.GetTopLevel(textArea)?.Clipboard?.GetTextAsync();
                 }
                 catch (Exception)
                 {
