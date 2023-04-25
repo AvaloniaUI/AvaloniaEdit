@@ -1,13 +1,9 @@
-﻿using Avalonia.Media;
-using Avalonia.Platform;
-
-using Moq;
-
-using System.Collections.Generic;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 
-#nullable enable
+using Avalonia.Media;
+using Avalonia.Platform;
 
 namespace AvaloniaEdit.AvaloniaMocks
 {
@@ -20,34 +16,48 @@ namespace AvaloniaEdit.AvaloniaMocks
             _defaultFamilyName = defaultFamilyName;
         }
 
+        public int TryCreateGlyphTypefaceCount { get; private set; }
+
         public string GetDefaultFontFamilyName()
         {
             return _defaultFamilyName;
         }
 
-        public string[] GetInstalledFontFamilyNames(bool checkForUpdates = false)
+        string[] IFontManagerImpl.GetInstalledFontFamilyNames(bool checkForUpdates)
         {
             return new[] { _defaultFamilyName };
         }
 
-        public bool TryMatchCharacter(int codepoint, FontStyle fontStyle, FontWeight fontWeight, FontStretch fontStretch,
-            FontFamily? fontFamily, CultureInfo? culture, out Typeface typeface)
+        public bool TryMatchCharacter(int codepoint, FontStyle fontStyle, FontWeight fontWeight,
+            FontStretch fontStretch,
+            CultureInfo culture, out Typeface fontKey)
         {
-            typeface = new Typeface(_defaultFamilyName);
+            fontKey = new Typeface(_defaultFamilyName);
+
+            return false;
+        }
+
+        public virtual bool TryCreateGlyphTypeface(string familyName, FontStyle style, FontWeight weight,
+            FontStretch stretch, [NotNullWhen(true)] out IGlyphTypeface glyphTypeface)
+        {
+            glyphTypeface = null;
+
+            TryCreateGlyphTypefaceCount++;
+
+            if (familyName == "Unknown")
+            {
+                return false;
+            }
+
+            glyphTypeface = new MockGlyphTypeface();
 
             return true;
         }
 
-        public bool TryCreateGlyphTypeface(string familyName, FontStyle style, FontWeight weight,
-                                           FontStretch stretch, out IGlyphTypeface glyphTypeface)
+        public virtual bool TryCreateGlyphTypeface(Stream stream, out IGlyphTypeface glyphTypeface)
         {
             glyphTypeface = new MockGlyphTypeface();
-            return true;
-        }
 
-        public bool TryCreateGlyphTypeface(Stream stream, out IGlyphTypeface glyphTypeface)
-        {
-            glyphTypeface = new MockGlyphTypeface();
             return true;
         }
     }
