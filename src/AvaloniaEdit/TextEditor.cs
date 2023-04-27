@@ -120,12 +120,12 @@ namespace AvaloniaEdit
         /// <summary>
         /// Occurs when the document property has changed.
         /// </summary>
-        public event EventHandler DocumentChanged;
+        public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 
         /// <summary>
         /// Raises the <see cref="DocumentChanged"/> event.
         /// </summary>
-        protected virtual void OnDocumentChanged(EventArgs e)
+        protected virtual void OnDocumentChanged(DocumentChangedEventArgs e)
         {
             DocumentChanged?.Invoke(this, e);
         }
@@ -148,7 +148,7 @@ namespace AvaloniaEdit
                 TextDocumentWeakEventManager.TextChanged.AddHandler(newValue, OnTextChanged);
                 PropertyChangedWeakEventManager.AddHandler(newValue.UndoStack, OnUndoStackPropertyChangedHandler);
             }
-            OnDocumentChanged(EventArgs.Empty);
+            OnDocumentChanged(new DocumentChangedEventArgs(oldValue, newValue));
             OnTextChanged(EventArgs.Empty);
         }
         #endregion
