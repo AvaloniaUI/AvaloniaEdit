@@ -258,7 +258,7 @@ namespace AvaloniaEdit.Editing
         }
 
         /// <inheritdoc/>
-        public event EventHandler DocumentChanged;
+        public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 
         /// <summary>
         /// Gets if the the document displayed by the text editor is readonly
@@ -296,7 +296,7 @@ namespace AvaloniaEdit.Editing
             // in the new document (e.g. if new document is shorter than the old document).
             Caret.Location = new TextLocation(1, 1);
             ClearSelection();
-            DocumentChanged?.Invoke(this, EventArgs.Empty);
+            DocumentChanged?.Invoke(this, new DocumentChangedEventArgs(oldValue, newValue));
             //CommandManager.InvalidateRequerySuggested();
         }
         #endregion

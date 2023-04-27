@@ -130,7 +130,7 @@ namespace AvaloniaEdit.Rendering
         /// <summary>
         /// Occurs when the document property has changed.
         /// </summary>
-        public event EventHandler DocumentChanged;
+        public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 
         private static void OnDocumentChanged(AvaloniaPropertyChangedEventArgs e)
         {
@@ -159,7 +159,7 @@ namespace AvaloniaEdit.Rendering
                 CachedElements = new TextViewCachedElements();
             }
             InvalidateMeasure();
-            DocumentChanged?.Invoke(this, EventArgs.Empty);
+            DocumentChanged?.Invoke(this, new DocumentChangedEventArgs(oldValue, newValue));
         }
 
         private void RecreateCachedElements()
