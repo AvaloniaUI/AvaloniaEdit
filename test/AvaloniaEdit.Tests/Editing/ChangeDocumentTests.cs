@@ -17,7 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Text;
-using AvaloniaEdit.AvaloniaMocks;
+using Avalonia.Headless.NUnit;
 using AvaloniaEdit.Document;
 using NUnit.Framework;
 
@@ -26,76 +26,52 @@ namespace AvaloniaEdit.Editing
     [TestFixture]
     public class ChangeDocumentTests
     {
-        [Test]
+        [AvaloniaTest]
         public void ClearCaretAndSelectionOnDocumentChange()
         {
-            using (UnitTestApplication.Start(new TestServices(
-                renderInterface: new MockPlatformRenderInterface(),
-                platform: new MockRuntimePlatform(),
-                platformHotkeyConfiguration: new MockPlatformHotkeyConfiguration(),
-                fontManagerImpl: new MockFontManagerImpl(),
-                textShaperImpl: new MockTextShaperImpl())))
-            {
-                TextArea textArea = new TextArea();
-                textArea.Document = new TextDocument("1\n2\n3\n4th line");
-                textArea.Caret.Offset = 6;
-                textArea.Selection = Selection.Create(textArea, 3, 6);
-                textArea.Document = new TextDocument("1\n2nd");
-                Assert.AreEqual(0, textArea.Caret.Offset);
-                Assert.AreEqual(new TextLocation(1, 1), textArea.Caret.Location);
-                Assert.IsTrue(textArea.Selection.IsEmpty);
-            }
+            TextArea textArea = new TextArea();
+            textArea.Document = new TextDocument("1\n2\n3\n4th line");
+            textArea.Caret.Offset = 6;
+            textArea.Selection = Selection.Create(textArea, 3, 6);
+            textArea.Document = new TextDocument("1\n2nd");
+            Assert.AreEqual(0, textArea.Caret.Offset);
+            Assert.AreEqual(new TextLocation(1, 1), textArea.Caret.Location);
+            Assert.IsTrue(textArea.Selection.IsEmpty);
         }
 
-        [Test]
+        [AvaloniaTest]
         public void SetDocumentToNull()
         {
-            using (UnitTestApplication.Start(new TestServices(
-                renderInterface: new MockPlatformRenderInterface(),
-                platform: new MockRuntimePlatform(),
-                platformHotkeyConfiguration: new MockPlatformHotkeyConfiguration(),
-                fontManagerImpl: new MockFontManagerImpl(),
-                textShaperImpl: new MockTextShaperImpl())))
-            {
-                TextArea textArea = new TextArea();
-                textArea.Document = new TextDocument("1\n2\n3\n4th line");
-                textArea.Caret.Offset = 6;
-                textArea.Selection = Selection.Create(textArea, 3, 6);
-                textArea.Document = null;
-                Assert.AreEqual(0, textArea.Caret.Offset);
-                Assert.AreEqual(new TextLocation(1, 1), textArea.Caret.Location);
-                Assert.IsTrue(textArea.Selection.IsEmpty);
-            }
+            TextArea textArea = new TextArea();
+            textArea.Document = new TextDocument("1\n2\n3\n4th line");
+            textArea.Caret.Offset = 6;
+            textArea.Selection = Selection.Create(textArea, 3, 6);
+            textArea.Document = null;
+            Assert.AreEqual(0, textArea.Caret.Offset);
+            Assert.AreEqual(new TextLocation(1, 1), textArea.Caret.Location);
+            Assert.IsTrue(textArea.Selection.IsEmpty);
         }
 
-        [Test]
+        [AvaloniaTest]
         public void CheckEventOrderOnDocumentChange()
         {
-            using (UnitTestApplication.Start(new TestServices(
-                renderInterface: new MockPlatformRenderInterface(),
-                platform: new MockRuntimePlatform(),
-                platformHotkeyConfiguration: new MockPlatformHotkeyConfiguration(),
-                fontManagerImpl: new MockFontManagerImpl(),
-                textShaperImpl: new MockTextShaperImpl())))
+            TextArea textArea = new TextArea();
+            TextDocument newDocument = new TextDocument();
+            StringBuilder b = new StringBuilder();
+            textArea.TextView.DocumentChanged += delegate
             {
-                TextArea textArea = new TextArea();
-                TextDocument newDocument = new TextDocument();
-                StringBuilder b = new StringBuilder();
-                textArea.TextView.DocumentChanged += delegate
-                {
-                    b.Append("TextView.DocumentChanged;");
-                    Assert.AreSame(newDocument, textArea.TextView.Document);
-                    Assert.AreSame(newDocument, textArea.Document);
-                };
-                textArea.DocumentChanged += delegate
-                {
-                    b.Append("TextArea.DocumentChanged;");
-                    Assert.AreSame(newDocument, textArea.TextView.Document);
-                    Assert.AreSame(newDocument, textArea.Document);
-                };
-                textArea.Document = newDocument;
-                Assert.AreEqual("TextView.DocumentChanged;TextArea.DocumentChanged;", b.ToString());
-            }
+                b.Append("TextView.DocumentChanged;");
+                Assert.AreSame(newDocument, textArea.TextView.Document);
+                Assert.AreSame(newDocument, textArea.Document);
+            };
+            textArea.DocumentChanged += delegate
+            {
+                b.Append("TextArea.DocumentChanged;");
+                Assert.AreSame(newDocument, textArea.TextView.Document);
+                Assert.AreSame(newDocument, textArea.Document);
+            };
+            textArea.Document = newDocument;
+            Assert.AreEqual("TextView.DocumentChanged;TextArea.DocumentChanged;", b.ToString());
         }
     }
 }
