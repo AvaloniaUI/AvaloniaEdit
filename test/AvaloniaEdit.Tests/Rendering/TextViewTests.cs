@@ -1,7 +1,6 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using AvaloniaEdit.AvaloniaMocks;
+using Avalonia.Headless.NUnit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 
@@ -9,14 +8,14 @@ using NUnit.Framework;
 
 namespace AvaloniaEdit.Tests.Rendering
 {
-    [TestFixture]
     internal class TextViewTests
     {
-        [Test]
+        // https://github.com/AvaloniaUI/Avalonia/blob/master/src/Headless/Avalonia.Headless/HeadlessPlatformStubs.cs#L126
+        private const int HeadlessGlyphAdvance = 8;
+        
+        [AvaloniaTest]
         public void Visual_Line_Should_Create_Two_Text_Lines_When_Wrapping()
         {
-            using var app = UnitTestApplication.Start(TestServices.StyledWindow);
-
             TextView textView = new TextView();
 
             TextDocument document = new TextDocument("hello world".ToCharArray());   
@@ -24,7 +23,7 @@ namespace AvaloniaEdit.Tests.Rendering
             textView.Document = document;
 
             ((ILogicalScrollable)textView).CanHorizontallyScroll = false;
-            textView.Width = MockGlyphTypeface.GlyphAdvance * 8;
+            textView.Width = HeadlessGlyphAdvance * 8;
 
             textView.Measure(Size.Infinity);
 
@@ -35,11 +34,9 @@ namespace AvaloniaEdit.Tests.Rendering
             Assert.AreEqual("world", new string(visualLine.TextLines[1].TextRuns[0].Text.Span));
         }
 
-        [Test()]
+        [AvaloniaTest]
         public void Visual_Line_Should_Create_One_Text_Lines_When_Not_Wrapping()
         {
-            using var app = UnitTestApplication.Start(TestServices.StyledWindow);
-
             TextView textView = new TextView();
 
             TextDocument document = new TextDocument("hello world".ToCharArray());
@@ -47,7 +44,7 @@ namespace AvaloniaEdit.Tests.Rendering
             textView.Document = document;
             textView.EnsureVisualLines();
             ((ILogicalScrollable)textView).CanHorizontallyScroll = false;
-            textView.Width = MockGlyphTypeface.GlyphAdvance * 500;
+            textView.Width = HeadlessGlyphAdvance * 500;
 
             textView.Measure(Size.Infinity);
 

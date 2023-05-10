@@ -187,7 +187,7 @@ namespace AvaloniaEdit.TextMate
                 ForceTokenization(
                     _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
                     _textView.VisualLines[_textView.VisualLines.Count - 1].LastDocumentLine.LineNumber - 1);
-            }, DispatcherPriority.MinValue);
+            }, DispatcherPriority.Default);
         }
 
         internal class InvalidLineRange

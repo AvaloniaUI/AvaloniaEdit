@@ -2,8 +2,8 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AvaloniaVersion>11.0.0-preview6</AvaloniaVersion>
-    <TextMateSharpVersion>1.0.52</TextMateSharpVersion>
+    <AvaloniaVersion>11.0.0-preview8</AvaloniaVersion>
+    <TextMateSharpVersion>1.0.55</TextMateSharpVersion>
     <VersionSuffix>beta</VersionSuffix>
   </PropertyGroup>
 </Project>
