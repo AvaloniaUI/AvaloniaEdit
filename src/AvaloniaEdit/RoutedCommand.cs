@@ -12,6 +12,8 @@ namespace AvaloniaEdit
 {
     public class RoutedCommand : ICommand
     {
+        private static IInputElement _inputElement;
+
         public string Name { get; }
         public KeyGesture Gesture { get; }
 
@@ -25,6 +27,7 @@ namespace AvaloniaEdit
         {
             CanExecuteEvent.AddClassHandler<Interactive>(CanExecuteEventHandler);
             ExecutedEvent.AddClassHandler<Interactive>(ExecutedEventHandler);
+            InputElement.GotFocusEvent.AddClassHandler<Interactive>(GotFocusEventHandler);
         }
 
         private static void CanExecuteEventHandler(Interactive control, CanExecuteRoutedEventArgs args)
@@ -48,6 +51,11 @@ namespace AvaloniaEdit
             }
         }
 
+        private static void GotFocusEventHandler(Interactive control, GotFocusEventArgs args)
+        {
+            _inputElement = control as IInputElement;
+        }
+
         public static RoutedEvent<CanExecuteRoutedEventArgs> CanExecuteEvent { get; } = RoutedEvent.Register<CanExecuteRoutedEventArgs>(nameof(CanExecuteEvent), RoutingStrategies.Bubble, typeof(RoutedCommand));
 
         public bool CanExecute(object parameter, IInputElement target)
@@ -62,7 +70,7 @@ namespace AvaloniaEdit
 
         bool ICommand.CanExecute(object parameter)
         {
-            return CanExecute(parameter, GetGloballyFocusedElement());
+            return CanExecute(parameter, _inputElement);
         }
 
         public static RoutedEvent<ExecutedRoutedEventArgs> ExecutedEvent { get; } = RoutedEvent.Register<ExecutedRoutedEventArgs>(nameof(ExecutedEvent), RoutingStrategies.Bubble, typeof(RoutedCommand));
@@ -77,7 +85,7 @@ namespace AvaloniaEdit
 
         void ICommand.Execute(object parameter)
         {
-            Execute(parameter, GetGloballyFocusedElement());
+            Execute(parameter, _inputElement);
         }
 
         // TODO
@@ -85,23 +93,6 @@ namespace AvaloniaEdit
         {
             add { }
             remove { }
-        }
-
-        IInputElement GetGloballyFocusedElement()
-        {
-            TopLevel topLevel = null;
-
-            if(Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
-            {
-                topLevel = lifetime.MainWindow;
-            }
-
-            if(Application.Current.ApplicationLifetime is ISingleViewApplicationLifetime singleView)
-            {
-                topLevel = TopLevel.GetTopLevel(singleView.MainView);
-            }
-
-            return topLevel?.FocusManager?.GetFocusedElement();
         }
     }
 
