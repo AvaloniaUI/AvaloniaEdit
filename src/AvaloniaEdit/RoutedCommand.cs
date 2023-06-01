@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 
@@ -60,7 +62,7 @@ namespace AvaloniaEdit
 
         bool ICommand.CanExecute(object parameter)
         {
-            return CanExecute(parameter, Application.Current.FocusManager.Current);
+            return CanExecute(parameter, GetGloballyFocusedElement());
         }
 
         public static RoutedEvent<ExecutedRoutedEventArgs> ExecutedEvent { get; } = RoutedEvent.Register<ExecutedRoutedEventArgs>(nameof(ExecutedEvent), RoutingStrategies.Bubble, typeof(RoutedCommand));
@@ -75,7 +77,7 @@ namespace AvaloniaEdit
 
         void ICommand.Execute(object parameter)
         {
-            Execute(parameter, Application.Current.FocusManager.Current);
+            Execute(parameter, GetGloballyFocusedElement());
         }
 
         // TODO
@@ -83,6 +85,23 @@ namespace AvaloniaEdit
         {
             add { }
             remove { }
+        }
+
+        IInputElement GetGloballyFocusedElement()
+        {
+            TopLevel topLevel = null;
+
+            if(Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+            {
+                topLevel = lifetime.MainWindow;
+            }
+
+            if(Application.Current.ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+            {
+                topLevel = TopLevel.GetTopLevel(singleView.MainView);
+            }
+
+            return topLevel?.FocusManager?.GetFocusedElement();
         }
     }
 

@@ -82,7 +82,7 @@ namespace AvaloniaEdit.Editing
 
         static CaretNavigationCommandHandler()
         {
-            var keymap = AvaloniaLocator.Current.GetService<PlatformHotkeyConfiguration>();
+            var keymap = Application.Current.PlatformSettings.HotkeyConfiguration;
 
             AddBinding(EditingCommands.MoveLeftByCharacter, KeyModifiers.None, Key.Left, OnMoveCaret(CaretMovementType.CharLeft));
             AddBinding(EditingCommands.SelectLeftByCharacter, keymap.SelectionModifiers, Key.Left, OnMoveCaretExtendSelection(CaretMovementType.CharLeft));
