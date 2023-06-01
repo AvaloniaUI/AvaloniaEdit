@@ -35,7 +35,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// Gets the image.
         /// </summary>
-        IBitmap Image { get; }
+        Bitmap Image { get; }
 		
 		/// <summary>
 		/// Gets the text. This property is used to filter the list of visible elements.

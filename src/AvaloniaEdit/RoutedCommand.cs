@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Avalonia;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 
@@ -10,6 +9,8 @@ namespace AvaloniaEdit
 {
     public class RoutedCommand : ICommand
     {
+        private static IInputElement _inputElement;
+
         public string Name { get; }
         public KeyGesture Gesture { get; }
 
@@ -23,6 +24,7 @@ namespace AvaloniaEdit
         {
             CanExecuteEvent.AddClassHandler<Interactive>(CanExecuteEventHandler);
             ExecutedEvent.AddClassHandler<Interactive>(ExecutedEventHandler);
+            InputElement.GotFocusEvent.AddClassHandler<Interactive>(GotFocusEventHandler);
         }
 
         private static void CanExecuteEventHandler(Interactive control, CanExecuteRoutedEventArgs args)
@@ -46,6 +48,11 @@ namespace AvaloniaEdit
             }
         }
 
+        private static void GotFocusEventHandler(Interactive control, GotFocusEventArgs args)
+        {
+            _inputElement = control as IInputElement;
+        }
+
         public static RoutedEvent<CanExecuteRoutedEventArgs> CanExecuteEvent { get; } = RoutedEvent.Register<CanExecuteRoutedEventArgs>(nameof(CanExecuteEvent), RoutingStrategies.Bubble, typeof(RoutedCommand));
 
         public bool CanExecute(object parameter, IInputElement target)
@@ -60,7 +67,7 @@ namespace AvaloniaEdit
 
         bool ICommand.CanExecute(object parameter)
         {
-            return CanExecute(parameter, Application.Current.FocusManager.Current);
+            return CanExecute(parameter, _inputElement);
         }
 
         public static RoutedEvent<ExecutedRoutedEventArgs> ExecutedEvent { get; } = RoutedEvent.Register<ExecutedRoutedEventArgs>(nameof(ExecutedEvent), RoutingStrategies.Bubble, typeof(RoutedCommand));
@@ -75,7 +82,7 @@ namespace AvaloniaEdit
 
         void ICommand.Execute(object parameter)
         {
-            Execute(parameter, Application.Current.FocusManager.Current);
+            Execute(parameter, _inputElement);
         }
 
         // TODO
