@@ -50,7 +50,7 @@ namespace AvaloniaEdit
 
         private static void GotFocusEventHandler(Interactive control, GotFocusEventArgs args)
         {
-            _inputElement = control as IInputElement;
+            _inputElement = args.Source as IInputElement;
         }
 
         public static RoutedEvent<CanExecuteRoutedEventArgs> CanExecuteEvent { get; } = RoutedEvent.Register<CanExecuteRoutedEventArgs>(nameof(CanExecuteEvent), RoutingStrategies.Bubble, typeof(RoutedCommand));
