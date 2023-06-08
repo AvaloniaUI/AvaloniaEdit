@@ -347,7 +347,7 @@ namespace AvaloniaEdit.Demo
                 Text = text;
             }
 
-            public Bitmap Image => null;
+            public IImage Image => null;
 
             public string Text { get; }
 
