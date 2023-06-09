@@ -348,7 +348,7 @@ namespace AvaloniaEdit.Rendering
             protected override void InsertItem(int index, Control item)
             {
                 base.InsertItem(index, item);
-                _textView.VisualChildren.Add(item);
+                _textView.VisualChildren.Insert(index, item);
                 _textView.LayersChanged();
             }
 
