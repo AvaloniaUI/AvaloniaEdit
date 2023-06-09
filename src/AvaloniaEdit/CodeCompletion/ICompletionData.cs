@@ -17,9 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
-using Avalonia.Media.Imaging;
 
 namespace AvaloniaEdit.CodeCompletion
 {
@@ -35,7 +35,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// <summary>
         /// Gets the image.
         /// </summary>
-        Bitmap Image { get; }
+        IImage Image { get; }
 		
 		/// <summary>
 		/// Gets the text. This property is used to filter the list of visible elements.
