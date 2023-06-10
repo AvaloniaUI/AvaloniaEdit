@@ -1,31 +1,11 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit"
              x:Class="AvaloniaEdit.Demo.App"
              RequestedThemeVariant="Dark">
   <Application.Styles>
     <FluentTheme />
     <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
 
-    <!--Code completion-->
-    <Style Selector="cc|CompletionList">
-      <Setter Property="Template">
-        <ControlTemplate>
-          <cc:CompletionListBox Name="PART_ListBox" Background="Gray" BorderThickness="1" BorderBrush="LightGray" >
-            <cc:CompletionListBox.ItemTemplate>
-              <DataTemplate x:DataType="cc:ICompletionData">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="18">
-                  <Image Source="{Binding Image}"
-                         Width="15"
-                         Height="15"                          />
-                  <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Text="{Binding Content}" FontSize="15" FontFamily="Consolas" Foreground="#eeeeee"/>
-                </StackPanel>
-              </DataTemplate>
-            </cc:CompletionListBox.ItemTemplate>
-          </cc:CompletionListBox>
-        </ControlTemplate>
-      </Setter>
-    </Style>
     <!--
     <Style Selector="TextBlock.h1">
       <Setter Property="Foreground"
