@@ -1,21 +1,21 @@
-﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
-        xmlns:Editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit">
-    <Style Selector="AvalonEdit|TextEditor">
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                    <ScrollViewer Focusable="False"
-                                  Name="PART_ScrollViewer"
-                                  VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}"
-                                  HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}"
-                                  VerticalContentAlignment="Top"
-                                  HorizontalContentAlignment="Left"
-                                  Padding="{TemplateBinding Padding}" />
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </Style>
-</Styles>
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:avaloniaedit="clr-namespace:AvaloniaEdit">
+  <ControlTheme x:Key="{x:Type avaloniaedit:TextEditor}" TargetType="avaloniaedit:TextEditor">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
+          <ScrollViewer Focusable="False"
+                        Name="PART_ScrollViewer"
+                        VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}"
+                        HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}"
+                        VerticalContentAlignment="Top"
+                        HorizontalContentAlignment="Left"
+                        Padding="{TemplateBinding Padding}" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

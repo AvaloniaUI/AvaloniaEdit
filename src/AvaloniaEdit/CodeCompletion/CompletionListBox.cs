@@ -27,11 +27,9 @@ namespace AvaloniaEdit.CodeCompletion
     /// <summary>
     /// The list box used inside the CompletionList.
     /// </summary>
-    public class CompletionListBox : ListBox, IStyleable
+    public class CompletionListBox : ListBox
     {
         internal ScrollViewer ScrollViewer;
-
-        Type IStyleable.StyleKey => typeof(ListBox);
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {

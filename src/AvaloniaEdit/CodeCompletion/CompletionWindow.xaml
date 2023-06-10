@@ -1,0 +1,13 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Style used for tooltip next to completion list box.  -->
+  <Style Selector="ContentControl.ToolTip">
+    <Setter Property="BorderThickness" Value="{DynamicResource CompletionToolTipBorderThickness}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource CompletionToolTipBorderBrush}" />
+    <Setter Property="Background" Value="{DynamicResource CompletionToolTipBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource CompletionToolTipForeground}" />
+    <Setter Property="Padding" Value="4,2" />
+  </Style>
+
+</Styles>

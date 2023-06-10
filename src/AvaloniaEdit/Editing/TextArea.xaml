@@ -1,31 +1,28 @@
-﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:Editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit">
-
-    <Style Selector="Editing|TextArea">
-        <Setter Property="SelectionBrush"
-                Value="#660000ff" />
-        <!--<Setter Property="SelectionBorder">
-            <Pen Brush="#0000ff"
-                 Thickness="1" />
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:editing="clr-namespace:AvaloniaEdit.Editing">
+  <ControlTheme x:Key="{x:Type editing:TextArea}" TargetType="editing:TextArea">
+    <Setter Property="SelectionBrush" Value="#660000ff" />
+    <!--<Setter Property="SelectionBorder">
+           <Pen Brush="#0000ff" Thickness="1" />
         </Setter>-->
-        <!--<Setter Property="SelectionForeground"
-                Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />-->
-        <Setter Property="Template">
-            <ControlTemplate>
-                <DockPanel Focusable="False" Background="{TemplateBinding Background}">
-                    <ItemsControl DockPanel.Dock="Left"
-                                  Focusable="False"
-                                  ItemsSource="{TemplateBinding LeftMargins}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                    <ContentPresenter Name="PART_CP" Cursor="IBeam"
-                                      Focusable="False" Background="{TemplateBinding Background}" />
-                </DockPanel>
-            </ControlTemplate>
-        </Setter>
-    </Style>
-</Styles>
+    <!--<Setter Property="SelectionForeground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />-->
+    <Setter Property="Template">
+      <ControlTemplate>
+        <DockPanel Focusable="False" Background="{TemplateBinding Background}">
+          <ItemsControl DockPanel.Dock="Left"
+                        Focusable="False"
+                        ItemsSource="{TemplateBinding LeftMargins}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+          </ItemsControl>
+          <ContentPresenter Name="PART_CP" Cursor="IBeam"
+                            Focusable="False" Background="{TemplateBinding Background}" />
+        </DockPanel>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

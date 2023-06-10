@@ -1,46 +1,35 @@
-<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion">
 
-    <Style Selector="cc|CompletionList">
-        <Setter Property="Template">
-            <ControlTemplate>
-                <cc:CompletionListBox Name="PART_ListBox">
-                    <cc:CompletionListBox.ItemTemplate>
-                        <DataTemplate x:DataType="cc:ICompletionData">
-                            <StackPanel Orientation="Horizontal" Margin="0">
-                                <Image Source="{Binding Image}"
-                                       Width="16"
-                                       Height="16"
-                                       Margin="0,0,2,0" />
-                                <ContentPresenter Content="{Binding Content}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </cc:CompletionListBox.ItemTemplate>
-                </cc:CompletionListBox>
-            </ControlTemplate>
-        </Setter>
-    </Style>
-
-    <Style Selector="cc|CompletionList > ListBox">
-        <Setter Property="Padding" Value="0" />
-    </Style>
-
-    <Style Selector="cc|CompletionList > ListBox > ListBoxItem">
+  <ControlTheme x:Key="{x:Type cc:CompletionListBox}" TargetType="cc:CompletionListBox"
+                BasedOn="{StaticResource {x:Type ListBox}}">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="ItemContainerTheme">
+      <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
         <Setter Property="Padding" Value="4,2" />
-    </Style>
+      </ControlTheme>
+    </Setter>
+  </ControlTheme>
 
-    <Style Selector="ContentControl.ToolTip">
-        <Setter Property="BorderThickness" 
-                Value="{DynamicResource CompletionToolTipBorderThickness}" />
-        <Setter Property="BorderBrush"
-                Value="{DynamicResource CompletionToolTipBorderBrush}" />
-        <Setter Property="Background"
-                Value="{DynamicResource CompletionToolTipBackground}" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource CompletionToolTipForeground}" />
-        <Setter Property="Padding"
-                Value="4,2" />
-    </Style>
+  <ControlTheme x:Key="{x:Type cc:CompletionList}" TargetType="cc:CompletionList">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <cc:CompletionListBox Name="PART_ListBox">
+          <cc:CompletionListBox.ItemTemplate>
+            <DataTemplate x:DataType="cc:ICompletionData">
+              <StackPanel Orientation="Horizontal" Margin="0">
+                <Image Source="{Binding Image}"
+                       Width="16"
+                       Height="16"
+                       Margin="0,0,2,0" />
+                <ContentPresenter Content="{Binding Content}" />
+              </StackPanel>
+            </DataTemplate>
+          </cc:CompletionListBox.ItemTemplate>
+        </cc:CompletionListBox>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
 
-</Styles>
+</ResourceDictionary>
