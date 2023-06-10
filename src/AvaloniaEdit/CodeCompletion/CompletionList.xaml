@@ -1,13 +1,11 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        
         xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:CompileBindings="False">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style Selector="cc|CompletionList">
         <Setter Property="Template">
             <ControlTemplate>
-                <cc:CompletionListBox Name="PART_ListBox" FontSize="11">
+                <cc:CompletionListBox Name="PART_ListBox">
                     <cc:CompletionListBox.ItemTemplate>
                         <DataTemplate x:DataType="cc:ICompletionData">
                             <StackPanel Orientation="Horizontal" Margin="0">
@@ -24,26 +22,25 @@
         </Setter>
     </Style>
 
-  <Style Selector="cc|CompletionList > ListBox">
-    <Setter Property="Padding" Value="0"/>
-    
-  </Style>
+    <Style Selector="cc|CompletionList > ListBox">
+        <Setter Property="Padding" Value="0" />
+    </Style>
 
-  <Style Selector="cc|CompletionList > ListBox > ListBoxItem">
-    <Setter Property="Padding" Value="4, 0, 0, 0"/>
-    <Setter Property="Height" Value="20"/>
-  </Style>
-  
+    <Style Selector="cc|CompletionList > ListBox > ListBoxItem">
+        <Setter Property="Padding" Value="4,2" />
+    </Style>
+
     <Style Selector="ContentControl.ToolTip">
-      <Setter Property="MinHeight" Value="22"/>
-        <Setter Property="BorderThickness"
-                Value="1" />
+        <Setter Property="BorderThickness" 
+                Value="{DynamicResource CompletionToolTipBorderThickness}" />
         <Setter Property="BorderBrush"
-                Value="Black" />
+                Value="{DynamicResource CompletionToolTipBorderBrush}" />
         <Setter Property="Background"
-                Value="#eeeeee" />
+                Value="{DynamicResource CompletionToolTipBackground}" />
+        <Setter Property="Foreground"
+                Value="{DynamicResource CompletionToolTipForeground}" />
         <Setter Property="Padding"
-                Value="2" />
+                Value="4,2" />
     </Style>
 
 </Styles>

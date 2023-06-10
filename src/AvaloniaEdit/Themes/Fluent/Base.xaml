@@ -1,14 +1,21 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="using:System">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <StaticResource x:Key="SearchPanelFontSize" ResourceKey="ControlContentThemeFontSize" />
   <StaticResource x:Key="SearchPanelFontFamily" ResourceKey="ContentControlThemeFontFamily" />
   <ResourceDictionary.ThemeDictionaries>
     <ResourceDictionary x:Key="Default">
+      <StaticResource x:Key="CompletionToolTipBackground" ResourceKey="ToolTipBackground" />
+      <StaticResource x:Key="CompletionToolTipForeground" ResourceKey="ToolTipForeground" />
+      <StaticResource x:Key="CompletionToolTipBorderBrush" ResourceKey="ToolTipBorderBrush" />
+      <StaticResource x:Key="CompletionToolTipBorderThickness" ResourceKey="ToolTipBorderThemeThickness" />
       <SolidColorBrush x:Key="SearchPanelBackgroundBrush" Color="{DynamicResource SystemChromeMediumColor}" />
       <SolidColorBrush x:Key="SearchPanelBorderBrush" Color="{DynamicResource SystemBaseLowColor}" />
     </ResourceDictionary>
     <ResourceDictionary x:Key="Dark">
+      <StaticResource x:Key="CompletionToolTipBackground" ResourceKey="ToolTipBackground" />
+      <StaticResource x:Key="CompletionToolTipForeground" ResourceKey="ToolTipForeground" />
+      <StaticResource x:Key="CompletionToolTipBorderBrush" ResourceKey="ToolTipBorderBrush" />
+      <StaticResource x:Key="CompletionToolTipBorderThickness" ResourceKey="ToolTipBorderThemeThickness" />
       <SolidColorBrush x:Key="SearchPanelBackgroundBrush" Color="{DynamicResource SystemChromeMediumColor}" />
       <SolidColorBrush x:Key="SearchPanelBorderBrush" Color="{DynamicResource SystemBaseLowColor}" />
     </ResourceDictionary>
