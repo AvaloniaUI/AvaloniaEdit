@@ -53,7 +53,7 @@ namespace AvaloniaEdit.CodeCompletion
             Child = CompletionList;
             // prevent user from resizing window to 0x0
             MinHeight = 15;
-            MinWidth = 30;          
+            MinWidth = 30;
 
             _toolTipContent = new ContentControl();
             _toolTipContent.Classes.Add("ToolTip");
@@ -62,7 +62,7 @@ namespace AvaloniaEdit.CodeCompletion
             {
                 IsLightDismissEnabled = true,
                 PlacementTarget = this,
-                Placement = PlacementMode.Right,
+                Placement = PlacementMode.RightEdgeAlignedTop,
                 Child = _toolTipContent,
             };
 
@@ -104,25 +104,30 @@ namespace AvaloniaEdit.CodeCompletion
                     };
                 }
                 else
-                {                   
+                {
                     _toolTipContent.Content = description;
                 }
 
                 _toolTip.IsOpen = false; //Popup needs to be closed to change position
 
-                //Calculate offset for tooltip
+                // Calculate offset for tooltip
+                var popupRoot = Host as PopupRoot;
                 if (CompletionList.CurrentList != null)
                 {
-                    int index = CompletionList.CurrentList.IndexOf(item);
-                    int scrollIndex = (int)CompletionList.ListBox.Scroll.Offset.Y;
-                    int yoffset = index - scrollIndex;
-                    if (yoffset < 0) yoffset = 0;
-                    if ((yoffset+1) * 20 > MaxHeight) yoffset--;
-                    _toolTip.Offset = new PixelPoint(2, yoffset * 20); //Todo find way to measure item height
+                    double yOffset = 0;
+                    var itemContainer = CompletionList.ListBox.ContainerFromItem(item);
+                    if (popupRoot != null && itemContainer != null)
+                    {
+                        var position = itemContainer.TranslatePoint(new Point(0, 0), popupRoot);
+                        if (position.HasValue)
+                            yOffset = position.Value.Y;
+                    }
+
+                    _toolTip.Offset = new Point(2, yOffset);
                 }
 
-                _toolTip.PlacementTarget = this.Host as PopupRoot;
-                _toolTip.IsOpen = true;                    
+                _toolTip.PlacementTarget = popupRoot;
+                _toolTip.IsOpen = true;
             }
             else
             {
