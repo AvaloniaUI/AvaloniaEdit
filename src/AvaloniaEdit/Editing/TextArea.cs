@@ -1134,9 +1134,8 @@ namespace AvaloniaEdit.Editing
             _logicalScrollable?.RaiseScrollInvalidated(e);
         }
 
-        private class TextAreaTextInputMethodClient : ITextInputMethodClient
+        private class TextAreaTextInputMethodClient : TextInputMethodClient
         {
-            private ITextEditable _textEditable;
             private TextArea _textArea;
 
             public TextAreaTextInputMethodClient()
@@ -1144,11 +1143,7 @@ namespace AvaloniaEdit.Editing
 
             }
 
-            public event EventHandler CursorRectangleChanged;
-            public event EventHandler TextViewVisualChanged;
-            public event EventHandler SurroundingTextChanged;
-
-            public Rect CursorRectangle
+            public override Rect CursorRectangle
             {
                 get
                 {   
@@ -1170,13 +1165,13 @@ namespace AvaloniaEdit.Editing
                 }
             }
 
-            public Visual TextViewVisual => _textArea;
+            public override Visual TextViewVisual => _textArea;
 
-            public bool SupportsPreedit => false;
+            public override bool SupportsPreedit => false;
 
-            public bool SupportsSurroundingText => true;
+            public override bool SupportsSurroundingText => true;
 
-            public TextInputMethodSurroundingText SurroundingText
+            public override string SurroundingText
             {
                 get
                 {
@@ -1187,26 +1182,15 @@ namespace AvaloniaEdit.Editing
 
                     var lineIndex = _textArea.Caret.Line;
 
-                    var position = _textArea.Caret.Position;
-
                     var documentLine = _textArea.Document.GetLineByNumber(lineIndex);
 
                     var text = _textArea.Document.GetText(documentLine.Offset, documentLine.Length);
 
-                    return new TextInputMethodSurroundingText
-                    {
-                        AnchorOffset = 0,
-                        CursorOffset = position.Column,
-                        Text = text
-                    };
+                    return text;
                 }
             }
 
-            public ITextEditable TextEditable
-            {
-                get => _textEditable;
-                set => _textEditable = value;
-            }
+            public override TextSelection Selection { get; set; }
 
             public void SetTextArea(TextArea textArea)
             {
@@ -1224,19 +1208,19 @@ namespace AvaloniaEdit.Editing
                     _textArea.SelectionChanged += TextArea_SelectionChanged;
                 }
 
-                TextViewVisualChanged?.Invoke(this, EventArgs.Empty);
+                RaiseTextViewVisualChanged();
 
-                CursorRectangleChanged?.Invoke(this, EventArgs.Empty);
+                RaiseCursorRectangleChanged();
             }
 
             private void Caret_PositionChanged(object sender, EventArgs e)
             {
-                CursorRectangleChanged?.Invoke(this, e);
+                RaiseCursorRectangleChanged();
             }
 
             private void TextArea_SelectionChanged(object sender, EventArgs e)
             {
-                SurroundingTextChanged?.Invoke(this, e);
+                RaiseSurroundingTextChanged();
             }
 
             public void SelectInSurroundingText(int start, int end)
@@ -1253,14 +1237,9 @@ namespace AvaloniaEdit.Editing
                     new TextViewPosition(selection.StartPosition.Line, end));
             }
 
-            public void SetPreeditText(string text)
+            public override void SetPreeditText(string text)
             {
               
-            }
-
-            public void SetComposingRegion(TextRange? region)
-            {
-                //ToDo
             }
         }
     }
