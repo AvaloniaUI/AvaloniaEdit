@@ -29,7 +29,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 
@@ -38,14 +37,14 @@ namespace AvaloniaEdit.CodeCompletion
     /// <summary>
     /// Base class for completion windows. Handles positioning the window at the caret.
     /// </summary>
-    public class CompletionWindowBase : Popup, IStyleable
+    public class CompletionWindowBase : Popup
     {
         static CompletionWindowBase()
         {
             //BackgroundProperty.OverrideDefaultValue(typeof(CompletionWindowBase), Brushes.White);           
         }
 
-        Type IStyleable.StyleKey => typeof(PopupRoot);
+        protected override Type StyleKeyOverride => typeof(PopupRoot);
 
         /// <summary>
         /// Gets the parent TextArea.

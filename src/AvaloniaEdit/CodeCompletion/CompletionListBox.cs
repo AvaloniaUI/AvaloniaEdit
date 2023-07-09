@@ -19,7 +19,6 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Styling;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.CodeCompletion
@@ -27,11 +26,11 @@ namespace AvaloniaEdit.CodeCompletion
     /// <summary>
     /// The list box used inside the CompletionList.
     /// </summary>
-    public class CompletionListBox : ListBox, IStyleable
+    public class CompletionListBox : ListBox
     {
         internal ScrollViewer ScrollViewer;
 
-        Type IStyleable.StyleKey => typeof(ListBox);
+        protected override Type StyleKeyOverride  => typeof(ListBox);
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
