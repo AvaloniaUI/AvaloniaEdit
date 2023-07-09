@@ -73,7 +73,7 @@ namespace AvaloniaEdit.Editing
                 if (!ta.IsReadOnly)
                 {
                     e.Client = ta._imClient;
-                }             
+                }
             });
         }
 
@@ -627,7 +627,7 @@ namespace AvaloniaEdit.Editing
         /// If the textview can be scrolled.
         /// </summary>
         /// <param name="line">The line to scroll to.</param>
-        public void ScrollToLine (int line)
+        public void ScrollToLine(int line)
         {
             var viewPortLines = (int)(this as IScrollable).Viewport.Height;
 
@@ -1134,9 +1134,8 @@ namespace AvaloniaEdit.Editing
             _logicalScrollable?.RaiseScrollInvalidated(e);
         }
 
-        private class TextAreaTextInputMethodClient : ITextInputMethodClient
+        private class TextAreaTextInputMethodClient : TextInputMethodClient
         {
-            private ITextEditable _textEditable;
             private TextArea _textArea;
 
             public TextAreaTextInputMethodClient()
@@ -1144,15 +1143,11 @@ namespace AvaloniaEdit.Editing
 
             }
 
-            public event EventHandler CursorRectangleChanged;
-            public event EventHandler TextViewVisualChanged;
-            public event EventHandler SurroundingTextChanged;
-
-            public Rect CursorRectangle
+            public override Rect CursorRectangle
             {
                 get
-                {   
-                    if(_textArea == null)
+                {
+                    if (_textArea == null)
                     {
                         return default;
                     }
@@ -1170,97 +1165,75 @@ namespace AvaloniaEdit.Editing
                 }
             }
 
-            public Visual TextViewVisual => _textArea;
+            public override Visual TextViewVisual => _textArea;
 
-            public bool SupportsPreedit => false;
+            public override bool SupportsPreedit => false;
 
-            public bool SupportsSurroundingText => true;
+            public override bool SupportsSurroundingText => true;
 
-            public TextInputMethodSurroundingText SurroundingText
+            public override string SurroundingText
             {
                 get
                 {
-                    if(_textArea == null)
+                    if (_textArea == null)
                     {
                         return default;
                     }
 
                     var lineIndex = _textArea.Caret.Line;
 
-                    var position = _textArea.Caret.Position;
-
                     var documentLine = _textArea.Document.GetLineByNumber(lineIndex);
 
                     var text = _textArea.Document.GetText(documentLine.Offset, documentLine.Length);
 
-                    return new TextInputMethodSurroundingText
-                    {
-                        AnchorOffset = 0,
-                        CursorOffset = position.Column,
-                        Text = text
-                    };
+                    return text;
                 }
             }
 
-            public ITextEditable TextEditable
+            public override TextSelection Selection
             {
-                get => _textEditable;
-                set => _textEditable = value;
+                get => new TextSelection(_textArea.Caret.Position.Column, _textArea.Caret.Position.Column + _textArea.Selection.Length);
+                set
+                {
+                    var selection = _textArea.Selection;
+
+                    _textArea.Selection = selection.StartSelectionOrSetEndpoint(
+                        new TextViewPosition(selection.StartPosition.Line, value.Start),
+                        new TextViewPosition(selection.StartPosition.Line, value.End));
+                }
             }
 
             public void SetTextArea(TextArea textArea)
             {
-                if(_textArea != null)
+                if (_textArea != null)
                 {
                     _textArea.Caret.PositionChanged -= Caret_PositionChanged;
-                    _textArea.SelectionChanged -= TextArea_SelectionChanged;
                 }
 
                 _textArea = textArea;
 
-                if(_textArea != null)
+                if (_textArea != null)
                 {
                     _textArea.Caret.PositionChanged += Caret_PositionChanged;
-                    _textArea.SelectionChanged += TextArea_SelectionChanged;
                 }
 
-                TextViewVisualChanged?.Invoke(this, EventArgs.Empty);
+                RaiseTextViewVisualChanged();
 
-                CursorRectangleChanged?.Invoke(this, EventArgs.Empty);
+                RaiseCursorRectangleChanged();
+
+                RaiseSurroundingTextChanged();
             }
 
             private void Caret_PositionChanged(object sender, EventArgs e)
             {
-                CursorRectangleChanged?.Invoke(this, e);
+                RaiseCursorRectangleChanged();
+                RaiseSurroundingTextChanged();
+                RaiseSelectionChanged();
             }
 
-            private void TextArea_SelectionChanged(object sender, EventArgs e)
+            public override void SetPreeditText(string text)
             {
-                SurroundingTextChanged?.Invoke(this, e);
-            }
 
-            public void SelectInSurroundingText(int start, int end)
-            {
-                if(_textArea == null)
-                {
-                    return;
-                }
-
-                var selection = _textArea.Selection;
-
-                _textArea.Selection = _textArea.Selection.StartSelectionOrSetEndpoint(
-                    new TextViewPosition(selection.StartPosition.Line, start), 
-                    new TextViewPosition(selection.StartPosition.Line, end));
-            }
-
-            public void SetPreeditText(string text)
-            {
-              
-            }
-
-            public void SetComposingRegion(TextRange? region)
-            {
-                //ToDo
             }
         }
     }
