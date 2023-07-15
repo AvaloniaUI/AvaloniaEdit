@@ -47,7 +47,7 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
-        public KnownLayer Layer => KnownLayer.Selection;
+        public KnownLayer Layer => KnownLayer.Background;
 
         public IBrush BackgroundBrush {
             get; set;
