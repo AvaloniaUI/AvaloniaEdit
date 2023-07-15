@@ -56,7 +56,6 @@ namespace AvaloniaEdit.CodeCompletion
             MinWidth = 30;
 
             _toolTipContent = new CompletionTipContentControl();
-            _toolTipContent.Classes.Add("ToolTip");
 
             _toolTip = new PopupWithCustomPosition
             {
