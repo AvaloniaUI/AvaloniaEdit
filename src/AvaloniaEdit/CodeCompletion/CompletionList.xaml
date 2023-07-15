@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion">
+                    xmlns:cc="using:AvaloniaEdit.CodeCompletion">
 
   <ControlTheme x:Key="{x:Type cc:CompletionListBox}" TargetType="cc:CompletionListBox"
                 BasedOn="{StaticResource {x:Type ListBox}}">

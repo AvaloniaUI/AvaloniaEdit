@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:editing="clr-namespace:AvaloniaEdit.Editing">
+                    xmlns:editing="using:AvaloniaEdit.Editing">
   <ControlTheme x:Key="{x:Type editing:TextArea}" TargetType="editing:TextArea">
     <Setter Property="SelectionBrush" Value="#660000ff" />
     <!--<Setter Property="SelectionBorder">
