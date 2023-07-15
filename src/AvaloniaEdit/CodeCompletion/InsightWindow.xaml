@@ -1,76 +1,68 @@
-<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion;assembly=AvaloniaEdit">
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:cc="clr-namespace:AvaloniaEdit.CodeCompletion">
+  <ControlTheme x:Key="{x:Type cc:OverloadViewer}" TargetType="cc:OverloadViewer">
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="Black" />
+    <Setter Property="Background" Value="#eeeeee" />
+    <Setter Property="Padding" Value="2" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border BorderThickness="{TemplateBinding BorderThickness}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                Background="{TemplateBinding Background}"
+                Padding="{TemplateBinding Padding}">
+          <Grid ColumnDefinitions="Auto,*"
+                RowDefinitions="Auto,*">
 
-    <Style Selector="cc|OverloadViewer">
-        <Setter Property="BorderThickness"
-                Value="1" />
-        <Setter Property="BorderBrush"
-                Value="Black" />
-        <Setter Property="Background"
-                Value="#eeeeee" />
-        <Setter Property="Padding"
-                Value="2" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border BorderThickness="{TemplateBinding BorderThickness}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        Background="{TemplateBinding Background}"
-                        Padding="{TemplateBinding Padding}">
-                    <Grid ColumnDefinitions="Auto,*"
-                          RowDefinitions="Auto,*">
+            <StackPanel Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="0,0,4,0"
+                        Orientation="Horizontal"
+                        IsVisible="{Binding Provider.Count, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cc:CollapseIfSingleOverloadConverter.Instance}}">
+              <Button Name="PART_UP">
+                <Path Stroke="Black"
+                      Fill="Black"
+                      Data="M 0,0.866 L 1,0.866 L 0.5,0 Z"
+                      Stretch="UniformToFill" />
+              </Button>
+              <TextBlock Margin="2,0,2,0"
+                         Text="{Binding Provider.CurrentIndexText, RelativeSource={RelativeSource TemplatedParent}}" />
+              <Button Name="PART_DOWN">
+                <Path Stroke="Black"
+                      Fill="Black"
+                      Data="M 0,0 L 1,0 L 0.5,0.866 Z"
+                      Stretch="UniformToFill" />
+              </Button>
+            </StackPanel>
+            <ContentPresenter Grid.Row="0"
+                              Grid.Column="1"
+                              Content="{Binding Provider.CurrentHeader, RelativeSource={RelativeSource TemplatedParent}}" />
+            <ContentPresenter Grid.Row="1"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="2"
+                              Content="{Binding Provider.CurrentContent, RelativeSource={RelativeSource TemplatedParent}}" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
 
-                        <StackPanel Grid.Row="0"
-                                    Grid.Column="0"
-                                    Margin="0,0,4,0"
-                                    Orientation="Horizontal"
-                                    IsVisible="{Binding Provider.Count, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cc:CollapseIfSingleOverloadConverter.Instance}}">
-                            <Button Name="PART_UP">
-                                <Path Stroke="Black"
-                                      Fill="Black"
-                                      Data="M 0,0.866 L 1,0.866 L 0.5,0 Z"
-                                      Stretch="UniformToFill" />
-                            </Button>
-                            <TextBlock Margin="2,0,2,0"
-                                       Text="{Binding Provider.CurrentIndexText, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Button Name="PART_DOWN">
-                                <Path Stroke="Black"
-                                      Fill="Black"
-                                      Data="M 0,0 L 1,0 L 0.5,0.866 Z"
-                                      Stretch="UniformToFill" />
-                            </Button>
-                        </StackPanel>
-                        <ContentPresenter Grid.Row="0"
-                                          Grid.Column="1"
-                                          Content="{Binding Provider.CurrentHeader, RelativeSource={RelativeSource TemplatedParent}}" />
-                        <ContentPresenter Grid.Row="1"
-                                          Grid.Column="0"
-                                          Grid.ColumnSpan="2"
-                                          Content="{Binding Provider.CurrentContent, RelativeSource={RelativeSource TemplatedParent}}" />
-                    </Grid>
-                </Border>
-            </ControlTemplate>
-        </Setter>
+    <Style Selector="^/template/ Button">
+      <Setter Property="Background" Value="LightGray" />
+      <Setter Property="Padding" Value="2,2,2,2" />
+      <Setter Property="Width" Value="9" />
+      <Setter Property="Height" Value="9" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Name="bd"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="2">
+            <ContentPresenter Margin="{TemplateBinding Padding}"
+                              Content="{TemplateBinding Content}" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
     </Style>
-
-    <Style Selector="cc|OverloadViewer /template/ Button">
-        <Setter Property="Background"
-                Value="LightGray" />
-        <Setter Property="Padding"
-                Value="2,2,2,2" />
-        <Setter Property="Width"
-                Value="9" />
-        <Setter Property="Height"
-                Value="9" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Border Name="bd"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="2">
-                    <ContentPresenter Margin="{TemplateBinding Padding}"
-                                      Content="{TemplateBinding Content}" />
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </Style>
-</Styles>
+    
+  </ControlTheme>
+</ResourceDictionary>

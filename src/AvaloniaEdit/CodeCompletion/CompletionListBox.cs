@@ -30,8 +30,6 @@ namespace AvaloniaEdit.CodeCompletion
     {
         internal ScrollViewer ScrollViewer;
 
-        protected override Type StyleKeyOverride  => typeof(ListBox);
-
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);

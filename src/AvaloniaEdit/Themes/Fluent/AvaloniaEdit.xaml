@@ -1,19 +1,17 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui">
-
   <Styles.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <MergeResourceInclude Source="/Themes/Fluent/Base.xaml" />
+        <ResourceInclude Source="/Themes/Fluent/Base.xaml" />
+        <ResourceInclude Source="/TextEditor.xaml" />
+        <ResourceInclude Source="/Editing/TextArea.xaml" />
+        <ResourceInclude Source="/CodeCompletion/CompletionList.xaml" />
+        <ResourceInclude Source="/CodeCompletion/InsightWindow.xaml" />
+        <ResourceInclude Source="/Search/SearchPanel.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Styles.Resources>
 
-  <StyleInclude Source="avares://AvaloniaEdit/TextEditor.xaml" />
-  <StyleInclude Source="avares://AvaloniaEdit/Editing/TextArea.xaml" />
-  <StyleInclude Source="avares://AvaloniaEdit/CodeCompletion/CompletionList.xaml" />
-  <StyleInclude Source="avares://AvaloniaEdit/CodeCompletion/InsightWindow.xaml" />
-  <StyleInclude Source="avares://AvaloniaEdit/Rendering/VisualLineDrawingVisual.xaml" />
-  <StyleInclude Source="avares://AvaloniaEdit/Search/DropDownButton.xaml" />
-  <StyleInclude Source="avares://AvaloniaEdit/Search/SearchPanel.xaml" />
-
+  <StyleInclude Source="/CodeCompletion/CompletionWindow.xaml" />
+  <StyleInclude Source="/Rendering/VisualLineDrawingVisual.xaml" />
 </Styles>

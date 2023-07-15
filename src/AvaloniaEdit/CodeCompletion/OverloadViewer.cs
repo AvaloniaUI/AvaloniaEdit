@@ -104,16 +104,24 @@ namespace AvaloniaEdit.CodeCompletion
         }
     }
 
-    internal sealed class CollapseIfSingleOverloadConverter : IValueConverter
+    /// <summary>
+    /// Converter to be used in the <see cref="OverloadViewer"/> control theme. Used to set the
+    /// visibility of the part showing the number of overloads.
+    /// </summary>
+    public sealed class CollapseIfSingleOverloadConverter : IValueConverter
     {
-        public static CollapseIfSingleOverloadConverter Instance { get; } = new CollapseIfSingleOverloadConverter();
+        public static CollapseIfSingleOverloadConverter Instance { get; } = new();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (int)value >= 2;
+            // Show the up/down arrows and the "i of n" text if there are 2 or more method overloads.
+            if (value is int count)
+                return count >= 2;
+
+            return AvaloniaProperty.UnsetValue;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

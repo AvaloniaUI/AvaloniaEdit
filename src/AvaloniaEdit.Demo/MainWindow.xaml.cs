@@ -328,7 +328,7 @@ namespace AvaloniaEdit.Demo
             }
 
             public int Count => _items.Count;
-            public string CurrentIndexText => null;
+            public string CurrentIndexText => $"{SelectedIndex + 1} of {Count}";
             public object CurrentHeader => _items[SelectedIndex].header;
             public object CurrentContent => _items[SelectedIndex].content;
 

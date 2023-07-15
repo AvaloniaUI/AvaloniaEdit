@@ -95,7 +95,7 @@ namespace AvaloniaEdit.CodeCompletion
 
             AttachEvents();
 
-            Initailize();
+            Initialize();
         }
 
         protected virtual void OnClosed()
@@ -103,7 +103,7 @@ namespace AvaloniaEdit.CodeCompletion
             DetachEvents();
         }
 
-        private void Initailize()
+        private void Initialize()
         {
             if (_document != null && StartOffset != TextArea.Caret.Offset)
             {
