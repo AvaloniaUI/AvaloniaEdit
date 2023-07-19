@@ -38,6 +38,12 @@ namespace AvaloniaEdit.CodeCompletion
         public CompletionList()
         {
             DoubleTapped += OnDoubleTapped;
+
+            CompletionAcceptKeys = new[]
+            {
+                Key.Enter,
+                Key.Tab,
+            };
         }
 
 
@@ -104,6 +110,11 @@ namespace AvaloniaEdit.CodeCompletion
         }
 
         /// <summary>
+        /// Gets or sets the array of keys that are supposed to request insertation of the completion
+        /// </summary>
+        public Key[] CompletionAcceptKeys { get; set; }
+
+        /// <summary>
         /// Gets the scroll viewer used in this list box.
         /// </summary>
         public ScrollViewer ScrollViewer => _listBox?.ScrollViewer;
@@ -163,13 +174,13 @@ namespace AvaloniaEdit.CodeCompletion
                     e.Handled = true;
                     _listBox.SelectIndex(_listBox.ItemCount - 1);
                     break;
-                case Key.Tab:
-                case Key.Enter:
-                    if(CurrentList.Count > 0)
+                default:
+                    if (CompletionAcceptKeys.Contains(e.Key) && CurrentList.Count > 0)
                     {
                         e.Handled = true;
                         RequestInsertion(e);
-                    }                    
+                    }
+
                     break;
             }
         }
