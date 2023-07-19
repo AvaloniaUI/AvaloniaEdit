@@ -1192,7 +1192,12 @@ namespace AvaloniaEdit.Editing
 
             public override TextSelection Selection
             {
-                get => new TextSelection(_textArea.Caret.Position.Column, _textArea.Caret.Position.Column + _textArea.Selection.Length);
+                get
+                {
+                    if (_textArea == null)
+                        return new TextSelection(0, 0);
+                    return new TextSelection(_textArea.Caret.Position.Column, _textArea.Caret.Position.Column + _textArea.Selection.Length);
+                }
                 set
                 {
                     var selection = _textArea.Selection;
