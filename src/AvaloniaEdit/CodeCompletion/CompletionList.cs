@@ -175,12 +175,11 @@ namespace AvaloniaEdit.CodeCompletion
                     _listBox.SelectIndex(_listBox.ItemCount - 1);
                     break;
                 default:
-                    if (CompletionAcceptKeys.Contains(e.Key))
-                        if (CurrentList.Count > 0)
-                        {
-                            e.Handled = true;
-                            RequestInsertion(e);
-                        }
+                    if (CompletionAcceptKeys.Contains(e.Key) && CurrentList.Count > 0)
+                    {
+                        e.Handled = true;
+                        RequestInsertion(e);
+                    }
 
                     break;
             }
