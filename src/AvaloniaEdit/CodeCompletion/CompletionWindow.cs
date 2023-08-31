@@ -33,7 +33,7 @@ namespace AvaloniaEdit.CodeCompletion
     public class CompletionWindow : CompletionWindowBase
     {
         private PopupWithCustomPosition _toolTip;
-        private ContentControl _toolTipContent;
+        private CompletionTipContentControl _toolTipContent;
 
         /// <summary>
         /// Gets the completion list used in this completion window.
@@ -55,8 +55,7 @@ namespace AvaloniaEdit.CodeCompletion
             MinHeight = 15;
             MinWidth = 30;
 
-            _toolTipContent = new ContentControl();
-            _toolTipContent.Classes.Add("ToolTip");
+            _toolTipContent = new CompletionTipContentControl();
 
             _toolTip = new PopupWithCustomPosition
             {

@@ -1,8 +1,9 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:editing="clr-namespace:AvaloniaEdit.Editing">
+                    xmlns:editing="using:AvaloniaEdit.Editing"
+                    x:ClassModifier="internal">
   <ControlTheme x:Key="{x:Type editing:TextArea}" TargetType="editing:TextArea">
-    <Setter Property="SelectionBrush" Value="#660000ff" />
+    <Setter Property="SelectionBrush" Value="{DynamicResource TextAreaSelectionBrush}" />
     <!--<Setter Property="SelectionBorder">
            <Pen Brush="#0000ff" Thickness="1" />
         </Setter>-->

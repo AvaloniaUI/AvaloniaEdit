@@ -1,5 +1,5 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:AvalonEdit="using:AvaloniaEdit"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         MinWidth="0"
         MinHeight="300"
