@@ -426,7 +426,7 @@ namespace AvaloniaEdit.Editing
         {
             try
             {
-                TopLevel.GetTopLevel(visual)?.Clipboard?.SetTextAsync(text).GetAwaiter().GetResult();
+                TopLevel.GetTopLevel(visual)?.Clipboard?.SetTextAsync(text);
             }
             catch (Exception)
             {
