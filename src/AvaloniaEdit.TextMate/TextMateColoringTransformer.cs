@@ -17,8 +17,7 @@ namespace AvaloniaEdit.TextMate
 {
     public class TextMateColoringTransformer :
         GenericLineTransformer,
-        IModelTokensChangedListener,
-        ForegroundTextTransformation.IColorMap
+        IModelTokensChangedListener
     {
         private Theme _theme;
         private IGrammar _grammar;
@@ -77,6 +76,7 @@ namespace AvaloniaEdit.TextMate
         public void Dispose()
         {
             _textView.VisualLinesChanged -= TextView_VisualLinesChanged;
+            _brushes.Clear();
         }
 
         public void SetTheme(Theme theme)
@@ -103,15 +103,6 @@ namespace AvaloniaEdit.TextMate
             {
                 _model.SetGrammar(grammar);
             }
-        }
-
-        IBrush ForegroundTextTransformation.IColorMap.GetBrush(int colorId)
-        {
-            if (_brushes == null)
-                return null;
-
-            _brushes.TryGetValue(colorId, out IBrush result);
-            return result;
         }
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
@@ -190,7 +181,7 @@ namespace AvaloniaEdit.TextMate
                 if (transformations[i] == null)
                     transformations[i] = new ForegroundTextTransformation();
 
-                transformations[i].ColorMap = this;
+                transformations[i].ColorMap = _brushes;
                 transformations[i].ExceptionHandler = _exceptionHandler;
                 transformations[i].StartOffset = lineOffset + startIndex;
                 transformations[i].EndOffset = lineOffset + endIndex;
