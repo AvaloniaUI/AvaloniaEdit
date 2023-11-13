@@ -14,7 +14,7 @@
     <Version>11.0.5</Version>
     <Authors>Avalonia Team</Authors>
     <Copyright>Copyright 2017-$([System.DateTime]::Now.ToString(`yyyy`)) &#169; The AvaloniaUI Project</Copyright>
-    <RepositoryUrl>https://github.com/AvaloniaUI/Avalonia.AvaloniaEdit/</RepositoryUrl>
+    <RepositoryUrl>https://github.com/AvaloniaUI/AvaloniaEdit/</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Icon.png</PackageIcon>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
