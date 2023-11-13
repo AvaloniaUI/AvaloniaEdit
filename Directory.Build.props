@@ -6,5 +6,23 @@
     <AvaloniaSampleVersion>11.0.5</AvaloniaSampleVersion>
     <TextMateSharpVersion>1.0.56</TextMateSharpVersion>
     <VersionSuffix>beta</VersionSuffix>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <Version>11.0.5</Version>
+    <Authors>Avalonia Team</Authors>
+    <Copyright>Copyright 2017-$([System.DateTime]::Now.ToString(`yyyy`)) &#169; The AvaloniaUI Project</Copyright>
+    <RepositoryUrl>https://github.com/AvaloniaUI/Avalonia.AvaloniaEdit/</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>Icon.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup Label="PackageIcon">
+    <None Include="$(MSBuildThisFileDirectory)/Icon.png" Pack="true" Visible="false" PackagePath=""/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+  </ItemGroup>
 </Project>

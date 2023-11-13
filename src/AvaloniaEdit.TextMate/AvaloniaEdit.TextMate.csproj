@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
-    <Description>TextMate integration for AvaloniaEdit.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageDescription>TextMate integration for AvaloniaEdit.</PackageDescription>
   </PropertyGroup>
 
   <ItemGroup>

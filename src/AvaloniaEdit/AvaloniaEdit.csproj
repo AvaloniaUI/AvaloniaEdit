@@ -4,22 +4,9 @@
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <WarningsNotAsErrors>0612,0618</WarningsNotAsErrors>
     <PackageId>Avalonia.AvaloniaEdit</PackageId>
-    <Description>This project is a port of AvalonEdit, a WPF-based text editor for Avalonia.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-
-    <Version>11.0.5</Version>
-    <Authors>Avalonia Team</Authors>
-    <Copyright>Copyright 2017-$([System.DateTime]::Now.ToString(`yyyy`)) &#169; The AvaloniaUI Project</Copyright>
-    <RepositoryUrl>https://github.com/AvaloniaUI/Avalonia.AvaloniaEdit/</RepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIcon>Icon.png</PackageIcon>
-    <PackageDescription>Avalonia-based text editor (port of AvalonEdit).</PackageDescription>
+    <PackageDescription>This project is a port of AvalonEdit, a WPF-based text editor for Avalonia.</PackageDescription>
     <PackageTags>editor;code-editor;avalonia;text-editor;netstandard</PackageTags>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,13 +18,6 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="System.Collections.Immutable" Version="1.6.0" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
-  </ItemGroup>
-
-  <ItemGroup Label="PackageIcon">
-    <None Include="$(MSBuildThisFileDirectory)/Icon.png" Pack="true" Visible="false" PackagePath=""/>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
 
   <ItemGroup>
