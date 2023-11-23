@@ -202,7 +202,11 @@ namespace AvaloniaEdit.Snippets
                     if (Layer == KnownLayer.Background)
                     {
                         geoBuilder.AddSegment(textView, s);
-                        drawingContext.DrawGeometry(BackgroundBrush, null, geoBuilder.CreateGeometry());
+                        var geometry = geoBuilder.CreateGeometry(); 
+                        if(geometry != null)
+                        {
+                            drawingContext.DrawGeometry(BackgroundBrush, null, geometry);
+                        }
                     }
                     else
                     {
@@ -218,7 +222,11 @@ namespace AvaloniaEdit.Snippets
                                     geoBuilder.CloseFigure();
                                 }
                             }
-                            drawingContext.DrawGeometry(null, ActiveBorderPen, geoBuilder.CreateGeometry());
+                            var geometry = geoBuilder.CreateGeometry(); 
+                            if(geometry != null)
+                            {
+                                drawingContext.DrawGeometry(null, ActiveBorderPen, geometry);
+                            }
                         }
                     }
                 }
