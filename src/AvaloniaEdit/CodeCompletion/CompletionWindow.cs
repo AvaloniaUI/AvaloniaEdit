@@ -61,7 +61,6 @@ namespace AvaloniaEdit.CodeCompletion
             {
                 IsLightDismissEnabled = true,
                 PlacementTarget = this,
-                Placement = PlacementMode.RightEdgeAlignedTop,
                 Child = _toolTipContent,
             };
 
@@ -92,40 +91,39 @@ namespace AvaloniaEdit.CodeCompletion
 
             var item = CompletionList.SelectedItem;
             var description = item?.Description;
-            if (description != null)
+            
+    
+            if (description != null && Host is Control placementTarget && CompletionList.CurrentList != null)
             {
-                if (description is string descriptionText)
-                {
-                    _toolTipContent.Content = new TextBlock
-                    {
-                        Text = descriptionText,
-                        TextWrapping = TextWrapping.Wrap
-                    };
-                }
-                else
-                {
-                    _toolTipContent.Content = description;
-                }
+                _toolTipContent.Content = description;
 
-                _toolTip.IsOpen = false; //Popup needs to be closed to change position
-
-                // Calculate offset for tooltip
-                var popupRoot = Host as PopupRoot;
-                if (CompletionList.CurrentList != null)
+                double yOffset = 0;
+                var selectedIndex = CompletionList.ListBox.SelectedIndex;
+                    
+                var itemContainer = CompletionList.ListBox.ContainerFromIndex(selectedIndex);
+                    
+                if (itemContainer != null)
                 {
-                    double yOffset = 0;
-                    var itemContainer = CompletionList.ListBox.ContainerFromItem(item);
-                    if (popupRoot != null && itemContainer != null)
+                    _toolTip.Placement = PlacementMode.RightEdgeAlignedTop;
+                    var position = itemContainer.TranslatePoint(new Point(0, 0), placementTarget);
+                    if (position.HasValue) yOffset = position.Value.Y;
+                }
+                else 
+                {
+                    //When scrolling down the container is not always ready
+                    //If that happens we align the tooltip at the bottom or top
+                    if (CompletionList.ListBox.FirstVisibleItem < selectedIndex)
                     {
-                        var position = itemContainer.TranslatePoint(new Point(0, 0), popupRoot);
-                        if (position.HasValue)
-                            yOffset = position.Value.Y;
+                        _toolTip.Placement = PlacementMode.RightEdgeAlignedBottom;
                     }
-
-                    _toolTip.Offset = new Point(2, yOffset);
+                    else
+                    {
+                        _toolTip.Placement = PlacementMode.RightEdgeAlignedTop;
+                    }
                 }
-
-                _toolTip.PlacementTarget = popupRoot;
+                   
+                _toolTip.Offset = new Point(2, yOffset);
+                _toolTip.PlacementTarget = placementTarget;
                 _toolTip.IsOpen = true;
             }
             else
