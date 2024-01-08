@@ -293,9 +293,9 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Moves to the next occurrence in the file.
         /// </summary>
-        public void FindNext(int additionallOffset = 0)
+        public void FindNext()
         {
-            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(_textArea.Caret.Offset + 1 + additionallOffset) ??
+            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(_textArea.Caret.Offset + 1) ??
                          _renderer.CurrentResults.FirstSegment;
             if (result != null)
             {
@@ -327,7 +327,7 @@ namespace AvaloniaEdit.Search
         {
             if (!IsReplaceMode) return;
 
-            FindNext(-1);
+            FindNext();
             if (!_textArea.Selection.IsEmpty)
             {
                 _textArea.Selection.ReplaceSelectionWithText(ReplacePattern ?? string.Empty);
