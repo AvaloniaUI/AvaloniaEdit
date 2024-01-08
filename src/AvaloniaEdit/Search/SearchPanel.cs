@@ -292,10 +292,11 @@ namespace AvaloniaEdit.Search
 
         /// <summary>
         /// Moves to the next occurrence in the file.
+        /// startWithZeroOffset = true -> finds also at current position (not only next) - see ReplaceNext
         /// </summary>
-        public void FindNext()
+        public void FindNext(bool startWithZeroOffset = false)
         {
-            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(_textArea.Caret.Offset + 1) ??
+            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(_textArea.Caret.Offset + (startWithZeroOffset ? 0 : 1)) ??
                          _renderer.CurrentResults.FirstSegment;
             if (result != null)
             {
@@ -327,7 +328,7 @@ namespace AvaloniaEdit.Search
         {
             if (!IsReplaceMode) return;
 
-            FindNext();
+            FindNext(startWithZeroOffset:true);
             if (!_textArea.Selection.IsEmpty)
             {
                 _textArea.Selection.ReplaceSelectionWithText(ReplacePattern ?? string.Empty);
