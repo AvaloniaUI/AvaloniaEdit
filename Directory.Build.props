@@ -3,7 +3,7 @@
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AvaloniaVersion>11.0.0</AvaloniaVersion>
-    <AvaloniaSampleVersion>11.0.5</AvaloniaSampleVersion>
+    <AvaloniaSampleVersion>11.0.6</AvaloniaSampleVersion>
     <TextMateSharpVersion>1.0.56</TextMateSharpVersion>
     <VersionSuffix>beta</VersionSuffix>
 
@@ -11,7 +11,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <Version>11.0.5</Version>
+    <Version>11.0.6</Version>
     <Authors>Avalonia Team</Authors>
     <Copyright>Copyright 2017-$([System.DateTime]::Now.ToString(`yyyy`)) &#169; The AvaloniaUI Project</Copyright>
     <RepositoryUrl>https://github.com/AvaloniaUI/AvaloniaEdit/</RepositoryUrl>
