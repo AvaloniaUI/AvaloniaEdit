@@ -156,7 +156,7 @@ namespace AvaloniaEdit.Search
             // if results are found by the next run, the message will be hidden inside DoSearch ...
             try
             {
-                if (_renderer.CurrentResults.Any())
+                if (_renderer.CurrentResults.Any() && _messageView != null)
                     _messageView.IsVisible = false;
                 _strategy = SearchStrategyFactory.Create(SearchPattern ?? "", !MatchCase, WholeWords, UseRegex ? SearchMode.RegEx : SearchMode.Normal);
                 OnSearchOptionsChanged(new SearchOptionsChangedEventArgs(SearchPattern, MatchCase, UseRegex, WholeWords));
@@ -480,7 +480,10 @@ namespace AvaloniaEdit.Search
         public void Close()
         {
             _textArea.RemoveChild(this);
-            _messageView.IsVisible = false;
+
+            if (_messageView != null)
+                _messageView.IsVisible = false;
+
             _textArea.TextView.BackgroundRenderers.Remove(_renderer);
             
             IsClosed = true;
