@@ -282,24 +282,11 @@ namespace AvaloniaEdit.Search
         }
 
         /// <summary>
-        /// Moves to the next occurrence in the file starting at current caret offset.
-        /// </summary>
-        public void Find()
-        {
-            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(_textArea.Caret.Offset) ??
-                         _renderer.CurrentResults.FirstSegment;
-            if (result != null)
-            {
-                SetCurrentSearchResult(result);
-            }
-        }
-
-        /// <summary>
         /// Moves to the next occurrence in the file starting at the next position from current caret offset.
         /// </summary>
         public void FindNext()
         {
-            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(_textArea.Caret.Offset + 1) ??
+            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(_textArea.Caret.Offset) ??
                          _renderer.CurrentResults.FirstSegment;
             if (result != null)
             {
@@ -312,7 +299,8 @@ namespace AvaloniaEdit.Search
         /// </summary>
         public void FindPrevious()
         {
-            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(_textArea.Caret.Offset);
+            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(
+                Math.Max(_textArea.Caret.Offset - _textArea.Selection.Length, 0));
             if (result != null)
                 result = _renderer.CurrentResults.GetPreviousSegment(result);
             if (result == null)
@@ -327,7 +315,7 @@ namespace AvaloniaEdit.Search
         {
             if (!IsReplaceMode) return;
 
-            Find();
+            FindNext();
             if (!_textArea.Selection.IsEmpty)
             {
                 _textArea.Selection.ReplaceSelectionWithText(ReplacePattern ?? string.Empty);
@@ -372,7 +360,7 @@ namespace AvaloniaEdit.Search
 
             if (!string.IsNullOrEmpty(SearchPattern))
             {
-                var offset = _textArea.Caret.Offset;
+                var offset = Math.Max(_textArea.Caret.Offset - SearchPattern.Length, 0);
                 if (changeSelection)
                 {
                     _textArea.ClearSelection();
@@ -437,7 +425,7 @@ namespace AvaloniaEdit.Search
 
         private void SelectResult(TextSegment result)
         {
-            _textArea.Caret.Offset = result.StartOffset;
+            _textArea.Caret.Offset = result.EndOffset;
             _textArea.Selection = Selection.Create(_textArea, result.StartOffset, result.EndOffset);
 
             double distanceToViewBorder = _border == null ?
