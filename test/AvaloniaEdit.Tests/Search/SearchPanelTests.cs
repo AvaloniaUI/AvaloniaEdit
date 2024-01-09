@@ -135,6 +135,26 @@ public class SearchPanelTests
     }
 
     [AvaloniaTest]
+    public void Replace_Next_After_Replace_Next_Should_Replace_Occurence()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world world world";
+
+        textEditor.CaretOffset = 6;
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.ReplacePattern = "universe";
+        textEditor.SearchPanel.Open();
+        textEditor.SearchPanel.IsReplaceMode = true;
+        textEditor.SearchPanel.ReplaceNext();
+        textEditor.SearchPanel.ReplaceNext();
+
+        Assert.AreEqual("hello universe universe world", textEditor.Text);
+    }
+
+    [AvaloniaTest]
     public void Replace_Next_Should_Replace_Occurence_At_Caret_Index()
     {
         UnitTestApplication.InitializeStyles();
