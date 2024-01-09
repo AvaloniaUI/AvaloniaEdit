@@ -299,9 +299,7 @@ namespace AvaloniaEdit.Search
                          _renderer.CurrentResults.FirstSegment;
             if (result != null)
             {
-                _currentSearchResultIndex = GetSearchResultIndex(_renderer.CurrentResults, result);
-                SelectResult(result);
-                UpdateSearchLabel();
+                SetCurrentSearchResult(result);
             }
         }
 
@@ -317,9 +315,7 @@ namespace AvaloniaEdit.Search
                 result = _renderer.CurrentResults.LastSegment;
             if (result != null)
             {
-                _currentSearchResultIndex = GetSearchResultIndex(_renderer.CurrentResults, result);
-                SelectResult(result);
-                UpdateSearchLabel();
+                SetCurrentSearchResult(result);
             }
         }
 
@@ -355,6 +351,13 @@ namespace AvaloniaEdit.Search
 
         private Panel _messageView;
         private TextBlock _messageViewContent;
+
+        private void SetCurrentSearchResult(SearchResult result)
+        {
+            _currentSearchResultIndex = GetSearchResultIndex(_renderer.CurrentResults, result);
+            SelectResult(result);
+            UpdateSearchLabel();
+        }
 
         private void DoSearch(bool changeSelection)
         {
