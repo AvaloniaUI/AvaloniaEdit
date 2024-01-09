@@ -144,7 +144,6 @@ namespace AvaloniaEdit.Search
         {
             if (e.Sender is SearchPanel panel)
             {
-                panel.ValidateSearchText();
                 panel.UpdateSearch();
             }
         }
@@ -268,14 +267,6 @@ namespace AvaloniaEdit.Search
             _searchTextBox = e.NameScope.Find<TextBox>("PART_searchTextBox");
             _messageView = e.NameScope.Find<Panel>("PART_MessageView");
             _messageViewContent = e.NameScope.Find<TextBlock>("PART_MessageContent");
-        }
-
-        private void ValidateSearchText()
-        {
-            if (_searchTextBox == null)
-                return;
-
-            UpdateSearch();
         }
 
         /// <summary>
