@@ -371,12 +371,19 @@ namespace AvaloniaEdit.Search
                 foreach (var result in _strategy.FindAll(_textArea.Document, 0, _textArea.Document.TextLength).Cast<SearchResult>())
                 {
                     _renderer.CurrentResults.Add(result);
-                    if (changeSelection && result.StartOffset >= offset)
-                    {
+                }
+
+                if (changeSelection)
+                {
+                    // select the first result after the caret position
+                    // or the first result in document order if there is no result after the caret
+                    var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(offset) ??
+                                 _renderer.CurrentResults.FirstSegment;
+
+                    if (result != null)
                         SelectResult(result);
-                        _currentSearchResultIndex = _renderer.CurrentResults.Count - 1;
-                        changeSelection = false;
-                    }
+
+                    _currentSearchResultIndex = _renderer.CurrentResults.Count - 1;
                 }
             }
 

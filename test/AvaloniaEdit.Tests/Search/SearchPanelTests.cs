@@ -60,6 +60,43 @@ public class SearchPanelTests
     }
 
     [AvaloniaTest]
+    public void Find_Should_Select_The_First_Result_After_Caret()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world world";
+
+        textEditor.CaretOffset = 6;
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.Open();
+        textEditor.SearchPanel.FindNext();
+
+        Assert.AreEqual(6, textEditor.SelectionStart);
+        Assert.AreEqual(5, textEditor.SelectionLength);
+    }
+
+    [AvaloniaTest]
+    public void Find_Should_Select_First_Result_When_There_Are_No_Results_After_Caret()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world lovely";
+
+        textEditor.CaretOffset = 12;
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.Open();
+        textEditor.SearchPanel.FindNext();
+
+        Assert.AreEqual(6, textEditor.SelectionStart);
+        Assert.AreEqual(5, textEditor.SelectionLength);
+
+    }
+
+    [AvaloniaTest]
     public void Find_Previous_After_Find_Previous_Should_Find_Occurence()
     {
         UnitTestApplication.InitializeStyles();
