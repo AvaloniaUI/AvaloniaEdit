@@ -358,14 +358,15 @@ namespace AvaloniaEdit.Search
 
             CleanSearchResults();
 
+            var offset = Math.Max(_textArea.Caret.Offset - _textArea.Selection.Length, 0);
+
+            if (changeSelection)
+            {
+                _textArea.ClearSelection();
+            }
+            
             if (!string.IsNullOrEmpty(SearchPattern))
             {
-                var offset = Math.Max(_textArea.Caret.Offset - SearchPattern.Length, 0);
-                if (changeSelection)
-                {
-                    _textArea.ClearSelection();
-                }
-
                 // We cast from ISearchResult to SearchResult; this is safe because we always use the built-in strategy
                 foreach (var result in _strategy.FindAll(_textArea.Document, 0, _textArea.Document.TextLength).Cast<SearchResult>())
                 {

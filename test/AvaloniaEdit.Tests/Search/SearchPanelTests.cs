@@ -117,6 +117,22 @@ public class SearchPanelTests
     }
 
     [AvaloniaTest]
+    public void Clear_Search_Pattern_Should_Clean_Selection()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world";
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.Open();
+
+        textEditor.SearchPanel.SearchPattern = "";
+
+        Assert.AreEqual(0, textEditor.SelectionLength);
+    }
+
+    [AvaloniaTest]
     public void Replace_All_Should_Replace_All_Occurences()
     {
         UnitTestApplication.InitializeStyles();
