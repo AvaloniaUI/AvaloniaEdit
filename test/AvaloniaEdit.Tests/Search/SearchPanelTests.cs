@@ -25,6 +25,23 @@ public class SearchPanelTests
     }
 
     [AvaloniaTest]
+    public void Find_Next_After_Find_Next_Should_Find_The_Occurence()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world world";
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.Open();
+        textEditor.SearchPanel.FindNext();
+        textEditor.SearchPanel.FindNext();
+
+        Assert.AreEqual(12, textEditor.SelectionStart);
+        Assert.AreEqual(5, textEditor.SelectionLength);
+    }
+
+    [AvaloniaTest]
     public void Find_Previous_Should_Find_Previous_Occurence()
     {
         UnitTestApplication.InitializeStyles();
@@ -39,6 +56,25 @@ public class SearchPanelTests
         textEditor.SearchPanel.FindPrevious();
 
         Assert.AreEqual(0, textEditor.SelectionStart);
+        Assert.AreEqual(5, textEditor.SelectionLength);
+    }
+
+    [AvaloniaTest]
+    public void Find_Previous_After_Find_Previous_Should_Find_Occurence()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world world";
+
+        textEditor.CaretOffset = 17;
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.Open();
+        textEditor.SearchPanel.FindPrevious();
+        textEditor.SearchPanel.FindPrevious();
+
+        Assert.AreEqual(6, textEditor.SelectionStart);
         Assert.AreEqual(5, textEditor.SelectionLength);
     }
 
