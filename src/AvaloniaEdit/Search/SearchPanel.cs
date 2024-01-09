@@ -284,9 +284,9 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Moves to the next occurrence in the file starting at the next position from current caret offset.
         /// </summary>
-        public void FindNext()
+        public void FindNext(int startOffset = -1)
         {
-            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(_textArea.Caret.Offset) ??
+            var result = _renderer.CurrentResults.FindFirstSegmentWithStartAfter(startOffset == -1 ? _textArea.Caret.Offset : startOffset) ??
                          _renderer.CurrentResults.FirstSegment;
             if (result != null)
             {
@@ -315,7 +315,7 @@ namespace AvaloniaEdit.Search
         {
             if (!IsReplaceMode) return;
 
-            FindNext();
+            FindNext(Math.Max(_textArea.Caret.Offset - _textArea.Selection.Length, 0));
             if (!_textArea.Selection.IsEmpty)
             {
                 _textArea.Selection.ReplaceSelectionWithText(ReplacePattern ?? string.Empty);
