@@ -15,7 +15,7 @@
           <StaticResource x:Key="OverloadViewerBorderBrush" ResourceKey="ThemeBorderMidBrush" />
           <SolidColorBrush x:Key="SearchPanelBackgroundBrush" Color="{DynamicResource ThemeBackgroundColor}" />
           <SolidColorBrush x:Key="SearchPanelBorderBrush" Color="{DynamicResource ThemeBorderLowColor}" />
-          <SolidColorBrush x:Key="TextAreaSelectionBrush" Color="{DynamicResource HighlightBrush}" />
+          <SolidColorBrush x:Key="TextAreaSelectionBrush" Color="{DynamicResource HighlightColor}" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
           <StaticResource x:Key="CompletionToolTipBackground" ResourceKey="ThemeBackgroundBrush" />
@@ -27,7 +27,7 @@
           <StaticResource x:Key="OverloadViewerBorderBrush" ResourceKey="ThemeBorderMidBrush" />
           <SolidColorBrush x:Key="SearchPanelBackgroundBrush" Color="{DynamicResource ThemeBackgroundColor}" />
           <SolidColorBrush x:Key="SearchPanelBorderBrush" Color="{DynamicResource ThemeBorderLowColor}" />
-          <SolidColorBrush x:Key="TextAreaSelectionBrush" Color="{DynamicResource HighlightBrush}" />
+          <SolidColorBrush x:Key="TextAreaSelectionBrush" Color="{DynamicResource HighlightColor}" />
         </ResourceDictionary>
       </ResourceDictionary.ThemeDictionaries>
 

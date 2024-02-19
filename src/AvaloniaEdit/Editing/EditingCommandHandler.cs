@@ -426,7 +426,7 @@ namespace AvaloniaEdit.Editing
         {
             try
             {
-                TopLevel.GetTopLevel(visual)?.Clipboard?.SetTextAsync(text).GetAwaiter().GetResult();
+                TopLevel.GetTopLevel(visual)?.Clipboard?.SetTextAsync(text);
             }
             catch (Exception)
             {
@@ -506,7 +506,10 @@ namespace AvaloniaEdit.Editing
                 }
 
                 if (text == null)
+                {
+                    textArea.Document.EndUpdate();
                     return;
+                }
 
 
                 text = GetTextToPaste(text, textArea);
