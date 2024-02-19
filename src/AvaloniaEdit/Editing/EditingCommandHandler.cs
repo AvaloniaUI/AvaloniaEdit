@@ -506,7 +506,10 @@ namespace AvaloniaEdit.Editing
                 }
 
                 if (text == null)
+                {
+                    textArea.Document.EndUpdate();
                     return;
+                }
 
 
                 text = GetTextToPaste(text, textArea);
