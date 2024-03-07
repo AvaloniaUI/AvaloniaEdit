@@ -34,6 +34,7 @@
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
                                FontWeight="Light"
+                               LineNumbersMargin="10,0,20,0"
                                FontSize="14" />
     </DockPanel>
 </Window>
