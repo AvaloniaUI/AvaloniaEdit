@@ -23,6 +23,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Labs.Input;
 using Avalonia.Media;
 
 using AvaloniaEdit.Document;
@@ -35,7 +36,7 @@ namespace AvaloniaEdit.Search
     /// <summary>
     /// Provides search functionality for AvalonEdit. It is displayed in the top-right corner of the TextArea.
     /// </summary>
-    public class SearchPanel : TemplatedControl, IRoutedCommandBindable
+    public class SearchPanel : TemplatedControl
     {
         private TextArea _textArea;
         private SearchInputHandler _handler;
@@ -198,7 +199,7 @@ namespace AvaloniaEdit.Search
         /// <summary>
         /// Adds the commands used by SearchPanel to the given CommandBindingCollection.
         /// </summary>
-        public void RegisterCommands(ICollection<RoutedCommandBinding> commandBindings)
+        public void RegisterCommands(ICollection<CommandBinding> commandBindings)
         {
             _handler.RegisterGlobalCommands(commandBindings);
         }
@@ -227,18 +228,18 @@ namespace AvaloniaEdit.Search
             _textArea.DocumentChanged += TextArea_DocumentChanged;
             KeyDown += SearchLayerKeyDown;
 
-            CommandBindings.Add(new RoutedCommandBinding(SearchCommands.FindNext, (sender, e) => FindNext()));
-            CommandBindings.Add(new RoutedCommandBinding(SearchCommands.FindPrevious, (sender, e) => FindPrevious()));
-            CommandBindings.Add(new RoutedCommandBinding(SearchCommands.CloseSearchPanel, (sender, e) => Close()));
+            CommandBindings.Add(new CommandBinding(SearchCommands.FindNext, (sender, e) => FindNext()));
+            CommandBindings.Add(new CommandBinding(SearchCommands.FindPrevious, (sender, e) => FindPrevious()));
+            CommandBindings.Add(new CommandBinding(SearchCommands.CloseSearchPanel, (sender, e) => Close()));
 
-            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Find, (sender, e) =>
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, (sender, e) =>
             {
                 IsReplaceMode = false;
                 Reactivate();
             }));
-            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Replace, (sender, e) => IsReplaceMode = true));
-            CommandBindings.Add(new RoutedCommandBinding(SearchCommands.ReplaceNext, (sender, e) => ReplaceNext(), (sender, e) => e.CanExecute = IsReplaceMode));
-            CommandBindings.Add(new RoutedCommandBinding(SearchCommands.ReplaceAll, (sender, e) => ReplaceAll(), (sender, e) => e.CanExecute = IsReplaceMode));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, (sender, e) => IsReplaceMode = true));
+            CommandBindings.Add(new CommandBinding(SearchCommands.ReplaceNext, (sender, e) => ReplaceNext(), (sender, e) => e.CanExecute = IsReplaceMode));
+            CommandBindings.Add(new CommandBinding(SearchCommands.ReplaceAll, (sender, e) => ReplaceAll(), (sender, e) => e.CanExecute = IsReplaceMode));
 
             IsClosed = true;
         }
@@ -559,7 +560,7 @@ namespace AvaloniaEdit.Search
             SearchOptionsChanged?.Invoke(this, e);
         }
 
-        public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+        public IList<CommandBinding> CommandBindings { get; } = new List<CommandBinding>();
     }
 
     /// <summary>
