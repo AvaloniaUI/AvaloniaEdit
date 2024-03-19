@@ -560,7 +560,7 @@ namespace AvaloniaEdit.Search
             SearchOptionsChanged?.Invoke(this, e);
         }
 
-        public IList<CommandBinding> CommandBindings { get; } = new List<CommandBinding>();
+        public IList<CommandBinding> CommandBindings => CommandManager.GetCommandBindings(this);
     }
 
     /// <summary>
