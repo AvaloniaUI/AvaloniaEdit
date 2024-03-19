@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Avalonia;
+using Avalonia.Labs.Input;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Utils;
 

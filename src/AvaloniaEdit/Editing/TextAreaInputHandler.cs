@@ -18,8 +18,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AvaloniaEdit.Utils;
 using Avalonia.Input;
+using Avalonia.Labs.Input;
 
 namespace AvaloniaEdit.Editing
 {
@@ -108,7 +110,7 @@ namespace AvaloniaEdit.Editing
     /// <remarks><inheritdoc cref="ITextAreaInputHandler"/></remarks>
     public class TextAreaInputHandler : ITextAreaInputHandler
     {
-        private readonly ObserveAddRemoveCollection<RoutedCommandBinding> _commandBindings;
+        private readonly ObserveAddRemoveCollection<CommandBinding> _commandBindings;
         private readonly List<KeyBinding> _keyBindings;
         private readonly ObserveAddRemoveCollection<ITextAreaInputHandler> _nestedInputHandlers;
 
@@ -118,7 +120,7 @@ namespace AvaloniaEdit.Editing
         public TextAreaInputHandler(TextArea textArea)
         {
             TextArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
-            _commandBindings = new ObserveAddRemoveCollection<RoutedCommandBinding>(CommandBinding_Added, CommandBinding_Removed);
+            _commandBindings = new ObserveAddRemoveCollection<CommandBinding>(CommandBinding_Added, CommandBinding_Removed);
             _keyBindings = new List<KeyBinding>();
             _nestedInputHandlers = new ObserveAddRemoveCollection<ITextAreaInputHandler>(NestedInputHandler_Added, NestedInputHandler_Removed);
         }
@@ -135,15 +137,15 @@ namespace AvaloniaEdit.Editing
         /// <summary>
         /// Gets the command bindings of this input handler.
         /// </summary>
-        public ICollection<RoutedCommandBinding> CommandBindings => _commandBindings;
+        public ICollection<CommandBinding> CommandBindings => _commandBindings;
 
-        private void CommandBinding_Added(RoutedCommandBinding commandBinding)
+        private void CommandBinding_Added(CommandBinding commandBinding)
         {
             if (IsAttached)
                 TextArea.CommandBindings.Add(commandBinding);
         }
 
-        private void CommandBinding_Removed(RoutedCommandBinding commandBinding)
+        private void CommandBinding_Removed(CommandBinding commandBinding)
         {
             if (IsAttached)
                 TextArea.CommandBindings.Remove(commandBinding);
@@ -175,7 +177,7 @@ namespace AvaloniaEdit.Editing
         /// <param name="handler">The event handler to run when the command is executed.</param>
         public void AddBinding(RoutedCommand command, KeyModifiers modifiers, Key key, EventHandler<ExecutedRoutedEventArgs> handler)
         {
-            CommandBindings.Add(new RoutedCommandBinding(command, handler));
+            CommandBindings.Add(new CommandBinding(command, handler));
             KeyBindings.Add(new KeyBinding { Command = command, Gesture = new KeyGesture (key, modifiers) });
         }
         #endregion
@@ -218,9 +220,10 @@ namespace AvaloniaEdit.Editing
 
             foreach (var commandBinding in CommandBindings)
             {
-                if (commandBinding.Command.Gesture?.Matches(keyEventArgs) == true)
+                if (commandBinding.Command is RoutedCommand routedCommand
+                    && routedCommand.Gestures.Any(g => g.Matches(keyEventArgs)))
                 {
-                    commandBinding.Command.Execute(null, (IInputElement)sender);
+                    routedCommand.Execute(null, (IInputElement)sender);
                     keyEventArgs.Handled = true;
                     break;
                 }

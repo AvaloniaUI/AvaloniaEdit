@@ -25,6 +25,7 @@ using AvaloniaEdit.Document;
 using Avalonia.Input;
 using AvaloniaEdit.Utils;
 using Avalonia.Controls;
+using Avalonia.Labs.Input;
 
 namespace AvaloniaEdit.Editing
 {
@@ -45,19 +46,19 @@ namespace AvaloniaEdit.Editing
             return handler;
         }
 
-        private static readonly List<RoutedCommandBinding> CommandBindings = new List<RoutedCommandBinding>();
+        private static readonly List<CommandBinding> CommandBindings = new List<CommandBinding>();
         private static readonly List<KeyBinding> KeyBindings = new List<KeyBinding>();
 
         private static void AddBinding(RoutedCommand command, KeyModifiers modifiers, Key key,
             EventHandler<ExecutedRoutedEventArgs> handler)
         {
-            CommandBindings.Add(new RoutedCommandBinding(command, handler));
+            CommandBindings.Add(new CommandBinding(command, handler));
             KeyBindings.Add(TextAreaDefaultInputHandler.CreateKeyBinding(command, modifiers, key));
         }
 
         private static void AddBinding(RoutedCommand command, EventHandler<ExecutedRoutedEventArgs> handler, EventHandler<CanExecuteRoutedEventArgs> canExecuteHandler = null)
         {
-            CommandBindings.Add(new RoutedCommandBinding(command, handler, canExecuteHandler));
+            CommandBindings.Add(new CommandBinding(command, handler, canExecuteHandler));
         }
 
         static EditingCommandHandler()
