@@ -540,7 +540,7 @@ namespace AvaloniaEdit
                 var line = (Line)DottedLineMargin.Create();
                 leftMargins.Insert(0, lineNumbers);
                 leftMargins.Insert(1, line);
-                var lineNumbersForeground = new Binding("LineNumbersForeground") { Source = editor };
+                var lineNumbersForeground = editor.GetBindingObservable(LineNumbersForegroundProperty);
                 line.Bind(Shape.StrokeProperty, lineNumbersForeground);
                 lineNumbers.Bind(ForegroundProperty, lineNumbersForeground);
             }
