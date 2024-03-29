@@ -1,10 +1,9 @@
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Threading;
-
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
-
 using TextMateSharp.Model;
 
 namespace AvaloniaEdit.TextMate
@@ -71,6 +70,19 @@ namespace AvaloniaEdit.TextMate
         public override int GetLineLength(int lineIndex)
         {
             return _documentSnapshot.GetLineLength(lineIndex);
+        }
+
+        public IReadOnlyCollection<string> GetTokenScopes(int lineIndex, int columnIndex)
+        {
+            var line = Get(lineIndex);
+            if (line == null) return Array.Empty<string>();
+
+            var element = line
+                .Tokens
+                .OrderBy(x => x.StartIndex)
+                .LastOrDefault(x => x.StartIndex <= columnIndex);
+
+            return element?.Scopes ?? new List<string>();
         }
 
         private void TextView_ScrollOffsetChanged(object sender, EventArgs e)

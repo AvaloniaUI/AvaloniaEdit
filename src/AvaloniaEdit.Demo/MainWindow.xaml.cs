@@ -109,9 +109,14 @@ namespace AvaloniaEdit.Demo
 
         private void Caret_PositionChanged(object sender, EventArgs e)
         {
-            _statusTextBlock.Text = string.Format("Line {0} Column {1}",
+            var scopes = _textMateInstallation.EditorModel.GetTokenScopes(
+                _textEditor.TextArea.Caret.Line - 1,
+                _textEditor.TextArea.Caret.Column - 1);
+
+            _statusTextBlock.Text = string.Format("Line {0} Column {1}. Scopes: {2}",
                 _textEditor.TextArea.Caret.Line,
-                _textEditor.TextArea.Caret.Column);
+                _textEditor.TextArea.Caret.Column,
+                scopes.Count > 0 ? string.Join(", ", scopes) : "None");
         }
 
         protected override void OnClosed(EventArgs e)
