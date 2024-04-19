@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -37,7 +38,7 @@ namespace AvaloniaEdit.CodeCompletion
     {
         public CompletionList()
         {
-            DoubleTapped += OnDoubleTapped;
+            AddHandler(PointerPressedEvent, OnPointerPressed, RoutingStrategies.Bubble, true);
 
             CompletionAcceptKeys = new[]
             {
@@ -110,7 +111,7 @@ namespace AvaloniaEdit.CodeCompletion
         }
 
         /// <summary>
-        /// Gets or sets the array of keys that are supposed to request insertation of the completion
+        /// Gets or sets the array of keys that are supposed to request insertion of the completion.
         /// </summary>
         public Key[] CompletionAcceptKeys { get; set; }
 
@@ -185,14 +186,23 @@ namespace AvaloniaEdit.CodeCompletion
             }
         }
 
-        protected void OnDoubleTapped(object sender, RoutedEventArgs e)
+        private void OnPointerPressed(object sender, PointerPressedEventArgs e)
         {
-            //TODO TEST
-            if (((AvaloniaObject)e.Source).VisualAncestorsAndSelf()
-                    .TakeWhile(obj => obj != this).Any(obj => obj is ListBoxItem))
+            var visual = e.Source as Visual;
+            if (e.GetCurrentPoint(visual).Properties.IsLeftButtonPressed)
             {
-                e.Handled = true;
-                RequestInsertion(e);
+                var listBoxItem = visual.VisualAncestorsAndSelf()
+                    .TakeWhile(v => v != this)
+                    .OfType<ListBoxItem>()
+                    .FirstOrDefault();
+
+                if (listBoxItem != null)
+                {
+                    // A completion item was clicked.
+                    Debug.Assert(e.Handled, "Click expected to be handled by ListBoxItem.");
+                    Debug.Assert(listBoxItem.IsSelected, "Completion item expected to be selected.");
+                    RequestInsertion(e);
+                }
             }
         }
 
