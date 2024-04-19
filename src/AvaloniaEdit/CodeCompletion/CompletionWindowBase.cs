@@ -311,8 +311,7 @@ namespace AvaloniaEdit.CodeCompletion
         {
             if (CloseOnFocusLost)
             {
-                Debug.WriteLine("CloseIfFocusLost: this.IsFocues=" + IsFocused + " IsTextAreaFocused=" + IsTextAreaFocused);
-                if (!IsFocused && !IsTextAreaFocused)
+                if ((Child == null || !Child.IsKeyboardFocusWithin)  && !IsTextAreaFocused)
                 {
                     Hide();
                 }
