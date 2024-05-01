@@ -854,9 +854,9 @@ namespace AvaloniaEdit.Editing
                     ReplaceSelectionWithNewLine();
                 else
                 {
-                    // TODO
-                    //if (OverstrikeMode && Selection.IsEmpty && Document.GetLineByNumber(Caret.Line).EndOffset > Caret.Offset)
-                    //    EditingCommands.SelectRightByCharacter.Execute(null, this);
+                    if (OverstrikeMode && Selection.IsEmpty && Document.GetLineByNumber(Caret.Line).EndOffset > Caret.Offset)
+                        EditingCommands.SelectRightByCharacter.Execute(null, this);
+
                     ReplaceSelectionWithText(e.Text);
                 }
                 OnTextEntered(e);
