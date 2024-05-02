@@ -1137,6 +1137,7 @@ namespace AvaloniaEdit.Editing
         private class TextAreaTextInputMethodClient : TextInputMethodClient
         {
             private TextArea _textArea;
+            private TextSelection _emptySelection;
 
             public TextAreaTextInputMethodClient()
             {
@@ -1203,17 +1204,14 @@ namespace AvaloniaEdit.Editing
                     var startLocation = _textArea.Selection.StartPosition.Location;
                     var endLocation = _textArea.Selection.EndPosition.Location;
 
-                    var smallerLocation = startLocation < endLocation ? startLocation : endLocation;
-                    var biggerLocation = startLocation > endLocation ? startLocation : endLocation;
-
                     var lineNumber = _textArea.Caret.Line;
                     var line = _textArea.Document.GetLineByNumber(lineNumber);
 
-                    var selectionStart = smallerLocation.Line == lineNumber
-                                             ? smallerLocation.Column - 1
+                    var selectionStart = startLocation.Line == lineNumber
+                                             ? startLocation.Column - 1
                                              : line.Offset;
-                    var selectionEnd = biggerLocation.Line == lineNumber
-                                           ? biggerLocation.Column - 1
+                    var selectionEnd = endLocation.Line == lineNumber
+                                           ? endLocation.Column - 1
                                            : line.EndOffset;
 
                     return new TextSelection(selectionStart, selectionEnd);
@@ -1263,7 +1261,6 @@ namespace AvaloniaEdit.Editing
                 RaiseSelectionChanged();
             }
 
-            private TextSelection _emptySelection;
             private void Caret_PositionChanged(object sender, EventArgs e)
             {
                 RaiseCursorRectangleChanged();
