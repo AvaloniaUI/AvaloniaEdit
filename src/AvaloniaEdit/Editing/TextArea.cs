@@ -1196,17 +1196,42 @@ namespace AvaloniaEdit.Editing
                 {
                     if (_textArea == null)
                         return new TextSelection(0, 0);
-                    return new TextSelection(_textArea.Caret.Position.Column, _textArea.Caret.Position.Column + _textArea.Selection.Length);
+
+                    if (_textArea.Selection.IsEmpty)
+                        return _emptySelection;
+
+                    var startLocation = _textArea.Selection.StartPosition.Location;
+                    var endLocation = _textArea.Selection.EndPosition.Location;
+
+                    var smallerLocation = startLocation < endLocation ? startLocation : endLocation;
+                    var biggerLocation = startLocation > endLocation ? startLocation : endLocation;
+
+                    var lineNumber = _textArea.Caret.Line;
+                    var line = _textArea.Document.GetLineByNumber(lineNumber);
+
+                    var selectionStart = smallerLocation.Line == lineNumber
+                                             ? smallerLocation.Column - 1
+                                             : line.Offset;
+                    var selectionEnd = biggerLocation.Line == lineNumber
+                                           ? biggerLocation.Column - 1
+                                           : line.EndOffset;
+
+                    return new TextSelection(selectionStart, selectionEnd);
                 }
                 set
                 {
                     if (_textArea == null) return;
-                    var selection =  _textArea.Selection;
-                    if (selection.StartPosition.Line == 0) return;
+                    var selection = _textArea.Selection;
+
+                    var lineNumber = _textArea.Caret.Line;
+                    var start = value.Start + 1;
+                    var end = value.End + 1;
 
                     _textArea.Selection = selection.StartSelectionOrSetEndpoint(
-                        new TextViewPosition(selection.StartPosition.Line, value.Start),
-                        new TextViewPosition(selection.StartPosition.Line, value.End));
+                        new TextViewPosition(lineNumber, start),
+                        new TextViewPosition(lineNumber, end));
+
+                    RaiseSelectionChanged();
                 }
             }
 
@@ -1215,6 +1240,7 @@ namespace AvaloniaEdit.Editing
                 if (_textArea != null)
                 {
                     _textArea.Caret.PositionChanged -= Caret_PositionChanged;
+                    _textArea.SelectionChanged -= TextArea_SelectionChanged;
                 }
 
                 _textArea = textArea;
@@ -1222,6 +1248,7 @@ namespace AvaloniaEdit.Editing
                 if (_textArea != null)
                 {
                     _textArea.Caret.PositionChanged += Caret_PositionChanged;
+                    _textArea.SelectionChanged += TextArea_SelectionChanged;
                 }
 
                 RaiseTextViewVisualChanged();
@@ -1231,11 +1258,31 @@ namespace AvaloniaEdit.Editing
                 RaiseSurroundingTextChanged();
             }
 
+            private void TextArea_SelectionChanged(object sender, EventArgs e)
+            {
+                RaiseSelectionChanged();
+            }
+
+            private TextSelection _emptySelection;
             private void Caret_PositionChanged(object sender, EventArgs e)
             {
                 RaiseCursorRectangleChanged();
                 RaiseSurroundingTextChanged();
-                RaiseSelectionChanged();
+
+                if (_textArea.Selection.IsEmpty)
+                {
+                    // We need to select something before empty selection so that the IME be able to complete/correct words
+                    // Atleast while its working so
+                    // Maybe this was designed for Avalonia TextBox where selection changing by two steps (start index, end index)
+                    var currentSelectionIdx = _textArea.Caret.Position.Column - 1;
+
+                    // Raise selection step by step to new location
+                    _emptySelection.Start = currentSelectionIdx;
+                    RaiseSelectionChanged();
+
+                    _emptySelection.End = currentSelectionIdx;
+                    RaiseSelectionChanged();
+                }
             }
 
             public override void SetPreeditText(string text)
