@@ -12,15 +12,16 @@ using AvaloniaEdit.Rendering;
 namespace AvaloniaEdit.Demo
 {
     /// <summary>
-    /// A custom, clickable margin.
+    /// A custom margin that draws a red dot when clicked. (Similar to the breakpoint margin the
+    /// Visual Studio editor.)
     /// </summary>
     internal sealed class CustomMargin : AbstractMargin
     {
-        private readonly IBrush _backgroundBrush = new ImmutableSolidColorBrush(Colors.DarkGray, 0.5f);
+        private readonly IBrush _backgroundBrush = new ImmutableSolidColorBrush(new Color(255, 51, 51, 51));
         private readonly IBrush _pointerOverBrush = new ImmutableSolidColorBrush(new Color(192, 80, 80, 80));
         private readonly IPen _pointerOverPen = new ImmutablePen(new ImmutableSolidColorBrush(new Color(192, 37, 37, 37)), 1);
-        private readonly IBrush _markerBrush = new ImmutableSolidColorBrush(new Color(192, 196, 65, 74));
-        private readonly IPen _markerPen = new ImmutablePen(new ImmutableSolidColorBrush(new Color(192, 186, 17, 28)), 1);
+        private readonly IBrush _markerBrush = new ImmutableSolidColorBrush(new Color(255, 195, 81, 92));
+        private readonly IPen _markerPen = new ImmutablePen(new ImmutableSolidColorBrush(new Color(255, 240, 92, 104)), 1);
 
         private readonly List<int> _markedDocumentLines = [];
         private int _pointerOverLine = -1;
