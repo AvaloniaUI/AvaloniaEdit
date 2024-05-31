@@ -136,9 +136,9 @@ namespace AvaloniaEdit.Editing
             var newLength = documentLineCount.ToString(CultureInfo.CurrentCulture).Length;
 
             // The margin looks too small when there is only one digit, so always reserve space for
-            // at least two digits
-            if (newLength < 2)
-                newLength = 2;
+            // at least four digits
+            if (newLength < 4)
+                newLength = 4;
 
             if (newLength != MaxLineNumberLength)
             {
