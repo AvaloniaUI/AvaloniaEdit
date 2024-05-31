@@ -112,6 +112,9 @@ namespace AvaloniaEdit.Demo
                 if (i.Delta.Y > 0) _textEditor.FontSize++;
                 else _textEditor.FontSize = _textEditor.FontSize > 1 ? _textEditor.FontSize - 1 : 1;
             }, RoutingStrategies.Bubble, true);
+
+            // Add a custom margin at the left of the text area, which can be clicked.
+            _textEditor.TextArea.LeftMargins.Insert(0, new CustomMargin());
         }
 
         private void Caret_PositionChanged(object sender, EventArgs e)
