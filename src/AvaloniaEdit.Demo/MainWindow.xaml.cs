@@ -18,6 +18,9 @@ using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Grammars;
 using Avalonia.Diagnostics;
+using AvaloniaEdit.Snippets;
+using Snippet = AvaloniaEdit.Snippets.Snippet;
+
 namespace AvaloniaEdit.Demo
 {
     using Pair = KeyValuePair<int, Control>;
@@ -32,6 +35,7 @@ namespace AvaloniaEdit.Demo
         private Button _addControlButton;
         private Button _clearControlButton;
         private Button _changeThemeButton;
+        private Button _insertSnippetButton;
         private ComboBox _syntaxModeCombo;
         private TextBlock _statusTextBlock;
         private ElementGenerator _generator = new ElementGenerator();
@@ -40,7 +44,6 @@ namespace AvaloniaEdit.Demo
 
         public MainWindow()
         {
-
             InitializeComponent();
 
             _textEditor = this.FindControl<TextEditor>("Editor");
@@ -74,6 +77,9 @@ namespace AvaloniaEdit.Demo
 
             _changeThemeButton = this.FindControl<Button>("changeThemeBtn");
             _changeThemeButton.Click += ChangeThemeButton_Click;
+
+            _insertSnippetButton = this.FindControl<Button>("insertSnippetBtn");
+            _insertSnippetButton.Click += InsertSnippetButton_Click;
 
             _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
@@ -399,6 +405,30 @@ namespace AvaloniaEdit.Demo
             {
                 return x.Key.CompareTo(y.Key);
             }
+        }
+
+        private void InsertSnippetButton_Click(object sender, RoutedEventArgs e)
+        {
+            var className = new SnippetReplaceableTextElement { Text = "Name" };
+            var snippet = new Snippet
+            {
+                Elements =
+                {
+                    new SnippetTextElement { Text = "public class " },
+                    className,
+                    new SnippetTextElement
+                    {
+                        Text = "\n{\n    public "
+                    },
+                    new SnippetBoundElement { TargetElement = className },
+                    new SnippetTextElement { Text = "()\n    {\n        " },
+                    new SnippetCaretElement(),
+                    new SnippetTextElement { Text = "\n    }\n}" }
+                }
+            };
+
+            snippet.Insert(_textEditor.TextArea);
+            _textEditor.Focus();
         }
     }
 }
