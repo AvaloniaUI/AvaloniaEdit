@@ -57,8 +57,8 @@ namespace AvaloniaEdit.TextMate
 
         AM.FontStyle GetFontStyle()
         {
-            if (FontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
-                (FontStyle & TextMateSharp.Themes.FontStyle.Italic) != 0)
+            if (FontStyle != (int)TextMateSharp.Themes.FontStyle.NotSet &&
+                (FontStyle & (int)TextMateSharp.Themes.FontStyle.Italic) != 0)
                 return AM.FontStyle.Italic;
 
             return AM.FontStyle.Normal;
@@ -66,8 +66,8 @@ namespace AvaloniaEdit.TextMate
 
         AM.FontWeight GetFontWeight()
         {
-            if (FontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
-                (FontStyle & TextMateSharp.Themes.FontStyle.Bold) != 0)
+            if (FontStyle != (int)TextMateSharp.Themes.FontStyle.NotSet &&
+                (FontStyle & (int)TextMateSharp.Themes.FontStyle.Bold) != 0)
                 return AM.FontWeight.Bold;
 
             return AM.FontWeight.Regular;
@@ -75,8 +75,8 @@ namespace AvaloniaEdit.TextMate
 
         bool IsUnderline()
         {
-            if (FontStyle != TextMateSharp.Themes.FontStyle.NotSet &&
-                (FontStyle & TextMateSharp.Themes.FontStyle.Underline) != 0)
+            if (FontStyle != (int)TextMateSharp.Themes.FontStyle.NotSet &&
+                (FontStyle & (int)TextMateSharp.Themes.FontStyle.Underline) != 0)
                 return true;
 
             return false;

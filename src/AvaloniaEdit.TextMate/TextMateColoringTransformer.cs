@@ -175,7 +175,7 @@ namespace AvaloniaEdit.TextMate
                         background = themeRule.background;
 
                     if (fontStyle == 0 && themeRule.fontStyle > 0)
-                        fontStyle = themeRule.fontStyle;
+                        fontStyle = (int)themeRule.fontStyle;
                 }
 
                 if (transformations[i] == null)
