@@ -4,7 +4,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AvaloniaVersion>11.0.0</AvaloniaVersion>
     <AvaloniaSampleVersion>11.0.6</AvaloniaSampleVersion>
-    <TextMateSharpVersion>1.0.56</TextMateSharpVersion>
+    <TextMateSharpVersion>1.0.57</TextMateSharpVersion>
     <VersionSuffix>beta</VersionSuffix>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
