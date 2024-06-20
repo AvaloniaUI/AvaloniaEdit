@@ -20,7 +20,7 @@ using TextMateSharp.Grammars;
 using Avalonia.Diagnostics;
 using AvaloniaEdit.Snippets;
 using Snippet = AvaloniaEdit.Snippets.Snippet;
-
+using AvaloniaEdit.Demo.ViewModels;
 namespace AvaloniaEdit.Demo
 {
     using Pair = KeyValuePair<int, Control>;
@@ -34,7 +34,6 @@ namespace AvaloniaEdit.Demo
         private OverloadInsightWindow _insightWindow;
         private Button _addControlButton;
         private Button _clearControlButton;
-        private Button _changeThemeButton;
         private Button _insertSnippetButton;
         private ComboBox _syntaxModeCombo;
         private TextBlock _statusTextBlock;
@@ -75,9 +74,6 @@ namespace AvaloniaEdit.Demo
             _clearControlButton = this.FindControl<Button>("clearControlBtn");
             _clearControlButton.Click += ClearControlButton_Click;
 
-            _changeThemeButton = this.FindControl<Button>("changeThemeBtn");
-            _changeThemeButton.Click += ChangeThemeButton_Click;
-
             _insertSnippetButton = this.FindControl<Button>("insertSnippetBtn");
             _insertSnippetButton.Click += InsertSnippetButton_Click;
 
@@ -115,6 +111,19 @@ namespace AvaloniaEdit.Demo
 
             // Add a custom margin at the left of the text area, which can be clicked.
             _textEditor.TextArea.LeftMargins.Insert(0, new CustomMargin());
+            
+            var mainWindowVM = new MainWindowViewModel(_textMateInstallation, _registryOptions);
+            foreach (ThemeName themeName in Enum.GetValues<ThemeName>())
+            {
+                var themeViewModel = new ThemeViewModel(themeName);
+                mainWindowVM.AllThemes.Add(themeViewModel);
+                if (themeName == ThemeName.DarkPlus)
+                {
+                    mainWindowVM.SelectedTheme = themeViewModel;
+                }
+            }
+            DataContext = mainWindowVM;
+   
         }
 
         private void Caret_PositionChanged(object sender, EventArgs e)
@@ -168,14 +177,6 @@ namespace AvaloniaEdit.Demo
                     _textEditor.TextArea.TextView.LineTransformers.RemoveAt(i);
                 }
             }
-        }
-
-        private void ChangeThemeButton_Click(object sender, RoutedEventArgs e)
-        {
-            _currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
-
-            _textMateInstallation.SetTheme(_registryOptions.LoadTheme(
-                (ThemeName)_currentTheme));
         }
 
         private void InitializeComponent()
