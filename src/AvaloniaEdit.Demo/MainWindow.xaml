@@ -43,7 +43,7 @@
             <Button Name="insertSnippetBtn" Content="Insert Snippet" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
         </StackPanel>
         <StackPanel Name="StatusBar" Background="Purple" Height="25" DockPanel.Dock="Bottom" Orientation="Horizontal">
-            <TextBlock Foreground="White" Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
+            <TextBlock Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
                                FontFamily="Cascadia Code,Consolas,Menlo,Monospace"

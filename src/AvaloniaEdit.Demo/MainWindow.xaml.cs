@@ -40,6 +40,7 @@ namespace AvaloniaEdit.Demo
         private ElementGenerator _generator = new ElementGenerator();
         private RegistryOptions _registryOptions;
         private int _currentTheme = (int)ThemeName.DarkPlus;
+        private CustomMargin _customMargin;
 
         public MainWindow()
         {
@@ -67,6 +68,7 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy(_textEditor.Options);
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
+            _textEditor.Options.HighlightCurrentLine = true;
 
             _addControlButton = this.FindControl<Button>("addControlBtn");
             _addControlButton.Click += AddControlButton_Click;
@@ -83,6 +85,8 @@ namespace AvaloniaEdit.Demo
                 (ThemeName)_currentTheme);
 
             _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
+            
+            _textMateInstallation.AppliedTheme += TextMateInstallationOnAppliedTheme;
 
             Language csharpLanguage = _registryOptions.GetLanguageByExtension(".cs");
 
@@ -110,7 +114,8 @@ namespace AvaloniaEdit.Demo
             }, RoutingStrategies.Bubble, true);
 
             // Add a custom margin at the left of the text area, which can be clicked.
-            _textEditor.TextArea.LeftMargins.Insert(0, new CustomMargin());
+            _customMargin = new CustomMargin();
+            _textEditor.TextArea.LeftMargins.Insert(0, _customMargin);
             
             var mainWindowVM = new MainWindowViewModel(_textMateInstallation, _registryOptions);
             foreach (ThemeName themeName in Enum.GetValues<ThemeName>())
@@ -123,7 +128,32 @@ namespace AvaloniaEdit.Demo
                 }
             }
             DataContext = mainWindowVM;
+            
    
+        }
+
+        private void TextMateInstallationOnAppliedTheme(object sender, TextMate.TextMate.Installation e)
+        {
+            var panel = this.Find<StackPanel>("StatusBar");
+            if (panel == null)
+            {
+                return;
+            }
+
+            if (!e.ApplyBrushAction("statusBar.background", brush => panel.Background = brush))
+            {
+                panel.Background = Brushes.Purple;
+            }
+
+            if (!e.ApplyBrushAction("statusBar.foreground", brush => _statusTextBlock.Foreground = brush))
+            {
+                _statusTextBlock.Foreground = Brushes.White;
+            }
+
+            if (!e.ApplyBrushAction("sideBar.background", brush => _customMargin.BackGroundBrush = brush))
+            {
+                _customMargin.SetDefaultBackgroundBrush();
+            }
         }
 
         private void Caret_PositionChanged(object sender, EventArgs e)

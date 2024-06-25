@@ -1,6 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media;
+using Avalonia.Styling;
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 using TextMateSharp.Registry;
@@ -32,9 +38,12 @@ namespace AvaloniaEdit.TextMate
             private IGrammar _grammar;
             private TMModel _tmModel;
             private TextMateColoringTransformer _transformer;
-
+            private ReadOnlyDictionary<string, string> _guiColorDictionary;
+            private IBrush _defaultSelectionBrush;
             public IRegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
             public TextEditorModel EditorModel { get { return _editorModel; } }
+
+            public event EventHandler<Installation> AppliedTheme;
 
             public Installation(TextEditor editor, IRegistryOptions registryOptions, bool initCurrentDocument = true)
             {
@@ -42,7 +51,7 @@ namespace AvaloniaEdit.TextMate
                 _textMateRegistry = new Registry(registryOptions);
 
                 _editor = editor;
-
+                _defaultSelectionBrush = editor.TextArea.SelectionBrush;
                 SetTheme(registryOptions.GetDefaultTheme());
 
                 editor.DocumentChanged += OnEditorOnDocumentChanged;
@@ -52,7 +61,7 @@ namespace AvaloniaEdit.TextMate
                     OnEditorOnDocumentChanged(editor, EventArgs.Empty);
                 }
             }
-
+            
             public void SetGrammar(string scopeName)
             {
                 _grammar = _textMateRegistry.LoadGrammar(scopeName);
@@ -61,17 +70,93 @@ namespace AvaloniaEdit.TextMate
 
                 _editor.TextArea.TextView.Redraw();
             }
+            
+            public bool ApplyBrushAction(string colorKeyNameFromJson, Action<IBrush> applyColorAction)
+            {
+                if (!_guiColorDictionary.TryGetValue(colorKeyNameFromJson, out var colorString))
+                {
+                    return false;
+                }
+                var colorBrush = new SolidColorBrush(Color.Parse(colorString));
+                applyColorAction(colorBrush);
+                return true;
+            }
 
-            public void SetTheme(IRawTheme theme)
+            public void SetTheme(IRawTheme theme, bool applyWindowProperties = true)
             {
                 _textMateRegistry.SetTheme(theme);
 
-                GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
+                var registryTheme = _textMateRegistry.GetTheme();
+                GetOrCreateTransformer().SetTheme(registryTheme);
 
                 _tmModel?.InvalidateLine(0);
 
                 _editorModel?.InvalidateViewPortLines();
+
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+                    {
+                        MainWindow: Window window
+                    })
+                {
+                    _guiColorDictionary = registryTheme.GetGuiColorDictionary();
+                    var themeName = theme.GetName();
+
+                    // Applies to the application on a whole.. Some might want to opt out of this for their own setups.
+                    if (applyWindowProperties)
+                    {
+                        if (themeName != null && themeName.ToLower().Contains("light"))
+                        {
+                            Application.Current.RequestedThemeVariant = ThemeVariant.Light;
+                        }
+                        else
+                        {
+                            Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
+                        }
+                    
+                        ApplyBrushAction("editor.background",brush =>window.Background = brush);
+                        ApplyBrushAction("editor.foreground",brush =>window.Foreground = brush);
+                    }
+
+                    ApplyBrushAction("editor.background",brush =>_editor.Background = brush);
+                    ApplyBrushAction("editor.foreground",brush =>_editor.Foreground = brush);
+                    
+                    if (_defaultSelectionBrush == null)
+                    {
+                        _defaultSelectionBrush = _editor.TextArea.SelectionBrush;
+                    }
+                    
+                    if (!ApplyBrushAction("editor.selectionBackground",
+                            brush => _editor.TextArea.SelectionBrush = brush))
+                    {
+                        _editor.TextArea.SelectionBrush = _defaultSelectionBrush;
+                    }
+
+                    if (!ApplyBrushAction("editor.lineHighlightBackground",
+                            brush =>
+                            {
+                                _editor.TextArea.TextView.CurrentLineBackground = brush;
+                                _editor.TextArea.TextView.CurrentLineBorder = new Pen(brush); // Todo: VS Code didn't seem to have a border but it might be nice to have that option. For now just make it the same..
+                            }))
+                    {
+                        _editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(CurrentHighlightRendererDefaultBackground);
+                        _editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(CurrentHighlightRendererDefaultBorder));
+                    }
+
+                    
+                    //Todo: looks like the margin doesn't have a active line highlight, would be a nice addition
+                    if (!ApplyBrushAction("editorLineNumber.foreground",
+                            brush => _editor.LineNumbersForeground = brush))
+                    {
+                        _editor.LineNumbersForeground = _editor.TextArea.Foreground;
+                    }
+                    
+                    AppliedTheme?.Invoke(this,this);
+                }
             }
+            
+            //These come out of CurrentHighlightRenderer sealed class. 
+            public static readonly Color CurrentHighlightRendererDefaultBackground = Color.FromArgb(22, 20, 220, 224);
+            public static readonly Color CurrentHighlightRendererDefaultBorder = Color.FromArgb(52, 0, 255, 110);
 
             public void Dispose()
             {
