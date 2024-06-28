@@ -8,10 +8,10 @@ using Avalonia.Threading;
 
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
-
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 using TextMateSharp.Themes;
+using FontStyle = TextMateSharp.Themes.FontStyle;
 
 namespace AvaloniaEdit.TextMate
 {
@@ -164,7 +164,7 @@ namespace AvaloniaEdit.TextMate
 
                 int foreground = 0;
                 int background = 0;
-                int fontStyle = 0;
+                FontStyle fontStyle = 0;
 
                 foreach (var themeRule in _theme.Match(token.Scopes))
                 {

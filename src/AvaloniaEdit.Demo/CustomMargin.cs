@@ -17,7 +17,8 @@ namespace AvaloniaEdit.Demo
     /// </summary>
     internal sealed class CustomMargin : AbstractMargin
     {
-        private readonly IBrush _backgroundBrush = new ImmutableSolidColorBrush(new Color(255, 51, 51, 51));
+        private readonly IBrush _defaultbackgroundBrush = Brushes.Transparent;
+        private IBrush _backgroundBrush = new ImmutableSolidColorBrush(new Color(255, 51, 51, 51));
         private readonly IBrush _pointerOverBrush = new ImmutableSolidColorBrush(new Color(192, 80, 80, 80));
         private readonly IPen _pointerOverPen = new ImmutablePen(new ImmutableSolidColorBrush(new Color(192, 37, 37, 37)), 1);
         private readonly IBrush _markerBrush = new ImmutableSolidColorBrush(new Color(255, 195, 81, 92));
@@ -25,6 +26,22 @@ namespace AvaloniaEdit.Demo
 
         private readonly List<int> _markedDocumentLines = [];
         private int _pointerOverLine = -1;
+
+        public IBrush BackGroundBrush
+        {
+            get => _backgroundBrush;
+            set
+            {
+                _backgroundBrush = value;
+                InvalidateVisual();
+            }
+        }
+
+        public void SetDefaultBackgroundBrush()
+        {
+            _backgroundBrush = _defaultbackgroundBrush;
+            InvalidateVisual();
+        }
 
         public CustomMargin()
         {

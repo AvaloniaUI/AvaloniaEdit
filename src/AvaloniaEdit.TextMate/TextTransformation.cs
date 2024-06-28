@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using AvaloniaEdit.Document;
-
+using TextMateSharp.Themes;
 using AM = Avalonia.Media;
 
 namespace AvaloniaEdit.TextMate
@@ -18,7 +18,7 @@ namespace AvaloniaEdit.TextMate
         public Action<Exception> ExceptionHandler { get; set; }
         public int ForegroundColor { get; set; }
         public int BackgroundColor { get; set; }
-        public int FontStyle { get; set; }
+        public FontStyle FontStyle { get; set; }
 
         public override void Transform(GenericLineTransformer transformer, DocumentLine line)
         {

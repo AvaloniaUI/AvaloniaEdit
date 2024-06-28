@@ -20,7 +20,7 @@ using TextMateSharp.Grammars;
 using Avalonia.Diagnostics;
 using AvaloniaEdit.Snippets;
 using Snippet = AvaloniaEdit.Snippets.Snippet;
-
+using AvaloniaEdit.Demo.ViewModels;
 namespace AvaloniaEdit.Demo
 {
     using Pair = KeyValuePair<int, Control>;
@@ -34,13 +34,13 @@ namespace AvaloniaEdit.Demo
         private OverloadInsightWindow _insightWindow;
         private Button _addControlButton;
         private Button _clearControlButton;
-        private Button _changeThemeButton;
         private Button _insertSnippetButton;
         private ComboBox _syntaxModeCombo;
         private TextBlock _statusTextBlock;
         private ElementGenerator _generator = new ElementGenerator();
         private RegistryOptions _registryOptions;
         private int _currentTheme = (int)ThemeName.DarkPlus;
+        private CustomMargin _customMargin;
 
         public MainWindow()
         {
@@ -68,15 +68,13 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy(_textEditor.Options);
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
+            _textEditor.Options.HighlightCurrentLine = true;
 
             _addControlButton = this.FindControl<Button>("addControlBtn");
             _addControlButton.Click += AddControlButton_Click;
 
             _clearControlButton = this.FindControl<Button>("clearControlBtn");
             _clearControlButton.Click += ClearControlButton_Click;
-
-            _changeThemeButton = this.FindControl<Button>("changeThemeBtn");
-            _changeThemeButton.Click += ChangeThemeButton_Click;
 
             _insertSnippetButton = this.FindControl<Button>("insertSnippetBtn");
             _insertSnippetButton.Click += InsertSnippetButton_Click;
@@ -87,6 +85,8 @@ namespace AvaloniaEdit.Demo
                 (ThemeName)_currentTheme);
 
             _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
+            
+            _textMateInstallation.AppliedTheme += TextMateInstallationOnAppliedTheme;
 
             Language csharpLanguage = _registryOptions.GetLanguageByExtension(".cs");
 
@@ -114,7 +114,46 @@ namespace AvaloniaEdit.Demo
             }, RoutingStrategies.Bubble, true);
 
             // Add a custom margin at the left of the text area, which can be clicked.
-            _textEditor.TextArea.LeftMargins.Insert(0, new CustomMargin());
+            _customMargin = new CustomMargin();
+            _textEditor.TextArea.LeftMargins.Insert(0, _customMargin);
+            
+            var mainWindowVM = new MainWindowViewModel(_textMateInstallation, _registryOptions);
+            foreach (ThemeName themeName in Enum.GetValues<ThemeName>())
+            {
+                var themeViewModel = new ThemeViewModel(themeName);
+                mainWindowVM.AllThemes.Add(themeViewModel);
+                if (themeName == ThemeName.DarkPlus)
+                {
+                    mainWindowVM.SelectedTheme = themeViewModel;
+                }
+            }
+            DataContext = mainWindowVM;
+            
+   
+        }
+
+        private void TextMateInstallationOnAppliedTheme(object sender, TextMate.TextMate.Installation e)
+        {
+            var panel = this.Find<StackPanel>("StatusBar");
+            if (panel == null)
+            {
+                return;
+            }
+
+            if (!e.ApplyBrushAction("statusBar.background", brush => panel.Background = brush))
+            {
+                panel.Background = Brushes.Purple;
+            }
+
+            if (!e.ApplyBrushAction("statusBar.foreground", brush => _statusTextBlock.Foreground = brush))
+            {
+                _statusTextBlock.Foreground = Brushes.White;
+            }
+
+            if (!e.ApplyBrushAction("sideBar.background", brush => _customMargin.BackGroundBrush = brush))
+            {
+                _customMargin.SetDefaultBackgroundBrush();
+            }
         }
 
         private void Caret_PositionChanged(object sender, EventArgs e)
@@ -168,14 +207,6 @@ namespace AvaloniaEdit.Demo
                     _textEditor.TextArea.TextView.LineTransformers.RemoveAt(i);
                 }
             }
-        }
-
-        private void ChangeThemeButton_Click(object sender, RoutedEventArgs e)
-        {
-            _currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
-
-            _textMateInstallation.SetTheme(_registryOptions.LoadTheme(
-                (ThemeName)_currentTheme));
         }
 
         private void InitializeComponent()

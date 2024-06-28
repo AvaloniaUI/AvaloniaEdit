@@ -1,10 +1,12 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:AvalonEdit="using:AvaloniaEdit"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:AvaloniaEdit.Demo.ViewModels"
         MinWidth="0"
         MinHeight="300"
         Width="1000"
         Title="AvaloniaEdit Demo"
+        x:DataType="vm:MainWindowViewModel"
         x:Class="AvaloniaEdit.Demo.MainWindow">
     <DockPanel>
         <StackPanel Orientation="Horizontal"
@@ -23,11 +25,25 @@
             <Button Name="addControlBtn" Content="Add Button" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <Button Name="clearControlBtn" Content="Clear Buttons" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <ComboBox Name="syntaxModeCombo" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-            <Button Name="changeThemeBtn" Content="Change theme" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+            
+            <DropDownButton Content="Change theme" VerticalAlignment="Stretch" VerticalContentAlignment="Center">
+                <Button.Flyout>
+                    <Flyout>
+                        <ListBox ItemsSource="{Binding AllThemes }" SelectedItem="{Binding SelectedTheme}">
+                            <ListBox.DataTemplates>
+                                <DataTemplate x:DataType="vm:ThemeViewModel">
+                                    <TextBlock Text="{Binding DisplayName}"/>
+                                </DataTemplate>
+                            </ListBox.DataTemplates>
+                        </ListBox>    
+                    </Flyout>
+                </Button.Flyout>
+            </DropDownButton>
+            
             <Button Name="insertSnippetBtn" Content="Insert Snippet" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
         </StackPanel>
         <StackPanel Name="StatusBar" Background="Purple" Height="25" DockPanel.Dock="Bottom" Orientation="Horizontal">
-            <TextBlock Foreground="White" Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
+            <TextBlock Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
                                FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
