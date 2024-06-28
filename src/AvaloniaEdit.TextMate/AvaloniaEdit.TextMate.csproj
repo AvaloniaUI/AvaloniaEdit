@@ -7,15 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\TextMateSharp\src\TextMateSharp.Grammars\TextMateSharp.Grammars.csproj" />
-    <ProjectReference Include="..\..\..\TextMateSharp\src\TextMateSharp\TextMateSharp.csproj" />
     <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0" />
-    <PackageReference Include="TextMateSharp.Grammars" Version="$(TextMateSharpVersion)" />
+    <PackageReference Include="TextMateSharp" Version="1.0.58" />
+    <PackageReference Include="TextMateSharp.Grammars" Version="1.0.58" />
   </ItemGroup>
 
 </Project>

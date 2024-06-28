@@ -147,7 +147,7 @@ namespace AvaloniaEdit.TextMate
                     if (!ApplyBrushAction("editorLineNumber.foreground",
                             brush => _editor.LineNumbersForeground = brush))
                     {
-                        _editor.LineNumbersForeground = _editor.TextArea.Foreground;
+                        _editor.LineNumbersForeground = _editor.Foreground;
                     }
                     
                     AppliedTheme?.Invoke(this,this);

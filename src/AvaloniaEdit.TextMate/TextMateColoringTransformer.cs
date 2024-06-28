@@ -8,7 +8,6 @@ using Avalonia.Threading;
 
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
-
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 using TextMateSharp.Themes;
