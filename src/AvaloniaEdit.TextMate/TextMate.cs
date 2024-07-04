@@ -39,7 +39,6 @@ namespace AvaloniaEdit.TextMate
             private TMModel _tmModel;
             private TextMateColoringTransformer _transformer;
             private ReadOnlyDictionary<string, string> _guiColorDictionary;
-            private IBrush _defaultSelectionBrush;
             public IRegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
             public TextEditorModel EditorModel { get { return _editorModel; } }
 
@@ -51,7 +50,6 @@ namespace AvaloniaEdit.TextMate
                 _textMateRegistry = new Registry(registryOptions);
 
                 _editor = editor;
-                _defaultSelectionBrush = editor.TextArea.SelectionBrush;
                 SetTheme(registryOptions.GetDefaultTheme());
 
                 editor.DocumentChanged += OnEditorOnDocumentChanged;
@@ -98,15 +96,16 @@ namespace AvaloniaEdit.TextMate
                 ApplyBrushAction("editor.background",brush =>_editor.Background = brush);
                 ApplyBrushAction("editor.foreground",brush =>_editor.Foreground = brush);
                 
-                if (_defaultSelectionBrush == null)
-                {
-                    _defaultSelectionBrush = _editor.TextArea.SelectionBrush;
-                }
-                
                 if (!ApplyBrushAction("editor.selectionBackground",
                         brush => _editor.TextArea.SelectionBrush = brush))
                 {
-                    _editor.TextArea.SelectionBrush = _defaultSelectionBrush;
+                    if (Application.Current!.TryGetResource("TextAreaSelectionBrush", out var resourceObject))
+                    {
+                        if (resourceObject is IBrush brush)
+                        {
+                            _editor.TextArea.SelectionBrush = brush;
+                        }
+                    }  
                 }
 
                 if (!ApplyBrushAction("editor.lineHighlightBackground",
