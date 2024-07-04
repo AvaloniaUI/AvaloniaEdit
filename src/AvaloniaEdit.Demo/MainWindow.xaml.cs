@@ -154,6 +154,11 @@ namespace AvaloniaEdit.Demo
             {
                 _customMargin.SetDefaultBackgroundBrush();
             }
+            
+            //Applying the Editor background to the whole window for demo sake.
+            e.ApplyBrushAction("editor.background",brush => Background = brush);
+            e.ApplyBrushAction("editor.foreground",brush => Foreground = brush);
+
         }
 
         private void Caret_PositionChanged(object sender, EventArgs e)

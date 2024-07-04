@@ -37,6 +37,12 @@ namespace AvaloniaEdit.Rendering
 
         #region Properties
 
+        public void SetDefaultColors()
+        {
+            BorderPen = new ImmutablePen(new ImmutableSolidColorBrush(DefaultBorder), 1);
+            BackgroundBrush = new ImmutableSolidColorBrush(DefaultBackground);
+        }
+
         public int Line {
             get { return _line; }
             set {

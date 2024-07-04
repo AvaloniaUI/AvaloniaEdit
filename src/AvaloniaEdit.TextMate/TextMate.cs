@@ -82,7 +82,7 @@ namespace AvaloniaEdit.TextMate
                 return true;
             }
 
-            public void SetTheme(IRawTheme theme, bool applyWindowProperties = true)
+            public void SetTheme(IRawTheme theme)
             {
                 _textMateRegistry.SetTheme(theme);
 
@@ -93,70 +93,42 @@ namespace AvaloniaEdit.TextMate
 
                 _editorModel?.InvalidateViewPortLines();
 
-                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
-                    {
-                        MainWindow: Window window
-                    })
+                _guiColorDictionary = registryTheme.GetGuiColorDictionary();
+
+                ApplyBrushAction("editor.background",brush =>_editor.Background = brush);
+                ApplyBrushAction("editor.foreground",brush =>_editor.Foreground = brush);
+                
+                if (_defaultSelectionBrush == null)
                 {
-                    _guiColorDictionary = registryTheme.GetGuiColorDictionary();
-                    var themeName = theme.GetName();
-
-                    // Applies to the application on a whole.. Some might want to opt out of this for their own setups.
-                    if (applyWindowProperties)
-                    {
-                        if (themeName != null && themeName.ToLower().Contains("light"))
-                        {
-                            Application.Current.RequestedThemeVariant = ThemeVariant.Light;
-                        }
-                        else
-                        {
-                            Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
-                        }
-                    
-                        ApplyBrushAction("editor.background",brush =>window.Background = brush);
-                        ApplyBrushAction("editor.foreground",brush =>window.Foreground = brush);
-                    }
-
-                    ApplyBrushAction("editor.background",brush =>_editor.Background = brush);
-                    ApplyBrushAction("editor.foreground",brush =>_editor.Foreground = brush);
-                    
-                    if (_defaultSelectionBrush == null)
-                    {
-                        _defaultSelectionBrush = _editor.TextArea.SelectionBrush;
-                    }
-                    
-                    if (!ApplyBrushAction("editor.selectionBackground",
-                            brush => _editor.TextArea.SelectionBrush = brush))
-                    {
-                        _editor.TextArea.SelectionBrush = _defaultSelectionBrush;
-                    }
-
-                    if (!ApplyBrushAction("editor.lineHighlightBackground",
-                            brush =>
-                            {
-                                _editor.TextArea.TextView.CurrentLineBackground = brush;
-                                _editor.TextArea.TextView.CurrentLineBorder = new Pen(brush); // Todo: VS Code didn't seem to have a border but it might be nice to have that option. For now just make it the same..
-                            }))
-                    {
-                        _editor.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(CurrentHighlightRendererDefaultBackground);
-                        _editor.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(CurrentHighlightRendererDefaultBorder));
-                    }
-
-                    
-                    //Todo: looks like the margin doesn't have a active line highlight, would be a nice addition
-                    if (!ApplyBrushAction("editorLineNumber.foreground",
-                            brush => _editor.LineNumbersForeground = brush))
-                    {
-                        _editor.LineNumbersForeground = _editor.Foreground;
-                    }
-                    
-                    AppliedTheme?.Invoke(this,this);
+                    _defaultSelectionBrush = _editor.TextArea.SelectionBrush;
                 }
+                
+                if (!ApplyBrushAction("editor.selectionBackground",
+                        brush => _editor.TextArea.SelectionBrush = brush))
+                {
+                    _editor.TextArea.SelectionBrush = _defaultSelectionBrush;
+                }
+
+                if (!ApplyBrushAction("editor.lineHighlightBackground",
+                        brush =>
+                        {
+                            _editor.TextArea.TextView.CurrentLineBackground = brush;
+                            _editor.TextArea.TextView.CurrentLineBorder = new Pen(brush); // Todo: VS Code didn't seem to have a border but it might be nice to have that option. For now just make it the same..
+                        }))
+                {
+                    _editor.TextArea.TextView.SetDefaultHighlightLineColors();
+                }
+                
+                //Todo: looks like the margin doesn't have a active line highlight, would be a nice addition
+                if (!ApplyBrushAction("editorLineNumber.foreground",
+                        brush => _editor.LineNumbersForeground = brush))
+                {
+                    _editor.LineNumbersForeground = _editor.Foreground;
+                }
+                
+                AppliedTheme?.Invoke(this,this);
             }
             
-            //These come out of CurrentHighlightRenderer sealed class. 
-            public static readonly Color CurrentHighlightRendererDefaultBackground = Color.FromArgb(22, 20, 220, 224);
-            public static readonly Color CurrentHighlightRendererDefaultBorder = Color.FromArgb(52, 0, 255, 110);
 
             public void Dispose()
             {
