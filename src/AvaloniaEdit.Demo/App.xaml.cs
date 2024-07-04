@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Platform;
 using Avalonia.Markup.Xaml;
 using System;
 using System.ComponentModel;
@@ -45,10 +44,10 @@ namespace AvaloniaEdit.Demo
 
         private void MainWindowViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (DataContext is not MainWindowViewModel mainWindowViewModel) return;
+            if (sender is not MainWindowViewModel mainWindowViewModel) return;
             if (e.PropertyName == nameof(MainWindowViewModel.SelectedTheme))
             {
-                RequestedThemeVariant = mainWindowViewModel.SelectedTheme.ThemeName.ToString().Contains("light")
+                RequestedThemeVariant = mainWindowViewModel.SelectedTheme.ThemeName.ToString().ToLower().Contains("light")
                     ? ThemeVariant.Light
                     : ThemeVariant.Dark;
             }
