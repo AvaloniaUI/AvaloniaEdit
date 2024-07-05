@@ -1,12 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Media;
-using Avalonia.Styling;
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 using TextMateSharp.Registry;
@@ -38,7 +32,7 @@ namespace AvaloniaEdit.TextMate
             private IGrammar _grammar;
             private TMModel _tmModel;
             private TextMateColoringTransformer _transformer;
-            private ReadOnlyDictionary<string, string> _guiColorDictionary;
+            private ReadOnlyDictionary<string, string> _themeColorsDictionary;
             public IRegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
             public TextEditorModel EditorModel { get { return _editorModel; } }
 
@@ -68,16 +62,10 @@ namespace AvaloniaEdit.TextMate
 
                 _editor.TextArea.TextView.Redraw();
             }
-            
-            public bool ApplyBrushAction(string colorKeyNameFromJson, Action<IBrush> applyColorAction)
+
+            public bool TryGetThemeColor(string colorKey, out string colorString)
             {
-                if (!_guiColorDictionary.TryGetValue(colorKeyNameFromJson, out var colorString))
-                {
-                    return false;
-                }
-                var colorBrush = new SolidColorBrush(Color.Parse(colorString));
-                applyColorAction(colorBrush);
-                return true;
+                return _themeColorsDictionary.TryGetValue(colorKey, out colorString);
             }
 
             public void SetTheme(IRawTheme theme)
@@ -91,43 +79,10 @@ namespace AvaloniaEdit.TextMate
 
                 _editorModel?.InvalidateViewPortLines();
 
-                _guiColorDictionary = registryTheme.GetGuiColorDictionary();
+                _themeColorsDictionary = registryTheme.GetGuiColorDictionary();
 
-                ApplyBrushAction("editor.background",brush =>_editor.Background = brush);
-                ApplyBrushAction("editor.foreground",brush =>_editor.Foreground = brush);
-                
-                if (!ApplyBrushAction("editor.selectionBackground",
-                        brush => _editor.TextArea.SelectionBrush = brush))
-                {
-                    if (Application.Current!.TryGetResource("TextAreaSelectionBrush", out var resourceObject))
-                    {
-                        if (resourceObject is IBrush brush)
-                        {
-                            _editor.TextArea.SelectionBrush = brush;
-                        }
-                    }  
-                }
-
-                if (!ApplyBrushAction("editor.lineHighlightBackground",
-                        brush =>
-                        {
-                            _editor.TextArea.TextView.CurrentLineBackground = brush;
-                            _editor.TextArea.TextView.CurrentLineBorder = new Pen(brush); // Todo: VS Code didn't seem to have a border but it might be nice to have that option. For now just make it the same..
-                        }))
-                {
-                    _editor.TextArea.TextView.SetDefaultHighlightLineColors();
-                }
-                
-                //Todo: looks like the margin doesn't have a active line highlight, would be a nice addition
-                if (!ApplyBrushAction("editorLineNumber.foreground",
-                        brush => _editor.LineNumbersForeground = brush))
-                {
-                    _editor.LineNumbersForeground = _editor.Foreground;
-                }
-                
                 AppliedTheme?.Invoke(this,this);
             }
-            
 
             public void Dispose()
             {

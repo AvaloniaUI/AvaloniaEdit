@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -134,31 +135,84 @@ namespace AvaloniaEdit.Demo
 
         private void TextMateInstallationOnAppliedTheme(object sender, TextMate.TextMate.Installation e)
         {
+            ApplyThemeColorsToEditor(e);
+            ApplyThemeColorsToWindow(e);
+        }
+
+        void ApplyThemeColorsToEditor(TextMate.TextMate.Installation e)
+        {
+            ApplyBrushAction(e, "editor.background",brush => _textEditor.Background = brush);
+            ApplyBrushAction(e, "editor.foreground",brush => _textEditor.Foreground = brush);
+
+            if (!ApplyBrushAction(e, "editor.selectionBackground",
+                    brush => _textEditor.TextArea.SelectionBrush = brush))
+            {
+                if (Application.Current!.TryGetResource("TextAreaSelectionBrush", out var resourceObject))
+                {
+                    if (resourceObject is IBrush brush)
+                    {
+                        _textEditor.TextArea.SelectionBrush = brush;
+                    }
+                }
+            }
+
+            if (!ApplyBrushAction(e, "editor.lineHighlightBackground",
+                    brush =>
+                    {
+                        _textEditor.TextArea.TextView.CurrentLineBackground = brush;
+                        _textEditor.TextArea.TextView.CurrentLineBorder = new Pen(brush); // Todo: VS Code didn't seem to have a border but it might be nice to have that option. For now just make it the same..
+                    }))
+            {
+                _textEditor.TextArea.TextView.SetDefaultHighlightLineColors();
+            }
+
+            //Todo: looks like the margin doesn't have a active line highlight, would be a nice addition
+            if (!ApplyBrushAction(e, "editorLineNumber.foreground",
+                    brush => _textEditor.LineNumbersForeground = brush))
+            {
+                _textEditor.LineNumbersForeground = _textEditor.Foreground;
+            }
+        }
+
+        private void ApplyThemeColorsToWindow(TextMate.TextMate.Installation e)
+        {
             var panel = this.Find<StackPanel>("StatusBar");
             if (panel == null)
             {
                 return;
             }
 
-            if (!e.ApplyBrushAction("statusBar.background", brush => panel.Background = brush))
+            if (!ApplyBrushAction(e, "statusBar.background", brush => panel.Background = brush))
             {
                 panel.Background = Brushes.Purple;
             }
 
-            if (!e.ApplyBrushAction("statusBar.foreground", brush => _statusTextBlock.Foreground = brush))
+            if (!ApplyBrushAction(e, "statusBar.foreground", brush => _statusTextBlock.Foreground = brush))
             {
                 _statusTextBlock.Foreground = Brushes.White;
             }
 
-            if (!e.ApplyBrushAction("sideBar.background", brush => _customMargin.BackGroundBrush = brush))
+            if (!ApplyBrushAction(e, "sideBar.background", brush => _customMargin.BackGroundBrush = brush))
             {
                 _customMargin.SetDefaultBackgroundBrush();
             }
-            
-            //Applying the Editor background to the whole window for demo sake.
-            e.ApplyBrushAction("editor.background",brush => Background = brush);
-            e.ApplyBrushAction("editor.foreground",brush => Foreground = brush);
 
+            //Applying the Editor background to the whole window for demo sake.
+            ApplyBrushAction(e, "editor.background",brush => Background = brush);
+            ApplyBrushAction(e, "editor.foreground",brush => Foreground = brush);
+        }
+
+        bool ApplyBrushAction(TextMate.TextMate.Installation e, string colorKeyNameFromJson, Action<IBrush> applyColorAction)
+        {
+            if (!e.TryGetThemeColor(colorKeyNameFromJson, out var colorString))
+                return false;
+
+            if (!Color.TryParse(colorString, out Color color))
+                return false;
+
+            var colorBrush = new SolidColorBrush(color);
+            applyColorAction(colorBrush);
+            return true;
         }
 
         private void Caret_PositionChanged(object sender, EventArgs e)
