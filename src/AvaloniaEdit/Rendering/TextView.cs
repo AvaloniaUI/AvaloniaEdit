@@ -2099,5 +2099,10 @@ namespace AvaloniaEdit.Rendering
         }
 
         Size IScrollable.Viewport => _scrollViewport;
+
+        public void SetDefaultHighlightLineColors()
+        {
+            _currentLineHighlightRenderer?.SetDefaultColors();
+        }
     }
 }

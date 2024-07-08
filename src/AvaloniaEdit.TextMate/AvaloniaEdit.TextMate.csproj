@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-    <PackageReference Include="TextMateSharp" Version="$(TextMateSharpVersion)" />
-    <PackageReference Include="TextMateSharp.Grammars" Version="$(TextMateSharpVersion)" />
+    <PackageReference Include="TextMateSharp" Version="1.0.58" />
+    <PackageReference Include="TextMateSharp.Grammars" Version="1.0.58" />
   </ItemGroup>
 
 </Project>

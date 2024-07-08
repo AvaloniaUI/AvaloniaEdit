@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -20,7 +21,7 @@ using TextMateSharp.Grammars;
 using Avalonia.Diagnostics;
 using AvaloniaEdit.Snippets;
 using Snippet = AvaloniaEdit.Snippets.Snippet;
-
+using AvaloniaEdit.Demo.ViewModels;
 namespace AvaloniaEdit.Demo
 {
     using Pair = KeyValuePair<int, Control>;
@@ -34,13 +35,13 @@ namespace AvaloniaEdit.Demo
         private OverloadInsightWindow _insightWindow;
         private Button _addControlButton;
         private Button _clearControlButton;
-        private Button _changeThemeButton;
         private Button _insertSnippetButton;
         private ComboBox _syntaxModeCombo;
         private TextBlock _statusTextBlock;
         private ElementGenerator _generator = new ElementGenerator();
         private RegistryOptions _registryOptions;
         private int _currentTheme = (int)ThemeName.DarkPlus;
+        private CustomMargin _customMargin;
 
         public MainWindow()
         {
@@ -68,15 +69,13 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy(_textEditor.Options);
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
+            _textEditor.Options.HighlightCurrentLine = true;
 
             _addControlButton = this.FindControl<Button>("addControlBtn");
             _addControlButton.Click += AddControlButton_Click;
 
             _clearControlButton = this.FindControl<Button>("clearControlBtn");
             _clearControlButton.Click += ClearControlButton_Click;
-
-            _changeThemeButton = this.FindControl<Button>("changeThemeBtn");
-            _changeThemeButton.Click += ChangeThemeButton_Click;
 
             _insertSnippetButton = this.FindControl<Button>("insertSnippetBtn");
             _insertSnippetButton.Click += InsertSnippetButton_Click;
@@ -87,6 +86,8 @@ namespace AvaloniaEdit.Demo
                 (ThemeName)_currentTheme);
 
             _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
+            
+            _textMateInstallation.AppliedTheme += TextMateInstallationOnAppliedTheme;
 
             Language csharpLanguage = _registryOptions.GetLanguageByExtension(".cs");
 
@@ -114,7 +115,104 @@ namespace AvaloniaEdit.Demo
             }, RoutingStrategies.Bubble, true);
 
             // Add a custom margin at the left of the text area, which can be clicked.
-            _textEditor.TextArea.LeftMargins.Insert(0, new CustomMargin());
+            _customMargin = new CustomMargin();
+            _textEditor.TextArea.LeftMargins.Insert(0, _customMargin);
+            
+            var mainWindowVM = new MainWindowViewModel(_textMateInstallation, _registryOptions);
+            foreach (ThemeName themeName in Enum.GetValues<ThemeName>())
+            {
+                var themeViewModel = new ThemeViewModel(themeName);
+                mainWindowVM.AllThemes.Add(themeViewModel);
+                if (themeName == ThemeName.DarkPlus)
+                {
+                    mainWindowVM.SelectedTheme = themeViewModel;
+                }
+            }
+            DataContext = mainWindowVM;
+            
+   
+        }
+
+        private void TextMateInstallationOnAppliedTheme(object sender, TextMate.TextMate.Installation e)
+        {
+            ApplyThemeColorsToEditor(e);
+            ApplyThemeColorsToWindow(e);
+        }
+
+        void ApplyThemeColorsToEditor(TextMate.TextMate.Installation e)
+        {
+            ApplyBrushAction(e, "editor.background",brush => _textEditor.Background = brush);
+            ApplyBrushAction(e, "editor.foreground",brush => _textEditor.Foreground = brush);
+
+            if (!ApplyBrushAction(e, "editor.selectionBackground",
+                    brush => _textEditor.TextArea.SelectionBrush = brush))
+            {
+                if (Application.Current!.TryGetResource("TextAreaSelectionBrush", out var resourceObject))
+                {
+                    if (resourceObject is IBrush brush)
+                    {
+                        _textEditor.TextArea.SelectionBrush = brush;
+                    }
+                }
+            }
+
+            if (!ApplyBrushAction(e, "editor.lineHighlightBackground",
+                    brush =>
+                    {
+                        _textEditor.TextArea.TextView.CurrentLineBackground = brush;
+                        _textEditor.TextArea.TextView.CurrentLineBorder = new Pen(brush); // Todo: VS Code didn't seem to have a border but it might be nice to have that option. For now just make it the same..
+                    }))
+            {
+                _textEditor.TextArea.TextView.SetDefaultHighlightLineColors();
+            }
+
+            //Todo: looks like the margin doesn't have a active line highlight, would be a nice addition
+            if (!ApplyBrushAction(e, "editorLineNumber.foreground",
+                    brush => _textEditor.LineNumbersForeground = brush))
+            {
+                _textEditor.LineNumbersForeground = _textEditor.Foreground;
+            }
+        }
+
+        private void ApplyThemeColorsToWindow(TextMate.TextMate.Installation e)
+        {
+            var panel = this.Find<StackPanel>("StatusBar");
+            if (panel == null)
+            {
+                return;
+            }
+
+            if (!ApplyBrushAction(e, "statusBar.background", brush => panel.Background = brush))
+            {
+                panel.Background = Brushes.Purple;
+            }
+
+            if (!ApplyBrushAction(e, "statusBar.foreground", brush => _statusTextBlock.Foreground = brush))
+            {
+                _statusTextBlock.Foreground = Brushes.White;
+            }
+
+            if (!ApplyBrushAction(e, "sideBar.background", brush => _customMargin.BackGroundBrush = brush))
+            {
+                _customMargin.SetDefaultBackgroundBrush();
+            }
+
+            //Applying the Editor background to the whole window for demo sake.
+            ApplyBrushAction(e, "editor.background",brush => Background = brush);
+            ApplyBrushAction(e, "editor.foreground",brush => Foreground = brush);
+        }
+
+        bool ApplyBrushAction(TextMate.TextMate.Installation e, string colorKeyNameFromJson, Action<IBrush> applyColorAction)
+        {
+            if (!e.TryGetThemeColor(colorKeyNameFromJson, out var colorString))
+                return false;
+
+            if (!Color.TryParse(colorString, out Color color))
+                return false;
+
+            var colorBrush = new SolidColorBrush(color);
+            applyColorAction(colorBrush);
+            return true;
         }
 
         private void Caret_PositionChanged(object sender, EventArgs e)
@@ -168,14 +266,6 @@ namespace AvaloniaEdit.Demo
                     _textEditor.TextArea.TextView.LineTransformers.RemoveAt(i);
                 }
             }
-        }
-
-        private void ChangeThemeButton_Click(object sender, RoutedEventArgs e)
-        {
-            _currentTheme = (_currentTheme + 1) % Enum.GetNames(typeof(ThemeName)).Length;
-
-            _textMateInstallation.SetTheme(_registryOptions.LoadTheme(
-                (ThemeName)_currentTheme));
         }
 
         private void InitializeComponent()

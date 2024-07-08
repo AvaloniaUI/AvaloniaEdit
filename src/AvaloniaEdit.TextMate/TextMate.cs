@@ -1,6 +1,6 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
-
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 using TextMateSharp.Registry;
@@ -32,9 +32,11 @@ namespace AvaloniaEdit.TextMate
             private IGrammar _grammar;
             private TMModel _tmModel;
             private TextMateColoringTransformer _transformer;
-
+            private ReadOnlyDictionary<string, string> _themeColorsDictionary;
             public IRegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
             public TextEditorModel EditorModel { get { return _editorModel; } }
+
+            public event EventHandler<Installation> AppliedTheme;
 
             public Installation(TextEditor editor, IRegistryOptions registryOptions, bool initCurrentDocument = true)
             {
@@ -42,7 +44,6 @@ namespace AvaloniaEdit.TextMate
                 _textMateRegistry = new Registry(registryOptions);
 
                 _editor = editor;
-
                 SetTheme(registryOptions.GetDefaultTheme());
 
                 editor.DocumentChanged += OnEditorOnDocumentChanged;
@@ -52,7 +53,7 @@ namespace AvaloniaEdit.TextMate
                     OnEditorOnDocumentChanged(editor, EventArgs.Empty);
                 }
             }
-
+            
             public void SetGrammar(string scopeName)
             {
                 _grammar = _textMateRegistry.LoadGrammar(scopeName);
@@ -62,15 +63,25 @@ namespace AvaloniaEdit.TextMate
                 _editor.TextArea.TextView.Redraw();
             }
 
+            public bool TryGetThemeColor(string colorKey, out string colorString)
+            {
+                return _themeColorsDictionary.TryGetValue(colorKey, out colorString);
+            }
+
             public void SetTheme(IRawTheme theme)
             {
                 _textMateRegistry.SetTheme(theme);
 
-                GetOrCreateTransformer().SetTheme(_textMateRegistry.GetTheme());
+                var registryTheme = _textMateRegistry.GetTheme();
+                GetOrCreateTransformer().SetTheme(registryTheme);
 
                 _tmModel?.InvalidateLine(0);
 
                 _editorModel?.InvalidateViewPortLines();
+
+                _themeColorsDictionary = registryTheme.GetGuiColorDictionary();
+
+                AppliedTheme?.Invoke(this,this);
             }
 
             public void Dispose()
