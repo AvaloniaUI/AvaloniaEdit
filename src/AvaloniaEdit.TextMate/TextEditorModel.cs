@@ -168,9 +168,9 @@ namespace AvaloniaEdit.TextMate
 
             try
             {
-    int startLine = Math.Clamp(_invalidRange.StartLine, 0, _documentSnapshot.LineCount - 1);
-    int endLine = Math.Clamp(_invalidRange.EndLine, 0, _documentSnapshot.LineCount - 1);
-    InvalidateLineRange(startLine, endLine);
+                int startLine = Math.Clamp(_invalidRange.StartLine, 0, _documentSnapshot.LineCount - 1);
+                int endLine = Math.Clamp(_invalidRange.EndLine, 0, _documentSnapshot.LineCount - 1);
+                InvalidateLineRange(startLine, endLine);
             }
             finally
             {
