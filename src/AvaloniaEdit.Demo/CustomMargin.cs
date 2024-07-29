@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
+using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 
@@ -51,15 +52,28 @@ namespace AvaloniaEdit.Demo
         protected override void OnTextViewChanged(TextView? oldTextView, TextView? newTextView)
         {
             if (oldTextView != null)
+            {
                 oldTextView.VisualLinesChanged -= OnVisualLinesChanged;
+                oldTextView.DocumentChanged -= OnDocumentChanged;
+            }
+
             if (newTextView != null)
+            {
                 newTextView.VisualLinesChanged += OnVisualLinesChanged;
+                newTextView.DocumentChanged += OnDocumentChanged;
+            }
 
             base.OnTextViewChanged(oldTextView, newTextView);
         }
 
         private void OnVisualLinesChanged(object? sender, EventArgs eventArgs)
         {
+            InvalidateVisual();
+        }
+
+        private void OnDocumentChanged(object? sender, DocumentChangedEventArgs e)
+        {
+            _markedDocumentLines.Clear();
             InvalidateVisual();
         }
 
@@ -86,6 +100,7 @@ namespace AvaloniaEdit.Demo
         protected override void OnPointerExited(PointerEventArgs e)
         {
             _pointerOverLine = -1;
+            InvalidateVisual();
 
             base.OnPointerExited(e);
         }
@@ -112,12 +127,12 @@ namespace AvaloniaEdit.Demo
             {
                 foreach (var visualLine in TextView.VisualLines)
                 {
-                    double y = TextView.VerticalOffset + visualLine.VisualTop + visualLine.Height / 2;
+                    double y = visualLine.VisualTop - TextView.VerticalOffset + visualLine.Height / 2;
 
-                    if (_pointerOverLine == visualLine.FirstDocumentLine.LineNumber)
-                        context.DrawEllipse(_pointerOverBrush, _pointerOverPen, new Point(10, y), 8, 8);
-                    else if (_markedDocumentLines.Contains(visualLine.FirstDocumentLine.LineNumber))
+                    if (_markedDocumentLines.Contains(visualLine.FirstDocumentLine.LineNumber))
                         context.DrawEllipse(_markerBrush, _markerPen, new Point(10, y), 8, 8);
+                    else if (_pointerOverLine == visualLine.FirstDocumentLine.LineNumber)
+                        context.DrawEllipse(_pointerOverBrush, _pointerOverPen, new Point(10, y), 8, 8);
                 }
             }
 
