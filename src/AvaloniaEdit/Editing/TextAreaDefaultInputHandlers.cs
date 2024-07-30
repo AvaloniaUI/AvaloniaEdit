@@ -20,6 +20,7 @@ using System;
 using System.Windows.Input;
 using AvaloniaEdit.Document;
 using Avalonia.Input;
+using Avalonia.Labs.Input;
 
 namespace AvaloniaEdit.Editing
 {
@@ -58,7 +59,7 @@ namespace AvaloniaEdit.Editing
 
         private void AddBinding(RoutedCommand command, EventHandler<ExecutedRoutedEventArgs> handler, EventHandler<CanExecuteRoutedEventArgs> canExecuteHandler = null)
         {
-            CommandBindings.Add(new RoutedCommandBinding(command, handler, canExecuteHandler));
+            CommandBindings.Add(new CommandBinding(command, handler, canExecuteHandler));
         }
 
         internal static KeyBinding CreateKeyBinding(ICommand command, KeyModifiers modifiers, Key key)

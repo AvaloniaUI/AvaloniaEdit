@@ -20,7 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Input;
-using Avalonia.Platform;
+using Avalonia.Labs.Input;
 
 namespace AvaloniaEdit
 {
@@ -115,13 +115,8 @@ namespace AvaloniaEdit
         public static RoutedCommand Replace { get; } = new RoutedCommand(nameof(Replace), GetReplaceKeyGesture());
         
         private static KeyModifiers GetPlatformCommandKey()
-        {            
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return KeyModifiers.Meta;
-            }
-
-            return KeyModifiers.Control;
+        {
+            return Application.Current?.PlatformSettings?.HotkeyConfiguration.CommandModifiers ?? KeyModifiers.Control;
         }
 
         private static KeyGesture GetReplaceKeyGesture()
