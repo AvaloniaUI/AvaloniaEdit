@@ -51,6 +51,16 @@
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
                                FontWeight="Light"
-                               FontSize="14" />
+                               FontSize="14" >
+        <AvalonEdit:TextEditor.ContextFlyout>
+            <MenuFlyout>
+                <MenuItem Header="Copy" InputGesture="ctrl+C" Command="{Binding CopyMouseCommmand}" CommandParameter="{Binding #Editor.TextArea}"></MenuItem>
+                <MenuItem Header="Cut" InputGesture="ctrl+X" Command="{Binding CutMouseCommand}" CommandParameter="{Binding #Editor.TextArea}"></MenuItem>
+                <MenuItem Header="Paste" InputGesture="ctrl+V" Command="{Binding PasteMouseCommmand}"  CommandParameter="{Binding #Editor.TextArea}"></MenuItem>
+                <MenuItem Header="-"/>
+                <MenuItem Header="Select All" InputGesture="ctrl+A" Command="{Binding SelectAllMouseCommmand}" CommandParameter="{Binding #Editor.TextArea}"></MenuItem>
+            </MenuFlyout>
+        </AvalonEdit:TextEditor.ContextFlyout>
+        </AvalonEdit:TextEditor>
     </DockPanel>
 </Window>

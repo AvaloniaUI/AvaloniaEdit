@@ -51,7 +51,8 @@ namespace AvaloniaEdit.Demo
             _textEditor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
             _textEditor.Background = Brushes.Transparent;
             _textEditor.ShowLineNumbers = true;
-            _textEditor.ContextMenu = new ContextMenu
+            // The ContextMenu has been defined in MainWindow.xaml 
+            /*_textEditor.ContextMenu = new ContextMenu
             {
                 ItemsSource = new List<MenuItem>
                 {
@@ -59,7 +60,7 @@ namespace AvaloniaEdit.Demo
                     new MenuItem { Header = "Paste", InputGesture = new KeyGesture(Key.V, KeyModifiers.Control) },
                     new MenuItem { Header = "Cut", InputGesture = new KeyGesture(Key.X, KeyModifiers.Control) }
                 }
-            };
+            };*/
             _textEditor.TextArea.Background = this.Background;
             _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
             _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
