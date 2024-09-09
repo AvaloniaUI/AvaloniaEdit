@@ -39,13 +39,14 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using Avalonia.Labs.Input;
 
 namespace AvaloniaEdit.Editing
 {
     /// <summary>
     /// Control that wraps a TextView and adds support for user input and the caret.
     /// </summary>
-    public class TextArea : TemplatedControl, ITextEditorComponent, IRoutedCommandBindable, ILogicalScrollable
+    public class TextArea : TemplatedControl, ITextEditorComponent, ILogicalScrollable
     {
         /// <summary>
         /// This is the extra scrolling space that occurs after the last line.
@@ -1075,7 +1076,7 @@ namespace AvaloniaEdit.Editing
             TextCopied?.Invoke(this, e);
         }
 
-        public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+        public IList<CommandBinding> CommandBindings => CommandManager.GetCommandBindings(this);
 
         bool ILogicalScrollable.IsLogicalScrollEnabled => _logicalScrollable?.IsLogicalScrollEnabled ?? default(bool);
 

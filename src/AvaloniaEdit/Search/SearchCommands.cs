@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using Avalonia.Input;
+using Avalonia.Labs.Input;
 using Avalonia.Threading;
 using AvaloniaEdit.Editing;
 
@@ -67,23 +68,23 @@ namespace AvaloniaEdit.Search
             _panel = panel;
         }
 
-        internal void RegisterGlobalCommands(ICollection<RoutedCommandBinding> commandBindings)
+        internal void RegisterGlobalCommands(ICollection<CommandBinding> commandBindings)
         {
-            commandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Find, ExecuteFind));
-            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Replace, ExecuteReplace));
-            commandBindings.Add(new RoutedCommandBinding(SearchCommands.FindNext, ExecuteFindNext, CanExecuteWithOpenSearchPanel));
-            commandBindings.Add(new RoutedCommandBinding(SearchCommands.FindPrevious, ExecuteFindPrevious, CanExecuteWithOpenSearchPanel));
+            commandBindings.Add(new CommandBinding(ApplicationCommands.Find, ExecuteFind));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, ExecuteReplace));
+            commandBindings.Add(new CommandBinding(SearchCommands.FindNext, ExecuteFindNext, CanExecuteWithOpenSearchPanel));
+            commandBindings.Add(new CommandBinding(SearchCommands.FindPrevious, ExecuteFindPrevious, CanExecuteWithOpenSearchPanel));
         }
 
-        private void RegisterCommands(ICollection<RoutedCommandBinding> commandBindings)
+        private void RegisterCommands(ICollection<CommandBinding> commandBindings)
         {
-            commandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Find, ExecuteFind));
-            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Replace, ExecuteReplace));
-            commandBindings.Add(new RoutedCommandBinding(SearchCommands.FindNext, ExecuteFindNext, CanExecuteWithOpenSearchPanel));
-            commandBindings.Add(new RoutedCommandBinding(SearchCommands.FindPrevious, ExecuteFindPrevious, CanExecuteWithOpenSearchPanel));
-            CommandBindings.Add(new RoutedCommandBinding(SearchCommands.ReplaceNext, ExecuteReplaceNext, CanExecuteWithOpenSearchPanel));
-            CommandBindings.Add(new RoutedCommandBinding(SearchCommands.ReplaceAll, ExecuteReplaceAll, CanExecuteWithOpenSearchPanel));
-            commandBindings.Add(new RoutedCommandBinding(SearchCommands.CloseSearchPanel, ExecuteCloseSearchPanel, CanExecuteWithOpenSearchPanel));
+            commandBindings.Add(new CommandBinding(ApplicationCommands.Find, ExecuteFind));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, ExecuteReplace));
+            commandBindings.Add(new CommandBinding(SearchCommands.FindNext, ExecuteFindNext, CanExecuteWithOpenSearchPanel));
+            commandBindings.Add(new CommandBinding(SearchCommands.FindPrevious, ExecuteFindPrevious, CanExecuteWithOpenSearchPanel));
+            CommandBindings.Add(new CommandBinding(SearchCommands.ReplaceNext, ExecuteReplaceNext, CanExecuteWithOpenSearchPanel));
+            CommandBindings.Add(new CommandBinding(SearchCommands.ReplaceAll, ExecuteReplaceAll, CanExecuteWithOpenSearchPanel));
+            commandBindings.Add(new CommandBinding(SearchCommands.CloseSearchPanel, ExecuteCloseSearchPanel, CanExecuteWithOpenSearchPanel));
         }
 
         private readonly SearchPanel _panel;
