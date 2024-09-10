@@ -47,7 +47,6 @@
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
                                FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
-                               Margin="30"
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
                                FontWeight="Light"
