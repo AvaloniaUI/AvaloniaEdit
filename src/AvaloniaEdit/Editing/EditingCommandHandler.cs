@@ -25,6 +25,7 @@ using AvaloniaEdit.Document;
 using Avalonia.Input;
 using AvaloniaEdit.Utils;
 using Avalonia.Controls;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AvaloniaEdit.Editing
 {
@@ -422,6 +423,14 @@ namespace AvaloniaEdit.Editing
             return true;
         }
 
+        public static bool ConfirmDataFormat(TextArea textArea, DataObject dataObject, string format)
+        {
+            return true;
+            ////var e = new DataObjectSettingDataEventArgs(dataObject, format);
+            ////textArea.RaiseEvent(e);
+            ////return !e.CommandCancelled;
+        }
+
         private static void SetClipboardText(string text, Visual visual)
         {
             try
@@ -524,6 +533,16 @@ namespace AvaloniaEdit.Editing
 
                 textArea.Document.EndUpdate();
             }
+        }
+
+        internal static string GetTextToPaste(IDataObject dataObject, TextArea textArea)
+        {
+            if (dataObject.Contains(DataFormats.Text))
+            {
+                return GetTextToPaste((string)dataObject.Get(DataFormats.Text), textArea);
+            }
+
+            return null;
         }
 
         internal static string GetTextToPaste(string text, TextArea textArea)
