@@ -341,10 +341,10 @@ namespace AvaloniaEdit.Editing
                 }
             }
 
-            //var copyingEventArgs = new DataObjectCopyingEventArgs(dataObject, true);
-            //TextArea.RaiseEvent(copyingEventArgs);
-            //if (copyingEventArgs.CommandCancelled)
-            //    return;
+            var copyingEventArgs = new DataObjectCopyingEventArgs(dataObject, true);
+            TextArea.RaiseEvent(copyingEventArgs);
+            if (copyingEventArgs.CommandCancelled)
+                return;
 
             object dragDescriptor = new object();
             this.currentDragDescriptor = dragDescriptor;
