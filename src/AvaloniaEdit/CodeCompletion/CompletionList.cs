@@ -120,7 +120,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         public ScrollViewer ScrollViewer => _listBox?.ScrollViewer;
 
-        private readonly ObservableCollection<ICompletionData> _completionData = new ObservableCollection<ICompletionData>();
+        private readonly List<ICompletionData> _completionData = new List<ICompletionData>();
 
         /// <summary>
         /// Gets the list to which completion data can be added.
@@ -252,7 +252,7 @@ namespace AvaloniaEdit.CodeCompletion
         // SelectItem gets called twice for every typed character (once from FormatLine), this helps execute SelectItem only once
         private string _currentText;
 
-        private ObservableCollection<ICompletionData> _currentList;
+        private List<ICompletionData> _currentList;
 
         public List<ICompletionData> CurrentList
         {
@@ -299,7 +299,7 @@ namespace AvaloniaEdit.CodeCompletion
             // e.g. "DateTimeKind k = (*cc here suggests DateTimeKind*)"
             var suggestedItem = _listBox.SelectedIndex != -1 ? (ICompletionData)_listBox.SelectedItem : null;
 
-            var listBoxItems = new ObservableCollection<ICompletionData>();
+            var listBoxItems = new List<ICompletionData>();
             var bestIndex = -1;
             var bestQuality = -1;
             double bestPriority = 0;
