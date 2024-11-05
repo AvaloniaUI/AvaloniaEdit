@@ -147,6 +147,9 @@ namespace AvaloniaEdit.CodeCompletion
             if (_listBox == null)
                 return;
 
+            if (_listBox.Items.Count == 0)
+                return;
+
             // We have to do some key handling manually, because the default doesn't work with
             // our simulated events.
             // Also, the default PageUp/PageDown implementation changes the focus, so we avoid it.
@@ -154,8 +157,7 @@ namespace AvaloniaEdit.CodeCompletion
             {
                 case Key.Down:
                     e.Handled = true;
-                    if (_listBox.Items.Count > 0)
-                        _listBox.SelectIndex((_listBox.SelectedIndex + 1) % _listBox.Items.Count);
+                    _listBox.SelectIndex((_listBox.SelectedIndex + 1) % _listBox.Items.Count);
                     break;
                 case Key.Up:
                     e.Handled = true;
