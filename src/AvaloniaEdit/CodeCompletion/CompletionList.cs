@@ -154,10 +154,15 @@ namespace AvaloniaEdit.CodeCompletion
                 case Key.Down:
                     e.Handled = true;
                     _listBox.SelectIndex(_listBox.SelectedIndex + 1);
+                    _listBox.SelectIndex(
+                        (_listBox.SelectedIndex + 1) % _listBox.Items.Count);
                     break;
                 case Key.Up:
                     e.Handled = true;
                     _listBox.SelectIndex(_listBox.SelectedIndex - 1);
+                    _listBox.SelectIndex((_listBox.SelectedIndex == 0)
+                        ? _listBox.Items.Count - 1
+                        : _listBox.SelectedIndex - 1);
                     break;
                 case Key.PageDown:
                     e.Handled = true;
