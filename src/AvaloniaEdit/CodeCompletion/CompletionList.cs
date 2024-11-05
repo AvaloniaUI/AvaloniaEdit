@@ -27,6 +27,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Threading;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.CodeCompletion
@@ -321,7 +322,7 @@ namespace AvaloniaEdit.CodeCompletion
             _currentList = listBoxItems;
             //_listBox.Items = null; Makes no sense? Tooltip disappeared because of this
             _listBox.ItemsSource = listBoxItems;
-            SelectIndexCentered(bestIndex);
+            Dispatcher.UIThread.Post(() => { SelectIndexCentered(bestIndex); }, DispatcherPriority.Loaded);
         }
 
         /// <summary>
