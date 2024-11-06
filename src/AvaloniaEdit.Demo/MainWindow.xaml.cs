@@ -304,20 +304,13 @@ namespace AvaloniaEdit.Demo
                 _completionWindow.Closed += (o, args) => _completionWindow = null;
 
                 var data = _completionWindow.CompletionList.CompletionData;
-                data.Add(new MyCompletionData("Item1"));
-                data.Add(new MyCompletionData("Item2"));
-                data.Add(new MyCompletionData("Item3"));
-                data.Add(new MyCompletionData("Item4"));
-                data.Add(new MyCompletionData("Item5"));
-                data.Add(new MyCompletionData("Item6"));
-                data.Add(new MyCompletionData("Item7"));
-                data.Add(new MyCompletionData("Item8"));
-                data.Add(new MyCompletionData("Item9"));
-                data.Add(new MyCompletionData("Item10"));
-                data.Add(new MyCompletionData("Item11"));
-                data.Add(new MyCompletionData("Item12"));
-                data.Add(new MyCompletionData("Item13"));
 
+                for (int i = 0; i < 500; i++)
+                {
+                    data.Add(new MyCompletionData("Item" + i.ToString()));
+                }
+
+                data.Insert(20, new MyCompletionData("long item to demosntrate dynamic poup resizing"));
 
                 _completionWindow.Show();
             }
@@ -443,7 +436,7 @@ namespace AvaloniaEdit.Demo
             public string Text { get; }
 
             // Use this property if you want to show a fancy UIElement in the list.
-            public object Content => Text;
+            public object Content => _contentControl ??= BuildContentControl();
 
             public object Description => "Description for " + Text;
 
@@ -454,6 +447,17 @@ namespace AvaloniaEdit.Demo
             {
                 textArea.Document.Replace(completionSegment, Text);
             }
+
+            Control BuildContentControl()
+            {
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = Text;
+                textBlock.Margin = new Thickness(5);
+
+                return textBlock;
+            }
+
+            Control _contentControl;
         }
 
         class ElementGenerator : VisualLineElementGenerator, IComparer<Pair>

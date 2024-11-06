@@ -27,6 +27,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Threading;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.CodeCompletion
@@ -120,7 +121,7 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         public ScrollViewer ScrollViewer => _listBox?.ScrollViewer;
 
-        private readonly ObservableCollection<ICompletionData> _completionData = new ObservableCollection<ICompletionData>();
+        private readonly List<ICompletionData> _completionData = new List<ICompletionData>();
 
         /// <summary>
         /// Gets the list to which completion data can be added.
@@ -146,6 +147,9 @@ namespace AvaloniaEdit.CodeCompletion
             if (_listBox == null)
                 return;
 
+            if (_listBox.Items.Count == 0)
+                return;
+
             // We have to do some key handling manually, because the default doesn't work with
             // our simulated events.
             // Also, the default PageUp/PageDown implementation changes the focus, so we avoid it.
@@ -153,11 +157,13 @@ namespace AvaloniaEdit.CodeCompletion
             {
                 case Key.Down:
                     e.Handled = true;
-                    _listBox.SelectIndex(_listBox.SelectedIndex + 1);
+                    _listBox.SelectIndex((_listBox.SelectedIndex + 1) % _listBox.Items.Count);
                     break;
                 case Key.Up:
                     e.Handled = true;
-                    _listBox.SelectIndex(_listBox.SelectedIndex - 1);
+                    _listBox.SelectIndex(_listBox.SelectedIndex == 0
+                        ? _listBox.Items.Count - 1
+                        : _listBox.SelectedIndex - 1);
                     break;
                 case Key.PageDown:
                     e.Handled = true;
@@ -247,7 +253,7 @@ namespace AvaloniaEdit.CodeCompletion
         // SelectItem gets called twice for every typed character (once from FormatLine), this helps execute SelectItem only once
         private string _currentText;
 
-        private ObservableCollection<ICompletionData> _currentList;
+        private List<ICompletionData> _currentList;
 
         public List<ICompletionData> CurrentList
         {
@@ -294,7 +300,7 @@ namespace AvaloniaEdit.CodeCompletion
             // e.g. "DateTimeKind k = (*cc here suggests DateTimeKind*)"
             var suggestedItem = _listBox.SelectedIndex != -1 ? (ICompletionData)_listBox.SelectedItem : null;
 
-            var listBoxItems = new ObservableCollection<ICompletionData>();
+            var listBoxItems = new List<ICompletionData>();
             var bestIndex = -1;
             var bestQuality = -1;
             double bestPriority = 0;
@@ -316,7 +322,7 @@ namespace AvaloniaEdit.CodeCompletion
             _currentList = listBoxItems;
             //_listBox.Items = null; Makes no sense? Tooltip disappeared because of this
             _listBox.ItemsSource = listBoxItems;
-            SelectIndexCentered(bestIndex);
+            Dispatcher.UIThread.Post(() => { SelectIndexCentered(bestIndex); }, DispatcherPriority.Loaded);
         }
 
         /// <summary>
