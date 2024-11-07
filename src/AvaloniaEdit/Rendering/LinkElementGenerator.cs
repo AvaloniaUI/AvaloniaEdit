@@ -37,7 +37,7 @@ namespace AvaloniaEdit.Rendering
 		internal readonly static Regex DefaultLinkRegex = new Regex(@"\b(https?://|ftp://|www\.)[\w\d\._/\-~%@()+:?&=#!]*[\w\d/]");
 
 		// try to detect email addresses
-		internal readonly static Regex DefaultMailRegex = new Regex(@"\b[\w\d\.\-]+\@[\w\d\.\-]+\.[a-z]{2,6}\b");
+		internal readonly static Regex DefaultMailRegex = new Regex(@"\b[\w\d\.\-\+]+\@[\w\d\.\-]+\.[a-z]{2,6}\b");
 
 		private readonly Regex _linkRegex;
 
