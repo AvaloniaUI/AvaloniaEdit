@@ -86,7 +86,7 @@ namespace AvaloniaEdit.Demo
         {
             double visualY = e.GetPosition(TextView).Y + TextView.VerticalOffset;
             VisualLine visualLine = TextView.GetVisualLineFromVisualTop(visualY);
-            return visualLine.FirstDocumentLine.LineNumber;
+            return (visualLine == null) ? -1 : visualLine.FirstDocumentLine.LineNumber;
         }
 
         protected override void OnPointerMoved(PointerEventArgs e)
