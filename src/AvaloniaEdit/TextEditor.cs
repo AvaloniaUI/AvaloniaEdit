@@ -242,6 +242,16 @@ namespace AvaloniaEdit
 
         #region Text property
         /// <summary>
+        /// Gets or sets the placeholder or descriptive text that is displayed even if the <see cref="Text"/>
+        /// property is not yet set.
+        /// </summary>
+        public string Watermark
+        {
+            get => textArea.Watermark;
+            set => textArea.Watermark = value;
+        }
+
+        /// <summary>
         /// Gets/Sets the text of the current document.
         /// </summary>
         public string Text
