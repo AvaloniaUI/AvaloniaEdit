@@ -48,7 +48,7 @@ namespace AvaloniaEdit
         #region Constructors
         static TextEditor()
         {
-            FocusableProperty.OverrideDefaultValue<TextEditor>(true);
+            FocusableProperty.OverrideDefaultValue<TextEditor>(false);
             HorizontalScrollBarVisibilityProperty.OverrideDefaultValue<TextEditor>(ScrollBarVisibility.Auto);
             VerticalScrollBarVisibilityProperty.OverrideDefaultValue<TextEditor>(ScrollBarVisibility.Auto);
 

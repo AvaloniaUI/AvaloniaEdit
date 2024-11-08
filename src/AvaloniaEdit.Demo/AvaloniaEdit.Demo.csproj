@@ -34,6 +34,7 @@
     <PackageReference Include="Avalonia" Version="$(AvaloniaSampleVersion)" />
     <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaSampleVersion)" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaSampleVersion)"/>
+    <PackageReference Include="Avalonia.Diagnostics" Version="$(AvaloniaSampleVersion)"/>
     <PackageReference Include="ReactiveUI" Version="20.1.1" />
     <ProjectReference Include="..\AvaloniaEdit\AvaloniaEdit.csproj" />
     <ProjectReference Include="..\AvaloniaEdit.TextMate\AvaloniaEdit.TextMate.csproj" />
