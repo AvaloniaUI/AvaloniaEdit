@@ -958,10 +958,11 @@ namespace AvaloniaEdit.Editing
                 if (e.KeyModifiers == KeyModifiers.Shift)
                 {
                     EditingCommandHandler.OnShiftTab(this, e);
-                    return;
                 }
-
-                EditingCommandHandler.OnTab(this, e);
+                else
+                {
+                    EditingCommandHandler.OnTab(this, e);
+                }
             }
 
             TextView.InvalidateCursorIfPointerWithinTextView();
