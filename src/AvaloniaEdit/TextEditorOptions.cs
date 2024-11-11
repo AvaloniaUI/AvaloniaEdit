@@ -77,6 +77,28 @@ namespace AvaloniaEdit
         }
         #endregion
 
+        #region AccepsTab
+
+        bool _acceptsTab = true;
+        [DefaultValue(true)]
+        public virtual bool AcceptsTab
+        {
+            get
+            {
+                return _acceptsTab;
+            }
+            set
+            {
+                if (_acceptsTab != value)
+                {
+                    _acceptsTab = value;
+                    OnPropertyChanged(nameof(AcceptsTab));
+                }
+            }
+        }
+
+        #endregion
+
         #region ShowSpaces / ShowTabs / ShowEndOfLine / ShowBoxForControlCharacters
 
         private bool _showSpaces;

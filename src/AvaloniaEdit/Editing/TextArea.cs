@@ -969,6 +969,20 @@ namespace AvaloniaEdit.Editing
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
+
+            if (e.Key == Key.Tab && Options.AcceptsTab)
+            {
+                e.Handled = true;
+                if (e.KeyModifiers == KeyModifiers.Shift)
+                {
+                    EditingCommandHandler.OnShiftTab(this, e);
+                }
+                else
+                {
+                    EditingCommandHandler.OnTab(this, e);
+                }
+            }
+
             TextView.InvalidateCursorIfPointerWithinTextView();
         }
 

@@ -25,6 +25,7 @@ using AvaloniaEdit.Document;
 using Avalonia.Input;
 using AvaloniaEdit.Utils;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace AvaloniaEdit.Editing
 {
@@ -73,8 +74,6 @@ namespace AvaloniaEdit.Editing
                 OnDelete(CaretMovementType.WordLeft));
             AddBinding(EditingCommands.EnterParagraphBreak, KeyModifiers.None, Key.Enter, OnEnter);
             AddBinding(EditingCommands.EnterLineBreak, KeyModifiers.Shift, Key.Enter, OnEnter);
-            AddBinding(EditingCommands.TabForward, KeyModifiers.None, Key.Tab, OnTab);
-            AddBinding(EditingCommands.TabBackward, KeyModifiers.Shift, Key.Tab, OnShiftTab);
 
             AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.None), CanDelete);
             AddBinding(ApplicationCommands.Copy, OnCopy, CanCopy);
@@ -115,7 +114,7 @@ namespace AvaloniaEdit.Editing
         /// transformLine needs to handle read-only segments!
         /// </summary>
         private static void TransformSelectedLines(Action<TextArea, DocumentLine> transformLine, object target,
-            ExecutedRoutedEventArgs args, DefaultSegmentType defaultSegmentType)
+            RoutedEventArgs args, DefaultSegmentType defaultSegmentType)
         {
             var textArea = GetTextArea(target);
             if (textArea?.Document != null)
@@ -228,7 +227,7 @@ namespace AvaloniaEdit.Editing
 
         #region Tab
 
-        private static void OnTab(object target, ExecutedRoutedEventArgs args)
+        public static void OnTab(object target, RoutedEventArgs args)
         {
             var textArea = GetTextArea(target);
             if (textArea?.Document != null)
@@ -264,9 +263,11 @@ namespace AvaloniaEdit.Editing
                 textArea.Caret.BringCaretToView();
                 args.Handled = true;
             }
+
+            TextBox textBox = new TextBox();
         }
 
-        private static void OnShiftTab(object target, ExecutedRoutedEventArgs args)
+        public static void OnShiftTab(object target, RoutedEventArgs args)
         {
             TransformSelectedLines(
                 delegate (TextArea textArea, DocumentLine line)
