@@ -1070,8 +1070,11 @@ namespace AvaloniaEdit.Editing
 
             if (change.Property == SelectionBrushProperty
                 || change.Property == SelectionBorderProperty
-                || change.Property == SelectionForegroundProperty
                 || change.Property == SelectionCornerRadiusProperty)
+            {
+                TextView.InvalidateLayer(KnownLayer.Selection);
+            }
+            else if (change.Property == SelectionForegroundProperty)
             {
                 TextView.Redraw();
             }
