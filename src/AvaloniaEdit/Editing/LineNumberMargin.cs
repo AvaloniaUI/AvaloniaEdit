@@ -37,6 +37,27 @@ namespace AvaloniaEdit.Editing
         private bool _selecting;
 
         /// <summary>
+        /// Identifies the <see cref="MinWidthInDigits"/> styled Avalonia property.
+        /// </summary>
+        public static readonly StyledProperty<int> MinWidthInDigitsProperty =
+            AvaloniaProperty.Register<LineNumberMargin, int>(nameof(MinWidthInDigits), 2);
+
+        /// <summary>
+        /// Gets or sets the minimum width of the line number margin measured in "number of digits".
+        /// This is a styled Avalonia property.
+        /// </summary>
+        /// <value>The minimum width in number of digits. The default value is 2.</value>
+        /// <remarks>
+        /// The line number margin may appear too small when there is only one digit. This property
+        /// allows to reserve additional space.
+        /// </remarks>
+        public int MinWidthInDigits
+        {
+            get => GetValue(MinWidthInDigitsProperty);
+            set => SetValue(MinWidthInDigitsProperty, value);
+        }
+
+        /// <summary>
         /// The typeface used for rendering the line number margin.
         /// This field is calculated in MeasureOverride() based on the FontFamily etc. properties.
         /// </summary>
@@ -48,7 +69,16 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         protected double EmSize { get; set; }
 
-		/// <inheritdoc/>
+        /// <inheritdoc/>
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+        {
+            base.OnPropertyChanged(change);
+
+            if (change.Property == MinWidthInDigitsProperty)
+                OnDocumentLineCountChanged();
+        }
+
+        /// <inheritdoc/>
 		protected override Size MeasureOverride(Size availableSize)
 		{
 			Typeface = this.CreateTypeface();
@@ -134,11 +164,7 @@ namespace AvaloniaEdit.Editing
         {
             var documentLineCount = Document?.LineCount ?? 1;
             var newLength = documentLineCount.ToString(CultureInfo.CurrentCulture).Length;
-
-            // The margin looks too small when there is only one digit, so always reserve space for
-            // at least two digits
-            if (newLength < 2)
-                newLength = 2;
+            newLength = Math.Max(newLength, MinWidthInDigits);
 
             if (newLength != MaxLineNumberLength)
             {
