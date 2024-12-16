@@ -108,8 +108,8 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Width="12"
-                            Fill="{Binding $parent.Foreground}"
-                            Stroke="{Binding $parent.Foreground}"
+                            Fill="{Binding $parent[ToggleButton].Foreground}"
+                            Stroke="{Binding $parent[ToggleButton].Foreground}"
                             StrokeThickness="1" />
                     </ToggleButton>
                     <ToggleButton Theme="{StaticResource SearchPanelTextBoxButton}"
@@ -122,8 +122,8 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Width="14"
-                            Fill="{Binding $parent.Foreground}"
-                            Stroke="{Binding $parent.Foreground}"
+                            Fill="{Binding $parent[ToggleButton].Foreground}"
+                            Stroke="{Binding $parent[ToggleButton].Foreground}"
                             StrokeThickness="1" />
                     </ToggleButton>
                     <ToggleButton Theme="{StaticResource SearchPanelTextBoxButton}"
@@ -136,8 +136,8 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Width="12"
-                            Fill="{Binding $parent.Foreground}"
-                            Stroke="{Binding $parent.Foreground}"
+                            Fill="{Binding $parent[ToggleButton].Foreground}"
+                            Stroke="{Binding $parent[ToggleButton].Foreground}"
                             StrokeThickness="1" />
                     </ToggleButton>
                   </StackPanel>
@@ -155,8 +155,8 @@
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center"
                       Width="16"
-                      Fill="{Binding $parent.Foreground}"
-                      Stroke="{Binding $parent.Foreground}"
+                      Fill="{Binding $parent[Button].Foreground}"
+                      Stroke="{Binding $parent[Button].Foreground}"
                       StrokeThickness="1" />
               </Button>
               <Button Margin="3,0,0,0"
@@ -171,8 +171,8 @@
                       VerticalAlignment="Center"
                       Stretch="Uniform"
                       Width="16"
-                      Fill="{Binding $parent.Foreground}"
-                      Stroke="{Binding $parent.Foreground}"
+                      Fill="{Binding $parent[Button].Foreground}"
+                      Stroke="{Binding $parent[Button].Foreground}"
                       StrokeThickness="1" />
               </Button>
               <Button Margin="3,0,0,0"
@@ -185,8 +185,8 @@
                       VerticalAlignment="Center"
                       Stretch="Uniform"
                       Width="12"
-                      Fill="{Binding $parent.Foreground}"
-                      Stroke="{Binding $parent.Foreground}"
+                      Fill="{Binding $parent[ToggleButton].Foreground}"
+                      Stroke="{Binding $parent[ToggleButton].Foreground}"
                       StrokeThickness="1" />
               </Button>
             </StackPanel>
@@ -215,7 +215,7 @@
                       VerticalAlignment="Center"
                       Stretch="Uniform"
                       Width="12"
-                      Fill="{Binding $parent.Foreground}"
+                      Fill="{Binding $parent[Button].Foreground}"
                       StrokeThickness="1" />
               </Button>
               <Button Margin="3, 0, 0, 0"
@@ -230,7 +230,7 @@
                       VerticalAlignment="Center"
                       Stretch="Uniform"
                       Width="18"
-                      Fill="{Binding $parent.Foreground}" />
+                      Fill="{Binding $parent[Button].Foreground}" />
               </Button>
             </StackPanel>
             <StackPanel Name="PART_MessageView"

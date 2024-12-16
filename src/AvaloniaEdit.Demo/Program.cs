@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
 
 namespace AvaloniaEdit.Demo
 {
@@ -9,6 +10,7 @@ namespace AvaloniaEdit.Demo
           => AppBuilder.Configure<App>().UsePlatformDetect();
 
         // The entry point. Things aren't ready yet
+        [STAThread]
         public static int Main(string[] args)
           => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
