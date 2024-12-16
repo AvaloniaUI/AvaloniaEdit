@@ -142,6 +142,24 @@ namespace AvaloniaEdit.Editing
 
         #endregion
 
+        #region Watermark
+        /// <summary>
+        /// Defines the <see cref="Watermark"/> property
+        /// </summary>
+        public static readonly StyledProperty<string> WatermarkProperty =
+            AvaloniaProperty.Register<TextArea, string>(nameof(Watermark));
+
+        /// <summary>
+        /// Gets or sets the placeholder or descriptive text that is displayed even if the <see cref="Text"/>
+        /// property is not yet set.
+        /// </summary>
+        public string Watermark
+        {
+            get => GetValue(WatermarkProperty);
+            set => SetValue(WatermarkProperty, value);
+        }
+        #endregion
+
         /// <summary>
         ///     Defines the <see cref="IScrollable.Offset" /> property.
         /// </summary>
@@ -951,6 +969,20 @@ namespace AvaloniaEdit.Editing
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
+
+            if (e.Key == Key.Tab && Options.AcceptsTab)
+            {
+                e.Handled = true;
+                if (e.KeyModifiers == KeyModifiers.Shift)
+                {
+                    EditingCommandHandler.OnShiftTab(this, e);
+                }
+                else
+                {
+                    EditingCommandHandler.OnTab(this, e);
+                }
+            }
+
             TextView.InvalidateCursorIfPointerWithinTextView();
         }
 

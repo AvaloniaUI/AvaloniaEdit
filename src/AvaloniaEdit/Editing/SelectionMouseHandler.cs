@@ -474,7 +474,7 @@ namespace AvaloniaEdit.Editing
 
                     if (TextArea.CapturePointer(e.Pointer))
                     {
-                        if (modifiers.HasFlag(KeyModifiers.Alt) && TextArea.Options.EnableRectangularSelection)
+                        if (modifiers.HasFlag(HotkeyConfiguration.BoxSelectionModifiers) && TextArea.Options.EnableRectangularSelection)
                         {
                             _mode = SelectionMode.Rectangular;
                             if (shift && TextArea.Selection is RectangleSelection)

@@ -20,8 +20,20 @@
               </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
           </ItemsControl>
-          <ContentPresenter Name="PART_CP" Cursor="IBeam"
-                            Focusable="False" Background="{TemplateBinding Background}" />
+          <Panel>
+            <ContentPresenter Name="PART_CP"
+                              Cursor="IBeam"
+                              Focusable="False"
+                              Background="{TemplateBinding Background}" />
+            <TextBlock Name="PART_Watermark"
+                       Opacity="0.5"
+                       Text="{TemplateBinding Watermark}"
+                       Foreground="{TemplateBinding Foreground}">
+              <TextBlock.IsVisible>
+                <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Document.Text" Converter="{x:Static StringConverters.IsNullOrEmpty}"/>
+              </TextBlock.IsVisible>
+            </TextBlock>
+          </Panel>
         </DockPanel>
       </ControlTemplate>
     </Setter>

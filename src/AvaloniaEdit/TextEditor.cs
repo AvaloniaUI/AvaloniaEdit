@@ -48,7 +48,7 @@ namespace AvaloniaEdit
         #region Constructors
         static TextEditor()
         {
-            FocusableProperty.OverrideDefaultValue<TextEditor>(true);
+            FocusableProperty.OverrideDefaultValue<TextEditor>(false);
             HorizontalScrollBarVisibilityProperty.OverrideDefaultValue<TextEditor>(ScrollBarVisibility.Auto);
             VerticalScrollBarVisibilityProperty.OverrideDefaultValue<TextEditor>(ScrollBarVisibility.Auto);
 
@@ -241,6 +241,16 @@ namespace AvaloniaEdit
         #endregion
 
         #region Text property
+        /// <summary>
+        /// Gets or sets the placeholder or descriptive text that is displayed even if the <see cref="Text"/>
+        /// property is not yet set.
+        /// </summary>
+        public string Watermark
+        {
+            get => textArea.Watermark;
+            set => textArea.Watermark = value;
+        }
+
         /// <summary>
         /// Gets/Sets the text of the current document.
         /// </summary>
