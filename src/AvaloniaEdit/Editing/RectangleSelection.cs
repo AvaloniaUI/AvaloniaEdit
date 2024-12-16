@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Avalonia;
@@ -383,24 +384,23 @@ namespace AvaloniaEdit.Editing
             return false;
         }
 
-        // TODO: clipboard
+        /// <summary>
+        /// Gets the name of the entry in the DataObject that signals rectangle selections.
+        /// </summary>
+        public const string RectangularSelectionDataType = "AvalonEditRectangularSelection";
 
-        ///// <summary>
-        ///// Gets the name of the entry in the DataObject that signals rectangle selections.
-        ///// </summary>
-        //public const string RectangularSelectionDataType = "AvalonEditRectangularSelection";
+        public override Avalonia.Input.DataObject CreateDataObject(TextArea textArea)
+        {
+            var data = base.CreateDataObject(textArea);
 
-        //public override System.Windows.DataObject CreateDataObject(TextArea textArea)
-        //{
-        //	var data = base.CreateDataObject(textArea);
-
-        //	if (EditingCommandHandler.ConfirmDataFormat(textArea, data, RectangularSelectionDataType)) {
-        //		MemoryStream isRectangle = new MemoryStream(1);
-        //		isRectangle.WriteByte(1);
-        //		data.SetData(RectangularSelectionDataType, isRectangle, false);
-        //	}
-        //	return data;
-        //}
+            if (EditingCommandHandler.ConfirmDataFormat(textArea, data, RectangularSelectionDataType))
+            {
+                MemoryStream isRectangle = new MemoryStream(1);
+                isRectangle.WriteByte(1);
+                data.Set(RectangularSelectionDataType, isRectangle);
+            }
+            return data;
+        }
 
         /// <inheritdoc/>
         public override string ToString()
