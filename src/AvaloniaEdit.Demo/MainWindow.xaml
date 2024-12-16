@@ -2,6 +2,7 @@
         xmlns:AvalonEdit="using:AvaloniaEdit"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:AvaloniaEdit.Demo.ViewModels"
+        xmlns:editing="using:AvaloniaEdit.Editing"
         MinWidth="0"
         MinHeight="300"
         Width="1000"
@@ -47,7 +48,6 @@
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
                                FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
-                               Margin="30"
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
                                FontWeight="Light"
@@ -62,6 +62,11 @@
                 <MenuItem Header="Select All" InputGesture="ctrl+A" Command="{Binding SelectAllMouseCommmand}" CommandParameter="{Binding #Editor.TextArea}"></MenuItem>
             </MenuFlyout>
         </AvalonEdit:TextEditor.ContextFlyout>
+          <AvalonEdit:TextEditor.Styles>
+            <Style Selector="editing|LineNumberMargin">
+              <Setter Property="MinWidthInDigits" Value="3" />
+            </Style>
+          </AvalonEdit:TextEditor.Styles>
         </AvalonEdit:TextEditor>
     </DockPanel>
 </Window>
