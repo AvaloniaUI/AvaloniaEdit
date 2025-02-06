@@ -192,6 +192,7 @@ namespace AvaloniaEdit.Search
             panel._handler = new SearchInputHandler(textArea, panel);
             textArea.DefaultInputHandler.NestedInputHandlers.Add(panel._handler);
             ((ISetLogicalParent)panel).SetParent(textArea);
+            KeyboardNavigation.SetTabNavigation(panel, KeyboardNavigationMode.Cycle);
             return panel;
         }
 
