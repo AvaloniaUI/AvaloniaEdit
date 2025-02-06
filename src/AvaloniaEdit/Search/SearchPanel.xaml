@@ -185,8 +185,8 @@
                       VerticalAlignment="Center"
                       Stretch="Uniform"
                       Width="12"
-                      Fill="{Binding $parent[ToggleButton].Foreground}"
-                      Stroke="{Binding $parent[ToggleButton].Foreground}"
+                      Fill="{Binding $parent[Button].Foreground}"
+                      Stroke="{Binding $parent[Button].Foreground}"
                       StrokeThickness="1" />
               </Button>
             </StackPanel>
