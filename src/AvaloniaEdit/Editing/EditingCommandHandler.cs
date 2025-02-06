@@ -332,7 +332,7 @@ namespace AvaloniaEdit.Editing
         private static void CanDelete(object target, CanExecuteRoutedEventArgs args)
         {
             var textArea = GetTextArea(target);
-            if (textArea?.Document != null)
+            if (textArea is { Document: not null, IsFocused: true })
             {
                 args.CanExecute = true;
                 args.Handled = true;
@@ -345,9 +345,9 @@ namespace AvaloniaEdit.Editing
 
         private static void CanCut(object target, CanExecuteRoutedEventArgs args)
         {
-            // HasSomethingSelected for copy and cut commands
+            // IsFocused and HasSomethingSelected for copy and cut commands
             var textArea = GetTextArea(target);
-            if (textArea?.Document != null)
+            if (textArea is { Document: not null, IsFocused: true })
             {
                 args.CanExecute = (textArea.Options.CutCopyWholeLine || !textArea.Selection.IsEmpty) && !textArea.IsReadOnly;
                 args.Handled = true;
@@ -356,9 +356,9 @@ namespace AvaloniaEdit.Editing
 
         private static void CanCopy(object target, CanExecuteRoutedEventArgs args)
         {
-            // HasSomethingSelected for copy and cut commands
+            // IsFocused and HasSomethingSelected for copy and cut commands
             var textArea = GetTextArea(target);
-            if (textArea?.Document != null)
+            if (textArea is { Document: not null, IsFocused: true })
             {
                 args.CanExecute = textArea.Options.CutCopyWholeLine || !textArea.Selection.IsEmpty;
                 args.Handled = true;
@@ -489,7 +489,7 @@ namespace AvaloniaEdit.Editing
         private static void CanPaste(object target, CanExecuteRoutedEventArgs args)
         {
             var textArea = GetTextArea(target);
-            if (textArea?.Document != null)
+            if (textArea is { Document: not null, IsFocused: true })
             {
                 args.CanExecute = textArea.ReadOnlySectionProvider.CanInsert(textArea.Caret.Offset);
                 args.Handled = true;
