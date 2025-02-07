@@ -64,19 +64,30 @@ namespace AvaloniaEdit.Editing
         static readonly List<RoutedCommandBinding> CommandBindings = new List<RoutedCommandBinding>();
         static readonly List<KeyBinding> KeyBindings = new List<KeyBinding>();
 
-        private static void AddBinding(RoutedCommand command, EventHandler<ExecutedRoutedEventArgs> handler)
+        private static void AddBinding(
+            RoutedCommand command,
+            EventHandler<ExecutedRoutedEventArgs> handler,
+            EventHandler<CanExecuteRoutedEventArgs> canExecuteHandler = null)
         {
-            CommandBindings.Add(new RoutedCommandBinding(command, handler));
+            CommandBindings.Add(new RoutedCommandBinding(command, handler, canExecuteHandler));
         }
 
-        private static void AddBinding(RoutedCommand command, KeyModifiers modifiers, Key key, EventHandler<ExecutedRoutedEventArgs> handler)
+        private static void AddBinding(
+            RoutedCommand command,
+            KeyModifiers modifiers, Key key,
+            EventHandler<ExecutedRoutedEventArgs> handler,
+            EventHandler<CanExecuteRoutedEventArgs> canExecuteHandler = null)
         {
-            AddBinding(command, new KeyGesture(key, modifiers), handler);
+            AddBinding(command, new KeyGesture(key, modifiers), handler, canExecuteHandler);
         }
 
-        private static void AddBinding(RoutedCommand command, KeyGesture gesture, EventHandler<ExecutedRoutedEventArgs> handler)
+        private static void AddBinding(
+            RoutedCommand command,
+            KeyGesture gesture,
+            EventHandler<ExecutedRoutedEventArgs> handler,
+            EventHandler<CanExecuteRoutedEventArgs> canExecuteHandler = null)
         {
-            AddBinding(command, handler);
+            AddBinding(command, handler, canExecuteHandler);
             KeyBindings.Add(TextAreaDefaultInputHandler.CreateKeyBinding(command, gesture));
         }
 
@@ -132,7 +143,17 @@ namespace AvaloniaEdit.Editing
             foreach (var keyGesture in keymap.MoveCursorToTheEndOfDocumentWithSelection)
                 AddBinding(EditingCommands.SelectToDocumentEnd, keyGesture, OnMoveCaretExtendSelection(CaretMovementType.DocumentEnd));
 
-            AddBinding(ApplicationCommands.SelectAll, OnSelectAll);
+            AddBinding(ApplicationCommands.SelectAll, OnSelectAll, CanSelectAll);
+        }
+
+        private static void CanSelectAll(object target, CanExecuteRoutedEventArgs args)
+        {
+            var textArea = GetTextArea(target);
+            if (textArea is { Document: not null, IsFocused: true })
+            {
+                args.Handled = true;
+                args.CanExecute = true;
+            }
         }
 
         private static void OnSelectAll(object target, ExecutedRoutedEventArgs args)
