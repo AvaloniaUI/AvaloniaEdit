@@ -20,7 +20,7 @@ public class MainWindowViewModel(TextMate.TextMate.Installation _textMateInstall
         }
     }
 
-    public void CopyMouseCommmand(TextArea textArea)
+    public void CopyMouseCommand(TextArea textArea)
     {
         ApplicationCommands.Copy.Execute(null, textArea);
     }
@@ -30,18 +30,18 @@ public class MainWindowViewModel(TextMate.TextMate.Installation _textMateInstall
         ApplicationCommands.Cut.Execute(null, textArea);
     }
     
-    public void PasteMouseCommmand(TextArea textArea)
+    public void PasteMouseCommand(TextArea textArea)
     {
         ApplicationCommands.Paste.Execute(null, textArea);
     }
 
-    public void SelectAllMouseCommmand(TextArea textArea)
+    public void SelectAllMouseCommand(TextArea textArea)
     {
         ApplicationCommands.SelectAll.Execute(null, textArea);
     }
 
     // Undo Status is not given back to disable it's item in ContextFlyout; therefore it's not being used yet.
-    public void UndoMouseCommmand(TextArea textArea)
+    public void UndoMouseCommand(TextArea textArea)
     {
         ApplicationCommands.Undo.Execute(null, textArea);
     }
