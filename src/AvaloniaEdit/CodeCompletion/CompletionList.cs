@@ -28,6 +28,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.CodeCompletion
@@ -37,18 +38,6 @@ namespace AvaloniaEdit.CodeCompletion
     /// </summary>
     public class CompletionList : TemplatedControl
     {
-        public CompletionList()
-        {
-            AddHandler(PointerPressedEvent, OnPointerPressed, RoutingStrategies.Bubble, true);
-
-            CompletionAcceptKeys = new[]
-            {
-                Key.Enter,
-                Key.Tab,
-            };
-        }
-
-
         /// <summary>
         /// If true, the CompletionList is filtered to show only matching items. Also enables search by substring.
         /// If false, enables the old behavior: no filtering, search by string.StartsWith.
@@ -95,6 +84,7 @@ namespace AvaloniaEdit.CodeCompletion
             if (_listBox != null)
             {
                 _listBox.ItemsSource = _completionData;
+                AddPointerHandler(CompletionAcceptAction);
             }
         }
 
@@ -112,9 +102,28 @@ namespace AvaloniaEdit.CodeCompletion
         }
 
         /// <summary>
+        /// Gets or sets the pointer action used to request insertion of a completion item.
+        /// </summary>
+        public CompletionAcceptAction CompletionAcceptAction
+        {
+            get => _completionAcceptAction;
+            set
+            {
+                if (_completionAcceptAction == value)
+                    return;
+
+                RemovePointerHandler(_completionAcceptAction);
+                _completionAcceptAction = value;
+                AddPointerHandler(value);
+            }
+        }
+
+        private CompletionAcceptAction _completionAcceptAction;
+
+        /// <summary>
         /// Gets or sets the array of keys that are supposed to request insertion of the completion.
         /// </summary>
-        public Key[] CompletionAcceptKeys { get; set; }
+        public Key[] CompletionAcceptKeys { get; set; } = new[] { Key.Enter, Key.Tab };
 
         /// <summary>
         /// Gets the scroll viewer used in this list box.
@@ -192,24 +201,76 @@ namespace AvaloniaEdit.CodeCompletion
             }
         }
 
+        private void AddPointerHandler(CompletionAcceptAction completionAcceptAction)
+        {
+            if (_listBox == null)
+                return;
+
+            switch (completionAcceptAction)
+            {
+                case CompletionAcceptAction.PointerPressed:
+                    _listBox.AddHandler(PointerPressedEvent, OnPointerPressed, RoutingStrategies.Bubble, true);
+                    break;
+                case CompletionAcceptAction.PointerReleased:
+                    _listBox.AddHandler(PointerReleasedEvent, OnPointerReleased);
+                    break;
+                case CompletionAcceptAction.DoubleTapped:
+                    AddHandler(DoubleTappedEvent, OnDoubleTapped);
+                    _listBox.AddHandler(DoubleTappedEvent, OnDoubleTapped);
+                    break;
+                default:
+                    Debug.Fail("Invalid CompletionAcceptAction");
+                    break;
+            }
+        }
+
+        private void RemovePointerHandler(CompletionAcceptAction completionAcceptAction)
+        {
+            if (_listBox == null)
+                return;
+
+            switch (completionAcceptAction)
+            {
+                case CompletionAcceptAction.PointerPressed:
+                    _listBox.RemoveHandler(PointerPressedEvent, OnPointerPressed);
+                    break;
+                case CompletionAcceptAction.PointerReleased:
+                    _listBox.RemoveHandler(PointerReleasedEvent, OnPointerReleased);
+                    break;
+                case CompletionAcceptAction.DoubleTapped:
+                    _listBox.RemoveHandler(DoubleTappedEvent, OnDoubleTapped);
+                    break;
+                default:
+                    Debug.Fail("Invalid CompletionAcceptAction");
+                    break;
+            }
+        }
+
         private void OnPointerPressed(object sender, PointerPressedEventArgs e)
         {
             var visual = e.Source as Visual;
-            if (e.GetCurrentPoint(visual).Properties.IsLeftButtonPressed)
-            {
-                var listBoxItem = visual.VisualAncestorsAndSelf()
-                    .TakeWhile(v => v != this)
-                    .OfType<ListBoxItem>()
-                    .FirstOrDefault();
+            if (!e.GetCurrentPoint(visual).Properties.IsLeftButtonPressed) 
+                return;
 
-                if (listBoxItem != null)
-                {
-                    // A completion item was clicked.
-                    Debug.Assert(e.Handled, "Click expected to be handled by ListBoxItem.");
-                    Debug.Assert(listBoxItem.IsSelected, "Completion item expected to be selected.");
-                    RequestInsertion(e);
-                }
-            }
+            RequestInsertion(e);
+        }
+
+        private void OnPointerReleased(object sender, PointerReleasedEventArgs e)
+        {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
+
+            // Ignore event if pointer is released outside the selected item.
+            var listBoxItem = _listBox.ContainerFromIndex(_listBox.SelectedIndex);
+            if (listBoxItem == null || !this.GetVisualsAt(e.GetPosition(this)).Any(v => v == listBoxItem || listBoxItem.IsVisualAncestorOf(v)))
+                return;
+
+            RequestInsertion(e);
+        }
+
+        private void OnDoubleTapped(object sender, TappedEventArgs e)
+        {
+            RequestInsertion(e);
         }
 
         /// <summary>
