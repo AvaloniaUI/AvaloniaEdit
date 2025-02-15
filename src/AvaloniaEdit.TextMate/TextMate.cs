@@ -63,6 +63,15 @@ namespace AvaloniaEdit.TextMate
                 _editor.TextArea.TextView.Redraw();
             }
 
+            public void SetGrammarFile(string path)
+            {
+                _grammar = _textMateRegistry.LoadGrammarFromPathSync(path, 0, null);
+
+                GetOrCreateTransformer().SetGrammar(_grammar);
+
+                _editor.TextArea.TextView.Redraw();
+            }
+
             public bool TryGetThemeColor(string colorKey, out string colorString)
             {
                 return _themeColorsDictionary.TryGetValue(colorKey, out colorString);
