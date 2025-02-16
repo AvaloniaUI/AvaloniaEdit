@@ -1196,6 +1196,10 @@ namespace AvaloniaEdit.Editing
 
                     var rect = _textArea.Caret.CalculateCaretRectangle().TransformToAABB(transform.Value);
 
+                    var scrollOffset = _textArea.TextView.ScrollOffset;
+
+                    rect = rect.WithX(rect.X - scrollOffset.X).WithY(rect.Y - scrollOffset.Y);
+
                     return rect;
                 }
             }
