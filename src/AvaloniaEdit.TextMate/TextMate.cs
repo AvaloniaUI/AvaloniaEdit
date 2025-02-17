@@ -53,13 +53,21 @@ namespace AvaloniaEdit.TextMate
                     OnEditorOnDocumentChanged(editor, EventArgs.Empty);
                 }
             }
-            
+
             public void SetGrammar(string scopeName)
             {
-                _grammar = _textMateRegistry.LoadGrammar(scopeName);
+                SetGrammarInternal(_textMateRegistry.LoadGrammar(scopeName));
+            }
 
+            public void SetGrammarFile(string path)
+            {
+                SetGrammarInternal(_grammar = _textMateRegistry.LoadGrammarFromPathSync(path, 0, null));
+            }
+
+            private void SetGrammarInternal(IGrammar grammar)
+            {
+                _grammar = grammar;
                 GetOrCreateTransformer().SetGrammar(_grammar);
-
                 _editor.TextArea.TextView.Redraw();
             }
 
