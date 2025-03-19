@@ -307,7 +307,7 @@ namespace AvaloniaEdit.Editing
 
         private static TextViewPosition GetEndOfLineCaretPosition(VisualLine visualLine, TextLine textLine)
         {
-            var newVisualCol = visualLine.GetTextLineVisualStartColumn(textLine) + textLine.Length - textLine.TrailingWhitespaceLength;
+            var newVisualCol = visualLine.GetTextLineVisualStartColumn(textLine) + textLine.Length - textLine.NewLineLength;
             var pos = visualLine.GetTextViewPosition(newVisualCol);
             pos.IsAtEndOfLine = true;
             return pos;
