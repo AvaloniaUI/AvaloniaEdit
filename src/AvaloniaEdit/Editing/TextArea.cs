@@ -970,7 +970,7 @@ namespace AvaloniaEdit.Editing
         {
             base.OnKeyDown(e);
 
-            if (e.Key == Key.Tab && Options.AcceptsTab)
+            if (e.Key == Key.Tab && Options.AcceptsTab && IsFocused)
             {
                 e.Handled = true;
                 if (e.KeyModifiers == KeyModifiers.Shift)
