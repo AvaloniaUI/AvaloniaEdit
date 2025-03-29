@@ -107,7 +107,7 @@ namespace AvaloniaEdit.Editing
                 var line = TextArea.Document.GetLineByNumber(start.Line);
                 var lineText = TextArea.Document.GetText(line);
                 var vLine = TextArea.TextView.GetOrConstructVisualLine(line);
-                var colDiff = start.VisualColumn - vLine.VisualLengthWithEndOfLineMarker;
+                var colDiff = start.VisualColumn - vLine.VisualLength;
                 if (colDiff > 0)
                 {
                     var additionalSpaces = "";
