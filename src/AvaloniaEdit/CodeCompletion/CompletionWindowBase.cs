@@ -260,7 +260,6 @@ namespace AvaloniaEdit.CodeCompletion
             UpdatePosition();
         }
 
-        /// <inheritdoc/>
         private void OnDeactivated(object sender, EventArgs e)
         {
             Dispatcher.UIThread.Post(CloseIfFocusLost, DispatcherPriority.Background);
