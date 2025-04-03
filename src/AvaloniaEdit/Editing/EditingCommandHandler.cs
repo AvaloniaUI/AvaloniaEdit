@@ -263,8 +263,6 @@ namespace AvaloniaEdit.Editing
                 textArea.Caret.BringCaretToView();
                 args.Handled = true;
             }
-
-            TextBox textBox = new TextBox();
         }
 
         public static void OnShiftTab(object target, RoutedEventArgs args)
