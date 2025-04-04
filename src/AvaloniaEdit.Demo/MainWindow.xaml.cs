@@ -64,6 +64,7 @@ namespace AvaloniaEdit.Demo
             _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
             _textEditor.TextArea.RightClickMovesCaret = true;
             _textEditor.Options.HighlightCurrentLine = true;
+            _textEditor.Options.CompletionAcceptAction = CompletionAcceptAction.DoubleTapped;
 
             _addControlButton = this.FindControl<Button>("addControlBtn");
             _addControlButton.Click += AddControlButton_Click;
