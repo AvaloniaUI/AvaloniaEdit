@@ -1,3 +1,5 @@
+@using System
+@using System.Globalization
 @{
     string[] members = {"Jani", "Hege", "Kai", "Jim"};
     int i = Array.IndexOf(members, "Kai")+1;
@@ -17,7 +19,7 @@
         <script type="text/javascript">
             function doSomething() {
                // some javascript comment here
-               alert('@Datetime.ToString()');
+               alert('@DateTime.Now.ToString(CultureInfo.CurrentCulture)');
             }
 
             function myFunction() {
