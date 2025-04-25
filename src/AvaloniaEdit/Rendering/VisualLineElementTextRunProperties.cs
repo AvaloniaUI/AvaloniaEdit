@@ -143,7 +143,7 @@ namespace AvaloniaEdit.Rendering
 		/// </summary>
 		public void SetFontRenderingEmSize(double value)
 		{
-			_fontRenderingEmSize = value;
+			_fontRenderingEmSize = value > 0 ? value : 1.0;
 		}
 
 		/// <inheritdoc/>
