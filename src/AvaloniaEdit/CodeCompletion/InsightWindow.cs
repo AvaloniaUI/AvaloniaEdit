@@ -17,6 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using Avalonia;
+using Avalonia.Controls;
 using AvaloniaEdit.Editing;
 
 namespace AvaloniaEdit.CodeCompletion
@@ -38,12 +40,21 @@ namespace AvaloniaEdit.CodeCompletion
 
         private void Initialize()
         {
-            // TODO: working area
-            //var caret = this.TextArea.Caret.CalculateCaretRectangle();
-            //var pointOnScreen = this.TextArea.TextView.PointToScreen(caret.Location - this.TextArea.TextView.ScrollOffset);
-            //Rect workingArea = System.Windows.Forms.Screen.FromPoint(pointOnScreen.ToSystemDrawing()).WorkingArea.ToWpf().TransformFromDevice(this);
-            //MaxHeight = workingArea.Height;
-            //MaxWidth = Math.Min(workingArea.Width, Math.Max(1000, workingArea.Width * 0.6));
+            var caret = this.TextArea.Caret.CalculateCaretRectangle();
+            var topLevel = TopLevel.GetTopLevel(this.TextArea.TextView) as WindowBase;
+            if (topLevel?.Presenter != null)
+            {
+                var presenter = topLevel.Presenter;
+                var pointOnScreen = presenter.PointToScreen(caret.Position - this.TextArea.TextView.ScrollOffset);
+                var screen = topLevel.Screens.ScreenFromPoint(pointOnScreen);
+
+                if (screen != null)
+                {
+                    var scaledWorkingArea = screen.WorkingArea.ToRect(topLevel.RenderScaling);
+                    MaxHeight = scaledWorkingArea.Height;
+                    MaxWidth = Math.Min(scaledWorkingArea.Width, Math.Max(1000, scaledWorkingArea.Width * 0.6));
+                }
+            }
         }
 
         /// <summary>
