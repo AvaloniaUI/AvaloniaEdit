@@ -149,7 +149,7 @@ namespace AvaloniaEdit.Editing
         private static void CanSelectAll(object target, CanExecuteRoutedEventArgs args)
         {
             var textArea = GetTextArea(target);
-            if (textArea is { Document: not null, IsFocused: true })
+            if (textArea is { Document: not null })
             {
                 args.Handled = true;
                 args.CanExecute = true;
