@@ -430,7 +430,8 @@ namespace AvaloniaEdit.Editing
 
         private void TextArea_MouseLeftButtonDown(object sender, PointerPressedEventArgs e)
         {
-            if (e.GetCurrentPoint(TextArea).Properties.IsLeftButtonPressed == false)
+            var pointer = e.GetCurrentPoint(TextArea);
+            if (pointer.Properties.IsLeftButtonPressed == false)
             {
                 if (TextArea.RightClickMovesCaret == true && e.Handled == false)
                 {
@@ -439,9 +440,7 @@ namespace AvaloniaEdit.Editing
             }
             else
             {
-                TextArea.Cursor = Cursor.Parse("IBeam");
-
-                var pointer = e.GetCurrentPoint(TextArea);
+                TextArea.Cursor = new Cursor(StandardCursorType.Ibeam);
 
                 _mode = SelectionMode.None;
                 if (!e.Handled)
@@ -466,6 +465,10 @@ namespace AvaloniaEdit.Editing
                     var oldPosition = TextArea.Caret.Position;
                     SetCaretOffsetToMousePosition(e);
 
+                    if (e.Pointer.Type is PointerType.Pen or PointerType.Touch)
+                    {
+                        return;
+                    }
 
                     if (!shift)
                     {
