@@ -407,20 +407,18 @@ namespace AvaloniaEdit
         /// <summary>
         /// Defines the <see cref="CaretBrush"/> property
         /// </summary>
-        public static readonly StyledProperty<IBrush> CaretBrushProperty =
-            AvaloniaProperty.Register<TextArea, IBrush>(nameof(CaretBrush));
+        public static readonly DirectProperty<TextEditor, IBrush> CaretBrushProperty =
+            AvaloniaProperty.RegisterDirect<TextEditor, IBrush>(nameof(CaretBrush),
+                getter: (editor) => editor.TextArea.Caret.CaretBrush,
+                setter: (editor, brush) => editor.TextArea.Caret.CaretBrush = brush);
 
         /// <summary>
         /// Gets or sets the brush used for Caret.
         /// </summary>
         public IBrush CaretBrush
         {
-            get => this.TextArea.Caret.CaretBrush;
-            set
-            {
-                SetValue(CaretBrushProperty, value);
-                this.TextArea.Caret.CaretBrush = value;
-            }
+            get => GetValue(CaretBrushProperty);
+            set => SetValue(CaretBrushProperty, value);
         }
         #endregion
 
