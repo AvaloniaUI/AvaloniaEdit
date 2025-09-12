@@ -403,25 +403,6 @@ namespace AvaloniaEdit
         }
         #endregion
 
-        #region CaretBrush
-        /// <summary>
-        /// Defines the <see cref="CaretBrush"/> property
-        /// </summary>
-        public static readonly DirectProperty<TextEditor, IBrush> CaretBrushProperty =
-            AvaloniaProperty.RegisterDirect<TextEditor, IBrush>(nameof(CaretBrush),
-                getter: (editor) => editor.TextArea.Caret.CaretBrush,
-                setter: (editor, brush) => editor.TextArea.Caret.CaretBrush = brush);
-
-        /// <summary>
-        /// Gets or sets the brush used for Caret.
-        /// </summary>
-        public IBrush CaretBrush
-        {
-            get => GetValue(CaretBrushProperty);
-            set => SetValue(CaretBrushProperty, value);
-        }
-        #endregion
-
         #region WordWrap
         /// <summary>
         /// Word wrap dependency property.
