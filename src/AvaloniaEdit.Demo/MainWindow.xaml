@@ -51,6 +51,7 @@
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
                                FontWeight="Light"
+                               LineNumbersMargin="10,0,20,0"
                                FontSize="14"
                                Watermark="Start typing to bring your ideas to life...">
         <AvalonEdit:TextEditor.ContextFlyout>
