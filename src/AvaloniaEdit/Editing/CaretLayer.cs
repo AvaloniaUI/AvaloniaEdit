@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -90,7 +91,44 @@ namespace AvaloniaEdit.Editing
         public override void Render(DrawingContext drawingContext)
         {
             base.Render(drawingContext);
+            
+            var caretRect = _caretRectangle;
+            
+            if (!string.IsNullOrEmpty(_textArea.PreeditText))
+            {
+                var caretPos = new Point(
+                    caretRect.X - TextView.HorizontalOffset,
+                    caretRect.Y - TextView.VerticalOffset
+                );
+                
+                var formattedText = new FormattedText(
+                    _textArea.PreeditText,
+                    CultureInfo.CurrentCulture,
+                    _textArea.FlowDirection,
+                    new Typeface(_textArea.FontFamily, _textArea.FontStyle, _textArea.FontWeight,
+                        _textArea.FontStretch),
+                    _textArea.FontSize,
+                    Brushes.Black
+                );
 
+                var textBounds = new Rect(
+                    caretPos.X,
+                    caretPos.Y,
+                    formattedText.Width,
+                    formattedText.Height
+                );
+                drawingContext.FillRectangle(Brushes.White, textBounds);
+                
+                drawingContext.DrawText(formattedText, caretPos);
+                
+                caretRect = new Rect(
+                    caretRect.X + formattedText.Width,
+                    caretRect.Y,
+                    caretRect.Width,
+                    caretRect.Height
+                );
+            }
+            
             if (_isVisible && _blink)
             {
                 var caretBrush = CaretBrush ?? TextView.GetValue(TextBlock.ForegroundProperty);
@@ -105,12 +143,13 @@ namespace AvaloniaEdit.Editing
                     }
                 }
 
-                var r = new Rect(_caretRectangle.X - TextView.HorizontalOffset,
-                                  _caretRectangle.Y - TextView.VerticalOffset,
-                                  _caretRectangle.Width,
-                                  _caretRectangle.Height);
+                var r = new Rect(caretRect.X - TextView.HorizontalOffset,
+                    caretRect.Y - TextView.VerticalOffset,
+                    caretRect.Width,
+                    caretRect.Height);
 
-                drawingContext.FillRectangle(caretBrush, PixelSnapHelpers.Round(r, PixelSnapHelpers.GetPixelSize(this)));
+                drawingContext.FillRectangle(caretBrush,
+                    PixelSnapHelpers.Round(r, PixelSnapHelpers.GetPixelSize(this)));
             }
         }
     }
