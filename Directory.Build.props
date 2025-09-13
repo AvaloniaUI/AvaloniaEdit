@@ -3,21 +3,23 @@
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AvaloniaVersion>11.0.0</AvaloniaVersion>
-    <AvaloniaSampleVersion>11.0.6</AvaloniaSampleVersion>
-    <TextMateSharpVersion>1.0.56</TextMateSharpVersion>
+    <AvaloniaSampleVersion>11.3.0</AvaloniaSampleVersion>
+    <TextMateSharpVersion>1.0.66</TextMateSharpVersion>
     <VersionSuffix>beta</VersionSuffix>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <Version>11.0.6</Version>
+    <Version>11.3.0</Version>
     <Authors>Avalonia Team</Authors>
     <Copyright>Copyright 2017-$([System.DateTime]::Now.ToString(`yyyy`)) &#169; The AvaloniaUI Project</Copyright>
     <RepositoryUrl>https://github.com/AvaloniaUI/AvaloniaEdit/</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Icon.png</PackageIcon>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\avalonia.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">

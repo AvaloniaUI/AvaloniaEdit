@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
+using AvaloniaEdit.CodeCompletion;
 
 namespace AvaloniaEdit
 {
@@ -75,6 +76,28 @@ namespace AvaloniaEdit
         {
             PropertyChanged?.Invoke(this, e);
         }
+        #endregion
+
+        #region AccepsTab
+
+        bool _acceptsTab = true;
+        [DefaultValue(true)]
+        public virtual bool AcceptsTab
+        {
+            get
+            {
+                return _acceptsTab;
+            }
+            set
+            {
+                if (_acceptsTab != value)
+                {
+                    _acceptsTab = value;
+                    OnPropertyChanged(nameof(AcceptsTab));
+                }
+            }
+        }
+
         #endregion
 
         #region ShowSpaces / ShowTabs / ShowEndOfLine / ShowBoxForControlCharacters
@@ -674,6 +697,25 @@ namespace AvaloniaEdit
                 {
                     _extendSelectionOnMouseUp = value;
                     OnPropertyChanged(nameof(ExtendSelectionOnMouseUp));
+                }
+            }
+        }
+
+        private CompletionAcceptAction _completionAcceptAction = CompletionAcceptAction.PointerPressed;
+
+        /// <summary>
+        /// Gets/Sets the pointer action used to request the insertion of a completion item.
+        /// </summary>
+        [DefaultValue(CompletionAcceptAction.PointerPressed)]
+        public CompletionAcceptAction CompletionAcceptAction
+        {
+            get { return _completionAcceptAction; }
+            set
+            {
+                if (_completionAcceptAction != value)
+                {
+                    _completionAcceptAction = value;
+                    OnPropertyChanged(nameof(CompletionAcceptAction));
                 }
             }
         }

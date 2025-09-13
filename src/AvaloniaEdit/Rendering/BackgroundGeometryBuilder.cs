@@ -260,10 +260,13 @@ namespace AvaloniaEdit.Rendering
 					} else {
 						right = visualLine.GetTextLineVisualXPosition(lastTextLine, segmentEndVc);
 					}
+
+					left -= scrollOffset.X;
+					right -= scrollOffset.X;
 					Rect extendSelection = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
 					if (lastRect != default) {
 						if (extendSelection.Intersects(lastRect)) {
-							lastRect.Union(extendSelection);
+							lastRect = lastRect.Union(extendSelection);
 							yield return lastRect;
 						} else {
 							// If the end of the line is in an RTL segment, keep lastRect and extendSelection separate.

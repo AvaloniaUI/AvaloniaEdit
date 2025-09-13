@@ -7,6 +7,12 @@ using AvaloniaEdit.Rendering;
 
 using TextMateSharp.Model;
 
+#if NET6_0_OR_GREATER
+using Math = System.Math;
+#else
+using Math = AvaloniaEdit.TextMate.Compatibility.Math;
+#endif
+
 namespace AvaloniaEdit.TextMate
 {
     public class TextEditorModel : AbstractLineList, IDisposable
@@ -168,7 +174,9 @@ namespace AvaloniaEdit.TextMate
 
             try
             {
-                InvalidateLineRange(_invalidRange.StartLine, _invalidRange.EndLine);
+                int startLine = Math.Clamp(_invalidRange.StartLine, 0, _documentSnapshot.LineCount - 1);
+                int endLine = Math.Clamp(_invalidRange.EndLine, 0, _documentSnapshot.LineCount - 1);
+                InvalidateLineRange(startLine, endLine);
             }
             finally
             {

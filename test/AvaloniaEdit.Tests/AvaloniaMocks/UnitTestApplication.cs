@@ -1,7 +1,9 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
 using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Themes.Simple;
 using AvaloniaEdit.AvaloniaMocks;
 
 [assembly: AvaloniaTestApplication(typeof(UnitTestApplication))]
@@ -24,6 +26,7 @@ namespace AvaloniaEdit.AvaloniaMocks
                 Source = new Uri("/Themes/Base.xaml", UriKind.Relative)
             };
 
+            Application.Current?.Resources.MergedDictionaries.Add(new SimpleTheme());
             Application.Current?.Resources.MergedDictionaries.Add(styleInclude);
         }
     }

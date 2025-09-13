@@ -526,20 +526,18 @@ namespace AvaloniaEdit.Rendering
         // Caller of RemoveInlineObjectRun will remove it from inlineObjects collection.
         private void RemoveInlineObjectRun(InlineObjectRun ior, bool keepElement)
         {
-            // TODO: Focus
-            //if (!keepElement && ior.Element.IsKeyboardFocusWithin)
-            //{
-            //    // When the inline element that has the focus is removed, it will reset the
-            //    // focus to the main window without raising appropriate LostKeyboardFocus events.
-            //    // To work around this, we manually set focus to the next focusable parent.
-            //    UIElement element = this;
-            //    while (element != null && !element.Focusable)
-            //    {
-            //        element = VisualTreeHelper.GetParent(element) as UIElement;
-            //    }
-            //    if (element != null)
-            //        Keyboard.Focus(element);
-            //}
+            if (!keepElement && ior.Element.IsKeyboardFocusWithin)
+            {
+                // When the inline element that has the focus is removed, it will reset the
+                // focus to the main window without raising appropriate LostKeyboardFocus events.
+                // To work around this, we manually set focus to the next focusable parent.
+                Control element = this;
+                while (element != null && !element.Focusable)
+                {
+                    element = element.GetVisualParent() as Control;
+                }
+                element?.Focus();
+            }
             ior.VisualLine = null;
             if (!keepElement)
                 VisualChildren.Remove(ior.Element);
@@ -700,6 +698,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         private void ClearVisualLines()
         {
+            _visibleVisualLines = null;
             if (_allVisualLines.Count != 0)
             {
                 foreach (var visualLine in _allVisualLines)
@@ -707,8 +706,6 @@ namespace AvaloniaEdit.Rendering
                     DisposeVisualLine(visualLine);
                 }
                 _allVisualLines.Clear();
-
-                _visibleVisualLines = new ReadOnlyCollection<VisualLine>(_allVisualLines.ToArray());
             }
         }
 
@@ -719,6 +716,7 @@ namespace AvaloniaEdit.Rendering
                 throw new ArgumentException("Cannot dispose visual line because it is in construction!");
             }
 
+            _visibleVisualLines = null;
             visualLine.Dispose();
             RemoveInlineObjects(visualLine);
         }
@@ -2099,5 +2097,10 @@ namespace AvaloniaEdit.Rendering
         }
 
         Size IScrollable.Viewport => _scrollViewport;
+
+        public void SetDefaultHighlightLineColors()
+        {
+            _currentLineHighlightRenderer?.SetDefaultColors();
+        }
     }
 }

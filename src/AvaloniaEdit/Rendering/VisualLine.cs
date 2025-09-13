@@ -166,6 +166,13 @@ namespace AvaloniaEdit.Rendering
             LastDocumentLine = FirstDocumentLine;
             var askInterestOffset = 0; // 0 or 1
 
+            // for long lines, do not run the element generators for performance reasons
+            if (lineLength > LENGTH_LIMIT)
+            {
+                _elements.Add(new VisualLineText(this, lineLength));
+                return;
+            }
+
             while (offset + askInterestOffset <= currentLineEnd)
             {
                 var textPieceEndOffset = currentLineEnd;

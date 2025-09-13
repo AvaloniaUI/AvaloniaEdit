@@ -21,9 +21,7 @@ using Avalonia;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Media;
 
 namespace AvaloniaEdit.CodeCompletion
 {
@@ -45,21 +43,28 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         public CompletionWindow(TextArea textArea) : base(textArea)
         {
-            CompletionList = new CompletionList();
+            CompletionList = new CompletionList
+            {
+                CompletionAcceptAction = textArea.Options.CompletionAcceptAction
+            };
+
             // keep height automatic
             CloseAutomatically = true;
             MaxHeight = 225;
-            Width = 175;
+            MaxWidth = 550;
             Child = CompletionList;
             // prevent user from resizing window to 0x0
             MinHeight = 15;
-            MinWidth = 30;
+            MinWidth = 175;
 
             _toolTipContent = new CompletionTipContentControl();
 
             _toolTip = new PopupWithCustomPosition
             {
-                IsLightDismissEnabled = true,
+                // The popup should not interfere with the pointer input. Popup visibility is
+                // controlled explicitly.
+                IsLightDismissEnabled = false,
+
                 PlacementTarget = this,
                 Child = _toolTipContent,
             };
@@ -143,10 +148,16 @@ namespace AvaloniaEdit.CodeCompletion
             item?.Complete(TextArea, new AnchorSegment(TextArea.Document, StartOffset, EndOffset - StartOffset), e);
         }
 
+        private void CompletionList_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MinWidth = Math.Max(MinWidth, CompletionList.Bounds.Width);
+        }
+
         private void AttachEvents()
         {
             CompletionList.InsertionRequested += CompletionList_InsertionRequested;
             CompletionList.SelectionChanged += CompletionList_SelectionChanged;
+            CompletionList.SizeChanged += CompletionList_SizeChanged;
             TextArea.Caret.PositionChanged += CaretPositionChanged;
             TextArea.PointerWheelChanged += TextArea_MouseWheel;
             TextArea.TextInput += TextArea_PreviewTextInput;
@@ -157,6 +168,7 @@ namespace AvaloniaEdit.CodeCompletion
         {
             CompletionList.InsertionRequested -= CompletionList_InsertionRequested;
             CompletionList.SelectionChanged -= CompletionList_SelectionChanged;
+            CompletionList.SizeChanged -= CompletionList_SizeChanged;
             TextArea.Caret.PositionChanged -= CaretPositionChanged;
             TextArea.PointerWheelChanged -= TextArea_MouseWheel;
             TextArea.TextInput -= TextArea_PreviewTextInput;
@@ -222,8 +234,8 @@ namespace AvaloniaEdit.CodeCompletion
                 {
                     CompletionList.SelectItem(string.Empty);
 
-                    if (CompletionList.ListBox.ItemCount == 0) IsVisible = false;
-                    else IsVisible = true;
+                    if (CompletionList.ListBox.ItemCount == 0) CompletionList.IsVisible = false;
+                    else CompletionList.IsVisible = true;
                 }
                 return;
             }
@@ -241,8 +253,8 @@ namespace AvaloniaEdit.CodeCompletion
                 {
                     CompletionList.SelectItem(document.GetText(StartOffset, offset - StartOffset));
 
-                    if (CompletionList.ListBox.ItemCount == 0) IsVisible = false;
-                    else IsVisible = true;
+                    if (CompletionList.ListBox.ItemCount == 0) CompletionList.IsVisible = false;
+                    else CompletionList.IsVisible = true;
                 }
             }
         }

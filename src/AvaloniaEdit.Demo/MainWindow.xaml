@@ -1,10 +1,13 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:AvalonEdit="using:AvaloniaEdit"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:AvaloniaEdit.Demo.ViewModels"
+        xmlns:editing="using:AvaloniaEdit.Editing"
         MinWidth="0"
         MinHeight="300"
-        Width="950"
+        Width="1000"
         Title="AvaloniaEdit Demo"
+        x:DataType="vm:MainWindowViewModel"
         x:Class="AvaloniaEdit.Demo.MainWindow">
     <DockPanel>
         <StackPanel Orientation="Horizontal"
@@ -13,7 +16,7 @@
                     Margin="3">
             <ToggleButton Name="wordWrap" ToolTip.Tip="Word wrap" IsChecked="{Binding #Editor.WordWrap}">
                 <ToggleButton.Content>
-                    <Path Fill="{Binding $parent.Foreground}" Data="M2.75 5C2.33579 5 2 5.33579 2 5.75C2 6.16421 2.33579 6.5 2.75 6.5H21.25C21.6642 6.5 22 6.16421 22 5.75C22 5.33579 21.6642 5 21.25 5H2.75Z M2.75 11.5C2.33579 11.5 2 11.8358 2 12.25C2 12.6642 2.33579 13 2.75 13H19C20.3807 13 21.5 14.1193 21.5 15.5C21.5 16.8807 20.3807 18 19 18H14.5607L15.2803 17.2803C15.5732 16.9874 15.5732 16.5126 15.2803 16.2197C14.9874 15.9268 14.5126 15.9268 14.2197 16.2197L12.2197 18.2197C11.9268 18.5126 11.9268 18.9874 12.2197 19.2803L14.2197 21.2803C14.5126 21.5732 14.9874 21.5732 15.2803 21.2803C15.5732 20.9874 15.5732 20.5126 15.2803 20.2197L14.5607 19.5H19C21.2091 19.5 23 17.7091 23 15.5C23 13.2909 21.2091 11.5 19 11.5H2.75Z M2 18.75C2 18.3358 2.33579 18 2.75 18H9.25C9.66421 18 10 18.3358 10 18.75C10 19.1642 9.66421 19.5 9.25 19.5H2.75C2.33579 19.5 2 19.1642 2 18.75Z" />
+                    <Path Fill="{Binding $parent[ToggleButton].Foreground}" Data="M2.75 5C2.33579 5 2 5.33579 2 5.75C2 6.16421 2.33579 6.5 2.75 6.5H21.25C21.6642 6.5 22 6.16421 22 5.75C22 5.33579 21.6642 5 21.25 5H2.75Z M2.75 11.5C2.33579 11.5 2 11.8358 2 12.25C2 12.6642 2.33579 13 2.75 13H19C20.3807 13 21.5 14.1193 21.5 15.5C21.5 16.8807 20.3807 18 19 18H14.5607L15.2803 17.2803C15.5732 16.9874 15.5732 16.5126 15.2803 16.2197C14.9874 15.9268 14.5126 15.9268 14.2197 16.2197L12.2197 18.2197C11.9268 18.5126 11.9268 18.9874 12.2197 19.2803L14.2197 21.2803C14.5126 21.5732 14.9874 21.5732 15.2803 21.2803C15.5732 20.9874 15.5732 20.5126 15.2803 20.2197L14.5607 19.5H19C21.2091 19.5 23 17.7091 23 15.5C23 13.2909 21.2091 11.5 19 11.5H2.75Z M2 18.75C2 18.3358 2.33579 18 2.75 18H9.25C9.66421 18 10 18.3358 10 18.75C10 19.1642 9.66421 19.5 9.25 19.5H2.75C2.33579 19.5 2 19.1642 2 18.75Z" />
                 </ToggleButton.Content>
             </ToggleButton>
             <ToggleButton Name="viewTabs" Content="View tabs" IsChecked="{Binding #Editor.Options.ShowTabs}" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
@@ -23,18 +26,48 @@
             <Button Name="addControlBtn" Content="Add Button" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <Button Name="clearControlBtn" Content="Clear Buttons" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <ComboBox Name="syntaxModeCombo" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-            <Button Name="changeThemeBtn" Content="Change theme" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+            
+            <DropDownButton Content="Change theme" VerticalAlignment="Stretch" VerticalContentAlignment="Center">
+                <Button.Flyout>
+                    <Flyout>
+                        <ListBox ItemsSource="{Binding AllThemes }" SelectedItem="{Binding SelectedTheme}">
+                            <ListBox.DataTemplates>
+                                <DataTemplate x:DataType="vm:ThemeViewModel">
+                                    <TextBlock Text="{Binding DisplayName}"/>
+                                </DataTemplate>
+                            </ListBox.DataTemplates>
+                        </ListBox>    
+                    </Flyout>
+                </Button.Flyout>
+            </DropDownButton>
+            
+            <Button Name="insertSnippetBtn" Content="Insert Snippet" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
         </StackPanel>
         <StackPanel Name="StatusBar" Background="Purple" Height="25" DockPanel.Dock="Bottom" Orientation="Horizontal">
-            <TextBlock Foreground="White" Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
+            <TextBlock Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
         </StackPanel>
         <AvalonEdit:TextEditor Name="Editor"
                                FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
-                               Margin="30"
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
                                FontWeight="Light"
                                LineNumbersMargin="10,0,20,0"
-                               FontSize="14" />
+                               FontSize="14"
+                               Watermark="Start typing to bring your ideas to life...">
+        <AvalonEdit:TextEditor.ContextFlyout>
+            <MenuFlyout>
+                <MenuItem Header="Copy" InputGesture="ctrl+C" Command="{Binding CopyMouseCommand}" CommandParameter="{Binding #Editor.TextArea}"></MenuItem>
+                <MenuItem Header="Cut" InputGesture="ctrl+X" Command="{Binding CutMouseCommand}" CommandParameter="{Binding #Editor.TextArea}"></MenuItem>
+                <MenuItem Header="Paste" InputGesture="ctrl+V" Command="{Binding PasteMouseCommand}"  CommandParameter="{Binding #Editor.TextArea}"></MenuItem>
+                <MenuItem Header="-"/>
+                <MenuItem Header="Select All" InputGesture="ctrl+A" Command="{Binding SelectAllMouseCommand}" CommandParameter="{Binding #Editor.TextArea}"></MenuItem>
+            </MenuFlyout>
+        </AvalonEdit:TextEditor.ContextFlyout>
+          <AvalonEdit:TextEditor.Styles>
+            <Style Selector="editing|LineNumberMargin">
+              <Setter Property="MinWidthInDigits" Value="3" />
+            </Style>
+          </AvalonEdit:TextEditor.Styles>
+        </AvalonEdit:TextEditor>
     </DockPanel>
 </Window>

@@ -25,6 +25,7 @@ using AvaloniaEdit.Document;
 using Avalonia.Input;
 using AvaloniaEdit.Utils;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace AvaloniaEdit.Editing
 {
@@ -73,8 +74,6 @@ namespace AvaloniaEdit.Editing
                 OnDelete(CaretMovementType.WordLeft));
             AddBinding(EditingCommands.EnterParagraphBreak, KeyModifiers.None, Key.Enter, OnEnter);
             AddBinding(EditingCommands.EnterLineBreak, KeyModifiers.Shift, Key.Enter, OnEnter);
-            AddBinding(EditingCommands.TabForward, KeyModifiers.None, Key.Tab, OnTab);
-            AddBinding(EditingCommands.TabBackward, KeyModifiers.Shift, Key.Tab, OnShiftTab);
 
             AddBinding(ApplicationCommands.Delete, OnDelete(CaretMovementType.None), CanDelete);
             AddBinding(ApplicationCommands.Copy, OnCopy, CanCopy);
@@ -115,7 +114,7 @@ namespace AvaloniaEdit.Editing
         /// transformLine needs to handle read-only segments!
         /// </summary>
         private static void TransformSelectedLines(Action<TextArea, DocumentLine> transformLine, object target,
-            ExecutedRoutedEventArgs args, DefaultSegmentType defaultSegmentType)
+            RoutedEventArgs args, DefaultSegmentType defaultSegmentType)
         {
             var textArea = GetTextArea(target);
             if (textArea?.Document != null)
@@ -228,7 +227,7 @@ namespace AvaloniaEdit.Editing
 
         #region Tab
 
-        private static void OnTab(object target, ExecutedRoutedEventArgs args)
+        public static void OnTab(object target, RoutedEventArgs args)
         {
             var textArea = GetTextArea(target);
             if (textArea?.Document != null)
@@ -266,7 +265,7 @@ namespace AvaloniaEdit.Editing
             }
         }
 
-        private static void OnShiftTab(object target, ExecutedRoutedEventArgs args)
+        public static void OnShiftTab(object target, RoutedEventArgs args)
         {
             TransformSelectedLines(
                 delegate (TextArea textArea, DocumentLine line)
@@ -331,7 +330,7 @@ namespace AvaloniaEdit.Editing
         private static void CanDelete(object target, CanExecuteRoutedEventArgs args)
         {
             var textArea = GetTextArea(target);
-            if (textArea?.Document != null)
+            if (textArea is { Document: not null })
             {
                 args.CanExecute = true;
                 args.Handled = true;
@@ -346,7 +345,7 @@ namespace AvaloniaEdit.Editing
         {
             // HasSomethingSelected for copy and cut commands
             var textArea = GetTextArea(target);
-            if (textArea?.Document != null)
+            if (textArea is { Document: not null })
             {
                 args.CanExecute = (textArea.Options.CutCopyWholeLine || !textArea.Selection.IsEmpty) && !textArea.IsReadOnly;
                 args.Handled = true;
@@ -357,7 +356,7 @@ namespace AvaloniaEdit.Editing
         {
             // HasSomethingSelected for copy and cut commands
             var textArea = GetTextArea(target);
-            if (textArea?.Document != null)
+            if (textArea is { Document: not null })
             {
                 args.CanExecute = textArea.Options.CutCopyWholeLine || !textArea.Selection.IsEmpty;
                 args.Handled = true;
@@ -422,6 +421,14 @@ namespace AvaloniaEdit.Editing
             return true;
         }
 
+        public static bool ConfirmDataFormat(TextArea textArea, DataObject dataObject, string format)
+        {
+            return true;
+            ////var e = new DataObjectSettingDataEventArgs(dataObject, format);
+            ////textArea.RaiseEvent(e);
+            ////return !e.CommandCancelled;
+        }
+
         private static void SetClipboardText(string text, Visual visual)
         {
             try
@@ -480,7 +487,7 @@ namespace AvaloniaEdit.Editing
         private static void CanPaste(object target, CanExecuteRoutedEventArgs args)
         {
             var textArea = GetTextArea(target);
-            if (textArea?.Document != null)
+            if (textArea is { Document: not null })
             {
                 args.CanExecute = textArea.ReadOnlySectionProvider.CanInsert(textArea.Caret.Offset);
                 args.Handled = true;
@@ -524,6 +531,16 @@ namespace AvaloniaEdit.Editing
 
                 textArea.Document.EndUpdate();
             }
+        }
+
+        internal static string GetTextToPaste(IDataObject dataObject, TextArea textArea)
+        {
+            if (dataObject.Contains(DataFormats.Text))
+            {
+                return GetTextToPaste((string)dataObject.Get(DataFormats.Text), textArea);
+            }
+
+            return null;
         }
 
         internal static string GetTextToPaste(string text, TextArea textArea)

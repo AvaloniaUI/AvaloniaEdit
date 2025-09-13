@@ -1,8 +1,10 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Platform;
 using Avalonia.Markup.Xaml;
 using System;
+using System.ComponentModel;
+using Avalonia.Styling;
+using AvaloniaEdit.Demo.ViewModels;
 
 namespace AvaloniaEdit.Demo
 {
@@ -17,13 +19,12 @@ namespace AvaloniaEdit.Demo
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
             {
-
                 var window = new MainWindow();
-
                 desktopLifetime.MainWindow = window;
-                //PlatformManager.CreateEmbeddableWindow().Crea
-                
-
+                if (window.DataContext is MainWindowViewModel mainWindowViewModel)
+                {
+                    mainWindowViewModel.PropertyChanged +=MainWindowViewModelOnPropertyChanged;
+                }
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewLifetime)
             {
@@ -39,6 +40,17 @@ namespace AvaloniaEdit.Demo
             }
 
             base.OnFrameworkInitializationCompleted();
+        }
+
+        private void MainWindowViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is not MainWindowViewModel mainWindowViewModel) return;
+            if (e.PropertyName == nameof(MainWindowViewModel.SelectedTheme))
+            {
+                RequestedThemeVariant = mainWindowViewModel.SelectedTheme.ThemeName.ToString().ToLower().Contains("light")
+                    ? ThemeVariant.Light
+                    : ThemeVariant.Dark;
+            }
         }
     }
 }

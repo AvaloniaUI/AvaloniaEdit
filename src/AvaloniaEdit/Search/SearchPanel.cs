@@ -42,6 +42,7 @@ namespace AvaloniaEdit.Search
         private TextDocument _currentDocument;
         private SearchResultBackgroundRenderer _renderer;
         private TextBox _searchTextBox;
+        private TextBox _replaceTextBox;
         private TextEditor _textEditor { get; set; }
         private Border _border;
         private int _currentSearchResultIndex = -1;
@@ -192,6 +193,7 @@ namespace AvaloniaEdit.Search
             panel._handler = new SearchInputHandler(textArea, panel);
             textArea.DefaultInputHandler.NestedInputHandlers.Add(panel._handler);
             ((ISetLogicalParent)panel).SetParent(textArea);
+            KeyboardNavigation.SetTabNavigation(panel, KeyboardNavigationMode.Cycle);
             return panel;
         }
 
@@ -227,6 +229,12 @@ namespace AvaloniaEdit.Search
             _textArea.DocumentChanged += TextArea_DocumentChanged;
             KeyDown += SearchLayerKeyDown;
 
+            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.SelectAll, (sender, e) => SelectAll(e)));
+            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Copy, (sender, e) => Copy(e)));
+            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Cut, (sender, e) => Cut(e)));
+            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Paste, (sender, e) => Paste(e)));
+            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Undo, (sender, e) => Undo(e)));
+            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Redo, (sender, e) => Redo(e)));
             CommandBindings.Add(new RoutedCommandBinding(SearchCommands.FindNext, (sender, e) => FindNext()));
             CommandBindings.Add(new RoutedCommandBinding(SearchCommands.FindPrevious, (sender, e) => FindPrevious()));
             CommandBindings.Add(new RoutedCommandBinding(SearchCommands.CloseSearchPanel, (sender, e) => Close()));
@@ -265,6 +273,7 @@ namespace AvaloniaEdit.Search
             base.OnApplyTemplate(e);
             _border = e.NameScope.Find<Border>("PART_Border");
             _searchTextBox = e.NameScope.Find<TextBox>("PART_searchTextBox");
+            _replaceTextBox = e.NameScope.Find<TextBox>("PART_replaceTextBox");
             _messageView = e.NameScope.Find<Panel>("PART_MessageView");
             _messageViewContent = e.NameScope.Find<TextBlock>("PART_MessageContent");
         }
@@ -280,6 +289,84 @@ namespace AvaloniaEdit.Search
             _searchTextBox.SelectionStart = 0;
             _searchTextBox.SelectionEnd = _searchTextBox.Text?.Length ?? 0;
         }
+
+        void SelectAll(ExecutedRoutedEventArgs e)
+        {
+            TextBox focusedTextBox = GetFocusedTextBox();
+
+            if (focusedTextBox == null)
+                return;
+
+            e.Handled = true;
+            focusedTextBox.SelectAll();
+        }
+
+        void Cut(ExecutedRoutedEventArgs e)
+        {
+            TextBox focusedTextBox = GetFocusedTextBox();
+
+            if (focusedTextBox == null)
+                return;
+
+            e.Handled = true;
+            focusedTextBox.Cut();
+        }
+
+        void Copy(ExecutedRoutedEventArgs e)
+        {
+            TextBox focusedTextBox = GetFocusedTextBox();
+
+            if (focusedTextBox == null)
+                return;
+
+            e.Handled = true;
+            focusedTextBox.Copy();
+        }
+
+        void Paste(ExecutedRoutedEventArgs e)
+        {
+            TextBox focusedTextBox = GetFocusedTextBox();
+
+            if (focusedTextBox == null)
+                return;
+
+            e.Handled = true;
+            focusedTextBox.Paste();
+        }
+
+        void Undo(ExecutedRoutedEventArgs e)
+        {
+            TextBox focusedTextBox = GetFocusedTextBox();
+
+            if (focusedTextBox == null)
+                return;
+
+            e.Handled = true;
+            focusedTextBox.Undo();
+        }
+
+        void Redo(ExecutedRoutedEventArgs e)
+        {
+            TextBox focusedTextBox = GetFocusedTextBox();
+
+            if (focusedTextBox == null)
+                return;
+
+            e.Handled = true;
+            focusedTextBox.Redo();
+        }
+
+        TextBox GetFocusedTextBox()
+        {
+            if (_searchTextBox.IsFocused)
+                return _searchTextBox;
+
+            if (_replaceTextBox.IsFocused)
+                return _replaceTextBox;
+
+            return null;
+        }
+
 
         /// <summary>
         /// Moves to the next occurrence in the file starting at the next position from current caret offset.
