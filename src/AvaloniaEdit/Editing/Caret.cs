@@ -586,6 +586,7 @@ namespace AvaloniaEdit.Editing
                     //if (hasWin32Caret) {
                     //	Win32.SetCaretPosition(textView, caretRect.Location - textView.ScrollOffset);
                     //}
+                    // _caretAdorner.Show(caretRect);
                     //textArea.ime.UpdateCompositionWindow();
                     var caretRect = _textArea.OverstrikeMode ? CalcCaretOverstrikeRectangle(visualLine) : CalcCaretRectangle(visualLine);
                     if (_smoothCaretEnabled && _lastCaretPixelPosition != null && _smoothCaretAnimationProgress < 1.0)
