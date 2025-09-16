@@ -577,6 +577,16 @@ namespace AvaloniaEdit.Editing
                 var visualLine = _textView.GetVisualLine(_position.Line);
                 if (visualLine != null)
                 {
+                    // TODO: win32 caret
+                    // Create Win32 caret so that Windows knows where our managed caret is. This is necessary for
+                    // features like 'Follow text editing' in the Windows Magnifier.
+                    //if (!hasWin32Caret) {
+                    //	hasWin32Caret = Win32.CreateCaret(textView, caretRect.Size);
+                    //}
+                    //if (hasWin32Caret) {
+                    //	Win32.SetCaretPosition(textView, caretRect.Location - textView.ScrollOffset);
+                    //}
+                    //textArea.ime.UpdateCompositionWindow();
                     var caretRect = _textArea.OverstrikeMode ? CalcCaretOverstrikeRectangle(visualLine) : CalcCaretRectangle(visualLine);
                     if (_smoothCaretEnabled && _lastCaretPixelPosition != null && _smoothCaretAnimationProgress < 1.0)
                     {
