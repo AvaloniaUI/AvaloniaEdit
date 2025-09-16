@@ -482,12 +482,87 @@ namespace AvaloniaEdit.Editing
             if (!_showScheduled)
             {
                 _showScheduled = true;
-                Dispatcher.UIThread.Post(ShowInternal);
+                Dispatcher.UIThread.Post(() =>
+                {
+                    if (_smoothCaretEnabled)
+                    {
+                        var caretRect = CalculateCaretRectangle();
+                        var pixelPos = new Point(caretRect.X, caretRect.Y);
+                        AnimateCaretToNewPosition(pixelPos);
+                    }
+                    else
+                    {
+                        ShowInternal();
+                    }
+                });
             }
         }
 
         private bool _showScheduled;
         private bool _hasWin32Caret;
+
+        private double _smoothCaretSpeed = 0.35; // default speed higher is faster 
+        private double _smoothCaretFrameInterval = 1.0 / 60.0; // 60 fps
+
+        /// <summary>
+        /// Gets or sets the speed of the smooth caret animation. Higher is faster.
+        /// </summary>
+        public double SmoothCaretSpeed
+        {
+            get => _smoothCaretSpeed;
+            set => _smoothCaretSpeed = Clamp(value, 0.01, 1.0);
+        }
+
+        private static double Clamp(double value, double min, double max)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
+        }
+
+        /// <summary>
+        /// Gets or sets the frame interval in seconds for the smooth caret animation.
+        /// </summary>
+        public double SmoothCaretFrameInterval
+        {
+            get => _smoothCaretFrameInterval;
+            set => _smoothCaretFrameInterval = Math.Max(0.001, value);
+        }
+
+        private void AnimateCaretToNewPosition(Point newPixelPosition)
+        {
+            if (!_smoothCaretEnabled)
+            {
+                _lastCaretPixelPosition = null;
+                _smoothCaretAnimationProgress = 1.0;
+                ShowInternal();
+                return;
+            }
+
+            if (_lastCaretPixelPosition == null)
+            {
+                _lastCaretPixelPosition = newPixelPosition;
+                _smoothCaretAnimationProgress = 1.0;
+                ShowInternal();
+                return;
+            }
+
+            _smoothCaretAnimationProgress = 0.0;
+            _animationTimer?.Dispose();
+            _animationTimer = DispatcherTimer.Run(() =>
+            {
+                _smoothCaretAnimationProgress += _smoothCaretSpeed;
+                if (_smoothCaretAnimationProgress >= 1.0)
+                {
+                    _smoothCaretAnimationProgress = 1.0;
+                    _lastCaretPixelPosition = newPixelPosition;
+                    _animationTimer?.Dispose();
+                    _animationTimer = null;
+                }
+                ShowInternal();
+                return _smoothCaretAnimationProgress < 1.0;
+            }, TimeSpan.FromSeconds(_smoothCaretFrameInterval));
+        }
 
         private void ShowInternal()
         {
@@ -503,17 +578,19 @@ namespace AvaloniaEdit.Editing
                 if (visualLine != null)
                 {
                     var caretRect = _textArea.OverstrikeMode ? CalcCaretOverstrikeRectangle(visualLine) : CalcCaretRectangle(visualLine);
-                    // TODO: win32 caret
-                    // Create Win32 caret so that Windows knows where our managed caret is. This is necessary for
-                    // features like 'Follow text editing' in the Windows Magnifier.
-                    //if (!hasWin32Caret) {
-                    //	hasWin32Caret = Win32.CreateCaret(textView, caretRect.Size);
-                    //}
-                    //if (hasWin32Caret) {
-                    //	Win32.SetCaretPosition(textView, caretRect.Location - textView.ScrollOffset);
-                    //}
-                    _caretAdorner.Show(caretRect);
-                    //textArea.ime.UpdateCompositionWindow();
+                    if (_smoothCaretEnabled && _lastCaretPixelPosition != null && _smoothCaretAnimationProgress < 1.0)
+                    {
+                        var target = new Point(caretRect.X, caretRect.Y);
+                        var start = _lastCaretPixelPosition.Value;
+                        var t = _smoothCaretAnimationProgress;
+                        var smoothedCaretPosition = new Point(start.X + (target.X - start.X) * t, start.Y + (target.Y - start.Y) * t);
+                        var smoothRect = new Rect(smoothedCaretPosition , caretRect.Size);
+                        _caretAdorner.Show(smoothRect);
+                    }
+                    else
+                    {
+                        _caretAdorner.Show(caretRect);
+                    }
                 }
                 else
                 {
@@ -552,6 +629,26 @@ namespace AvaloniaEdit.Editing
         {
             get => _caretAdorner.CaretBrush;
             set => _caretAdorner.CaretBrush = value;
+        }
+
+        private bool _smoothCaretEnabled;
+        private double _smoothCaretAnimationProgress;
+        private Point? _lastCaretPixelPosition;
+        private IDisposable _animationTimer;
+
+        /// <summary>
+        /// Gets or sets whether the caret should animate smoothly between positions.
+        /// </summary>
+        public bool SmoothCaret
+        {
+            get => _smoothCaretEnabled;
+            set
+            {
+                if (_smoothCaretEnabled != value)
+                {
+                    _smoothCaretEnabled = value;
+                }
+            }
         }
     }
 }
