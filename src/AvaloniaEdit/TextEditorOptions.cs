@@ -719,5 +719,22 @@ namespace AvaloniaEdit
                 }
             }
         }
+
+        private bool _smoothCaret;
+        /// <summary>
+        /// Gets or sets whether the caret should animate smoothly between positions.
+        /// </summary>
+        public bool SmoothCaret
+        {
+            get => _smoothCaret;
+            set
+            {
+                if (_smoothCaret != value)
+                {
+                    _smoothCaret = value;
+                    OnPropertyChanged(nameof(SmoothCaret));
+                }
+            }
+        }
     }
 }

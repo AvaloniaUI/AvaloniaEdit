@@ -218,6 +218,14 @@ namespace AvaloniaEdit.Rendering
 
             UpdateBuiltinElementGeneratorsFromOptions();
             Redraw();
+
+            if (e.PropertyName == nameof(TextEditorOptions.SmoothCaret))
+            {
+                if (this.GetService(typeof(AvaloniaEdit.Editing.TextArea)) is AvaloniaEdit.Editing.TextArea ta)
+                {
+                    ta.Caret.SmoothCaret = Options.SmoothCaret;
+                }
+            }
         }
 
         private static void OnOptionsChanged(AvaloniaPropertyChangedEventArgs e)

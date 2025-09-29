@@ -368,6 +368,9 @@ namespace AvaloniaEdit.Editing
             if (newValue != null)
             {
                 PropertyChangedWeakEventManager.AddHandler(newValue, OnOptionChanged);
+                // set caret smooth option
+                if (Caret != null)
+                    Caret.SmoothCaret = newValue.SmoothCaret;
             }
             OnOptionChanged(new PropertyChangedEventArgs(null));
         }
