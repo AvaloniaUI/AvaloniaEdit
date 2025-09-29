@@ -216,6 +216,9 @@ namespace AvaloniaEdit.Rendering
             else
                 _columnRulerRenderer.SetRuler(null, ColumnRulerPen);
 
+            if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName == nameof(TextEditorOptions.LineHeightFactor))
+                InvalidateDefaultTextMetrics();
+
             UpdateBuiltinElementGeneratorsFromOptions();
             Redraw();
         }
@@ -1185,6 +1188,7 @@ namespace AvaloniaEdit.Rendering
             if (_visibleVisualLines != null)
             {
                 var pos = new Point(-_scrollOffset.X, -_clippedPixelsOnTop);
+                var defaultLineHeight = _defaultLineHeight;
                 foreach (var visualLine in _visibleVisualLines)
                 {
                     var offset = 0;
@@ -1198,16 +1202,19 @@ namespace AvaloniaEdit.Rendering
                             {
                                 Debug.Assert(_inlineObjects.Contains(inline));
 
-                                var distance = textLine.GetDistanceFromCharacterHit(new CharacterHit(offset));
-
-                                inline.Element.Arrange(new Rect(new Point(pos.X + distance, pos.Y), inline.Element.DesiredSize));
-
-                                Debug.WriteLine(distance);
+                                var desiredSize = inline.Element.DesiredSize;
+                                var x = pos.X + textLine.GetDistanceFromCharacterHit(new CharacterHit(offset));
+                                var y = pos.Y;
+                                var width = desiredSize.Width;
+                                var height = Math.Max(desiredSize.Height, defaultLineHeight);
+                                inline.Element.Arrange(new Rect(x, y, width, height));
                             }
 
                             offset += span.Length;
                         }
-                        pos = new Point(pos.X, pos.Y + textLine.Height);
+
+                        var lineHeight = Math.Max(textLine.Height, defaultLineHeight);
+                        pos = new Point(pos.X, pos.Y + lineHeight);
                     }
                 }
             }
@@ -1414,9 +1421,11 @@ namespace AvaloniaEdit.Rendering
         }
 
         private bool _defaultTextMetricsValid;
-        private double _wideSpaceWidth; // Width of an 'x'. Used as basis for the tab width, and for scrolling.
-        private double _defaultLineHeight; // Height of a line containing 'x'. Used for scrolling.
-        private double _defaultBaseline; // Baseline of a line containing 'x'. Used for TextTop/TextBottom calculation.
+        private double _wideSpaceWidth;    // Width of an 'x'. Used as basis for the tab width, and for scrolling.
+        private double _defaultTextHeight; // Height of a text containing 'x'.
+        private double _defaultLineHeight; // Height of a line containing 'x' (= text height adjusted by LineHeightFactor).
+                                           // Used for scrolling.
+        private double _defaultBaseline;   // Baseline of text containing 'x'. Used for TextTop/TextBottom calculation.
 
         /// <summary>
         /// Gets the width of a 'wide space' (the space width used for calculating the tab size).
@@ -1449,6 +1458,15 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
+        internal double DefaultTextHeight
+        {
+            get
+            {
+                CalculateDefaultTextMetrics();
+                return _defaultTextHeight;
+            }
+        }
+
         /// <summary>
         /// Gets the default baseline position. This is the difference between <see cref="VisualYPosition.TextTop"/>
         /// and <see cref="VisualYPosition.Baseline"/> for a line containing regular text.
@@ -1477,26 +1495,33 @@ namespace AvaloniaEdit.Rendering
         {
             if (_defaultTextMetricsValid)
                 return;
+
             _defaultTextMetricsValid = true;
+
+            TextLine line = null;
             if (_formatter != null)
             {
                 var textRunProperties = CreateGlobalTextRunProperties();
-                var line = _formatter.FormatLine(
+                line = _formatter.FormatLine(
                     new SimpleTextSource("x", textRunProperties),
                     0, 32000,
-                    new VisualLineTextParagraphProperties { defaultTextRunProperties = textRunProperties },
-                    null);
-
+                    new VisualLineTextParagraphProperties { defaultTextRunProperties = textRunProperties });
+            }
+            
+            if (line != null)
+            {
                 _wideSpaceWidth = Math.Max(1, line.WidthIncludingTrailingWhitespace);
                 _defaultBaseline = Math.Max(1, line.Baseline);
-                _defaultLineHeight = Math.Max(1, line.Height);
+                _defaultTextHeight = Math.Max(1, line.Height);
             }
             else
             {
                 _wideSpaceWidth = FontSize / 2;
                 _defaultBaseline = FontSize;
-                _defaultLineHeight = FontSize + 3;
+                _defaultTextHeight = FontSize + 3;
             }
+
+            _defaultLineHeight = _defaultTextHeight * Options.LineHeightFactor;
 
             // Update heightTree.DefaultLineHeight, if a document is loaded.
             if (_heightTree != null)

@@ -19,6 +19,7 @@ using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Grammars;
 using Avalonia.Diagnostics;
+using Avalonia.Layout;
 using AvaloniaEdit.Snippets;
 using Snippet = AvaloniaEdit.Snippets.Snippet;
 using AvaloniaEdit.Demo.ViewModels;
@@ -270,7 +271,16 @@ namespace AvaloniaEdit.Demo
 
         private void AddControlButton_Click(object sender, RoutedEventArgs e)
         {
-            _generator.controls.Add(new Pair(_textEditor.CaretOffset, new Button() { Content = "Click me", Cursor = Cursor.Default }));
+            var button = new Button() { Content = "Click me", Cursor = Cursor.Default };
+
+            // The VerticalAlignment controls the alignment within a text line.
+            button.VerticalAlignment = VerticalAlignment.Center;
+
+            // Optionally, TextBlock.BaseLineProperty can be set. Avalonia will align the baselines
+            // of all elements within a line.
+            TextBlock.SetBaselineOffset(button, 22);
+
+            _generator.controls.Add(new Pair(_textEditor.CaretOffset, button));
             _generator.controls.Sort(0, _generator.controls.Count, _generator);
             _textEditor.TextArea.TextView.Redraw();
         }

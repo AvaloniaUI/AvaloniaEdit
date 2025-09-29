@@ -419,7 +419,7 @@ namespace AvaloniaEdit.Editing
 				// This is necessary to ensure the rectangle is calculated correctly in bidirectional text.
 				var textBounds = textLine.GetTextBounds(currentPos, nextPos - currentPos)[0];
 				r = textBounds.Rectangle;
-				var y = r.Y + visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.LineTop);
+				var y = r.Y + visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextTop);
 				r = r.WithY(y);
 			} else {
 				// If the caret is at the end of the line (or in virtual space),

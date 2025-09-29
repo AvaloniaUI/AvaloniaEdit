@@ -51,15 +51,19 @@ namespace AvaloniaEdit.Rendering
             Disposed
         }
 
-        private readonly TextView _textView;
         private List<VisualLineElement> _elements;
         internal bool HasInlineObjects;
         private LifetimePhase _phase;
 
         /// <summary>
+        /// Gets the <see cref="TextView"/> to which this <see cref="VisualLine"/> belongs.
+        /// </summary>
+        internal TextView TextView { get; }
+
+        /// <summary>
         /// Gets the document to which this VisualLine belongs.
         /// </summary>
-        public TextDocument Document { get; }
+        public TextDocument Document => TextView.Document;
 
         /// <summary>
         /// Gets the first document line displayed by this visual line.
@@ -110,7 +114,7 @@ namespace AvaloniaEdit.Rendering
             get
             {
                 var length = VisualLength;
-                if (_textView.Options.ShowEndOfLine && LastDocumentLine.NextLine != null) length++;
+                if (TextView.Options.ShowEndOfLine && LastDocumentLine.NextLine != null) length++;
                 return length;
             }
         }
@@ -129,8 +133,7 @@ namespace AvaloniaEdit.Rendering
         {
             Debug.Assert(textView != null);
             Debug.Assert(firstDocumentLine != null);
-            _textView = textView;
-            Document = textView.Document;
+            TextView = textView;
             FirstDocumentLine = firstDocumentLine;
         }
 
@@ -301,10 +304,12 @@ namespace AvaloniaEdit.Rendering
 
         internal void SetTextLines(List<TextLine> textLines)
         {
+            double defaultLineHeight = TextView.DefaultLineHeight;
             _textLines = new ReadOnlyCollection<TextLine>(textLines);
+
             Height = 0;
             foreach (var line in textLines)
-                Height += line.Height;
+                Height += Math.Max(line.Height, defaultLineHeight);
         }
 
         /// <summary>
@@ -370,40 +375,54 @@ namespace AvaloniaEdit.Rendering
         }
 
         /// <summary>
-        /// Gets the visual top from the specified text line.
+        /// Gets the visual Y position from the specified text line.
         /// </summary>
-        /// <returns>Distance in device-independent pixels
-        /// from the top of the document to the top of the specified text line.</returns>
+        /// <param name="textLine">
+        /// The line of text. (Note: This may also include inline UI elements, such as buttons.)
+        /// </param>
+        /// <param name="yPositionMode">The reference position within the line.</param>
+        /// <returns>
+        /// The distance in device-independent pixels from the top of the document to reference
+        /// position within the specified text line.
+        /// </returns>
         public double GetTextLineVisualYPosition(TextLine textLine, VisualYPosition yPositionMode)
         {
             if (textLine == null)
                 throw new ArgumentNullException(nameof(textLine));
+
+            var defaultLineHeight = TextView.DefaultLineHeight;
             var pos = VisualTop;
             foreach (var tl in TextLines)
             {
+                double textHeight = tl.Height;
+                double lineHeight = Math.Max(textHeight, defaultLineHeight);
+
                 if (tl == textLine)
                 {
+                    double textOffset = (lineHeight - textHeight) / 2;
+
                     switch (yPositionMode)
                     {
                         case VisualYPosition.LineTop:
                             return pos;
                         case VisualYPosition.LineMiddle:
-                            return pos + tl.Height / 2;
+                            return pos + lineHeight / 2;
                         case VisualYPosition.LineBottom:
-                            return pos + tl.Height;
+                            return pos + lineHeight;
                         case VisualYPosition.TextTop:
-                            return pos + tl.Baseline - _textView.DefaultBaseline;
+                            return pos + textOffset + tl.Baseline - TextView.DefaultBaseline;
                         case VisualYPosition.TextBottom:
-                            return pos + tl.Baseline - _textView.DefaultBaseline + _textView.DefaultLineHeight;
+                            return pos + textOffset + tl.Baseline - TextView.DefaultBaseline + TextView.DefaultTextHeight;
                         case VisualYPosition.TextMiddle:
-                            return pos + tl.Baseline - _textView.DefaultBaseline + _textView.DefaultLineHeight / 2;
+                            return pos + textOffset + tl.Baseline - TextView.DefaultBaseline + TextView.DefaultTextHeight / 2;
                         case VisualYPosition.Baseline:
-                            return pos + tl.Baseline;
+                            return pos + textOffset + tl.Baseline;
                         default:
                             throw new ArgumentException("Invalid yPositionMode:" + yPositionMode);
                     }
                 }
-                pos += tl.Height;
+
+                pos += lineHeight;
             }
             throw new ArgumentException("textLine is not a line in this VisualLine");
         }
@@ -425,10 +444,11 @@ namespace AvaloniaEdit.Rendering
         public TextLine GetTextLineByVisualYPosition(double visualTop)
         {
             const double epsilon = 0.0001;
-            var pos = VisualTop;
+            double pos = VisualTop;
+            double defaultLineHeight = TextView.DefaultLineHeight;
             foreach (var tl in TextLines)
             {
-                pos += tl.Height;
+                pos += Math.Max(tl.Height, defaultLineHeight);
                 if (visualTop + epsilon < pos)
                     return tl;
             }
@@ -471,7 +491,7 @@ namespace AvaloniaEdit.Rendering
 
             if (visualColumn > VisualLengthWithEndOfLineMarker)
             {
-                xPos += (visualColumn - VisualLengthWithEndOfLineMarker) * _textView.WideSpaceWidth;
+                xPos += (visualColumn - VisualLengthWithEndOfLineMarker) * TextView.WideSpaceWidth;
             }
 
             return xPos;
@@ -483,7 +503,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public int GetVisualColumn(Point point)
         {
-            return GetVisualColumn(point, _textView.Options.EnableVirtualSpace);
+            return GetVisualColumn(point, TextView.Options.EnableVirtualSpace);
         }
 
         /// <summary>
@@ -513,7 +533,7 @@ namespace AvaloniaEdit.Rendering
             {
                 if (allowVirtualSpace && textLine == TextLines[TextLines.Count - 1])
                 {
-                    var virtualX = (int)Math.Round((xPos - textLine.WidthIncludingTrailingWhitespace) / _textView.WideSpaceWidth, MidpointRounding.AwayFromZero);
+                    var virtualX = (int)Math.Round((xPos - textLine.WidthIncludingTrailingWhitespace) / TextView.WideSpaceWidth, MidpointRounding.AwayFromZero);
                     return VisualLengthWithEndOfLineMarker + virtualX;
                 }
             }
@@ -560,7 +580,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public int GetVisualColumnFloor(Point point)
         {
-            return GetVisualColumnFloor(point, _textView.Options.EnableVirtualSpace);
+            return GetVisualColumnFloor(point, TextView.Options.EnableVirtualSpace);
         }
 
         /// <summary>
@@ -581,7 +601,7 @@ namespace AvaloniaEdit.Rendering
                 if (allowVirtualSpace && textLine == TextLines[TextLines.Count - 1])
                 {
                     // clicking virtual space in the last line
-                    var virtualX = (int)((point.X - textLine.WidthIncludingTrailingWhitespace) / _textView.WideSpaceWidth);
+                    var virtualX = (int)((point.X - textLine.WidthIncludingTrailingWhitespace) / TextView.WideSpaceWidth);
                     return VisualLengthWithEndOfLineMarker + virtualX;
                 }
 
@@ -782,7 +802,7 @@ namespace AvaloniaEdit.Rendering
             {
                 _visual = new VisualLineDrawingVisual(this);
 
-                ((ISetLogicalParent)_visual).SetParent(_textView);
+                ((ISetLogicalParent)_visual).SetParent(TextView);
             }
 
             return _visual;
@@ -793,22 +813,27 @@ namespace AvaloniaEdit.Rendering
     internal sealed class VisualLineDrawingVisual : Control
     {
         public VisualLine VisualLine { get; }
-        public double LineHeight { get; }
+        public double LineHeight => VisualLine.Height;
         internal bool IsAdded { get; set; }
 
         public VisualLineDrawingVisual(VisualLine visualLine)
         {
             VisualLine = visualLine;
-            LineHeight = VisualLine.TextLines.Sum(textLine => textLine.Height);
         }
 
         public override void Render(DrawingContext context)
         {
             double pos = 0;
-            foreach (var textLine in VisualLine.TextLines)
+            double defaultLineHeight = VisualLine.TextView.DefaultLineHeight;
+            var textLines = VisualLine.TextLines;
+            for (var i = 0; i < textLines.Count; i++)
             {
-                textLine.Draw(context, new Point(0, pos));
-                pos += textLine.Height;
+                var textLine = textLines[i];
+                double textHeight = textLine.Height;
+                double lineHeight = Math.Max(textHeight, defaultLineHeight);
+                double textOffset = (lineHeight - textHeight) / 2;
+                textLine.Draw(context, new Point(0, pos + textOffset));
+                pos += lineHeight;
             }
         }
     }

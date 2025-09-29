@@ -29,8 +29,9 @@ namespace AvaloniaEdit.Rendering
 		LineTop,
 		/// <summary>
 		/// Returns the top of the text.
-		/// If the line contains inline UI elements larger than the text, TextTop may be below LineTop.
-		/// For a line containing regular text (all in the editor's main font), this will be equal to LineTop.
+		/// If the line contains inline UI elements larger than the text, TextTop may be below
+		/// LineTop. For a line containing regular text (all in the editor's main font) and
+		/// LineHeightFactor = 1, this will be equal to LineTop.
 		/// </summary>
 		TextTop,
 		/// <summary>
@@ -42,9 +43,10 @@ namespace AvaloniaEdit.Rendering
 		/// </summary>
 		LineMiddle,
 		/// <summary>
-		/// Returns the bottom of the text. 
-		/// If the line contains inline UI elements larger than the text, TextBottom might be above LineBottom.
-		/// For a line containing regular text (all in the editor's main font), this will be equal to LineBottom.
+		/// Returns the bottom of the text.
+		/// If the line contains inline UI elements larger than the text, TextBottom might be above
+		/// LineBottom. For a line containing regular text (all in the editor's main font) and
+		/// LineHeightFactor = 1, this will be equal to LineBottom.
 		/// </summary>
 		TextBottom,
 		/// <summary>
