@@ -721,7 +721,7 @@ namespace AvaloniaEdit
         }
 
         // The default LineHeightFactor matches the line height in the Visual Studio text editor.
-        private const double DefaultLineHeightFactor = 1.0455;
+        private const double DefaultLineHeightFactor = 1.16;
         private double _lineHeightFactor = DefaultLineHeightFactor;
 
         /// <summary>
