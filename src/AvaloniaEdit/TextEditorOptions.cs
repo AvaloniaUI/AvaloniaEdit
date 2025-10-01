@@ -719,5 +719,30 @@ namespace AvaloniaEdit
                 }
             }
         }
+
+        // The default LineHeightFactor matches the line height in the Visual Studio text editor.
+        private const double DefaultLineHeightFactor = 1.16;
+        private double _lineHeightFactor = DefaultLineHeightFactor;
+
+        /// <summary>
+        /// Gets/Sets a factor to increase or decrease the height of a text line.
+        /// (Does not affect the font size.)
+        /// </summary>
+        [DefaultValue(DefaultLineHeightFactor)]
+        public double LineHeightFactor
+        {
+            get { return _lineHeightFactor; }
+            set
+            {
+                if (value <= 0 || double.IsNaN(value) || double.IsInfinity(value))
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "value must be a positive number");
+                
+                if (_lineHeightFactor != value)
+                {
+                    _lineHeightFactor = value;
+                    OnPropertyChanged(nameof(LineHeightFactor));
+                }
+            }
+        }
     }
 }

@@ -195,7 +195,8 @@ namespace AvaloniaEdit.Rendering
 
 			for (int i = 0; i < visualLine.TextLines.Count; i++) {
 				TextLine line = visualLine.TextLines[i];
-				double y = visualLine.GetTextLineVisualYPosition(line, VisualYPosition.TextTop);
+				double y = visualLine.GetTextLineVisualYPosition(line, VisualYPosition.LineTop);
+                double lineHeight = Math.Max(line.Height, textView.DefaultLineHeight);
 				int visualStartCol = visualLine.GetTextLineVisualStartColumn(line);
 				int visualEndCol = visualStartCol + line.Length;
 				if (line == lastTextLine)
@@ -223,7 +224,8 @@ namespace AvaloniaEdit.Rendering
 						continue;
 					if (segmentStartVcInLine == visualStartCol && i > 0 && segmentStartVc < segmentStartVcInLine && visualLine.TextLines[i - 1].TrailingWhitespaceLength == 0)
 						continue;
-					lastRect = new Rect(pos, y, textView.EmptyLineSelectionWidth, line.Height);
+
+					lastRect = new Rect(pos, y, textView.EmptyLineSelectionWidth, lineHeight);
 				} else {
 					if (segmentStartVcInLine <= visualEndCol) {
 						foreach (var b in line.GetTextBounds(segmentStartVcInLine, segmentEndVcInLine - segmentStartVcInLine)) {
@@ -232,7 +234,7 @@ namespace AvaloniaEdit.Rendering
 							if (lastRect != default)
 								yield return lastRect;
 							// left>right is possible in RTL languages
-							lastRect = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
+							lastRect = new Rect(Math.Min(left, right), y, Math.Abs(right - left), lineHeight);
 						}
 					}
 				}
@@ -263,7 +265,7 @@ namespace AvaloniaEdit.Rendering
 
 					left -= scrollOffset.X;
 					right -= scrollOffset.X;
-					Rect extendSelection = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
+					Rect extendSelection = new Rect(Math.Min(left, right), y, Math.Abs(right - left), lineHeight);
 					if (lastRect != default) {
 						if (extendSelection.Intersects(lastRect)) {
 							lastRect = lastRect.Union(extendSelection);
