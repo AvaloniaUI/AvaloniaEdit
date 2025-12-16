@@ -69,7 +69,7 @@ namespace AvaloniaEdit.TextMate
             return _documentSnapshot.LineCount;
         }
 
-        public override LineText GetLineText(int lineIndex)
+        public override LineText GetLineTextIncludingTerminators(int lineIndex)
         {
             return _documentSnapshot.GetLineTextIncludingTerminatorAsMemory(lineIndex);
         }

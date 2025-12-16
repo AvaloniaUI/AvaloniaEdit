@@ -1,8 +1,11 @@
-﻿using AvaloniaEdit.Document;
+﻿using System;
+using Avalonia.Controls.Shapes;
+using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 
 using NUnit.Framework;
+using TextMateSharp.Grammars;
 
 namespace AvaloniaEdit.Tests.TextMate
 {
@@ -34,9 +37,9 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Text = "puppy\npussy\nbirdie";
 
-            Assert.AreEqual("puppy", textEditorModel.GetLineText(0));
-            Assert.AreEqual("pussy", textEditorModel.GetLineText(1));
-            Assert.AreEqual("birdie", textEditorModel.GetLineText(2));
+            AssertLinesAreEqual("puppy\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("pussy\n", textEditorModel.GetLineTextIncludingTerminators(1));
+            AssertLinesAreEqual("birdie", textEditorModel.GetLineTextIncludingTerminators(2));
         }
 
         [Test]
@@ -52,9 +55,9 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Insert(0, "cutty ");
 
-            Assert.AreEqual("cutty puppy", textEditorModel.GetLineText(0));
-            Assert.AreEqual("pussy", textEditorModel.GetLineText(1));
-            Assert.AreEqual("birdie", textEditorModel.GetLineText(2));
+            AssertLinesAreEqual("cutty puppy\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("pussy\n", textEditorModel.GetLineTextIncludingTerminators(1));
+            AssertLinesAreEqual("birdie", textEditorModel.GetLineTextIncludingTerminators(2));
         }
 
         [Test]
@@ -86,10 +89,10 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Insert(0, "lion\n");
 
-            Assert.AreEqual("lion", textEditorModel.GetLineText(0));
-            Assert.AreEqual("puppy", textEditorModel.GetLineText(1));
-            Assert.AreEqual("pussy", textEditorModel.GetLineText(2));
-            Assert.AreEqual("birdie", textEditorModel.GetLineText(3));
+            AssertLinesAreEqual("lion\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("puppy\n", textEditorModel.GetLineTextIncludingTerminators(1));
+            AssertLinesAreEqual("pussy\n", textEditorModel.GetLineTextIncludingTerminators(2));
+            AssertLinesAreEqual("birdie", textEditorModel.GetLineTextIncludingTerminators(3));
         }
 
         [Test]
@@ -107,8 +110,8 @@ namespace AvaloniaEdit.Tests.TextMate
                 document.Lines[0].Offset,
                 document.Lines[0].TotalLength);
 
-            Assert.AreEqual("pussy", textEditorModel.GetLineText(0));
-            Assert.AreEqual("birdie", textEditorModel.GetLineText(1));
+            AssertLinesAreEqual("pussy\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("birdie", textEditorModel.GetLineTextIncludingTerminators(1));
         }
 
         [Test]
@@ -126,8 +129,8 @@ namespace AvaloniaEdit.Tests.TextMate
                 document.Lines[0].Offset,
                 document.Lines[0].TotalLength);
 
-            Assert.AreEqual("pussy", textEditorModel.GetLineText(0));
-            Assert.AreEqual("birdie", textEditorModel.GetLineText(1));
+            AssertLinesAreEqual("pussy\r\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("birdie", textEditorModel.GetLineTextIncludingTerminators(1));
         }
 
         [Test]
@@ -219,7 +222,7 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Replace(0, 1, "P");
 
-            Assert.AreEqual("Puppy", textEditorModel.GetLineText(0));
+            AssertLinesAreEqual("Puppy\n", textEditorModel.GetLineTextIncludingTerminators(0));
         }
 
         [Test]
@@ -235,7 +238,7 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Replace(0, 1, "\n");
 
-            Assert.AreEqual("", textEditorModel.GetLineText(0));
+            AssertLinesAreEqual("\n", textEditorModel.GetLineTextIncludingTerminators(0));
         }
 
         [Test]
@@ -252,7 +255,7 @@ namespace AvaloniaEdit.Tests.TextMate
 
             document.Text = string.Empty;
             Assert.AreEqual(1, textEditorModel.GetNumberOfLines());
-            Assert.AreEqual(string.Empty, textEditorModel.GetLineText(0));
+            AssertLinesAreEqual(string.Empty, textEditorModel.GetLineTextIncludingTerminators(0));
         }
 
         [Test]
@@ -270,10 +273,10 @@ namespace AvaloniaEdit.Tests.TextMate
             document.Text = "one\ntwo\nthree\nfour";
             Assert.AreEqual(4, textEditorModel.GetNumberOfLines());
 
-            Assert.AreEqual("one", textEditorModel.GetLineText(0));
-            Assert.AreEqual("two", textEditorModel.GetLineText(1));
-            Assert.AreEqual("three", textEditorModel.GetLineText(2));
-            Assert.AreEqual("four", textEditorModel.GetLineText(3));
+            AssertLinesAreEqual("one\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("two\n", textEditorModel.GetLineTextIncludingTerminators(1));
+            AssertLinesAreEqual("three\n", textEditorModel.GetLineTextIncludingTerminators(2));
+            AssertLinesAreEqual("four", textEditorModel.GetLineTextIncludingTerminators(3));
         }
 
         [Test]
@@ -311,9 +314,9 @@ namespace AvaloniaEdit.Tests.TextMate
             Assert.IsNull(textEditorModel.InvalidRange,
                 "InvalidRange should be null");
 
-            Assert.AreEqual("*puppy", textEditorModel.GetLineText(0));
-            Assert.AreEqual("*puppy", textEditorModel.GetLineText(1));
-            Assert.AreEqual("*puppy", textEditorModel.GetLineText(2));
+            AssertLinesAreEqual("*puppy\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("*puppy\n", textEditorModel.GetLineTextIncludingTerminators(1));
+            AssertLinesAreEqual("*puppy", textEditorModel.GetLineTextIncludingTerminators(2));
         }
 
         [Test]
@@ -355,9 +358,14 @@ namespace AvaloniaEdit.Tests.TextMate
             Assert.IsNull(textEditorModel.InvalidRange,
                 "InvalidRange should be null");
 
-            Assert.AreEqual("*puppy", textEditorModel.GetLineText(0));
-            Assert.AreEqual("*puppy", textEditorModel.GetLineText(1));
-            Assert.AreEqual("*puppy", textEditorModel.GetLineText(2));
+            AssertLinesAreEqual("*puppy\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("*puppy\n", textEditorModel.GetLineTextIncludingTerminators(1));
+            AssertLinesAreEqual("*puppy", textEditorModel.GetLineTextIncludingTerminators(2));
+        }
+
+        private static void AssertLinesAreEqual(LineText expected, LineText actual)
+        {
+            Assert.AreEqual(expected, actual);
         }
     }
 }
