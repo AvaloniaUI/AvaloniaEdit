@@ -530,6 +530,8 @@ namespace AvaloniaEdit.Editing
                 args.Handled = true;
 
                 textArea.Document.EndUpdate();
+
+                textArea.OnTextPasted(new TextEventArgs(text));
             }
         }
 
