@@ -88,7 +88,15 @@ namespace AvaloniaEdit.Document
 		/// <remarks>This is the same as Text.Substring, but is more efficient because
 		///  it doesn't require creating a String object for the whole document.</remarks>
 		string GetText(int offset, int length);
-		
+
+		/// <summary>
+		/// Retrieves the text for a portion of the document as ReadOnlyMemory&lt;char&gt;.
+		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException">offset or length is outside the valid range.</exception>
+		/// <remarks>This method may be more efficient than GetText(int, int) because it can avoid allocating a new string
+		///  in some implementations.</remarks>
+		ReadOnlyMemory<char> GetTextAsMemory(int offset, int length);
+
 		/// <summary>
 		/// Retrieves the text for a portion of the document.
 		/// </summary>
@@ -300,7 +308,13 @@ namespace AvaloniaEdit.Document
 		{
 			return Text.Substring(offset, length);
 		}
-		
+
+		/// <inheritdoc/>
+		public ReadOnlyMemory<char> GetTextAsMemory(int offset, int length)
+		{
+			return Text.AsMemory(offset, length);
+		}
+
 		/// <inheritdoc/>
 		public string GetText(ISegment segment)
 		{

@@ -6,6 +6,12 @@ jobs:
     vmImage: 'windows-2022'
   steps:
 
+  - task: UseDotNet@2
+    displayName: 'Install .NET 8 SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '8.x'
+
   - task: DotNetCoreCLI@2
     inputs:
       command: 'test'
