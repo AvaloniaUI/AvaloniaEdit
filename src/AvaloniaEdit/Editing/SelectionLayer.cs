@@ -43,6 +43,11 @@ namespace AvaloniaEdit.Editing
 
         public override void Render(DrawingContext drawingContext)
         {
+            if (!_textArea.TextView.VisualLinesValid)
+            {
+                return;
+            }
+
             base.Render(drawingContext);
 
             var selectionBorder = _textArea.SelectionBorder;
