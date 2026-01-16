@@ -129,6 +129,13 @@ namespace AvaloniaEdit.Document
             return _rope.ToString(offset, length);
         }
 
+        /// <inheritdoc/>
+        public ReadOnlyMemory<char> GetTextAsMemory(int offset, int length)
+        {
+            VerifyAccess();
+            return _rope.GetMemory(offset, length);
+        }
+
         private Thread ownerThread = Thread.CurrentThread;
 
 		/// <summary>

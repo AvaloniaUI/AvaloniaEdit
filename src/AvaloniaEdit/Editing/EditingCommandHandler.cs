@@ -197,7 +197,7 @@ namespace AvaloniaEdit.Editing
                     {
                         foreach (var segment in segments.Reverse())
                         {
-                            foreach (var writableSegment in textArea.GetDeletableSegments(segment).Reverse())
+                            foreach (var writableSegment in System.Linq.Enumerable.Reverse(textArea.GetDeletableSegments(segment)))
                             {
                                 transformSegment(textArea, writableSegment);
                             }
@@ -530,6 +530,8 @@ namespace AvaloniaEdit.Editing
                 args.Handled = true;
 
                 textArea.Document.EndUpdate();
+
+                textArea.OnTextPasted(new TextEventArgs(text));
             }
         }
 
