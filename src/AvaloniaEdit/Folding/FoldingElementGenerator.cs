@@ -154,10 +154,9 @@ namespace AvaloniaEdit.Folding
 				string title = foldingSection.Title;
 				if (string.IsNullOrEmpty(title))
 					title = "...";
-				var p = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
-				p.SetForegroundBrush(TextBrush);
-				var textFormatter = TextFormatterFactory.Create(CurrentContext.TextView);
-				var text = FormattedTextElement.PrepareText(textFormatter, title, p);
+				var properties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
+				properties.SetForegroundBrush(TextBrush);
+				var text = TextFormatter.Current.FormatLine(new SimpleTextSource(title, properties), 0, double.MaxValue, new GenericTextParagraphProperties(properties));
 				return new FoldingLineElement(foldingSection, text, foldedUntil - offset, TextBrush);
 			} else {
 				return null;

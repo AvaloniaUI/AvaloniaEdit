@@ -18,6 +18,7 @@
 
 using System;
 using Avalonia;
+using Avalonia.Controls;
 
 namespace AvaloniaEdit.Utils
 {
@@ -32,17 +33,18 @@ namespace AvaloniaEdit.Utils
 		/// </summary>
 		public static Size GetPixelSize(Visual visual)
 		{
-			if (visual == null)
-				throw new ArgumentNullException(nameof(visual));
-
-            // TODO-avedit
-            //PresentationSource source = PresentationSource.FromVisual(visual);
-            //if (source != null) {
-            //	Matrix matrix = source.CompositionTarget.TransformFromDevice;
-            //	return new Size(matrix.M11, matrix.M22);
-            //} else {
-            return new Size(1, 1);
-            //}
+            if (visual == null)
+                throw new ArgumentNullException(nameof(visual));
+            var source = TopLevel.GetTopLevel(visual);
+            if (source != null)
+            {
+                var scaling = source.RenderScaling;
+                return new Size(1 / scaling , 1 / scaling);
+            }
+            else
+            {
+                return new Size(1, 1);
+            }
         }
 		
 		/// <summary>

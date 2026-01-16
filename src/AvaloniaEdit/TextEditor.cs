@@ -551,7 +551,9 @@ namespace AvaloniaEdit
                 leftMargins.Insert(0, lineNumbers);
                 leftMargins.Insert(1, line);
                 var lineNumbersForeground = editor.GetBindingObservable(LineNumbersForegroundProperty);
+                var lineNumbersMargin = editor.GetBindingObservable(LineNumbersMarginProperty);
                 line.Bind(Shape.StrokeProperty, lineNumbersForeground);
+                line.Bind(MarginProperty, lineNumbersMargin);
                 lineNumbers.Bind(ForegroundProperty, lineNumbersForeground);
             }
             else
@@ -617,6 +619,23 @@ namespace AvaloniaEdit
             editor?.SearchPanel?.SetSearchResultsBrush(e.GetNewValue<IBrush>());
         }
 
+        #endregion
+        
+        #region LineNumbersMargin
+        /// <summary>
+        /// LineNumbersMargin dependency property.
+        /// </summary>
+        public static readonly StyledProperty<Thickness> LineNumbersMarginProperty =
+            AvaloniaProperty.Register<TextEditor, Thickness>("LineNumbersMargin", new Thickness(2, 0, 2, 0));
+
+        /// <summary>
+        /// Gets or sets the margin that is used to display the vertical line to the right of the line numbers.
+        /// </summary>
+        public Thickness LineNumbersMargin
+        {
+            get => GetValue(LineNumbersMarginProperty);
+            set => SetValue(LineNumbersMarginProperty, value);
+        }
         #endregion
 
         #region TextBoxBase-like methods

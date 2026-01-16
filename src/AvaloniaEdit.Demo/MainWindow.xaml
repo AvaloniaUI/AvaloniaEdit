@@ -26,7 +26,6 @@
             <Button Name="addControlBtn" Content="Add Button" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <Button Name="clearControlBtn" Content="Clear Buttons" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
             <ComboBox Name="syntaxModeCombo" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
-            
             <DropDownButton Content="Change theme" VerticalAlignment="Stretch" VerticalContentAlignment="Center">
                 <Button.Flyout>
                     <Flyout>
@@ -40,8 +39,16 @@
                     </Flyout>
                 </Button.Flyout>
             </DropDownButton>
-            
             <Button Name="insertSnippetBtn" Content="Insert Snippet" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock VerticalAlignment="Center">LineHeight factor</TextBlock>
+                <NumericUpDown Name="lineHeightFactorNumericUpDown"
+                               Minimum="1"
+                               Increment="0.1"
+                               Value="{Binding Path=#Editor.Options.LineHeightFactor}"
+                               VerticalAlignment="Center"
+                               VerticalContentAlignment="Center" />
+            </StackPanel>
         </StackPanel>
         <StackPanel Name="StatusBar" Background="Purple" Height="25" DockPanel.Dock="Bottom" Orientation="Horizontal">
             <TextBlock Name="StatusText" Text="Ready" Margin="5 0 0 0" VerticalAlignment="Center" FontSize="12"/>
@@ -51,6 +58,7 @@
                                HorizontalScrollBarVisibility="Auto"
                                VerticalScrollBarVisibility="Visible"
                                FontWeight="Light"
+                               LineNumbersMargin="10,0,20,0"
                                FontSize="14"
                                Watermark="Start typing to bring your ideas to life...">
         <AvalonEdit:TextEditor.ContextFlyout>

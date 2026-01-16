@@ -599,7 +599,7 @@ namespace AvaloniaEdit.Utils
             }
         }
 
-        internal static void VerifyArrayWithRange(T[] array, int arrayIndex, int count)
+        internal static void VerifyArrayWithRange(Span<T> array, int arrayIndex, int count)
         {
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
@@ -777,6 +777,18 @@ namespace AvaloniaEdit.Utils
         /// </remarks>
         public void CopyTo(T[] array, int arrayIndex)
         {
+            CopyTo(array.AsSpan(), arrayIndex);
+        }
+
+        /// <summary>
+        /// Copies the whole content of the rope into the specified array.
+        /// Runs in O(N).
+        /// </summary>
+        /// <remarks>
+        /// This method counts as a read access and may be called concurrently to other read accesses.
+        /// </remarks>
+        public void CopyTo(Span<T> array, int arrayIndex)
+        {
             CopyTo(0, array, arrayIndex, Length);
         }
 
@@ -787,7 +799,7 @@ namespace AvaloniaEdit.Utils
         /// <remarks>
         /// This method counts as a read access and may be called concurrently to other read accesses.
         /// </remarks>
-        public void CopyTo(int index, T[] array, int arrayIndex, int count)
+        public void CopyTo(int index, Span<T> array, int arrayIndex, int count)
         {
             VerifyRange(index, count);
             VerifyArrayWithRange(array, arrayIndex, count);

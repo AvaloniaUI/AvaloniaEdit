@@ -54,9 +54,55 @@ namespace AvaloniaEdit.Utils
 			#endif
 			if (length == 0)
 				return string.Empty;
+			
+#if NET6_0_OR_GREATER
+			return string.Create(length, (rope, startIndex, length), (dest, x) =>
+				x.rope.CopyTo(x.startIndex, dest, 0, x.length));
+#else
 			char[] buffer = new char[length];
 			rope.CopyTo(startIndex, buffer, 0, length);
 			return new string(buffer);
+#endif
+		}
+
+		/// <summary>
+		/// Retrieves the text for a portion of the rope as ReadOnlyMemory.
+		/// Runs in O(lg N + M), where M=<paramref name="length"/>.
+		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException">offset or length is outside the valid range.</exception>
+		/// <remarks>
+		/// This method counts as a read access and may be called concurrently to other read accesses.
+		/// When the requested range falls entirely within a single leaf node, this method returns
+		/// a slice of the internal buffer without allocation. Otherwise, a new buffer is allocated.
+		/// </remarks>
+		public static ReadOnlyMemory<char> GetMemory(this Rope<char> rope, int startIndex, int length)
+		{
+			if (rope == null)
+				throw new ArgumentNullException(nameof(rope));
+
+			if (length < 0)
+				throw new ArgumentOutOfRangeException(nameof(length), length, "Value must be >= 0");
+
+			if (length == 0)
+				return ReadOnlyMemory<char>.Empty;
+
+			rope.VerifyRange(startIndex, length);
+
+			// Try to get a zero-allocation slice if the range fits within a single leaf node
+			var entry = rope.FindNodeUsingCache(startIndex).PeekOrDefault();
+			int offsetWithinNode = startIndex - entry.NodeStartIndex;
+
+			// Check if the entire requested range fits within this leaf node
+			if (offsetWithinNode + length <= entry.Node.Length)
+			{
+				// Return a slice of the existing buffer - no allocation needed
+				return new ReadOnlyMemory<char>(entry.Node.Contents, offsetWithinNode, length);
+			}
+
+			// Range spans multiple nodes - must allocate and copy
+			char[] buffer = new char[length];
+			rope.CopyTo(startIndex, buffer, 0, length);
+			return new ReadOnlyMemory<char>(buffer);
 		}
 		
 		/// <summary>

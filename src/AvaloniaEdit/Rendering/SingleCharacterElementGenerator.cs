@@ -103,30 +103,32 @@ namespace AvaloniaEdit.Rendering
         {
             var c = CurrentContext.Document.GetCharAt(offset);
 
-            if (ShowSpaces && c == ' ')
-            {
-                var runProperties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
-                runProperties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
-                return new SpaceTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter(
-                        CurrentContext.TextView.Options.ShowSpacesGlyph,
-                        runProperties));
-            }
-            else if (ShowTabs && c == '\t')
-            {
-                var runProperties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
-                runProperties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
-                return new TabTextElement(CurrentContext.TextView.CachedElements.GetTextForNonPrintableCharacter(
-                        CurrentContext.TextView.Options.ShowTabsGlyph,
-                        runProperties));
-            }
-            else if (ShowBoxForControlCharacters && char.IsControl(c))
-            {
-                var runProperties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
-                runProperties.SetForegroundBrush(Brushes.White);
-                var textFormatter = TextFormatterFactory.Create(CurrentContext.TextView);
-                var text = FormattedTextElement.PrepareText(textFormatter, TextUtilities.GetControlCharacterName(c), runProperties);
-                return new SpecialCharacterBoxElement(text);
-            }
+			if (ShowSpaces && (c == ' '))
+			{
+				var properties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
+				properties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
+				var textSource = new SimpleTextSource(CurrentContext.TextView.Options.ShowSpacesGlyph, properties);
+				var textLine = TextFormatter.Current.FormatLine(textSource, 0, double.MaxValue, new GenericTextParagraphProperties(properties));
+				return new SpaceTextElement(textLine);
+			}
+			
+			if (ShowTabs && (c == '\t'))
+			{
+				var properties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
+				properties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
+				var textSource = new SimpleTextSource(CurrentContext.TextView.Options.ShowTabsGlyph, properties);
+				var textLine = TextFormatter.Current.FormatLine(textSource, 0, double.MaxValue, new GenericTextParagraphProperties(properties));
+				return new TabTextElement(textLine);
+			}
+
+			if (ShowBoxForControlCharacters && char.IsControl(c))
+			{
+				var properties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
+				properties.SetForegroundBrush(Brushes.White);
+				var textSource = new SimpleTextSource(TextUtilities.GetControlCharacterName(c), properties);
+				var textLine = TextFormatter.Current.FormatLine(textSource, 0, double.MaxValue, new GenericTextParagraphProperties(properties));
+				return new SpecialCharacterBoxElement(textLine);
+			}
 
             return null;
         }

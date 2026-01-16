@@ -356,7 +356,7 @@ namespace AvaloniaEdit.Utils
         /// <summary>
         /// Copies from this node to the array.
         /// </summary>
-        internal void CopyTo(int index, T[] array, int arrayIndex, int count)
+        internal void CopyTo(int index, Span<T> array, int arrayIndex, int count)
         {
             if (Height == 0)
             {
@@ -368,7 +368,7 @@ namespace AvaloniaEdit.Utils
                 else
                 {
                     // leaf node
-                    Array.Copy(Contents, index, array, arrayIndex, count);
+                    Contents.AsSpan(index, count).CopyTo(array.Slice(arrayIndex, count));
                 }
             }
             else
