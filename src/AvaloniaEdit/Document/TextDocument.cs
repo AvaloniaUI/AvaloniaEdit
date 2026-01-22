@@ -129,6 +129,13 @@ namespace AvaloniaEdit.Document
             return _rope.ToString(offset, length);
         }
 
+        /// <inheritdoc/>
+        public ReadOnlyMemory<char> GetTextAsMemory(int offset, int length)
+        {
+            VerifyAccess();
+            return _rope.GetMemory(offset, length);
+        }
+
         private Thread ownerThread = Thread.CurrentThread;
 
 		/// <summary>
@@ -1025,7 +1032,7 @@ namespace AvaloniaEdit.Document
 
         #region UndoStack
 
-        public UndoStack _undoStack;
+        private UndoStack _undoStack;
 
         /// <summary>
         /// Gets the <see cref="UndoStack"/> of the document.
