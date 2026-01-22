@@ -11,7 +11,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <Version>11.3.9</Version>
+    <Version>11.3.0</Version>
     <Authors>Avalonia Team</Authors>
     <Copyright>Copyright 2017-$([System.DateTime]::Now.ToString(`yyyy`)) &#169; The AvaloniaUI Project</Copyright>
     <RepositoryUrl>https://github.com/AvaloniaUI/AvaloniaEdit/</RepositoryUrl>
