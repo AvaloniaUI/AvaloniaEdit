@@ -14,6 +14,7 @@ namespace AvaloniaEdit.AvaloniaMocks
     {
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<UnitTestApplication>()
+                .UseHarfBuzz()
                 .UseHeadless(new AvaloniaHeadlessPlatformOptions
                 {
                     UseHeadlessDrawing = true
