@@ -1160,6 +1160,15 @@ namespace AvaloniaEdit.Editing
 
         Size IScrollable.Viewport => _logicalScrollable?.Viewport ?? default(Size);
 
+        bool IScrollable.CanHorizontallyScroll
+        {
+            get => _logicalScrollable?.CanHorizontallyScroll ?? default(bool);
+        }
+
+        bool IScrollable.CanVerticallyScroll
+        {
+            get => _logicalScrollable?.CanVerticallyScroll ?? default(bool);
+        }
         bool ILogicalScrollable.CanHorizontallyScroll
         {
             get => _logicalScrollable?.CanHorizontallyScroll ?? default(bool);

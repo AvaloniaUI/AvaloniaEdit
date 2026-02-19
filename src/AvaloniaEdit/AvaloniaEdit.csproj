@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <WarningsNotAsErrors>0612,0618</WarningsNotAsErrors>
     <PackageId>Avalonia.AvaloniaEdit</PackageId>
     <PackageDescription>This project is a port of AvalonEdit, a WPF-based text editor for Avalonia.</PackageDescription>

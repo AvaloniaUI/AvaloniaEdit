@@ -177,7 +177,7 @@ namespace AvaloniaEdit.Editing
 
         DragDropEffects GetEffect(DragEventArgs e)
         {
-            if (e.Data.Contains(DataFormats.Text))
+            if (e.DataTransfer.Contains(DataFormat.Text))
             {
                 e.Handled = true;
                 int visualColumn;
@@ -243,10 +243,10 @@ namespace AvaloniaEdit.Editing
                         ////if (pastingEventArgs.CommandCancelled)
                         ////    return;
 
-                        string text = EditingCommandHandler.GetTextToPaste(e.Data, TextArea);
+                        string text = EditingCommandHandler.GetTextToPaste(e.DataTransfer, TextArea);
                         if (text == null)
                             return;
-                        bool rectangular = e.Data.Contains(RectangleSelection.RectangularSelectionDataType);
+                        bool rectangular = e.DataTransfer.Contains(DataFormat.CreateStringApplicationFormat(RectangleSelection.RectangularSelectionDataType));
 
                         // Mark the undo group with the currentDragDescriptor, if the drag
                         // is originating from the same control. This allows combining
@@ -331,7 +331,7 @@ namespace AvaloniaEdit.Editing
             // mouse capture and Drag'n'Drop doesn't mix
             e.Pointer.Capture(null);
 
-            DataObject dataObject = TextArea.Selection.CreateDataObject(TextArea);
+            DataTransfer dataObject = TextArea.Selection.CreateDataObject(TextArea);
 
             DragDropEffects allowedEffects = DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link;
             var deleteOnMove = TextArea.Selection.Segments.Select(s => new AnchorSegment(TextArea.Document, s)).ToList();
@@ -359,7 +359,7 @@ namespace AvaloniaEdit.Editing
                 try
                 {
                     Debug.WriteLine("DoDragDrop with allowedEffects=" + allowedEffects);
-                    resultEffect = await DragDrop.DoDragDrop(e, dataObject, allowedEffects);
+                    resultEffect = await DragDrop.DoDragDropAsync(e, dataObject, allowedEffects);
                     Debug.WriteLine("DoDragDrop done, resultEffect=" + resultEffect);
                 }
                 catch (Exception ex)

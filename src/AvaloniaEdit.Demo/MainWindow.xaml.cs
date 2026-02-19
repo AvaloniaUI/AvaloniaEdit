@@ -48,7 +48,7 @@ namespace AvaloniaEdit.Demo
         {
             InitializeComponent();
 
-            this.AttachDevTools();
+            //this.AttachDevTools();
 
             _textEditor = this.FindControl<TextEditor>("Editor");
             _textEditor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
