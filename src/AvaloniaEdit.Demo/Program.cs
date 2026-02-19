@@ -7,7 +7,7 @@ namespace AvaloniaEdit.Demo
     {
         // This method is needed for IDE previewer infrastructure
         public static AppBuilder BuildAvaloniaApp()
-          => AppBuilder.Configure<App>().UsePlatformDetect();
+          => AppBuilder.Configure<App>().WithDeveloperTools().UsePlatformDetect();
 
         // The entry point. Things aren't ready yet
         [STAThread]
