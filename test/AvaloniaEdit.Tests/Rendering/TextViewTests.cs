@@ -3,6 +3,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Headless.NUnit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 using NUnit.Framework;
 

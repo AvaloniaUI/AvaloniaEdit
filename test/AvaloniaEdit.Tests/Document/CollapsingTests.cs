@@ -19,6 +19,7 @@
 using System;
 using AvaloniaEdit.Rendering;
 using NUnit.Framework;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 namespace AvaloniaEdit.Document
 {
@@ -31,7 +32,7 @@ namespace AvaloniaEdit.Document
 		[SetUp]
 		public void Setup()
 		{
-			document = new TextDocument();
+            document = new TextDocument();
 			document.Text = "1\n2\n3\n4\n5\n6\n7\n8\n9\n10";
 			heightTree = new HeightTree(document, 10);
 			foreach (DocumentLine line in document.Lines) {

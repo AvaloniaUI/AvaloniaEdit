@@ -20,6 +20,7 @@ using System;
 using System.Linq;
 using AvaloniaEdit.Document;
 using NUnit.Framework;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 namespace AvaloniaEdit.Search
 {

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using AvaloniaEdit.Rendering;
 using NUnit.Framework;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 namespace AvaloniaEdit.Document
 {
