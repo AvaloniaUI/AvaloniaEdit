@@ -1,0 +1,29 @@
+<RunSettings>
+    <DataCollectionRunSettings>
+        <DataCollectors>
+            <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0">
+                <Configuration>
+                    <CodeCoverage>
+                        <ModulePaths>
+                            <Include>
+                                <ModulePath>.*\.dll$</ModulePath>
+                            </Include>
+                            <Exclude>
+                                <ModulePath>.*Tests\.dll$</ModulePath>
+                                <ModulePath>.*Demo\.dll$</ModulePath>
+                                <!-- Standard system/third-party exclusions -->
+                                <ModulePath>.*Microsoft\..*</ModulePath>
+                                <ModulePath>.*System\..*</ModulePath>
+                                <ModulePath>.*Moq\.dll$</ModulePath>
+                                <ModulePath>.*nunit.*</ModulePath>
+                            </Exclude>
+                        </ModulePaths>
+
+                        <!-- Standard practice to exclude the test projects themselves -->
+                        <IncludeTestAssembly>False</IncludeTestAssembly>
+                    </CodeCoverage>
+                </Configuration>
+            </DataCollector>
+        </DataCollectors>
+    </DataCollectionRunSettings>
+</RunSettings>
