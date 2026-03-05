@@ -11,17 +11,30 @@ namespace AvaloniaEdit.TextMate
 {
     public static class TextMate
     {
-        public static void RegisterExceptionHandler(Action<Exception> handler)
-        {
-            _exceptionHandler = handler;
-        }
-
+        /// <summary>
+        /// Installs TextMate integration into the specified text editor, enabling advanced syntax highlighting and editing
+        /// features.
+        /// </summary>
+        /// <remarks>Ensure that the editor and registry options are properly configured before calling this method.</remarks>
+        /// <param name="editor">The text editor instance in which to install the TextMate integration. Must not be null.</param>
+        /// <param name="registryOptions">The registry configuration options that determine how TextMate features are applied
+        /// within the editor. Must not be null.</param>
+        /// <param name="initCurrentDocument">Indicates whether the current document in the editor should be initialized with TextMate features upon installation.
+        /// The default is <see langword="true"/>.</param>
+        /// <param name="exceptionHandler">An optional delegate that handles exceptions occurring during the installation process and during subsequent
+        /// TextMate-related operations. This includes, for example, failures while loading grammars or themes from <paramref name="registryOptions"/>,
+        /// and exceptions thrown during ongoing syntax highlighting such as background tokenization, reacting to document/content changes, or editor
+        /// option changes. If null, this API does not catch those exceptions, and they will propagate according to normal .NET exception handling
+        /// (for example, to the caller, to the thread invoking the operation, or as unhandled exceptions).</param>
+        /// <returns>An <see cref="Installation"/> object representing the result of the TextMate installation, which can be used to
+        /// manage the integration lifecycle.</returns>
         public static Installation InstallTextMate(
             this TextEditor editor,
             IRegistryOptions registryOptions,
-            bool initCurrentDocument = true)
+            bool initCurrentDocument = true,
+            Action<Exception> exceptionHandler = null)
         {
-            return new Installation(editor, registryOptions, initCurrentDocument);
+            return new Installation(editor, registryOptions, initCurrentDocument, exceptionHandler);
         }
 
         public class Installation : IDisposable
@@ -31,6 +44,7 @@ namespace AvaloniaEdit.TextMate
             private readonly IRegistryOptions _textMateRegistryOptions;
             private readonly Registry _textMateRegistry;
             private readonly TextEditor _editor;
+            private Action<Exception> _exceptionHandler;
             private TextEditorModel _editorModel;
             private IGrammar _grammar;
             private TMModel _tmModel;
@@ -42,10 +56,31 @@ namespace AvaloniaEdit.TextMate
 
             public event EventHandler<Installation> AppliedTheme;
 
-            public Installation(TextEditor editor, IRegistryOptions registryOptions, bool initCurrentDocument = true)
+            /// <summary>
+            /// Initializes a new instance of the Installation class, configuring syntax highlighting for the specified
+            /// text editor using the provided registry options.
+            /// </summary>
+            /// <remarks>This constructor sets up the necessary components for syntax highlighting and
+            /// registers event handlers to respond to document changes in the editor.</remarks>
+            /// <param name="editor">The text editor instance to be configured for syntax highlighting. Cannot be null.</param>
+            /// <param name="registryOptions">The registry options that define syntax highlighting rules and themes. Cannot be null.</param>
+            /// <param name="initCurrentDocument">Indicates whether to initialize syntax highlighting for the current document in the editor immediately
+            /// upon installation. The default is <see langword="true"/>.</param>
+            /// <param name="exceptionHandler">
+            /// An optional delegate that handles exceptions occurring during the installation and initialization process,
+            /// during syntax highlighting and line transformation operations (for example, within <see cref="TextMateColoringTransformer" />),
+            /// and during internal operations such as applying themes, loading grammars, and reacting to editor document changes.
+            /// </param>
+            /// <exception cref="ArgumentNullException">Thrown if <paramref name="editor"/> or <paramref name="registryOptions"/> is null.</exception>
+            public Installation(
+                TextEditor editor,
+                IRegistryOptions registryOptions,
+                bool initCurrentDocument = true,
+                Action<Exception> exceptionHandler = null)
             {
                 _textMateRegistryOptions = registryOptions ?? throw new ArgumentNullException(nameof(registryOptions));
                 _editor = editor ?? throw new ArgumentNullException(nameof(editor));
+                _exceptionHandler = exceptionHandler;
 
                 _textMateRegistry = new Registry(registryOptions);
                 _transformer = _editor.TextArea.TextView.LineTransformers.OfType<TextMateColoringTransformer>().FirstOrDefault();
@@ -235,6 +270,7 @@ namespace AvaloniaEdit.TextMate
 
                     _grammar = null;
                     _themeColorsDictionary = null;
+                    _exceptionHandler = null;
 
                     // Sever delegate chains to prevent subscribers (e.g., ViewModels) from
                     // rooting this Installation and its entire object graph.
@@ -345,12 +381,5 @@ namespace AvaloniaEdit.TextMate
                 editorModel.Dispose();
             }
         }
-
-        // WARNING: This static field creates a permanent GC root. If the Action<Exception>
-        // target captures an instance (e.g., a ViewModel or Installation), that instance and
-        // its entire reachable object graph will never be collected for the lifetime of the
-        // AppDomain. A future breaking change should scope this handler to the Installation
-        // instance instead. See: https://github.com/AvaloniaUI/AvaloniaEdit/issues/XXXX
-        static Action<Exception> _exceptionHandler;
     }
 }
