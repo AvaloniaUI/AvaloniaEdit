@@ -14,14 +14,10 @@ namespace AvaloniaEdit.Tests.TextMate
         private const string MockScopeName = "source.mock";
         private const ThemeName MockThemeName = ThemeName.Abbys;
 
-        [SetUpFixture]
-        public class SetupFixture
+        [OneTimeSetUp]
+        public void RunBeforeAnyTests()
         {
-            [OneTimeSetUp]
-            public void RunBeforeAnyTests()
-            {
-                UnitTestApplication.BuildAvaloniaApp().SetupWithoutStarting();
-            }
+            UnitTestApplication.BuildAvaloniaApp().SetupWithoutStarting();
         }
 
         #region Constructor tests
