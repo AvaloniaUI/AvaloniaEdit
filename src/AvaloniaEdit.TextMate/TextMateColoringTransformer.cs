@@ -70,8 +70,9 @@ namespace AvaloniaEdit.TextMate
         /// <remarks>This method is thread-safe and locks access during the operation. It validates the
         /// state of the model and grammar before setting them, ensuring that stale references are severed when null
         /// values are provided.</remarks>
-        /// <param name="document">The text document to be associated with the transformer. This parameter cannot be null.</param>
-        /// <param name="model">The model to be set for the document. If null, any existing model reference is removed.</param>
+        /// <param name="document">The text document to be associated with the transformer, or <see langword="null"/> to clear the existing document reference (e.g., during disposal).</param>
+        /// <param name="model">The model to be set for the document, or <see langword="null"/> to clear the existing model reference (e.g., during disposal).
+        /// When both <paramref name="document"/> and <paramref name="model"/> are null, all stale references are severed.</param>
         public void SetModel(TextDocument document, TMModel model)
         {
             ThrowIfDisposed();
@@ -224,8 +225,8 @@ namespace AvaloniaEdit.TextMate
         /// <remarks>This method is thread-safe and should only be called when the object has not been
         /// disposed. If the model is already initialized, calling this method will also update the model's
         /// grammar.</remarks>
-        /// <param name="grammar">The grammar to apply to the model. This parameter must not be null and determines how the model processes
-        /// and interprets text.</param>
+        /// <param name="grammar">The grammar to apply to the model. Determines how the model tokenizes and interprets text.
+        /// If <see langword="null"/>, the current grammar reference is cleared and no grammar is applied to the model.</param>
         public void SetGrammar(IGrammar grammar)
         {
             ThrowIfDisposed();

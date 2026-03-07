@@ -110,12 +110,6 @@ namespace AvaloniaEdit.TextMate
                 {
                     ThrowIfDisposed();
 
-                    if (_textMateRegistry == null)
-                    {
-                        throw new InvalidOperationException(
-                            $"{nameof(TextMate)} is not initialized. You must call {nameof(TextMate)}.{nameof(InstallTextMate)} before using this feature.");
-                    }
-
                     SetGrammarInternal(_textMateRegistry.LoadGrammar(scopeName));
                 }
 
@@ -132,7 +126,7 @@ namespace AvaloniaEdit.TextMate
                 {
                     ThrowIfDisposed();
 
-                    if (_textMateRegistry == null || _transformer == null || _editor?.TextArea?.TextView.LineTransformers == null)
+                    if (_transformer == null || _editor?.TextArea?.TextView.LineTransformers == null)
                     {
                         throw new InvalidOperationException(
                             $"{nameof(TextMate)} is not initialized. You must call {nameof(TextMate)}.{nameof(InstallTextMate)} before using this feature.");
@@ -156,7 +150,8 @@ namespace AvaloniaEdit.TextMate
             /// The caller is responsible for triggering a redraw after releasing the lock.
             /// </para>
             /// </remarks>
-            /// <param name="grammar">The grammar to apply. This parameter defines the rules for input processing and cannot be null.</param>
+            /// <param name="grammar">The grammar to apply. Defines the tokenization rules for syntax highlighting.
+            /// May be <see langword="null"/> to clear the current grammar.</param>
             private void SetGrammarInternal(IGrammar grammar)
             {
                 _grammar = grammar;
@@ -286,14 +281,6 @@ namespace AvaloniaEdit.TextMate
                 DisposeTMModel(tmModel, transformer);
 
                 // Only remove/dispose if we created it; otherwise we don't own its lifecycle.
-                // NOTE: When we do NOT own the transformer, it may retain stale internal
-                // references to our now-disposed _tmModel and _document via its SetModel call.
-                // TextMateColoringTransformer.SetModel does not guard against null arguments,
-                // so we cannot safely clear those references from here. The transformer's own
-                // ModelTokensChanged and TransformLine methods early-return when _model is null
-                // or _model.IsStopped is true, so the disposed TMModel is inert - this is a
-                // minor GC-rooting concern only, not a use-after-dispose crash risk. The
-                // references will be overwritten when the owning Installation next calls SetModel.
                 if (_ownsTransformer && transformer != null)
                 {
                     _editor.TextArea.TextView.LineTransformers.Remove(transformer);
