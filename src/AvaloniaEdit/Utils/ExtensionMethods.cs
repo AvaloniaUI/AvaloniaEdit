@@ -15,18 +15,20 @@
 // FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Documents;
+using Avalonia.Input;
+using Avalonia.LogicalTree;
+using Avalonia.Media;
+using Avalonia.Reactive;
+using Avalonia.VisualTree;
+using AvaloniaEdit.Editing;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Xml;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.Documents;
-using Avalonia.Input;
-using Avalonia.Media;
-using Avalonia.Reactive;
-using Avalonia.VisualTree;
 
 namespace AvaloniaEdit.Utils
 {
@@ -217,7 +219,8 @@ namespace AvaloniaEdit.Utils
         #region Snap to device pixels
         public static Point SnapToDevicePixels(this Point p, Visual targetVisual)
         {
-            var root = targetVisual.GetVisualRoot();
+
+            var root = TopLevel.GetTopLevel(targetVisual);
 
             // Get the root control and its scaling
             var scaling = new Vector(root.RenderScaling, root.RenderScaling);

@@ -2,8 +2,8 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AvaloniaVersion>12.0.0-preview1</AvaloniaVersion>
-    <AvaloniaSampleVersion>12.0.0-preview1</AvaloniaSampleVersion>
+    <AvaloniaVersion>12.0.0-preview2</AvaloniaVersion>
+    <AvaloniaSampleVersion>12.0.0-preview2</AvaloniaSampleVersion>
     <AvaloniaDiagnosticsSupportVersion>2.2.0-beta2</AvaloniaDiagnosticsSupportVersion>
     <TextMateSharpVersion>2.0.2</TextMateSharpVersion>
     <VersionSuffix>beta</VersionSuffix>
@@ -12,7 +12,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <Version>12.0.0-preview1</Version>
+    <Version>12.0.0-preview2</Version>
     <Authors>Avalonia Team</Authors>
     <Copyright>Copyright 2017-$([System.DateTime]::Now.ToString(`yyyy`)) &#169; The AvaloniaUI Project</Copyright>
     <RepositoryUrl>https://github.com/AvaloniaUI/AvaloniaEdit/</RepositoryUrl>
