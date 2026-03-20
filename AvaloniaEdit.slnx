@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="azure-pipelines.yml" />
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Project Path="src/AvaloniaEdit.Demo/AvaloniaEdit.Demo.csproj" />
+  <Project Path="src/AvaloniaEdit.TextMate/AvaloniaEdit.TextMate.csproj" />
+  <Project Path="src/AvaloniaEdit/AvaloniaEdit.csproj" />
+  <Project Path="test/AvaloniaEdit.Tests/AvaloniaEdit.Tests.csproj" />
+</Solution>
