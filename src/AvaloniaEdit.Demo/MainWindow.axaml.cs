@@ -26,7 +26,7 @@ namespace AvaloniaEdit.Demo
 {
     using Pair = KeyValuePair<int, Control>;
 
-    public class MainWindow : Window
+    public partial class MainWindow : Window
     {
         private readonly TextEditor _textEditor;
         private FoldingManager _foldingManager;
