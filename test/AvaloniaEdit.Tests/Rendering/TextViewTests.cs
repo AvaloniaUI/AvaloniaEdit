@@ -5,8 +5,6 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
-using NUnit.Framework;
-
 namespace AvaloniaEdit.Tests.Rendering
 {
     internal class TextViewTests
