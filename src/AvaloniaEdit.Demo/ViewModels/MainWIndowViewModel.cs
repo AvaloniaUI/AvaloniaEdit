@@ -1,47 +1,51 @@
 using System.Collections.ObjectModel;
 using AvaloniaEdit.Editing;
-using ReactiveUI;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using TextMateSharp.Grammars;
 
 namespace AvaloniaEdit.Demo.ViewModels;
 
-public class MainWindowViewModel(TextMate.TextMate.Installation _textMateInstallation, RegistryOptions _registryOptions) : ReactiveObject
+public partial class MainWindowViewModel(TextMate.TextMate.Installation _textMateInstallation, RegistryOptions _registryOptions) : ObservableObject
 {
     public ObservableCollection<ThemeViewModel> AllThemes { get; set; } = [];
-    private ThemeViewModel _selectedTheme;
 
     public ThemeViewModel SelectedTheme
     {
-        get => _selectedTheme;
+        get;
         set
         {
-            this.RaiseAndSetIfChanged(ref _selectedTheme, value);
+            SetProperty(ref field, value);
             _textMateInstallation.SetTheme(_registryOptions.LoadTheme(value.ThemeName));
         }
     }
 
-    public void CopyMouseCommand(TextArea textArea)
+    [RelayCommand]
+    private void CopyMouse(TextArea textArea)
     {
         ApplicationCommands.Copy.Execute(null, textArea);
     }
 
-    public void CutMouseCommand(TextArea textArea)
+    [RelayCommand]
+    private void CutMouse(TextArea textArea)
     {
         ApplicationCommands.Cut.Execute(null, textArea);
     }
-    
-    public void PasteMouseCommand(TextArea textArea)
+
+    [RelayCommand]
+    private void PasteMouse(TextArea textArea)
     {
         ApplicationCommands.Paste.Execute(null, textArea);
     }
 
-    public void SelectAllMouseCommand(TextArea textArea)
+    [RelayCommand]
+    private void SelectAllMouse(TextArea textArea)
     {
         ApplicationCommands.SelectAll.Execute(null, textArea);
     }
 
-    // Undo Status is not given back to disable it's item in ContextFlyout; therefore it's not being used yet.
-    public void UndoMouseCommand(TextArea textArea)
+    [RelayCommand]
+    private void UndoMouse(TextArea textArea)
     {
         ApplicationCommands.Undo.Execute(null, textArea);
     }

@@ -32,7 +32,6 @@ namespace AvaloniaEdit.Highlighting
     /// </summary>
     public class HighlightingEngine
     {
-        private readonly HighlightingRuleSet _mainRuleSet;
         private SpanStack _spanStack = SpanStack.Empty;
 
         /// <summary>
@@ -40,7 +39,7 @@ namespace AvaloniaEdit.Highlighting
         /// </summary>
         public HighlightingEngine(HighlightingRuleSet mainRuleSet)
         {
-            _mainRuleSet = mainRuleSet ?? throw new ArgumentNullException(nameof(mainRuleSet));
+            CurrentRuleSet = mainRuleSet ?? throw new ArgumentNullException(nameof(mainRuleSet));
         }
 
         /// <summary>
@@ -241,7 +240,7 @@ namespace AvaloniaEdit.Highlighting
             get
             {
                 if (_spanStack.IsEmpty)
-                    return _mainRuleSet;
+                    return field;
                 return _spanStack.Peek().RuleSet ?? EmptyRuleSet;
             }
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using Avalonia;
-using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Themes.Simple;
@@ -14,6 +13,7 @@ namespace AvaloniaEdit.AvaloniaMocks
     {
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<UnitTestApplication>()
+                .UseHarfBuzz()
                 .UseHeadless(new AvaloniaHeadlessPlatformOptions
                 {
                     UseHeadlessDrawing = true

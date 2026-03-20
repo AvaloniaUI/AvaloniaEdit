@@ -1,11 +1,10 @@
-﻿using System;
-using Avalonia.Controls.Shapes;
-using AvaloniaEdit.Document;
+﻿using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 
 using NUnit.Framework;
 using TextMateSharp.Grammars;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 namespace AvaloniaEdit.Tests.TextMate
 {

@@ -2,6 +2,7 @@
 using AvaloniaEdit.TextMate;
 
 using NUnit.Framework;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 namespace AvaloniaEdit.Tests.TextMate
 {

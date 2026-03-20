@@ -41,21 +41,19 @@ namespace AvaloniaEdit.Indentation.CSharp
             IndentationString = options.IndentationString;
         }
 
-        private string _indentationString = "\t";
-
         /// <summary>
         /// Gets/Sets the indentation string.
         /// </summary>
         public string IndentationString
         {
-            get => _indentationString;
+            get;
             set
             {
                 if (string.IsNullOrEmpty(value))
                     throw new ArgumentException("Indentation string must not be null or empty");
-                _indentationString = value;
+                field = value;
             }
-        }
+        } = "\t";
 
         /// <summary>
         /// Performs indentation using the specified document accessor.

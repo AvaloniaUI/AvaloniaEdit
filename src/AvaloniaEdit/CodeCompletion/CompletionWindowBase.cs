@@ -30,7 +30,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 
 namespace AvaloniaEdit.CodeCompletion
 {
@@ -72,7 +71,7 @@ namespace AvaloniaEdit.CodeCompletion
         public CompletionWindowBase(TextArea textArea) : base()
         {
             TextArea = textArea ?? throw new ArgumentNullException(nameof(textArea));
-            _parentWindow = textArea.GetVisualRoot() as Window;
+            _parentWindow = TopLevel.GetTopLevel(textArea) as Window;
 
 
             AddHandler(PointerReleasedEvent, OnMouseUp, handledEventsToo: true);
@@ -129,7 +128,7 @@ namespace AvaloniaEdit.CodeCompletion
 
         private void AttachEvents()
         {
-            ((ISetLogicalParent)this).SetParent(TextArea.GetVisualRoot() as ILogical);
+            ((ISetLogicalParent)this).SetParent(TopLevel.GetTopLevel(TextArea) as ILogical);
 
             _document = TextArea.Document;
             if (_document != null)

@@ -20,7 +20,6 @@ using System;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
-using Avalonia.Utilities;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Rendering

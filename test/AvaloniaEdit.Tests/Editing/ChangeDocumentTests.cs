@@ -20,6 +20,7 @@ using System.Text;
 using Avalonia.Headless.NUnit;
 using AvaloniaEdit.Document;
 using NUnit.Framework;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 namespace AvaloniaEdit.Editing
 {
