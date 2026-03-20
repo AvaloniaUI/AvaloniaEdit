@@ -3,6 +3,7 @@
     <File Path="azure-pipelines.yml" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
+    <File Path="NuGet.config" />
   </Folder>
   <Project Path="src/AvaloniaEdit.Demo/AvaloniaEdit.Demo.csproj" />
   <Project Path="src/AvaloniaEdit.TextMate/AvaloniaEdit.TextMate.csproj" />
