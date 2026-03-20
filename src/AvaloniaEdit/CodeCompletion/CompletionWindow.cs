@@ -98,7 +98,7 @@ namespace AvaloniaEdit.CodeCompletion
             var description = item?.Description;
             
     
-            if (description != null && Host is Control placementTarget && CompletionList.CurrentList != null)
+            if (description != null && TopLevel.GetTopLevel(CompletionList) is Control placementTarget && CompletionList.CurrentList != null)
             {
                 _toolTipContent.Content = description;
 

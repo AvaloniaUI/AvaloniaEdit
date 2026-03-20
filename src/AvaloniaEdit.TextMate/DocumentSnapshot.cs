@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using AvaloniaEdit.Document;
@@ -53,6 +52,15 @@ namespace AvaloniaEdit.TextMate
             {
                 var lineRange = _lineRanges[lineIndex];
                 return _textSource.GetText(lineRange.Offset, lineRange.TotalLength);
+            }
+        }
+
+        public ReadOnlyMemory<char> GetLineTextIncludingTerminatorAsMemory(int lineIndex)
+        {
+            lock (_lock)
+            {
+                var lineRange = _lineRanges[lineIndex];
+                return _textSource.GetTextAsMemory(lineRange.Offset, lineRange.TotalLength);
             }
         }
 

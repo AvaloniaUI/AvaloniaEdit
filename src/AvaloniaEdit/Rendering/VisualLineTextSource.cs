@@ -19,7 +19,6 @@
 using System;
 using System.Diagnostics;
 using Avalonia.Media.TextFormatting;
-using Avalonia.Utilities;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Utils;
 using ITextSource = Avalonia.Media.TextFormatting.ITextSource;

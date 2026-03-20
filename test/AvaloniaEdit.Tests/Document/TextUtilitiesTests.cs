@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using NUnit.Framework;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 namespace AvaloniaEdit.Document
 {

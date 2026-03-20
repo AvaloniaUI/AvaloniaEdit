@@ -1,10 +1,16 @@
 variables:
-  packageVersion: '11.3.999-cibuild00$(Build.BuildId)-beta'
+  packageVersion: '11.4.999-cibuild00$(Build.BuildId)-beta'
 jobs:
 - job: Windows
   pool:
     vmImage: 'windows-2022'
   steps:
+
+  - task: UseDotNet@2
+    displayName: 'Install .NET 10 SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '10.x'
 
   - task: DotNetCoreCLI@2
     inputs:

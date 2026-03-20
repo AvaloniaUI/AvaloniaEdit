@@ -393,8 +393,8 @@ namespace AvaloniaEdit.Editing
 
             var textLine = visualLine.GetTextLine(_position.VisualColumn, _position.IsAtEndOfLine);
             var xPos = visualLine.GetTextLineVisualXPosition(textLine, _position.VisualColumn);
-            var lineTop = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextTop);
-            var lineBottom = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextBottom);
+            var lineTop = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.LineTop);
+            var lineBottom = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.LineBottom);
 
             return new Rect(xPos,
                             lineTop,
@@ -426,8 +426,8 @@ namespace AvaloniaEdit.Editing
 				// use the visual X position of currentPos and nextPos (one or more of which will be in virtual space)
 				double xPos = visualLine.GetTextLineVisualXPosition(textLine, currentPos);
 				double xPos2 = visualLine.GetTextLineVisualXPosition(textLine, nextPos);
-				double lineTop = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextTop);
-				double lineBottom = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.TextBottom);
+				double lineTop = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.LineTop);
+				double lineBottom = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.LineBottom);
 				r = new Rect(xPos, lineTop, xPos2 - xPos, lineBottom - lineTop);
 			}
 			// If the caret is too small (e.g. in front of zero-width character), ensure it's still visible

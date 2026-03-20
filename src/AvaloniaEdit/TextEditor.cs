@@ -34,7 +34,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
-using Avalonia.Data;
 using AvaloniaEdit.Search;
 
 namespace AvaloniaEdit
@@ -93,7 +92,7 @@ namespace AvaloniaEdit
 
         #endregion
 
-        protected override void OnGotFocus(GotFocusEventArgs e)
+        protected override void OnGotFocus(FocusChangedEventArgs e)
         {
             base.OnGotFocus(e);
             TextArea.Focus();

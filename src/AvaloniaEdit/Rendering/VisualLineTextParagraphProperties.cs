@@ -34,7 +34,7 @@ namespace AvaloniaEdit.Rendering
 
 		public override FlowDirection FlowDirection => FlowDirection.LeftToRight;
 		public override TextAlignment TextAlignment => TextAlignment.Left;
-		public override double LineHeight => DefaultTextRunProperties.FontRenderingEmSize * 1.35;
+		public override double LineHeight => double.NaN;
 		public override bool FirstLineInParagraph => firstLineInParagraph;
 		public override TextRunProperties DefaultTextRunProperties => defaultTextRunProperties;
 

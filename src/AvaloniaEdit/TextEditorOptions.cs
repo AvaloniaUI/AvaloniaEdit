@@ -80,29 +80,26 @@ namespace AvaloniaEdit
 
         #region AccepsTab
 
-        bool _acceptsTab = true;
         [DefaultValue(true)]
         public virtual bool AcceptsTab
         {
             get
             {
-                return _acceptsTab;
+                return field;
             }
             set
             {
-                if (_acceptsTab != value)
+                if (field != value)
                 {
-                    _acceptsTab = value;
+                    field = value;
                     OnPropertyChanged(nameof(AcceptsTab));
                 }
             }
-        }
+        } = true;
 
         #endregion
 
         #region ShowSpaces / ShowTabs / ShowEndOfLine / ShowBoxForControlCharacters
-
-        private bool _showSpaces;
 
         /// <summary>
         /// Gets/Sets whether to show a visible glyph for spaces. The glyph displayed can be set via <see cref="ShowSpacesGlyph" />
@@ -111,18 +108,16 @@ namespace AvaloniaEdit
         [DefaultValue(false)]
         public virtual bool ShowSpaces
         {
-            get { return _showSpaces; }
+            get { return field; }
             set
             {
-                if (_showSpaces != value)
+                if (field != value)
                 {
-                    _showSpaces = value;
+                    field = value;
                     OnPropertyChanged(nameof(ShowSpaces));
                 }
             }
         }
-
-        private string _showSpacesGlyph = "\u00B7";
 
         /// <summary>
         /// Gets/Sets the char to show when ShowSpaces option is enabled
@@ -131,18 +126,16 @@ namespace AvaloniaEdit
         [DefaultValue("\u00B7")]
         public virtual string ShowSpacesGlyph
         {
-            get { return _showSpacesGlyph; }
+            get { return field; }
             set
             {
-                if (_showSpacesGlyph != value)
+                if (field != value)
                 {
-                    _showSpacesGlyph = value;
+                    field = value;
                     OnPropertyChanged(nameof(ShowSpacesGlyph));
                 }
             }
-        }
-
-        private bool _showTabs;
+        } = "\u00B7";
 
         /// <summary>
         /// Gets/Sets whether to show a visible glyph for tab. The glyph displayed can be set via <see cref="ShowTabsGlyph" />
@@ -151,18 +144,16 @@ namespace AvaloniaEdit
         [DefaultValue(false)]
         public virtual bool ShowTabs
         {
-            get { return _showTabs; }
+            get { return field; }
             set
             {
-                if (_showTabs != value)
+                if (field != value)
                 {
-                    _showTabs = value;
+                    field = value;
                     OnPropertyChanged(nameof(ShowTabs));
                 }
             }
         }
-
-        private string _showTabsGlyph = "\u2192";
 
         /// <summary>
         /// Gets/Sets the char to show when ShowTabs option is enabled
@@ -171,18 +162,16 @@ namespace AvaloniaEdit
         [DefaultValue("\u2192")]
         public virtual string ShowTabsGlyph
         {
-            get { return _showTabsGlyph; }
+            get { return field; }
             set
             {
-                if (_showTabsGlyph != value)
+                if (field != value)
                 {
-                    _showTabsGlyph = value;
+                    field = value;
                     OnPropertyChanged(nameof(ShowTabsGlyph));
                 }
             }
-        }
-
-        private bool _showEndOfLine;
+        } = "\u2192";
 
         /// <summary>
         /// Gets/Sets whether to show EOL char at the end of lines. The glyphs displayed can be set via <see cref="EndOfLineCRLFGlyph" />, <see cref="EndOfLineCRGlyph" /> and <see cref="EndOfLineLFGlyph" />.
@@ -191,18 +180,16 @@ namespace AvaloniaEdit
         [DefaultValue(false)]
         public virtual bool ShowEndOfLine
         {
-            get { return _showEndOfLine; }
+            get { return field; }
             set
             {
-                if (_showEndOfLine != value)
+                if (field != value)
                 {
-                    _showEndOfLine = value;
+                    field = value;
                     OnPropertyChanged(nameof(ShowEndOfLine));
                 }
             }
         }
-
-        private string _endOfLineCRLFGlyph = "¶";
 
         /// <summary>
         /// Gets/Sets the char to show for CRLF (\r\n) when ShowEndOfLine option is enabled
@@ -211,18 +198,16 @@ namespace AvaloniaEdit
         [DefaultValue("¶")]
         public virtual string EndOfLineCRLFGlyph
         {
-            get { return _endOfLineCRLFGlyph; }
+            get { return field; }
             set
             {
-                if (_endOfLineCRLFGlyph != value)
+                if (field != value)
                 {
-                    _endOfLineCRLFGlyph = value;
+                    field = value;
                     OnPropertyChanged(nameof(EndOfLineCRLFGlyph));
                 }
             }
-        }
-
-        private string _endOfLineCRGlyph = "\\r";
+        } = "¶";
 
         /// <summary>
         /// Gets/Sets the char to show for CR (\r) when ShowEndOfLine option is enabled
@@ -231,18 +216,16 @@ namespace AvaloniaEdit
         [DefaultValue("\\r")]
         public virtual string EndOfLineCRGlyph
         {
-            get { return _endOfLineCRGlyph; }
+            get { return field; }
             set
             {
-                if (_endOfLineCRGlyph != value)
+                if (field != value)
                 {
-                    _endOfLineCRGlyph = value;
+                    field = value;
                     OnPropertyChanged(nameof(EndOfLineCRGlyph));
                 }
             }
-        }
-
-        private string _endOfLineLFGlyph = "\\n";
+        } = "\\r";
 
         /// <summary>
         /// Gets/Sets the char to show for LF (\n) when ShowEndOfLine option is enabled
@@ -251,18 +234,16 @@ namespace AvaloniaEdit
         [DefaultValue("\\n")]
         public virtual string EndOfLineLFGlyph
         {
-            get { return _endOfLineLFGlyph; }
+            get { return field; }
             set
             {
-                if (_endOfLineLFGlyph != value)
+                if (field != value)
                 {
-                    _endOfLineLFGlyph = value;
+                    field = value;
                     OnPropertyChanged(nameof(EndOfLineLFGlyph));
                 }
             }
-        }
-
-        private bool _showBoxForControlCharacters = true;
+        } = "\\n";
 
         /// <summary>
         /// Gets/Sets whether to show a box with the hex code for control characters.
@@ -271,21 +252,20 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public virtual bool ShowBoxForControlCharacters
         {
-            get { return _showBoxForControlCharacters; }
+            get { return field; }
             set
             {
-                if (_showBoxForControlCharacters != value)
+                if (field != value)
                 {
-                    _showBoxForControlCharacters = value;
+                    field = value;
                     OnPropertyChanged(nameof(ShowBoxForControlCharacters));
                 }
             }
-        }
+        } = true;
+
         #endregion
 
         #region EnableHyperlinks
-
-        private bool _enableHyperlinks = true;
 
         /// <summary>
         /// Gets/Sets whether to enable clickable hyperlinks in the editor.
@@ -294,18 +274,16 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public virtual bool EnableHyperlinks
         {
-            get { return _enableHyperlinks; }
+            get { return field; }
             set
             {
-                if (_enableHyperlinks != value)
+                if (field != value)
                 {
-                    _enableHyperlinks = value;
+                    field = value;
                     OnPropertyChanged(nameof(EnableHyperlinks));
                 }
             }
-        }
-
-        private bool _enableEmailHyperlinks = true;
+        } = true;
 
         /// <summary>
         /// Gets/Sets whether to enable clickable hyperlinks for e-mail addresses in the editor.
@@ -314,18 +292,16 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public virtual bool EnableEmailHyperlinks
         {
-            get { return _enableEmailHyperlinks; }
+            get { return field; }
             set
             {
-                if (_enableEmailHyperlinks != value)
+                if (field != value)
                 {
-                    _enableEmailHyperlinks = value;
+                    field = value;
                     OnPropertyChanged(nameof(EnableEmailHyperlinks));
                 }
             }
-        }
-
-        private bool _requireControlModifierForHyperlinkClick = true;
+        } = true;
 
         /// <summary>
         /// Gets/Sets whether the user needs to press Control to click hyperlinks.
@@ -335,16 +311,17 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public virtual bool RequireControlModifierForHyperlinkClick
         {
-            get { return _requireControlModifierForHyperlinkClick; }
+            get { return field; }
             set
             {
-                if (_requireControlModifierForHyperlinkClick != value)
+                if (field != value)
                 {
-                    _requireControlModifierForHyperlinkClick = value;
+                    field = value;
                     OnPropertyChanged(nameof(RequireControlModifierForHyperlinkClick));
                 }
             }
-        }
+        } = true;
+
         #endregion
 
         #region TabSize / IndentationSize / ConvertTabsToSpaces / GetIndentationString
@@ -353,8 +330,6 @@ namespace AvaloniaEdit
         // The fields should be accessed only by their property - the fields might not be used
         // if someone overrides the property.
 
-        private int _indentationSize = 4;
-
         /// <summary>
         /// Gets/Sets the width of one indentation unit.
         /// </summary>
@@ -362,7 +337,7 @@ namespace AvaloniaEdit
         [DefaultValue(4)]
         public virtual int IndentationSize
         {
-            get => _indentationSize;
+            get;
             set
             {
                 if (value < 1)
@@ -371,16 +346,14 @@ namespace AvaloniaEdit
                 // (it only crashed in the hundred thousands for me; but might crash earlier with larger fonts)
                 if (value > 1000)
                     throw new ArgumentOutOfRangeException(nameof(value), value, "indentation size is too large");
-                if (_indentationSize != value)
+                if (field != value)
                 {
-                    _indentationSize = value;
+                    field = value;
                     OnPropertyChanged(nameof(IndentationSize));
                     OnPropertyChanged(nameof(IndentationString));
                 }
             }
-        }
-
-        private bool _convertTabsToSpaces;
+        } = 4;
 
         /// <summary>
         /// Gets/Sets whether to use spaces for indentation instead of tabs.
@@ -389,12 +362,12 @@ namespace AvaloniaEdit
         [DefaultValue(false)]
         public virtual bool ConvertTabsToSpaces
         {
-            get { return _convertTabsToSpaces; }
+            get { return field; }
             set
             {
-                if (_convertTabsToSpaces != value)
+                if (field != value)
                 {
-                    _convertTabsToSpaces = value;
+                    field = value;
                     OnPropertyChanged(nameof(ConvertTabsToSpaces));
                     OnPropertyChanged(nameof(IndentationString));
                 }
@@ -426,26 +399,22 @@ namespace AvaloniaEdit
         }
         #endregion
 
-        private bool _cutCopyWholeLine = true;
-
         /// <summary>
         /// Gets/Sets whether copying without a selection copies the whole current line.
         /// </summary>
         [DefaultValue(true)]
         public virtual bool CutCopyWholeLine
         {
-            get { return _cutCopyWholeLine; }
+            get { return field; }
             set
             {
-                if (_cutCopyWholeLine != value)
+                if (field != value)
                 {
-                    _cutCopyWholeLine = value;
+                    field = value;
                     OnPropertyChanged(nameof(CutCopyWholeLine));
                 }
             }
-        }
-
-        private bool _allowScrollBelowDocument = true;
+        } = true;
 
         /// <summary>
         /// Gets/Sets whether the user can scroll below the bottom of the document.
@@ -454,18 +423,16 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public virtual bool AllowScrollBelowDocument
         {
-            get { return _allowScrollBelowDocument; }
+            get { return field; }
             set
             {
-                if (_allowScrollBelowDocument != value)
+                if (field != value)
                 {
-                    _allowScrollBelowDocument = value;
+                    field = value;
                     OnPropertyChanged(nameof(AllowScrollBelowDocument));
                 }
             }
-        }
-
-        private double _wordWrapIndentation;
+        } = true;
 
         /// <summary>
         /// Gets/Sets the indentation used for all lines except the first when word-wrapping.
@@ -474,20 +441,18 @@ namespace AvaloniaEdit
         [DefaultValue(0.0)]
         public virtual double WordWrapIndentation
         {
-            get => _wordWrapIndentation;
+            get;
             set
             {
                 if (double.IsNaN(value) || double.IsInfinity(value))
                     throw new ArgumentOutOfRangeException(nameof(value), value, "value must not be NaN/infinity");
-                if (value != _wordWrapIndentation)
+                if (value != field)
                 {
-                    _wordWrapIndentation = value;
+                    field = value;
                     OnPropertyChanged(nameof(WordWrapIndentation));
                 }
             }
         }
-
-        private bool _inheritWordWrapIndentation = true;
 
         /// <summary>
         /// Gets/Sets whether the indentation is inherited from the first line when word-wrapping.
@@ -497,18 +462,16 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public virtual bool InheritWordWrapIndentation
         {
-            get { return _inheritWordWrapIndentation; }
+            get { return field; }
             set
             {
-                if (value != _inheritWordWrapIndentation)
+                if (value != field)
                 {
-                    _inheritWordWrapIndentation = value;
+                    field = value;
                     OnPropertyChanged(nameof(InheritWordWrapIndentation));
                 }
             }
-        }
-
-        private bool _enableRectangularSelection = true;
+        } = true;
 
         /// <summary>
         /// Enables rectangular selection (press ALT and select a rectangle)
@@ -516,18 +479,16 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public bool EnableRectangularSelection
         {
-            get { return _enableRectangularSelection; }
+            get { return field; }
             set
             {
-                if (_enableRectangularSelection != value)
+                if (field != value)
                 {
-                    _enableRectangularSelection = value;
+                    field = value;
                     OnPropertyChanged(nameof(EnableRectangularSelection));
                 }
             }
-        }
-
-        private bool _enableTextDragDrop = true;
+        } = true;
 
         /// <summary>
         /// Enable dragging text within the text area.
@@ -535,18 +496,16 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public bool EnableTextDragDrop
         {
-            get { return _enableTextDragDrop; }
+            get { return field; }
             set
             {
-                if (_enableTextDragDrop != value)
+                if (field != value)
                 {
-                    _enableTextDragDrop = value;
+                    field = value;
                     OnPropertyChanged(nameof(EnableTextDragDrop));
                 }
             }
-        }
-
-        private bool _enableVirtualSpace;
+        } = true;
 
         /// <summary>
         /// Gets/Sets whether the user can set the caret behind the line ending
@@ -557,18 +516,16 @@ namespace AvaloniaEdit
         [DefaultValue(false)]
         public virtual bool EnableVirtualSpace
         {
-            get { return _enableVirtualSpace; }
+            get { return field; }
             set
             {
-                if (_enableVirtualSpace != value)
+                if (field != value)
                 {
-                    _enableVirtualSpace = value;
+                    field = value;
                     OnPropertyChanged(nameof(EnableVirtualSpace));
                 }
             }
         }
-
-        private bool _enableImeSupport = true;
 
         /// <summary>
         /// Gets/Sets whether the support for Input Method Editors (IME)
@@ -577,18 +534,16 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public virtual bool EnableImeSupport
         {
-            get { return _enableImeSupport; }
+            get { return field; }
             set
             {
-                if (_enableImeSupport != value)
+                if (field != value)
                 {
-                    _enableImeSupport = value;
+                    field = value;
                     OnPropertyChanged(nameof(EnableImeSupport));
                 }
             }
-        }
-
-        private bool _showColumnRulers;
+        } = true;
 
         /// <summary>
         /// Gets/Sets whether the column rulers should be shown.
@@ -596,36 +551,32 @@ namespace AvaloniaEdit
         [DefaultValue(false)]
         public virtual bool ShowColumnRulers
         {
-            get { return _showColumnRulers; }
+            get { return field; }
             set
             {
-                if (_showColumnRulers != value)
+                if (field != value)
                 {
-                    _showColumnRulers = value;
+                    field = value;
                     OnPropertyChanged(nameof(ShowColumnRulers));
                 }
             }
         }
-
-        private IEnumerable<int> _columnRulerPositions = new List<int>() { 80 };
 
         /// <summary>
         /// Gets/Sets the positions the column rulers should be shown.
         /// </summary>
         public virtual IEnumerable<int> ColumnRulerPositions
         {
-            get { return _columnRulerPositions; }
+            get { return field; }
             set
             {
-                if (_columnRulerPositions != value)
+                if (field != value)
                 {
-                    _columnRulerPositions = value;
+                    field = value;
                     OnPropertyChanged(nameof(ColumnRulerPositions));
                 }
             }
-        }
-
-        private bool _highlightCurrentLine;
+        } = new List<int>() { 80 };
 
         /// <summary>
         /// Gets/Sets if current line should be shown.
@@ -633,18 +584,16 @@ namespace AvaloniaEdit
         [DefaultValue(false)]
         public virtual bool HighlightCurrentLine
         {
-            get { return _highlightCurrentLine; }
+            get { return field; }
             set
             {
-                if (_highlightCurrentLine != value)
+                if (field != value)
                 {
-                    _highlightCurrentLine = value;
+                    field = value;
                     OnPropertyChanged(nameof(HighlightCurrentLine));
                 }
             }
         }
-
-        private bool _hideCursorWhileTyping = true;
 
         /// <summary>
         /// Gets/Sets if mouse cursor should be hidden while user is typing.
@@ -652,18 +601,16 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public bool HideCursorWhileTyping
         {
-            get { return _hideCursorWhileTyping; }
+            get { return field; }
             set
             {
-                if (_hideCursorWhileTyping != value)
+                if (field != value)
                 {
-                    _hideCursorWhileTyping = value;
+                    field = value;
                     OnPropertyChanged(nameof(HideCursorWhileTyping));
                 }
             }
-        }
-
-        private bool _allowToggleOverstrikeMode;
+        } = true;
 
         /// <summary>
         /// Gets/Sets if the user is allowed to enable/disable overstrike mode.
@@ -671,18 +618,16 @@ namespace AvaloniaEdit
         [DefaultValue(false)]
         public bool AllowToggleOverstrikeMode
         {
-            get { return _allowToggleOverstrikeMode; }
+            get { return field; }
             set
             {
-                if (_allowToggleOverstrikeMode != value)
+                if (field != value)
                 {
-                    _allowToggleOverstrikeMode = value;
+                    field = value;
                     OnPropertyChanged(nameof(AllowToggleOverstrikeMode));
                 }
             }
         }
-
-        private bool _extendSelectionOnMouseUp = true;
 
         /// <summary>
         /// Gets/Sets if the mouse up event should extend the editor selection to the mouse position.
@@ -690,18 +635,16 @@ namespace AvaloniaEdit
         [DefaultValue(true)]
         public bool ExtendSelectionOnMouseUp
         {
-            get { return _extendSelectionOnMouseUp; }
+            get { return field; }
             set
             {
-                if (_extendSelectionOnMouseUp != value)
+                if (field != value)
                 {
-                    _extendSelectionOnMouseUp = value;
+                    field = value;
                     OnPropertyChanged(nameof(ExtendSelectionOnMouseUp));
                 }
             }
-        }
-
-        private CompletionAcceptAction _completionAcceptAction = CompletionAcceptAction.PointerPressed;
+        } = true;
 
         /// <summary>
         /// Gets/Sets the pointer action used to request the insertion of a completion item.
@@ -709,15 +652,39 @@ namespace AvaloniaEdit
         [DefaultValue(CompletionAcceptAction.PointerPressed)]
         public CompletionAcceptAction CompletionAcceptAction
         {
-            get { return _completionAcceptAction; }
+            get { return field; }
             set
             {
-                if (_completionAcceptAction != value)
+                if (field != value)
                 {
-                    _completionAcceptAction = value;
+                    field = value;
                     OnPropertyChanged(nameof(CompletionAcceptAction));
                 }
             }
-        }
+        } = CompletionAcceptAction.PointerPressed;
+
+        // The default LineHeightFactor matches the line height in the Visual Studio text editor.
+        private const double DefaultLineHeightFactor = 1.16;
+
+        /// <summary>
+        /// Gets/Sets a factor to increase or decrease the height of a text line.
+        /// (Does not affect the font size.)
+        /// </summary>
+        [DefaultValue(DefaultLineHeightFactor)]
+        public double LineHeightFactor
+        {
+            get { return field; }
+            set
+            {
+                if (value <= 0 || double.IsNaN(value) || double.IsInfinity(value))
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "value must be a positive number");
+                
+                if (field != value)
+                {
+                    field = value;
+                    OnPropertyChanged(nameof(LineHeightFactor));
+                }
+            }
+        } = DefaultLineHeightFactor;
     }
 }

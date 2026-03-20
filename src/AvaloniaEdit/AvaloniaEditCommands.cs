@@ -18,9 +18,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using Avalonia;
 using Avalonia.Input;
-using Avalonia.Platform;
 
 namespace AvaloniaEdit
 {

@@ -76,7 +76,13 @@ namespace AvaloniaEdit.Document
 		{
 			return _rope.ToString(offset, length);
 		}
-		
+
+		/// <inheritdoc/>
+		public ReadOnlyMemory<char> GetTextAsMemory(int offset, int length)
+		{
+			return _rope.GetMemory(offset, length);
+		}
+
 		/// <inheritdoc/>
 		public string GetText(ISegment segment)
 		{

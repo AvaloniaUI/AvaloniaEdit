@@ -24,9 +24,7 @@ using Avalonia.Input;
 using Avalonia.Input.TextInput;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
@@ -176,7 +174,6 @@ namespace AvaloniaEdit.Editing
         /// <remarks><inheritdoc cref="ITextAreaInputHandler"/></remarks>
         public TextAreaDefaultInputHandler DefaultInputHandler { get; }
 
-        private ITextAreaInputHandler _activeInputHandler;
         private bool _isChangingInputHandler;
 
         /// <summary>
@@ -186,14 +183,15 @@ namespace AvaloniaEdit.Editing
         /// <remarks><inheritdoc cref="ITextAreaInputHandler"/></remarks>
         public ITextAreaInputHandler ActiveInputHandler
         {
-            get => _activeInputHandler;
+            get;
             set
             {
                 if (value != null && value.TextArea != this)
-                    throw new ArgumentException("The input handler was created for a different text area than this one.");
+                    throw new ArgumentException(
+                        "The input handler was created for a different text area than this one.");
                 if (_isChangingInputHandler)
                     throw new InvalidOperationException("Cannot set ActiveInputHandler recursively");
-                if (_activeInputHandler != value)
+                if (field != value)
                 {
                     _isChangingInputHandler = true;
                     try
@@ -202,14 +200,15 @@ namespace AvaloniaEdit.Editing
                         PopStackedInputHandler(StackedInputHandlers.LastOrDefault());
                         Debug.Assert(StackedInputHandlers.IsEmpty);
 
-                        _activeInputHandler?.Detach();
-                        _activeInputHandler = value;
+                        field?.Detach();
+                        field = value;
                         value?.Attach();
                     }
                     finally
                     {
                         _isChangingInputHandler = false;
                     }
+
                     ActiveInputHandlerChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -732,16 +731,14 @@ namespace AvaloniaEdit.Editing
             }
         }
 
-        private IReadOnlySectionProvider _readOnlySectionProvider = NoReadOnlySections.Instance;
-
         /// <summary>
         /// Gets/Sets an object that provides read-only sections for the text area.
         /// </summary>
         public IReadOnlySectionProvider ReadOnlySectionProvider
         {
-            get => _readOnlySectionProvider;
-            set => _readOnlySectionProvider = value ?? throw new ArgumentNullException(nameof(value));
-        }
+            get;
+            set => field = value ?? throw new ArgumentNullException(nameof(value));
+        } = NoReadOnlySections.Instance;
 
         /// <summary>
         /// The <see cref="RightClickMovesCaret"/> property.
@@ -784,7 +781,7 @@ namespace AvaloniaEdit.Editing
             Focus();
         }
 
-        protected override void OnGotFocus(GotFocusEventArgs e)
+        protected override void OnGotFocus(FocusChangedEventArgs e)
         {
             base.OnGotFocus(e);
 
@@ -793,7 +790,7 @@ namespace AvaloniaEdit.Editing
             _imClient.SetTextArea(this);
         }
 
-        protected override void OnLostFocus(RoutedEventArgs e)
+        protected override void OnLostFocus(FocusChangedEventArgs e)
         {
             base.OnLostFocus(e);
 
@@ -1115,6 +1112,10 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         public event EventHandler<TextEventArgs> TextCopied;
 
+        /// <summary>
+        /// Accurs when new text is pasted inside the TextArea.
+        /// </summary>
+        public event EventHandler<TextEventArgs> TextPasted;
 
         event EventHandler ILogicalScrollable.ScrollInvalidated
         {
@@ -1125,6 +1126,11 @@ namespace AvaloniaEdit.Editing
         internal void OnTextCopied(TextEventArgs e)
         {
             TextCopied?.Invoke(this, e);
+        }
+
+        internal void OnTextPasted(TextEventArgs e)
+        {
+            TextPasted?.Invoke(this, e);
         }
 
         public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
@@ -1151,6 +1157,15 @@ namespace AvaloniaEdit.Editing
 
         Size IScrollable.Viewport => _logicalScrollable?.Viewport ?? default(Size);
 
+        bool IScrollable.CanHorizontallyScroll
+        {
+            get => _logicalScrollable?.CanHorizontallyScroll ?? default(bool);
+        }
+
+        bool IScrollable.CanVerticallyScroll
+        {
+            get => _logicalScrollable?.CanVerticallyScroll ?? default(bool);
+        }
         bool ILogicalScrollable.CanHorizontallyScroll
         {
             get => _logicalScrollable?.CanHorizontallyScroll ?? default(bool);
