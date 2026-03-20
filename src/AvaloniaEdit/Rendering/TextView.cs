@@ -2090,6 +2090,10 @@ namespace AvaloniaEdit.Rendering
             }
         }
 
+        bool IScrollable.CanHorizontallyScroll => _canHorizontallyScroll;
+
+        bool IScrollable.CanVerticallyScroll => _canVerticallyScroll;
+
         bool ILogicalScrollable.IsLogicalScrollEnabled => true;
 
         Size ILogicalScrollable.ScrollSize => new Size(10, 50);

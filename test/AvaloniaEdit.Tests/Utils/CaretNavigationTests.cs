@@ -18,6 +18,7 @@
 
 using AvaloniaEdit.Document;
 using NUnit.Framework;
+using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
 namespace AvaloniaEdit.Utils
 {

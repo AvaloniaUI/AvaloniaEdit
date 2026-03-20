@@ -7,10 +7,10 @@ jobs:
   steps:
 
   - task: UseDotNet@2
-    displayName: 'Install .NET 8 SDK'
+    displayName: 'Install .NET 10 SDK'
     inputs:
       packageType: 'sdk'
-      version: '8.x'
+      version: '10.x'
 
   - task: DotNetCoreCLI@2
     inputs:
