@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using AvaloniaEdit.Document;
-using System;
 using System.Linq;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Legacy.ClassicAssert;

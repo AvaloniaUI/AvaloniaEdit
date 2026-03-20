@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
     <PackageDescription>TextMate integration for AvaloniaEdit.</PackageDescription>
   </PropertyGroup>
 
@@ -11,9 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-    <PackageReference Include="TextMateSharp" Version="$(TextMateSharpVersion)" />
-    <PackageReference Include="TextMateSharp.Grammars" Version="$(TextMateSharpVersion)" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="TextMateSharp" />
+    <PackageReference Include="TextMateSharp.Grammars" />
   </ItemGroup>
 
 </Project>

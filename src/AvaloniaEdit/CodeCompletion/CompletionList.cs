@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Avalonia;
@@ -106,19 +105,17 @@ namespace AvaloniaEdit.CodeCompletion
         /// </summary>
         public CompletionAcceptAction CompletionAcceptAction
         {
-            get => _completionAcceptAction;
+            get;
             set
             {
-                if (_completionAcceptAction == value)
+                if (field == value)
                     return;
 
-                RemovePointerHandler(_completionAcceptAction);
-                _completionAcceptAction = value;
+                RemovePointerHandler(field);
+                field = value;
                 AddPointerHandler(value);
             }
         }
-
-        private CompletionAcceptAction _completionAcceptAction;
 
         /// <summary>
         /// Gets or sets the array of keys that are supposed to request insertion of the completion.

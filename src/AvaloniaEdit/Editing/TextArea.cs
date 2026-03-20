@@ -24,9 +24,7 @@ using Avalonia.Input;
 using Avalonia.Input.TextInput;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
@@ -176,7 +174,6 @@ namespace AvaloniaEdit.Editing
         /// <remarks><inheritdoc cref="ITextAreaInputHandler"/></remarks>
         public TextAreaDefaultInputHandler DefaultInputHandler { get; }
 
-        private ITextAreaInputHandler _activeInputHandler;
         private bool _isChangingInputHandler;
 
         /// <summary>
@@ -186,14 +183,15 @@ namespace AvaloniaEdit.Editing
         /// <remarks><inheritdoc cref="ITextAreaInputHandler"/></remarks>
         public ITextAreaInputHandler ActiveInputHandler
         {
-            get => _activeInputHandler;
+            get;
             set
             {
                 if (value != null && value.TextArea != this)
-                    throw new ArgumentException("The input handler was created for a different text area than this one.");
+                    throw new ArgumentException(
+                        "The input handler was created for a different text area than this one.");
                 if (_isChangingInputHandler)
                     throw new InvalidOperationException("Cannot set ActiveInputHandler recursively");
-                if (_activeInputHandler != value)
+                if (field != value)
                 {
                     _isChangingInputHandler = true;
                     try
@@ -202,14 +200,15 @@ namespace AvaloniaEdit.Editing
                         PopStackedInputHandler(StackedInputHandlers.LastOrDefault());
                         Debug.Assert(StackedInputHandlers.IsEmpty);
 
-                        _activeInputHandler?.Detach();
-                        _activeInputHandler = value;
+                        field?.Detach();
+                        field = value;
                         value?.Attach();
                     }
                     finally
                     {
                         _isChangingInputHandler = false;
                     }
+
                     ActiveInputHandlerChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -732,16 +731,14 @@ namespace AvaloniaEdit.Editing
             }
         }
 
-        private IReadOnlySectionProvider _readOnlySectionProvider = NoReadOnlySections.Instance;
-
         /// <summary>
         /// Gets/Sets an object that provides read-only sections for the text area.
         /// </summary>
         public IReadOnlySectionProvider ReadOnlySectionProvider
         {
-            get => _readOnlySectionProvider;
-            set => _readOnlySectionProvider = value ?? throw new ArgumentNullException(nameof(value));
-        }
+            get;
+            set => field = value ?? throw new ArgumentNullException(nameof(value));
+        } = NoReadOnlySections.Instance;
 
         /// <summary>
         /// The <see cref="RightClickMovesCaret"/> property.

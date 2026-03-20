@@ -30,7 +30,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 
 namespace AvaloniaEdit.CodeCompletion
 {

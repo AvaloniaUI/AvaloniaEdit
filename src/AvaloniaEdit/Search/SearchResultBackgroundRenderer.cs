@@ -24,8 +24,6 @@ using AvaloniaEdit.Rendering;
 
 namespace AvaloniaEdit.Search
 {
-    using Avalonia.Media.Immutable;
-
     internal class SearchResultBackgroundRenderer : IBackgroundRenderer
     {
         public TextSegmentCollection<SearchResult> CurrentResults { get; } = new TextSegmentCollection<SearchResult>();
