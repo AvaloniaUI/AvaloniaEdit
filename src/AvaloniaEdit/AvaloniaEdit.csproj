@@ -12,12 +12,10 @@
   <ItemGroup>
     <EmbeddedResource Include="**\*.xshd;**\*.resx;" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
     <AvaloniaResource Include="**\*.xaml;Assets\*;" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
-
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.6.0" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,12 +32,4 @@
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-  <Target Name="ChangeAliasesOfSystemDrawing" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
-    <ItemGroup>
-      <ReferencePath Condition="'%(FileName)' == 'Splat'">
-        <Aliases>SystemDrawing</Aliases>
-      </ReferencePath>
-    </ItemGroup>
-  </Target>
 </Project>
