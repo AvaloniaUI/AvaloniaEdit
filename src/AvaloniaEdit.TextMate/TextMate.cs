@@ -25,7 +25,6 @@ namespace AvaloniaEdit.TextMate
 
         public class Installation
         {
-            private IRegistryOptions _textMateRegistryOptions;
             private Registry _textMateRegistry;
             private TextEditor _editor;
             private TextEditorModel _editorModel;
@@ -33,14 +32,14 @@ namespace AvaloniaEdit.TextMate
             private TMModel _tmModel;
             private TextMateColoringTransformer _transformer;
             private ReadOnlyDictionary<string, string> _themeColorsDictionary;
-            public IRegistryOptions RegistryOptions { get { return _textMateRegistryOptions; } }
+            public IRegistryOptions RegistryOptions { get { return field; } }
             public TextEditorModel EditorModel { get { return _editorModel; } }
 
             public event EventHandler<Installation> AppliedTheme;
 
             public Installation(TextEditor editor, IRegistryOptions registryOptions, bool initCurrentDocument = true)
             {
-                _textMateRegistryOptions = registryOptions;
+                RegistryOptions = registryOptions;
                 _textMateRegistry = new Registry(registryOptions);
 
                 _editor = editor;

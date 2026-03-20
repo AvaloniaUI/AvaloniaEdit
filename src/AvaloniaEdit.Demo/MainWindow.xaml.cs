@@ -401,7 +401,6 @@ namespace AvaloniaEdit.Demo
         private class MyOverloadProvider : IOverloadProvider
         {
             private readonly IList<(string header, string content)> _items;
-            private int _selectedIndex;
 
             public MyOverloadProvider(IList<(string header, string content)> items)
             {
@@ -411,10 +410,10 @@ namespace AvaloniaEdit.Demo
 
             public int SelectedIndex
             {
-                get => _selectedIndex;
+                get;
                 set
                 {
-                    _selectedIndex = value;
+                    field = value;
                     OnPropertyChanged();
                     // ReSharper disable ExplicitCallerInfoArgument
                     OnPropertyChanged(nameof(CurrentHeader));

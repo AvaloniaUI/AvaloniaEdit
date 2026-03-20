@@ -1135,26 +1135,24 @@ namespace AvaloniaEdit.Document
 
         #region Service Provider
 
-        private IServiceProvider _serviceProvider;
-
         internal IServiceProvider ServiceProvider
         {
             get
             {
                 VerifyAccess();
-                if (_serviceProvider == null)
+                if (field == null)
                 {
                     var container = new ServiceContainer();
                     container.AddService(this);
                     container.AddService<IDocument>(this);
-                    _serviceProvider = container;
+                    field = container;
                 }
-                return _serviceProvider;
+                return field;
             }
             set
             {
                 VerifyAccess();
-                _serviceProvider = value ?? throw new ArgumentNullException(nameof(value));
+                field = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 
@@ -1167,8 +1165,6 @@ namespace AvaloniaEdit.Document
 
         #region FileName
 
-        private string _fileName;
-
         /// <inheritdoc/>
         public event EventHandler FileNameChanged;
 
@@ -1180,12 +1176,12 @@ namespace AvaloniaEdit.Document
         /// <inheritdoc/>
         public string FileName
         {
-            get { return _fileName; }
+            get { return field; }
             set
             {
-                if (_fileName != value)
+                if (field != value)
                 {
-                    _fileName = value;
+                    field = value;
                     OnFileNameChanged(EventArgs.Empty);
                 }
             }
