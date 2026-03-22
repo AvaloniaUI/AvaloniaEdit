@@ -111,7 +111,7 @@ namespace AvaloniaEdit.Folding
                 else
                     firstErrorOffset = 0;
             }
-            foldMarkers.Sort((a, b) => a.StartOffset.CompareTo(b.StartOffset));
+            foldMarkers.Sort(static (a, b) => a.StartOffset.CompareTo(b.StartOffset));
             return foldMarkers;
         }
 
