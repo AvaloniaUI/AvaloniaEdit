@@ -60,7 +60,7 @@ namespace AvaloniaEdit.Folding
         {
             try
             {
-                var reader = XmlReader.Create(document.CreateReader());
+                using var reader = XmlReader.Create(document.CreateReader());
                 return CreateNewFoldings(document, reader, out firstErrorOffset);
             }
             catch (XmlException)
