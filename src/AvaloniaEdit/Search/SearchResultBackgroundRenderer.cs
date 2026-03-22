@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Linq;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
@@ -60,8 +59,8 @@ namespace AvaloniaEdit.Search
             if (visualLines.Count == 0)
                 return;
 
-            var viewStart = visualLines.First().FirstDocumentLine.Offset;
-            var viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
+            var viewStart = visualLines[0].FirstDocumentLine.Offset;
+            var viewEnd = visualLines[^1].LastDocumentLine.EndOffset;
 
             foreach (var result in CurrentResults.FindOverlappingSegments(viewStart, viewEnd - viewStart))
             {

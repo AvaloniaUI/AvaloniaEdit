@@ -21,11 +21,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Avalonia;
-using AvaloniaEdit.Document;
-using Avalonia.Input;
-using AvaloniaEdit.Utils;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Editing
 {
@@ -33,7 +33,7 @@ namespace AvaloniaEdit.Editing
     /// We re-use the CommandBinding and InputBinding instances between multiple text areas,
     /// so this class is static.
     /// </summary>
-    internal class EditingCommandHandler
+    internal static class EditingCommandHandler
     {
         /// <summary>
         /// Creates a new <see cref="TextAreaInputHandler"/> for the text area.
@@ -62,7 +62,7 @@ namespace AvaloniaEdit.Editing
         }
 
         static EditingCommandHandler()
-        {            
+        {
             AddBinding(EditingCommands.Delete, KeyModifiers.None, Key.Delete, OnDelete(CaretMovementType.CharRight));
             AddBinding(EditingCommands.DeleteNextWord, KeyModifiers.Control, Key.Delete,
                 OnDelete(CaretMovementType.WordRight));
@@ -130,8 +130,8 @@ namespace AvaloniaEdit.Editing
                         }
                         else if (defaultSegmentType == DefaultSegmentType.WholeDocument)
                         {
-                            start = textArea.Document.Lines.First();
-                            end = textArea.Document.Lines.Last();
+                            start = textArea.Document.Lines[0];
+                            end = textArea.Document.Lines[^1];
                         }
                         else
                         {
@@ -452,7 +452,7 @@ namespace AvaloniaEdit.Editing
             ISegment wholeLine = new SimpleSegment(line.Offset, line.TotalLength);
             var text = textArea.Document.GetText(wholeLine);
             // Ignore empty line copy
-            if(string.IsNullOrEmpty(text)) return false;
+            if (string.IsNullOrEmpty(text)) return false;
             // Ensure we use the appropriate newline sequence for the OS
             text = TextUtilities.NormalizeNewLines(text, Environment.NewLine);
 
