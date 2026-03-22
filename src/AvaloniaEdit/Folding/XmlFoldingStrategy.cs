@@ -214,7 +214,7 @@ namespace AvaloniaEdit.Folding
                 reader.MoveToAttribute(i);
 
                 text.Append(reader.Name);
-                text.Append("=");
+                text.Append('=');
                 text.Append('"');
                 text.Append(XmlEncodeAttributeValue(reader.Value, '"'));
                 text.Append('"');
@@ -223,7 +223,7 @@ namespace AvaloniaEdit.Folding
                 // last attribute.
                 if (i < reader.AttributeCount - 1)
                 {
-                    text.Append(" ");
+                    text.Append(' ');
                 }
             }
 
