@@ -1,5 +1,5 @@
 variables:
-  packageVersion: '11.4.999-cibuild00$(Build.BuildId)-beta'
+  packageVersion: '12.0.999-cibuild00$(Build.BuildId)-beta'
 jobs:
 - job: Windows
   pool:
