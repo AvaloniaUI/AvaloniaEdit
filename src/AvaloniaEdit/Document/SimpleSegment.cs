@@ -94,7 +94,7 @@ namespace AvaloniaEdit.Document
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"[Offset={Offset}, Length={Length}]";
+            return string.Create(CultureInfo.InvariantCulture, $"[Offset={Offset}, Length={Length}]");
         }
     }
 
@@ -165,7 +165,7 @@ namespace AvaloniaEdit.Document
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "[Offset=" + Offset.ToString(CultureInfo.InvariantCulture) + ", EndOffset=" + EndOffset.ToString(CultureInfo.InvariantCulture) + "]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(Offset)}={Offset}, {nameof(EndOffset)}={EndOffset}]");
         }
     }
 }

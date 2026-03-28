@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Utils;
 
@@ -163,7 +164,7 @@ namespace AvaloniaEdit.Editing
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "[SimpleSelection Start=" + _start + " End=" + _end + "]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(SimpleSelection)} Start={_start}, End={_end}]");
         }
     }
 }

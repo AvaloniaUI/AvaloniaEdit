@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System.Globalization;
 using AvaloniaEdit.Document;
 
 namespace AvaloniaEdit.Highlighting
@@ -45,7 +46,7 @@ namespace AvaloniaEdit.Highlighting
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"[HighlightedSection ({Offset}-{Offset + Length})={Color}]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(HighlightedSection)} ({Offset}-{Offset + Length})={Color}]");
 		}
 	}
 }

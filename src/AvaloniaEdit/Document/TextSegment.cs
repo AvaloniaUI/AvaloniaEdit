@@ -18,6 +18,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace AvaloniaEdit.Document
 {
@@ -265,14 +266,14 @@ namespace AvaloniaEdit.Document
         internal string ToDebugString()
         {
             return
-                $"[nodeLength={NodeLength} totalNodeLength={TotalNodeLength} distanceToMaxEnd={DistanceToMaxEnd} MaxEndOffset={StartOffset + DistanceToMaxEnd}]";
+                string.Create(CultureInfo.InvariantCulture, $"[nodeLength={NodeLength} totalNodeLength={TotalNodeLength} distanceToMaxEnd={DistanceToMaxEnd} MaxEndOffset={StartOffset + DistanceToMaxEnd}]");
         }
 #endif
 
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"[{GetType().Name} Offset={StartOffset} Length={Length} EndOffset={EndOffset}]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(TextSegment)} Offset={StartOffset} {nameof(Length)}={Length} {nameof(EndOffset)}={EndOffset}]");
         }
     }
 }

@@ -16,29 +16,30 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace AvaloniaEdit.Highlighting
 {
-	/// <summary>
+    /// <summary>
 	/// A highlighting rule.
 	/// </summary>
 	public class HighlightingRule
-	{
-		/// <summary>
-		/// Gets/Sets the regular expression for the rule.
-		/// </summary>
-		public Regex Regex { get; set; }
-		
-		/// <summary>
-		/// Gets/Sets the highlighting color.
-		/// </summary>
-		public HighlightingColor Color { get; set; }
-		
-		/// <inheritdoc/>
-		public override string ToString()
-		{
-			return "[" + GetType().Name + " " + Regex + "]";
-		}
-	}
+    {
+        /// <summary>
+        /// Gets/Sets the regular expression for the rule.
+        /// </summary>
+        public Regex Regex { get; set; }
+
+        /// <summary>
+        /// Gets/Sets the highlighting color.
+        /// </summary>
+        public HighlightingColor Color { get; set; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(HighlightingRule)} {Regex}]");
+        }
+    }
 }
