@@ -18,6 +18,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using AvaloniaEdit.Document;
 
 namespace AvaloniaEdit.Rendering
@@ -146,22 +147,16 @@ namespace AvaloniaEdit.Rendering
 #if DEBUG
 		public override string ToString()
 		{
-			return "[HeightTreeNode "
-				+ DocumentLine.LineNumber + " CS=" + GetCollapsedSections(CollapsedSections)
-				+ " Line.CS=" + GetCollapsedSections(LineNode.CollapsedSections)
-				+ " Line.Height=" + LineNode.Height
-				+ " TotalHeight=" + TotalHeight
-				+ "]";
+            return string.Create(CultureInfo.InvariantCulture,
+                $"[{nameof(HeightTreeNode)} {DocumentLine.LineNumber} CS={GetCollapsedSections(CollapsedSections)} Line.CS={GetCollapsedSections(LineNode.CollapsedSections)} Line.Height={LineNode.Height} {nameof(TotalHeight)}={TotalHeight}]");
 		}
 
 		static string GetCollapsedSections(List<CollapsedLineSection> list)
 		{
 			if (list == null)
 				return "{}";
-			return "{" +
-				string.Join(",",
-							list.ConvertAll(cs => cs.Id).ToArray())
-				+ "}";
+
+            return string.Create(CultureInfo.InvariantCulture, $"{{{string.Join(",", list.ConvertAll(cs => cs.Id).ToArray())}}}");
 		}
 #endif
 	}

@@ -107,10 +107,9 @@ namespace AvaloniaEdit.Indentation.CSharp
 
             public readonly override string ToString()
             {
-                return string.Format(
+                return string.Create(
                     CultureInfo.InvariantCulture,
-                    "[Block StartLine={0}, LastWord='{1}', Continuation={2}, OneLineBlock={3}, PreviousOneLineBlock={4}]",
-                    StartLine, LastWord, Continuation, OneLineBlock, PreviousOneLineBlock);
+                    $"[Block {nameof(StartLine)}={StartLine}, {nameof(LastWord)}='{LastWord}', {nameof(Continuation)}={Continuation}, {nameof(OneLineBlock)}={OneLineBlock}, {nameof(PreviousOneLineBlock)}={PreviousOneLineBlock}]");
             }
         }
 

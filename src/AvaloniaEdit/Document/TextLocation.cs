@@ -67,7 +67,7 @@ namespace AvaloniaEdit.Document
         /// </summary>
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "(Line {1}, Col {0})", Column, Line);
+            return string.Create(CultureInfo.InvariantCulture, $"({nameof(Line)} {Line}, Col {Column})");
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace AvaloniaEdit.Document
         {
             if (value is TextLocation loc && destinationType == typeof(string))
             {
-                return loc.Line.ToString(culture) + ";" + loc.Column.ToString(culture);
+                return string.Create(culture, $"{loc.Line};{loc.Column}");
             }
             throw new InvalidOperationException();
         }

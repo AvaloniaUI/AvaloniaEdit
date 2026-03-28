@@ -17,43 +17,44 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
+using System.Globalization;
 using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Highlighting
 {
-	/// <summary>
+    /// <summary>
 	/// A highlighting rule set describes a set of spans that are valid at a given code location.
 	/// </summary>
 	public class HighlightingRuleSet
-	{
-		/// <summary>
-		/// Creates a new RuleSet instance.
-		/// </summary>
-		public HighlightingRuleSet()
-		{
-			Spans = new NullSafeCollection<HighlightingSpan>();
-			Rules = new NullSafeCollection<HighlightingRule>();
-		}
-		
-		/// <summary>
-		/// Gets/Sets the name of the rule set.
-		/// </summary>
-		public string Name { get; set; }
-		
-		/// <summary>
-		/// Gets the list of spans.
-		/// </summary>
-		public IList<HighlightingSpan> Spans { get; }
-		
-		/// <summary>
-		/// Gets the list of rules.
-		/// </summary>
-		public IList<HighlightingRule> Rules { get; }
-		
-		/// <inheritdoc/>
-		public override string ToString()
-		{
-			return "[" + GetType().Name + " " + Name + "]";
-		}
-	}
+    {
+        /// <summary>
+        /// Creates a new RuleSet instance.
+        /// </summary>
+        public HighlightingRuleSet()
+        {
+            Spans = new NullSafeCollection<HighlightingSpan>();
+            Rules = new NullSafeCollection<HighlightingRule>();
+        }
+
+        /// <summary>
+        /// Gets/Sets the name of the rule set.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets the list of spans.
+        /// </summary>
+        public IList<HighlightingSpan> Spans { get; }
+
+        /// <summary>
+        /// Gets the list of rules.
+        /// </summary>
+        public IList<HighlightingRule> Rules { get; }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(HighlightingRuleSet)} {Name}]");
+        }
+    }
 }

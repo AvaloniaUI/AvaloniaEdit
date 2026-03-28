@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Globalization;
 
 namespace AvaloniaEdit.Document
 {
@@ -98,7 +99,7 @@ namespace AvaloniaEdit.Document
 		
 		public override string ToString()
 		{
-			return "[TextAnchorNode Length=" + Length + " TotalLength=" + TotalLength + " Target=" + Target + "]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(TextAnchorNode)} {nameof(Length)}={Length}, {nameof(TotalLength)}={TotalLength}, {nameof(Target)}={Target}]");
 		}
 	}
 }
