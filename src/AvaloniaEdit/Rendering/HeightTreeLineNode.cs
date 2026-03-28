@@ -32,7 +32,8 @@ namespace AvaloniaEdit.Rendering
         internal double Height;
         internal List<CollapsedLineSection> CollapsedSections;
 
-        internal bool IsDirectlyCollapsed {
+        internal readonly bool IsDirectlyCollapsed
+        {
             get { return CollapsedSections != null; }
         }
 
@@ -54,8 +55,10 @@ namespace AvaloniaEdit.Rendering
         /// <summary>
         /// Returns 0 if the line is directly collapsed, otherwise, returns <see cref="Height"/>.
         /// </summary>
-        internal double TotalHeight {
-            get {
+        internal readonly double TotalHeight
+        {
+            get
+            {
                 return IsDirectlyCollapsed ? 0 : Height;
             }
         }

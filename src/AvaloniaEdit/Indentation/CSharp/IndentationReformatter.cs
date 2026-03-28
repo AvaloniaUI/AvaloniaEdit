@@ -105,7 +105,7 @@ namespace AvaloniaEdit.Indentation.CSharp
                 LastWord = "";
             }
 
-            public override string ToString()
+            public readonly override string ToString()
             {
                 return string.Format(
                     CultureInfo.InvariantCulture,
@@ -179,7 +179,7 @@ namespace AvaloniaEdit.Indentation.CSharp
                     return;
                 indent.Append(_block.InnerIndent);
                 indent.Append(Repeat(set.IndentString, _block.OneLineBlock));
-                
+
                 if (doc.Text != indent.ToString())
                     doc.Text = indent.ToString();
                 return;
@@ -305,17 +305,17 @@ namespace AvaloniaEdit.Indentation.CSharp
                         {
                             _block.Indent(set.IndentString + set.IndentString);
                             /* oldBlock refers to the previous line, not the previous block
-							 * The block we want is not available anymore because it was never pushed.
-							 * } else if (oldBlock.OneLineBlock) {
-							// Inside a one-line-block is another statement
-							// with a full block: indent the inner full block
-							// by one additional level
-							block.Indent(set, set.IndentString + set.IndentString);
-							block.OuterIndent += set.IndentString;
-							// Indent current line if it starts with the '{' character
-							if (i == 0) {
-								oldBlock.InnerIndent += set.IndentString;
-							}*/
+                             * The block we want is not available anymore because it was never pushed.
+                             * } else if (oldBlock.OneLineBlock) {
+                            // Inside a one-line-block is another statement
+                            // with a full block: indent the inner full block
+                            // by one additional level
+                            block.Indent(set, set.IndentString + set.IndentString);
+                            block.OuterIndent += set.IndentString;
+                            // Indent current line if it starts with the '{' character
+                            if (i == 0) {
+                                oldBlock.InnerIndent += set.IndentString;
+                            }*/
                         }
                         else
                         {
