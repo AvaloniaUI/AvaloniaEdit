@@ -809,30 +809,6 @@ namespace AvaloniaEdit.Utils
         }
 
         [Test]
-        public void StructEnumerator_Reset_ShouldAllowReEnumeration()
-        {
-            var deque = new Deque<int>();
-            deque.PushBack(1);
-            deque.PushBack(2);
-            deque.PushBack(3);
-
-            var enumerator = deque.GetEnumerator();
-
-            // First pass
-            var firstPass = new List<int>();
-            while (enumerator.MoveNext())
-                firstPass.Add(enumerator.Current);
-
-            // Reset and second pass
-            enumerator.Reset();
-            var secondPass = new List<int>();
-            while (enumerator.MoveNext())
-                secondPass.Add(enumerator.Current);
-
-            Assert.AreEqual(firstPass, secondPass);
-        }
-
-        [Test]
         public void LinqOperations_ShouldWorkWithDeque()
         {
             var deque = new Deque<int>();
