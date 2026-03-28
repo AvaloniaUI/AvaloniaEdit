@@ -110,9 +110,9 @@ namespace AvaloniaEdit
         /// <inheritdoc/>
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                                 "[TextViewPosition Line={0} Column={1} VisualColumn={2} IsAtEndOfLine={3}]",
-                                 Line, Column, VisualColumn, IsAtEndOfLine);
+            return string.Create(
+                CultureInfo.InvariantCulture,
+                $"[{nameof(TextViewPosition)} {nameof(Line)}={Line} {nameof(Column)}={Column} {nameof(VisualColumn)}={VisualColumn} {nameof(IsAtEndOfLine)}={IsAtEndOfLine}]");
         }
 
         #region Equals and GetHashCode implementation

@@ -252,7 +252,7 @@ namespace AvaloniaEdit.Highlighting
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "[" + GetType().Name + " " + (string.IsNullOrEmpty(Name) ? ToCss() : Name) + "]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(HighlightingColor)} {(string.IsNullOrEmpty(Name) ? ToCss() : Name)}]");
         }
 
         /// <summary>

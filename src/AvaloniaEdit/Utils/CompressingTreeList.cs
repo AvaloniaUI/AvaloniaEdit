@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 
 namespace AvaloniaEdit.Utils
@@ -132,7 +133,7 @@ namespace AvaloniaEdit.Utils
 
             public override string ToString()
             {
-                return "[TotalCount=" + TotalCount + " Count=" + Count + " Value=" + Value + "]";
+                return string.Create(CultureInfo.InvariantCulture, $"[{nameof(TotalCount)}={TotalCount} {nameof(Count)}={Count} {nameof(Value)}={Value}]");
             }
         }
         #endregion
