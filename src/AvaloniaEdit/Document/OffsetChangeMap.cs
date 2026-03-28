@@ -216,7 +216,7 @@ namespace AvaloniaEdit.Document
     /// An entry in the OffsetChangeMap.
     /// This represents the offset of a document change (either insertion or removal, not both at once).
     /// </summary>
-	public struct OffsetChangeMapEntry : IEquatable<OffsetChangeMapEntry>
+    public readonly struct OffsetChangeMapEntry : IEquatable<OffsetChangeMapEntry>
     {
         // MSB: DefaultAnchorMovementIsBeforeInsertion
         private readonly uint _insertionLengthWithMovementFlag;

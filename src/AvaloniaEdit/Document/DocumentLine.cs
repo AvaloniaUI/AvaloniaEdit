@@ -269,10 +269,10 @@ namespace AvaloniaEdit.Document
         public override string ToString()
         {
             if (IsDeleted)
-                return "[DocumentLine deleted]";
-            return string.Format(
+                return string.Create(CultureInfo.InvariantCulture, $"[{nameof(DocumentLine)} deleted]");
+            return string.Create(
                 CultureInfo.InvariantCulture,
-                "[DocumentLine Number={0} Offset={1} Length={2}]", LineNumber, Offset, Length);
+                $"[{nameof(DocumentLine)} {nameof(LineNumber)}={LineNumber} {nameof(Offset)}={Offset} {nameof(Length)}={Length}]");
         }
         #endregion
     }

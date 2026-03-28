@@ -302,7 +302,7 @@ namespace AvaloniaEdit.Highlighting.Xshd
                     var definition = GetDefinition(position, colorReference.ReferencedDefinition);
                     var color = definition.GetNamedColor(colorReference.ReferencedElement);
                     if (color == null)
-                        throw Error(position, "Could not find color named '" + colorReference.ReferencedElement + "'.");
+                        throw Error(position, $"Could not find color named '{colorReference.ReferencedElement}'.");
                     return color;
                 }
                 return null;
@@ -316,7 +316,7 @@ namespace AvaloniaEdit.Highlighting.Xshd
                     throw Error(position, "Resolving references to other syntax definitions is not possible because the IHighlightingDefinitionReferenceResolver is null.");
                 var d = _resolver.GetDefinition(definitionName);
                 if (d == null)
-                    throw Error(position, "Could not find definition with name '" + definitionName + "'.");
+                    throw Error(position, $"Could not find definition with name '{definitionName}'.");
                 return d;
             }
 
@@ -331,7 +331,7 @@ namespace AvaloniaEdit.Highlighting.Xshd
                     var definition = GetDefinition(position, ruleSetReference.ReferencedDefinition);
                     var ruleSet = definition.GetNamedRuleSet(ruleSetReference.ReferencedElement);
                     if (ruleSet == null)
-                        throw Error(position, "Could not find rule set named '" + ruleSetReference.ReferencedElement + "'.");
+                        throw Error(position, $"Could not find rule set named '{ruleSetReference.ReferencedElement}'.");
                     return ruleSet;
                 }
                 return null;
@@ -347,9 +347,9 @@ namespace AvaloniaEdit.Highlighting.Xshd
                     if (endRegex == null)
                         endRegex = "$";
                     else if (span.EndRegexType == XshdRegexType.IgnorePatternWhitespace)
-                        endRegex = "($|" + endRegex + "\n)";
+                        endRegex = $"($|{endRegex}\n)";
                     else
-                        endRegex = "($|" + endRegex + ")";
+                        endRegex = $"($|{endRegex})";
                 }
                 var wholeSpanColor = GetColor(span, span.SpanColorReference);
                 return new HighlightingSpan
@@ -392,7 +392,7 @@ namespace AvaloniaEdit.Highlighting.Xshd
         {
             if (element.LineNumber > 0)
                 return new HighlightingDefinitionInvalidException(
-                    "Error at line " + element.LineNumber + ":\n" + message);
+                    $"Error at line {element.LineNumber}:\n{message}");
             return new HighlightingDefinitionInvalidException(message);
         }
 

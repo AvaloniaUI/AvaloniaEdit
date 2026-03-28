@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Avalonia;
@@ -408,7 +409,7 @@ namespace AvaloniaEdit.Editing
         {
             // It's possible that ToString() gets called on old (invalid) selections, e.g. for "change from... to..." debug message
             // make sure we don't crash even when the desired locations don't exist anymore.
-            return $"[RectangleSelection {_startLine} {_topLeftOffset} {_startXPos} to {_endLine} {_bottomRightOffset} {_endXPos}]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(RectangleSelection)} {_startLine} {_topLeftOffset} {_startXPos} to {_endLine} {_bottomRightOffset} {_endXPos}]");
         }
     }
 }

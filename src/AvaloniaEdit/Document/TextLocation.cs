@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2013 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2010-2013 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -31,7 +31,7 @@ namespace AvaloniaEdit.Document
     /// <see cref="IDocument.GetOffset(TextLocation)"/> to convert between offsets and TextLocations.
     /// </remarks>
     [TypeConverter(typeof(TextLocationConverter))]
-    public struct TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
+    public readonly struct TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
     {
         /// <summary>
         /// Represents no text location (0, 0).
@@ -67,7 +67,7 @@ namespace AvaloniaEdit.Document
         /// </summary>
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "(Line {1}, Col {0})", Column, Line);
+            return string.Create(CultureInfo.InvariantCulture, $"({nameof(Line)} {Line}, Col {Column})");
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace AvaloniaEdit.Document
         {
             if (value is TextLocation loc && destinationType == typeof(string))
             {
-                return loc.Line.ToString(culture) + ";" + loc.Column.ToString(culture);
+                return string.Create(culture, $"{loc.Line};{loc.Column}");
             }
             throw new InvalidOperationException();
         }

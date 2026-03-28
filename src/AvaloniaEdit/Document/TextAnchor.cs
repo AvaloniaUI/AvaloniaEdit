@@ -16,8 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using AvaloniaEdit.Utils;
+using System;
+using System.Globalization;
 
 namespace AvaloniaEdit.Document
 {
@@ -138,7 +139,7 @@ namespace AvaloniaEdit.Document
 	    /// <inheritdoc/>
 		public override string ToString()
 		{
-			return "[TextAnchor Offset=" + Offset + "]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(TextAnchor)} {nameof(Offset)}={Offset}]");
 		}
 	}
 }

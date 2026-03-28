@@ -27,7 +27,7 @@ namespace AvaloniaEdit.Document
     /// Represents a simple segment (Offset,Length pair) that is not automatically updated
     /// on document changes.
     /// </summary>
-    public struct SimpleSegment : IEquatable<SimpleSegment>, ISegment
+    public readonly struct SimpleSegment : IEquatable<SimpleSegment>, ISegment
     {
         public static readonly SimpleSegment Invalid = new SimpleSegment(-1, -1);
 
@@ -94,7 +94,7 @@ namespace AvaloniaEdit.Document
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"[Offset={Offset}, Length={Length}]";
+            return string.Create(CultureInfo.InvariantCulture, $"[Offset={Offset}, Length={Length}]");
         }
     }
 
@@ -165,7 +165,7 @@ namespace AvaloniaEdit.Document
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "[Offset=" + Offset.ToString(CultureInfo.InvariantCulture) + ", EndOffset=" + EndOffset.ToString(CultureInfo.InvariantCulture) + "]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(Offset)}={Offset}, {nameof(EndOffset)}={EndOffset}]");
         }
     }
 }
