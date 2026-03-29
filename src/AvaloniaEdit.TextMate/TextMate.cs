@@ -44,6 +44,8 @@ namespace AvaloniaEdit.TextMate
             private readonly Registry _textMateRegistry;
             private readonly TextEditor _editor;
             private Action<Exception> _exceptionHandler;
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2213:Disposable fields should be disposed",
+                Justification = "Disposed in Dispose(bool) and DisposeEditorModel methods")]
             private TextEditorModel _editorModel;
             private IGrammar _grammar;
             private TMModel _tmModel;

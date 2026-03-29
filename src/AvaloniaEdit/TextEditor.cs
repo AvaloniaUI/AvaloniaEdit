@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -76,7 +76,7 @@ namespace AvaloniaEdit
         /// </summary>
         protected TextEditor(TextArea textArea) : this(textArea, new TextDocument())
         {
-            
+
         }
 
         protected TextEditor(TextArea textArea, TextDocument document)
@@ -620,7 +620,7 @@ namespace AvaloniaEdit
         }
 
         #endregion
-        
+
         #region LineNumbersMargin
         /// <summary>
         /// LineNumbersMargin dependency property.
@@ -871,7 +871,7 @@ namespace AvaloniaEdit
         /// </summary>
         public bool CanRedo
         {
-           get { return ApplicationCommands.Redo.CanExecute(null, TextArea); }
+            get { return ApplicationCommands.Redo.CanExecute(null, TextArea); }
         }
 
         /// <summary>
@@ -1131,6 +1131,8 @@ namespace AvaloniaEdit
         /// <remarks>
         /// This method sets <see cref="IsModified"/> to false.
         /// </remarks>
+        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope",
+            Justification = "Method does not own the stream and should not dispose it.")]
         public void Save(Stream stream)
         {
             if (stream == null)
