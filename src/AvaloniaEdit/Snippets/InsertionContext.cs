@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AvaloniaEdit.Document;
@@ -37,6 +38,18 @@ namespace AvaloniaEdit.Snippets
             RaisingDeactivated,
             Deactivated
         }
+
+        /// <summary>
+        /// Pre-compiled, SIMD-accelerated search values for newline characters
+        /// used during snippet text insertion.
+        /// </summary>
+        private static readonly SearchValues<char> _newlineChars = SearchValues.Create("\r\n");
+
+        /// <summary>
+        /// Pre-compiled, SIMD-accelerated search values for characters that require
+        /// special handling during snippet text insertion (tabs and newline characters).
+        /// </summary>
+        private static readonly SearchValues<char> _tabAndNewlineChars = SearchValues.Create("\t\r\n");
 
         private Status _currentStatus = Status.Insertion;
 
