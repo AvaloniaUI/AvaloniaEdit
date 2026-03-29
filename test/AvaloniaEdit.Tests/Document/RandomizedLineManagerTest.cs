@@ -120,7 +120,7 @@ namespace AvaloniaEdit.Document
 		{
 			char[] chars = { 'a', 'b', '\r', '\n' };
 			char[] buffer = new char[20];
-			HeightTree heightTree = new HeightTree(document, 10);
+            using HeightTree heightTree = new HeightTree(document, 10);
 			List<CollapsedLineSection> collapsedSections = new List<CollapsedLineSection>();
 			for (int i = 0; i < 2500; i++) {
 //				Console.WriteLine("Iteration " + i);

@@ -51,7 +51,7 @@ namespace AvaloniaEdit.TextMate
             private readonly bool _ownsTransformer;
             private ReadOnlyDictionary<string, string> _themeColorsDictionary;
             public IRegistryOptions RegistryOptions { get; }
-            public TextEditorModel EditorModel { get { return Volatile.Read(ref _editorModel); } }
+            public TextEditorModel EditorModel => Volatile.Read(ref _editorModel);
 
             public event EventHandler<Installation> AppliedTheme;
 

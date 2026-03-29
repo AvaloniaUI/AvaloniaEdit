@@ -50,9 +50,9 @@ namespace AvaloniaEdit.Utils
 			Assert.AreEqual("Hello, World", rope.ToString());
 		}
 		
-		string BuildLongString(int lines)
+        private static string BuildLongString(int lines)
 		{
-			StringWriter w = new StringWriter();
+            using StringWriter w = new StringWriter();
 			w.NewLine = "\n";
 			for (int i = 1; i <= lines; i++) {
 				w.WriteLine(i.ToString());

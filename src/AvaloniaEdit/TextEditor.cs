@@ -18,15 +18,11 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Avalonia;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Editing;
-using AvaloniaEdit.Highlighting;
-using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Utils;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
@@ -34,7 +30,12 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Editing;
+using AvaloniaEdit.Highlighting;
+using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Search;
+using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit
 {
@@ -691,7 +692,7 @@ namespace AvaloniaEdit
         /// </summary>
         public void Delete()
         {
-            if(CanDelete)
+            if (CanDelete)
             {
                 ApplicationCommands.Delete.Execute(null, TextArea);
             }

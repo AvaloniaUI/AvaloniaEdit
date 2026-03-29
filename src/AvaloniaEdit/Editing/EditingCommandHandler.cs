@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -416,7 +416,7 @@ namespace AvaloniaEdit.Editing
             text = TextUtilities.NormalizeNewLines(text, Environment.NewLine);
 
 
-            var df = new DataTransfer();
+            using var df = new DataTransfer();
             var item = new DataTransferItem();
             item.Set(DataFormat.Text, text);
             df.Add(item);
@@ -482,7 +482,7 @@ namespace AvaloniaEdit.Editing
             //textArea.RaiseEvent(copyingEventArgs);
             //if (copyingEventArgs.CommandCancelled)
             //    return false;
-            var df = new DataTransfer();
+            using var df = new DataTransfer();
             var item = new DataTransferItem();
             item.Set(DataFormat.Text, text);
             df.Add(item);
