@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -346,6 +346,158 @@ namespace AvaloniaEdit.Tests.Snippets
         }
 
         #endregion InsertText - tab replacement tests
+
+        #region InsertText - tab with newline characters tests
+
+        [AvaloniaTest]
+        public void InsertText_Tab_ShouldNormalizeNewlines_When_TabContainsLineFeed()
+        {
+            // arrange - create a TextArea with custom options that returns Tab with newline
+            var textArea = CreateTextAreaWithCustomIndentation("    code\n", "  \n  ");
+            var context = CreateContext(textArea, 4);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            // Verify Tab contains newline
+            Assert.IsTrue(context.Tab.Contains('\n'));
+            Assert.AreEqual("  \n  ", context.Tab);
+
+            // act - input text contains a tab character
+            context.InsertText("x\ty");
+
+            // assert - tab should be replaced with Tab string, and its embedded newline normalized
+            // Expected: "    " + "x" + "  " + term + indent + "  " + "y" + "code\n"
+            string expected = "    x  " + term + indent + "  y" + "code\n";
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
+        [AvaloniaTest]
+        public void InsertText_Tab_ShouldNormalizeNewlines_When_TabContainsCarriageReturn()
+        {
+            // arrange
+            var textArea = CreateTextAreaWithCustomIndentation("start\n", "\t\r\t");
+            var context = CreateContext(textArea, 0);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            // Verify Tab contains newline
+            Assert.IsTrue(context.Tab.Contains('\r'));
+            Assert.AreEqual("\t\r\t", context.Tab);
+
+            // act
+            context.InsertText("a\tb");
+
+            // assert - the \r in Tab should be normalized to term + indent
+            string expected = "a\t" + term + indent + "\tb" + "start\n";
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
+        [AvaloniaTest]
+        public void InsertText_Tab_ShouldNormalizeNewlines_When_TabContainsCrLf()
+        {
+            // arrange
+            var textArea = CreateTextAreaWithCustomIndentation("    \n", "--\r\n++");
+            var context = CreateContext(textArea, 4);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            // Verify Tab contains newline
+            Assert.IsTrue(context.Tab.Contains("\r\n"));
+            Assert.AreEqual("--\r\n++", context.Tab);
+
+            // act
+            context.InsertText("\t");
+
+            // assert - the \r\n in Tab should be normalized to term + indent
+            string expected = "    --" + term + indent + "++" + "\n";
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
+        [AvaloniaTest]
+        public void InsertText_MultipleTabs_ShouldNormalizeNewlines_When_TabContainsNewline()
+        {
+            // arrange
+            var textArea = CreateTextAreaWithCustomIndentation("", ">\n<");
+            var context = CreateContext(textArea, 0);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            Assert.AreEqual(">\n<", context.Tab);
+
+            // act - input contains multiple tabs
+            context.InsertText("\t\t");
+
+            // assert - each tab's embedded newline should be normalized
+            string expected = ">" + term + indent + "<"
+                            + ">" + term + indent + "<";
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
+        [AvaloniaTest]
+        public void InsertText_TabWithSurroundingText_ShouldNormalizeEmbeddedNewlines()
+        {
+            // arrange
+            var textArea = CreateTextAreaWithCustomIndentation("    \n", " [\n] ");
+            var context = CreateContext(textArea, 4);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            Assert.AreEqual(" [\n] ", context.Tab);
+
+            // act
+            context.InsertText("before\tmiddle\tafter");
+
+            // assert
+            string expected = "    before ["
+                            + term + indent + "] middle ["
+                            + term + indent + "] after"
+                            + "\n";
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
+        [AvaloniaTest]
+        public void InsertText_Tab_ShouldNormalizeMixedNewlines_When_TabContainsMultipleNewlineTypes()
+        {
+            // arrange
+            var textArea = CreateTextAreaWithCustomIndentation("", "a\rb\nc\r\nd");
+            var context = CreateContext(textArea, 0);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            Assert.IsTrue(context.Tab.Contains('\r') || context.Tab.Contains('\n'));
+
+            // act
+            context.InsertText("\t");
+
+            // assert - all newlines in Tab should be normalized
+            string expected = "a" + term + indent
+                            + "b" + term + indent
+                            + "c" + term + indent
+                            + "d";
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
+        [AvaloniaTest]
+        public void InsertText_TabAndInputNewline_ShouldNormalizeBoth_When_TabContainsNewline()
+        {
+            // arrange
+            var textArea = CreateTextAreaWithCustomIndentation("    \n", ">>>\n<<<");
+            var context = CreateContext(textArea, 4);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            // act - input contains both tab and explicit newline
+            context.InsertText("x\t\ny");
+
+            // assert - both the tab's embedded newline and the explicit \n should be normalized
+            string expected = "    x>>>"
+                            + term + indent + "<<<"
+                            + term + indent + "y"
+                            + "\n";
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
+        #endregion InsertText - tab with newline characters tests
 
         #region InsertText - newline normalization tests (\n)
 
@@ -1532,6 +1684,38 @@ namespace AvaloniaEdit.Tests.Snippets
         }
 
         /// <summary>
+        /// Creates a <see cref="TextArea"/> with custom IndentationString for testing
+        /// scenarios where Tab property contains newline characters.
+        /// </summary>
+        private static TextArea CreateTextAreaWithCustomIndentation(string documentText, string customIndentation)
+        {
+            var textArea = new TextArea
+            {
+                Document = new TextDocument(documentText),
+                Options = new TestEditorOptionsWithCustomIndentation(customIndentation)
+            };
+
+            return textArea;
+        }
+
+        /// <summary>
+        /// Custom <see cref="TextEditorOptions"/> that overrides GetIndentationString
+        /// to return a custom indentation string, used for testing edge cases where
+        /// the indentation string contains newline characters.
+        /// </summary>
+        private sealed class TestEditorOptionsWithCustomIndentation : TextEditorOptions
+        {
+            private readonly string _customIndentation;
+
+            public TestEditorOptionsWithCustomIndentation(string customIndentation)
+            {
+                _customIndentation = customIndentation ?? throw new ArgumentNullException(nameof(customIndentation));
+            }
+
+            public override string GetIndentationString(int column) => _customIndentation;
+        }
+
+        /// <summary>
         /// Simple stub implementation of <see cref="IActiveElement"/> for testing.
         /// Tracks whether OnInsertionCompleted and Deactivate were called.
         /// </summary>
@@ -1541,7 +1725,7 @@ namespace AvaloniaEdit.Tests.Snippets
             public bool DeactivateCalled { get; private set; }
             public SnippetEventArgs DeactivateArgs { get; private set; }
             public bool IsEditable { get; init; }
-            public ISegment Segment { get; init; }
+            public ISegment Segment { get; init; } = new TextSegment();
 
             public void OnInsertionCompleted()
             {
