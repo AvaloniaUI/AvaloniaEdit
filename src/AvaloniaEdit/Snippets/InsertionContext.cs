@@ -169,7 +169,7 @@ namespace AvaloniaEdit.Snippets
         {
             if (owner == null)
                 throw new ArgumentNullException(nameof(owner));
-            return _elementMap.TryGetValue(owner, out var element) ? element : null;
+            return _elementMap.GetValueOrDefault(owner);
         }
 
         /// <summary>
