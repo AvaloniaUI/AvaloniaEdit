@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 
@@ -158,7 +157,7 @@ namespace AvaloniaEdit.Highlighting
             Debug.Assert(newOffsets.Length == newColors.Length);
             Debug.Assert(newOffsets[0] == 0);
             // remove everything not before offset:
-            while (_stateChangeOffsets.Count > 0 && _stateChangeOffsets.Last() >= offset)
+            while (_stateChangeOffsets.Count > 0 && _stateChangeOffsets[^1] >= offset)
             {
                 _stateChangeOffsets.RemoveAt(_stateChangeOffsets.Count - 1);
                 _stateChanges.RemoveAt(_stateChanges.Count - 1);

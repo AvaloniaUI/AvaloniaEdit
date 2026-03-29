@@ -311,7 +311,7 @@ namespace AvaloniaEdit.Utils
 #if DEBUG
                     // In debug builds, explicitly mark left node as 'damaged' - but no one else should be using it
                     // because it's not shared.
-                    Left.Contents = Empty<T>.Array;
+                    Left.Contents = Array.Empty<T>();
 #endif
                 }
                 Left = null;

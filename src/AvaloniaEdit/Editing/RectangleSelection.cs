@@ -81,7 +81,7 @@ namespace AvaloniaEdit.Editing
         /// Key gesture: Alt+Shift+End
         /// </summary>
         public static readonly RoutedCommand BoxSelectToLineEnd = new RoutedCommand(nameof(BoxSelectToLineEnd));
-        
+
         #endregion
 
         private TextDocument _document;
@@ -107,8 +107,8 @@ namespace AvaloniaEdit.Editing
             _startXPos = GetXPos(textArea, start);
             _endXPos = GetXPos(textArea, end);
             CalculateSegments();
-            _topLeftOffset = _segments.First().StartOffset;
-            _bottomRightOffset = _segments.Last().EndOffset;
+            _topLeftOffset = _segments[0].StartOffset;
+            _bottomRightOffset = _segments[^1].EndOffset;
 
             StartPosition = start;
             EndPosition = end;
@@ -123,8 +123,8 @@ namespace AvaloniaEdit.Editing
             _startXPos = startXPos;
             _endXPos = GetXPos(textArea, end);
             CalculateSegments();
-            _topLeftOffset = _segments.First().StartOffset;
-            _bottomRightOffset = _segments.Last().EndOffset;
+            _topLeftOffset = _segments[0].StartOffset;
+            _bottomRightOffset = _segments[^1].EndOffset;
 
             StartPosition = GetStart();
             EndPosition = end;
@@ -139,8 +139,8 @@ namespace AvaloniaEdit.Editing
             _startXPos = GetXPos(textArea, start);
             _endXPos = endXPos;
             CalculateSegments();
-            _topLeftOffset = _segments.First().StartOffset;
-            _bottomRightOffset = _segments.Last().EndOffset;
+            _topLeftOffset = _segments[0].StartOffset;
+            _bottomRightOffset = _segments[^1].EndOffset;
 
             StartPosition = start;
             EndPosition = GetEnd();
@@ -182,7 +182,7 @@ namespace AvaloniaEdit.Editing
 
         private TextViewPosition GetStart()
         {
-            var segment = (_startLine < _endLine ? _segments.First() : _segments.Last());
+            var segment = (_startLine < _endLine ? _segments[0] : _segments[^1]);
             if (_startXPos < _endXPos)
             {
                 return new TextViewPosition(_document.GetLocation(segment.StartOffset), segment.StartVisualColumn);
@@ -192,7 +192,7 @@ namespace AvaloniaEdit.Editing
 
         private TextViewPosition GetEnd()
         {
-            var segment = (_startLine < _endLine ? _segments.Last() : _segments.First());
+            var segment = (_startLine < _endLine ? _segments[^1] : _segments[0]);
             if (_startXPos < _endXPos)
             {
                 return new TextViewPosition(_document.GetLocation(segment.EndOffset), segment.EndVisualColumn);

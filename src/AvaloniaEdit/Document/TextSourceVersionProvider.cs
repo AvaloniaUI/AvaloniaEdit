@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Document
 {
@@ -105,7 +104,7 @@ namespace AvaloniaEdit.Document
                     return GetForwardChanges(o);
                 if (result > 0)
                     return o.GetForwardChanges(this).Reverse().Select(c => c.Invert());
-                return Empty<TextChangeEventArgs>.Array;
+                return Array.Empty<TextChangeEventArgs>();
             }
 
             private IEnumerable<TextChangeEventArgs> GetForwardChanges(Version other)

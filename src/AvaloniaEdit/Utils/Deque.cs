@@ -27,7 +27,7 @@ namespace AvaloniaEdit.Utils
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
 	internal sealed class Deque<T> : ICollection<T>
 	{
-	    private T[] _arr = Empty<T>.Array;
+        private T[] _arr = Array.Empty<T>();
 	    private int _head;
 	    private int _tail;
 
@@ -37,7 +37,7 @@ namespace AvaloniaEdit.Utils
 	    /// <inheritdoc/>
 		public void Clear()
 		{
-			_arr = Empty<T>.Array;
+            _arr = Array.Empty<T>();
 			Count = 0;
 			_head = 0;
 			_tail = 0;

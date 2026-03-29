@@ -83,8 +83,8 @@ namespace AvaloniaEdit.Document
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (!(obj is TextLocation)) return false;
-            return (TextLocation)obj == this;
+            if (obj is TextLocation textLocation) return textLocation == this;
+            return false;
         }
 
         /// <summary>

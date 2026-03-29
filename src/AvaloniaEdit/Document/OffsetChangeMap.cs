@@ -86,7 +86,7 @@ namespace AvaloniaEdit.Document
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
                          Justification = "The Empty instance is immutable")]
-        public static readonly OffsetChangeMap Empty = new OffsetChangeMap(new OffsetChangeMapEntry[0], true);
+        public static readonly OffsetChangeMap Empty = new OffsetChangeMap(Array.Empty<OffsetChangeMapEntry>(), true);
 
         /// <summary>
         /// Creates a new OffsetChangeMap with a single element.

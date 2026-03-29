@@ -16,10 +16,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using AvaloniaEdit.Editing;
 using Avalonia.Input;
+using AvaloniaEdit.Editing;
 
 namespace AvaloniaEdit.Snippets
 {
@@ -76,28 +74,48 @@ namespace AvaloniaEdit.Snippets
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private IActiveElement FindNextEditableElement(int offset, bool backwards)
         {
-            var elements = _context.ActiveElements.Where(e => e.IsEditable && e.Segment != null);
-            if (backwards)
+            IActiveElement firstEditableElement = null;
+            IActiveElement lastEditableElement = null;
+            IActiveElement previousEditableElement = null;
+
+            foreach (IActiveElement element in _context.ActiveElements)
             {
-                elements = elements.Reverse();
-                foreach (var element in elements)
+                if (!element.IsEditable || element.Segment == null)
+                {
+                    continue;
+                }
+
+                if (firstEditableElement == null)
+                {
+                    firstEditableElement = element;
+                }
+
+                lastEditableElement = element;
+
+                if (backwards)
                 {
                     if (offset > element.Segment.EndOffset)
-                        return element;
+                    {
+                        previousEditableElement = element;
+                    }
                 }
-            }
-            else
-            {
-                foreach (var element in elements)
+                else
                 {
                     if (offset < element.Segment.Offset)
+                    {
                         return element;
+                    }
                 }
             }
-            return elements.FirstOrDefault();
+
+            if (backwards)
+            {
+                return previousEditableElement ?? lastEditableElement;
+            }
+
+            return firstEditableElement;
         }
     }
 }

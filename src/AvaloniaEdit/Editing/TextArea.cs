@@ -50,7 +50,7 @@ namespace AvaloniaEdit.Editing
         /// </summary>
         private const int AdditionalVerticalScrollAmount = 2;
 
-        private ILogicalScrollable _logicalScrollable;
+        private readonly ILogicalScrollable _logicalScrollable;
 
         private readonly TextAreaTextInputMethodClient _imClient = new TextAreaTextInputMethodClient();
 
@@ -164,8 +164,8 @@ namespace AvaloniaEdit.Editing
         public static readonly DirectProperty<TextArea, Vector> OffsetProperty =
             AvaloniaProperty.RegisterDirect<TextArea, Vector>(
                 nameof(IScrollable.Offset),
-                o => (o as IScrollable).Offset,
-                (o, v) => (o as IScrollable).Offset = v);
+                static o => (o as IScrollable).Offset,
+                static (o, v) => (o as IScrollable).Offset = v);
 
         #region InputHandler management
         /// <summary>
@@ -1272,7 +1272,7 @@ namespace AvaloniaEdit.Editing
                 set
                 {
                     if (_textArea == null) return;
-                    var selection =  _textArea.Selection;
+                    var selection = _textArea.Selection;
                     if (selection.StartPosition.Line == 0) return;
 
                     _textArea.Selection = selection.StartSelectionOrSetEndpoint(
