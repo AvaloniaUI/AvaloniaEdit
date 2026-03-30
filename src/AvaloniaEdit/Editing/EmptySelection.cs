@@ -54,7 +54,7 @@ namespace AvaloniaEdit.Editing
             return Create(TextArea, startPosition, endPosition);
         }
 
-        public override IEnumerable<SelectionSegment> Segments => Empty<SelectionSegment>.Array;
+        public override IEnumerable<SelectionSegment> Segments => Array.Empty<SelectionSegment>();
 
         public override string GetText()
         {

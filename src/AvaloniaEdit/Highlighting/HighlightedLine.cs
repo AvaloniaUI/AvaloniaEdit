@@ -308,7 +308,7 @@ namespace AvaloniaEdit.Highlighting
         ///// <inheritdoc/>
         public override string ToString()
         {
-        	return "[" + GetType().Name + " " + ToHtml() + "]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(HighlightedLine)} {ToHtml()}]");
         }
         #endregion
 

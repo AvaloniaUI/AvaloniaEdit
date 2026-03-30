@@ -33,7 +33,7 @@ namespace AvaloniaEdit
         /// </summary>
         public TextLocation Location
         {
-            get => new TextLocation(Line, Column);
+            readonly get => new TextLocation(Line, Column);
             set
             {
                 Line = value.Line;
@@ -108,11 +108,11 @@ namespace AvaloniaEdit
         }
 
         /// <inheritdoc/>
-        public override string ToString()
+        public readonly override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                                 "[TextViewPosition Line={0} Column={1} VisualColumn={2} IsAtEndOfLine={3}]",
-                                 Line, Column, VisualColumn, IsAtEndOfLine);
+            return string.Create(
+                CultureInfo.InvariantCulture,
+                $"[{nameof(TextViewPosition)} {nameof(Line)}={Line} {nameof(Column)}={Column} {nameof(VisualColumn)}={VisualColumn} {nameof(IsAtEndOfLine)}={IsAtEndOfLine}]");
         }
 
         #region Equals and GetHashCode implementation
@@ -120,7 +120,7 @@ namespace AvaloniaEdit
         // If you don't need it, you can just remove the region and the ": IEquatable<Struct1>" declaration.
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
+        public readonly override bool Equals(object obj)
         {
             if (obj is TextViewPosition)
                 return Equals((TextViewPosition)obj); // use Equals method below
@@ -129,7 +129,7 @@ namespace AvaloniaEdit
 
         /// <inheritdoc/>
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
-        public override int GetHashCode()
+        public readonly override int GetHashCode()
         {
             var hashCode = IsAtEndOfLine ? 115817 : 0;
             unchecked
@@ -144,7 +144,7 @@ namespace AvaloniaEdit
         /// <summary>
         /// Equality test.
         /// </summary>
-        public bool Equals(TextViewPosition other)
+        public readonly bool Equals(TextViewPosition other)
         {
             return Line == other.Line && Column == other.Column && VisualColumn == other.VisualColumn && IsAtEndOfLine == other.IsAtEndOfLine;
         }
@@ -167,7 +167,7 @@ namespace AvaloniaEdit
         #endregion
 
         /// <inheritdoc/>
-        public int CompareTo(TextViewPosition other)
+        public readonly int CompareTo(TextViewPosition other)
         {
             int r = Location.CompareTo(other.Location);
             if (r != 0)

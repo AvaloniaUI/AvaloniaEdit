@@ -26,7 +26,7 @@ namespace AvaloniaEdit.Utils
     /// </summary>
     internal sealed class DelayedEvents
     {
-        private struct EventCall
+        private readonly struct EventCall
         {
             private readonly EventHandler _handler;
             private readonly object _sender;

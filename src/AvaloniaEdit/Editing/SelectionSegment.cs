@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Globalization;
 using AvaloniaEdit.Document;
 
 namespace AvaloniaEdit.Editing
@@ -86,7 +87,8 @@ namespace AvaloniaEdit.Editing
         /// <inheritdoc/>
         public override string ToString()
         {
-            return $"[SelectionSegment StartOffset={StartOffset}, EndOffset={EndOffset}, StartVC={StartVisualColumn}, EndVC={EndVisualColumn}]";
+            return string.Create(CultureInfo.InvariantCulture,
+                $"[{nameof(SelectionSegment)} {nameof(StartOffset)}={StartOffset}, {nameof(EndOffset)}={EndOffset}, StartVC={StartVisualColumn}, EndVC={EndVisualColumn}]");
         }
     }
 }

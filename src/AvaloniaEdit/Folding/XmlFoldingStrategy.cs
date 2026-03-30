@@ -60,7 +60,7 @@ namespace AvaloniaEdit.Folding
         {
             try
             {
-                var reader = XmlReader.Create(document.CreateReader());
+                using var reader = XmlReader.Create(document.CreateReader());
                 return CreateNewFoldings(document, reader, out firstErrorOffset);
             }
             catch (XmlException)
@@ -111,7 +111,7 @@ namespace AvaloniaEdit.Folding
                 else
                     firstErrorOffset = 0;
             }
-            foldMarkers.Sort((a, b) => a.StartOffset.CompareTo(b.StartOffset));
+            foldMarkers.Sort(static (a, b) => a.StartOffset.CompareTo(b.StartOffset));
             return foldMarkers;
         }
 
@@ -214,7 +214,7 @@ namespace AvaloniaEdit.Folding
                 reader.MoveToAttribute(i);
 
                 text.Append(reader.Name);
-                text.Append("=");
+                text.Append('=');
                 text.Append('"');
                 text.Append(XmlEncodeAttributeValue(reader.Value, '"'));
                 text.Append('"');
@@ -223,7 +223,7 @@ namespace AvaloniaEdit.Folding
                 // last attribute.
                 if (i < reader.AttributeCount - 1)
                 {
-                    text.Append(" ");
+                    text.Append(' ');
                 }
             }
 

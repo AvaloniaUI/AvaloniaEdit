@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AvaloniaEdit.Document;
-using AvaloniaEdit.Utils;
 using SpanStack = System.Collections.Immutable.ImmutableStack<AvaloniaEdit.Highlighting.HighlightingSpan>;
 
 namespace AvaloniaEdit.Highlighting
@@ -341,7 +340,7 @@ namespace AvaloniaEdit.Highlighting
         private static Match[] AllocateMatchArray(int count)
         {
             if (count == 0)
-                return Empty<Match>.Array;
+                return Array.Empty<Match>();
             return new Match[count];
         }
         #endregion

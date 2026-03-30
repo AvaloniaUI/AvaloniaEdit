@@ -18,6 +18,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 
 namespace AvaloniaEdit.Utils
@@ -310,7 +311,7 @@ namespace AvaloniaEdit.Utils
 #if DEBUG
                     // In debug builds, explicitly mark left node as 'damaged' - but no one else should be using it
                     // because it's not shared.
-                    Left.Contents = Empty<T>.Array;
+                    Left.Contents = Array.Empty<T>();
 #endif
                 }
                 Left = null;
@@ -705,7 +706,7 @@ namespace AvaloniaEdit.Utils
 
         public override string ToString()
         {
-            return "[FunctionNode length=" + Length + " initializerRan=" + (_initializer == null) + "]";
+            return string.Create(CultureInfo.InvariantCulture, $"[{nameof(FunctionNode<>)} length={Length} initializerRan={(_initializer == null)}]");
         }
 #endif
     }
