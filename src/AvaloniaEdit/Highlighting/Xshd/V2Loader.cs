@@ -48,6 +48,7 @@ namespace AvaloniaEdit.Highlighting.Xshd
         //    }
         //}
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "XmlReader is disposed by caller")]
         public static XshdSyntaxDefinition LoadDefinition(XmlReader reader, bool skipValidation)
         {
             reader = HighlightingLoader.GetValidatingReader(reader, true);
