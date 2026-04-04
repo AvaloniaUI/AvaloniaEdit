@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
+using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit.Snippets
 {
@@ -44,12 +45,6 @@ namespace AvaloniaEdit.Snippets
         /// used during snippet text insertion.
         /// </summary>
         private static readonly SearchValues<char> _newlineChars = SearchValues.Create("\r\n");
-
-        /// <summary>
-        /// Pre-compiled, SIMD-accelerated search values for characters that require
-        /// special handling during snippet text insertion (tabs and newline characters).
-        /// </summary>
-        private static readonly SearchValues<char> _tabAndNewlineChars = SearchValues.Create("\t\r\n");
 
         private Status _currentStatus = Status.Insertion;
 
@@ -129,28 +124,160 @@ namespace AvaloniaEdit.Snippets
         /// This method will add the current indentation to every line in <paramref name="text"/> and will
         /// replace newlines with the expected newline for the document.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method uses a two-phase algorithm that is semantically equivalent to the
+        /// original implementation:
+        /// </para>
+        /// <list type="number">
+        /// <item>
+        /// <description>
+        /// <b>Phase 1 - Tab expansion:</b> Replaces tab characters with the configured
+        /// indentation string using <see cref="string.Replace(string, string)"/>, which
+        /// leverages the runtime's native SIMD-optimized implementation. When
+        /// <see cref="Tab"/> equals <c>"\t"</c> (identity replacement), this phase is
+        /// skipped entirely.
+        /// </description>
+        /// </item>
+        /// <item>
+        /// <description>
+        /// <b>Phase 2 - Newline normalization:</b> Scans the fully tab-expanded text for
+        /// newline characters using <see cref="SearchValues{T}"/> (SIMD-accelerated) and
+        /// replaces them with <see cref="LineTerminator"/> + <see cref="Indentation"/>. Uses
+        /// a stack-allocated <see cref="ValueStringBuilder"/> that falls back to
+        /// <see cref="ArrayPool{T}"/> for large inputs, minimizing heap allocations.
+        /// </description>
+        /// </item>
+        /// </list>
+        /// <para>
+        /// The two-phase approach ensures that if <see cref="Tab"/> contains newline characters
+        /// (possible via a custom <see cref="TextEditorOptions"/> subclass), those newlines are
+        /// correctly processed by the newline normalization phase - including CRLF pairs that
+        /// span the boundary between expanded tab content and adjacent source text.
+        /// </para>
+        /// <para>
+        /// The entire transformed result is inserted into the document with a single
+        /// <see cref="TextDocument.Insert(int, string)"/> call within a
+        /// <see cref="TextDocument.RunUpdate"/> scope, eliminating per-line substring
+        /// allocations and reducing document change, anchor update, and undo-grouping overhead.
+        /// </para>
+        /// <para>
+        /// A fast path is provided for text that contains no special characters, avoiding
+        /// all intermediate allocations entirely.
+        /// </para>
+        /// </remarks>
         public void InsertText(string text)
         {
             if (_currentStatus != Status.Insertion)
                 throw new InvalidOperationException();
 
-            text = text?.Replace("\t", Tab) ?? throw new ArgumentNullException(nameof(text));
+            text = text ?? throw new ArgumentNullException(nameof(text));
+
+            // Fast path: if Tab is identity ("\t") and text has no newlines,
+            // or if Tab is not identity and text has no tabs or newlines,
+            // insert directly with zero extra allocations
+            bool isTabIdentity = Tab == "\t";
+
+            ReadOnlySpan<char> span = text.AsSpan();
+            bool hasNewlines = span.IndexOfAny(_newlineChars) >= 0;
+            bool hasTabs = !isTabIdentity && span.Contains('\t');
+
+            if (!hasNewlines && !hasTabs)
+            {
+                using (Document.RunUpdate())
+                {
+                    Document.Insert(InsertionPosition, text);
+                    InsertionPosition += text.Length;
+                }
+                return;
+            }
+
+            // Phase 1: Tab expansion
+            // Equivalent to the original's: text = text.Replace("\t", Tab)
+            //
+            // Uses the runtime's native string.Replace which is SIMD-optimized
+            // and significantly faster than a managed StringBuilder loop for
+            // this operation. When Tab == "\t" (identity), this is skipped.
+            //
+            // This must happen before newline normalization so that any newline
+            // characters within Tab are visible to Phase 2. This is what makes
+            // CRLF boundary merging work correctly - Phase 2 sees the fully
+            // expanded text as one contiguous stream.
+            string expanded = hasTabs ? text.Replace("\t", Tab) : text;
+            ReadOnlySpan<char> expandedSpan = expanded.AsSpan();
+
+            // Check if newlines exist in the expanded text (tab expansion may
+            // have introduced newlines if Tab contains \r or \n)
+            if (expandedSpan.IndexOfAny(_newlineChars) < 0)
+            {
+                // Tab expansion produced text with no newlines - insert directly
+                using (Document.RunUpdate())
+                {
+                    Document.Insert(InsertionPosition, expanded);
+                    InsertionPosition += expanded.Length;
+                }
+                return;
+            }
+
+            // Phase 2: Newline normalization
+            // Equivalent to the original's NewLineFinder.NextNewLine loop
+            //
+            // Uses a ValueStringBuilder backed by stackalloc for small inputs
+            // (typical snippets < 256 chars) with ArrayPool<char> fallback for
+            // larger inputs. This eliminates the StringBuilder object allocation
+            // and its internal char[] buffer allocation on the heap for the
+            // common case.
+            //
+            // Because this operates on the fully tab-expanded text, CRLF pairs
+            // that span tab-expansion boundaries are correctly handled as single
+            // units - identical to the original implementation.
+            string result;
+            using (var vsb = new ValueStringBuilder(stackalloc char[256]))
+            {
+                int pos = 0;
+                while (pos < expandedSpan.Length)
+                {
+                    int index = expandedSpan[pos..].IndexOfAny(_newlineChars);
+                    if (index < 0)
+                    {
+                        // No more newlines - append remaining text
+                        vsb.Append(expandedSpan[pos..]);
+                        break;
+                    }
+
+                    // Append literal text before the newline
+                    if (index > 0)
+                    {
+                        vsb.Append(expandedSpan.Slice(pos, index));
+                    }
+
+                    pos += index;
+                    char c = expandedSpan[pos];
+
+                    // Handle \r\n as a single unit, or \r / \n individually
+                    if (c == '\r' && pos + 1 < expandedSpan.Length && expandedSpan[pos + 1] == '\n')
+                    {
+                        pos += 2; // skip \r\n
+                    }
+                    else
+                    {
+                        pos++; // skip \r or \n
+                    }
+
+                    // Replace with document's line terminator + indentation
+                    vsb.Append(LineTerminator);
+                    vsb.Append(Indentation);
+                }
+
+                // Single document insert wrapped in RunUpdate() for update-scope
+                // and undo-grouping parity with the original implementation
+                result = vsb.ToString();
+            }
 
             using (Document.RunUpdate())
             {
-                int textOffset = 0;
-                SimpleSegment segment;
-                while ((segment = NewLineFinder.NextNewLine(text, textOffset)) != SimpleSegment.Invalid)
-                {
-                    string insertString = text.Substring(textOffset, segment.Offset - textOffset)
-                        + LineTerminator + Indentation;
-                    Document.Insert(InsertionPosition, insertString);
-                    InsertionPosition += insertString.Length;
-                    textOffset = segment.EndOffset;
-                }
-                string remainingInsertString = text.Substring(textOffset);
-                Document.Insert(InsertionPosition, remainingInsertString);
-                InsertionPosition += remainingInsertString.Length;
+                Document.Insert(InsertionPosition, result);
+                InsertionPosition += result.Length;
             }
         }
 
@@ -171,6 +298,7 @@ namespace AvaloniaEdit.Snippets
                 throw new ArgumentNullException(nameof(element));
             if (_currentStatus != Status.Insertion)
                 throw new InvalidOperationException();
+
             _elementMap.Add(owner, element);
             _registeredElements.Add(element);
         }
@@ -182,6 +310,7 @@ namespace AvaloniaEdit.Snippets
         {
             if (owner == null)
                 throw new ArgumentNullException(nameof(owner));
+
             return _elementMap.GetValueOrDefault(owner);
         }
 
@@ -201,8 +330,8 @@ namespace AvaloniaEdit.Snippets
         {
             if (_currentStatus != Status.Insertion)
                 throw new InvalidOperationException();
-            if (e == null)
-                e = EventArgs.Empty;
+
+            e ??= EventArgs.Empty;
 
             _currentStatus = Status.RaisingInsertionCompleted;
             int endPosition = InsertionPosition;
@@ -251,8 +380,8 @@ namespace AvaloniaEdit.Snippets
                 return;
             if (_currentStatus != Status.Interactive)
                 throw new InvalidOperationException("Cannot call Deactivate() until RaiseInsertionCompleted() has finished.");
-            if (e == null)
-                e = new SnippetEventArgs(DeactivateReason.Unknown);
+
+            e ??= new SnippetEventArgs(DeactivateReason.Unknown);
 
             TextDocumentWeakEventManager.UpdateFinished.RemoveHandler(Document, OnUpdateFinished);
             _currentStatus = Status.RaisingDeactivated;
