@@ -497,6 +497,83 @@ namespace AvaloniaEdit.Tests.Snippets
             Assert.AreEqual(expected, textArea.Document.Text);
         }
 
+        [AvaloniaTest]
+        public void InsertText_CrLfBoundary_TabEndsWithCr_FollowedByLfInSource()
+        {
+            // This is the exact counterexample identified during code review:
+            // Tab = "\r", text = "\t\n"
+            //
+            // Original behavior:
+            //   text.Replace("\t", "\r") produces "\r\n"
+            //   NewLineFinder sees \r\n as ONE CRLF unit -> one LineTerminator + Indentation
+            //
+            // A naive single-pass approach would process \r from Tab expansion in isolation
+            // (one newline), then see the \n from source text (second newline) = TWO newlines.
+            // The two-phase approach avoids this because Phase 2 sees "\r\n" as one unit.
+
+            // arrange
+            var textArea = CreateTextAreaWithCustomIndentation("", "\r");
+            var context = CreateContext(textArea, 0);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            Assert.AreEqual("\r", context.Tab);
+
+            // act
+            context.InsertText("\t\n");
+
+            // assert - the \r from Tab expansion + \n from source text must form ONE CRLF,
+            // producing exactly one LineTerminator + Indentation, not two
+            string expected = term + indent;
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
+        [AvaloniaTest]
+        public void InsertText_CrLfBoundary_SourceEndsWithCr_FollowedByTabStartingWithLf()
+        {
+            // Another boundary case: source text ends with \r, Tab starts with \n.
+            // After tab expansion, the \r from source and \n from Tab should merge
+            // into one CRLF unit.
+
+            // arrange - Tab = "\nX" so expanded text becomes "A\r\nXB"
+            var textArea = CreateTextAreaWithCustomIndentation("", "\nX");
+            var context = CreateContext(textArea, 0);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            Assert.AreEqual("\nX", context.Tab);
+
+            // act - "A\r" from source + "\nX" from Tab expansion + "B" from source
+            context.InsertText("A\r\tB");
+
+            // assert - \r from source and \n from Tab expansion form one CRLF
+            // Then "X" is literal, then "B"
+            string expected = "A" + term + indent + "XB";
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
+        [AvaloniaTest]
+        public void InsertText_CrLfBoundary_TabEndsWithCr_FollowedByTabStartingWithCr()
+        {
+            // Boundary case between two consecutive tab expansions:
+            // Tab = "\r", text = "\t\t" -> expanded = "\r\r"
+            // Each \r is a standalone newline, so two newlines.
+            // (No CRLF merging because both tab expansions contribute \r, not \r\n)
+
+            // arrange
+            var textArea = CreateTextAreaWithCustomIndentation("", "\r");
+            var context = CreateContext(textArea, 0);
+            string term = context.LineTerminator;
+            string indent = context.Indentation;
+
+            // act
+            context.InsertText("\t\t");
+
+            // assert - two standalone \r, each producing a newline
+            string expected = term + indent + term + indent;
+            Assert.AreEqual(expected, textArea.Document.Text);
+        }
+
         #endregion InsertText - tab with newline characters tests
 
         #region InsertText - newline normalization tests (\n)
