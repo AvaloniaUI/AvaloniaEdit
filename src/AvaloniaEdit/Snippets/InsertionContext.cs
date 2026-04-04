@@ -223,7 +223,7 @@ namespace AvaloniaEdit.Snippets
             // Equivalent to the original's NewLineFinder.NextNewLine loop
             //
             // Uses a ValueStringBuilder backed by stackalloc for small inputs
-            // (typical snippets < 256 chars) with ArrayPool<char> fallback for
+            // (typical snippets < 512 chars) with ArrayPool<char> fallback for
             // larger inputs. This eliminates the StringBuilder object allocation
             // and its internal char[] buffer allocation on the heap for the
             // common case.
@@ -232,7 +232,8 @@ namespace AvaloniaEdit.Snippets
             // that span tab-expansion boundaries are correctly handled as single
             // units - identical to the original implementation.
             string result;
-            using (var vsb = new ValueStringBuilder(stackalloc char[256]))
+            const int optimizedStackBufferSize = 512;
+            using (var vsb = new ValueStringBuilder(stackalloc char[optimizedStackBufferSize]))
             {
                 int pos = 0;
                 while (pos < expandedSpan.Length)
