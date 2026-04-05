@@ -19,6 +19,7 @@ namespace AvaloniaEdit.TextMate
 
         public DocumentSnapshot(TextDocument document)
         {
+            ArgumentNullException.ThrowIfNull(document);
             _document = document;
             _lineRanges = new LineRange[document.LineCount];
 
@@ -27,10 +28,15 @@ namespace AvaloniaEdit.TextMate
 
         public void RemoveLines(int startLine, int endLine)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(startLine);
+            ArgumentOutOfRangeException.ThrowIfLessThan(endLine, startLine);
             lock (_lock)
             {
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(endLine, _lineCount);
+
                 int removeCount = endLine - startLine + 1;
                 int shiftCount = _lineCount - (endLine + 1);
+
                 if (shiftCount > 0)
                 {
                     Array.Copy(_lineRanges, endLine + 1, _lineRanges, startLine, shiftCount);
@@ -43,8 +49,11 @@ namespace AvaloniaEdit.TextMate
 
         public string GetLineText(int lineIndex)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(lineIndex);
             lock (_lock)
             {
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(lineIndex, _lineCount);
+
                 var lineRange = _lineRanges[lineIndex];
                 return _textSource.GetText(lineRange.Offset, lineRange.Length);
             }
@@ -52,8 +61,11 @@ namespace AvaloniaEdit.TextMate
 
         public string GetLineTextIncludingTerminator(int lineIndex)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(lineIndex);
             lock (_lock)
             {
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(lineIndex, _lineCount);
+
                 var lineRange = _lineRanges[lineIndex];
                 return _textSource.GetText(lineRange.Offset, lineRange.TotalLength);
             }
@@ -61,8 +73,11 @@ namespace AvaloniaEdit.TextMate
 
         public ReadOnlyMemory<char> GetLineTextIncludingTerminatorAsMemory(int lineIndex)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(lineIndex);
             lock (_lock)
             {
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(lineIndex, _lineCount);
+
                 var lineRange = _lineRanges[lineIndex];
                 return _textSource.GetTextAsMemory(lineRange.Offset, lineRange.TotalLength);
             }
@@ -70,8 +85,11 @@ namespace AvaloniaEdit.TextMate
 
         public string GetLineTerminator(int lineIndex)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(lineIndex);
             lock (_lock)
             {
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(lineIndex, _lineCount);
+
                 var lineRange = _lineRanges[lineIndex];
                 return _textSource.GetText(lineRange.Offset + lineRange.Length, lineRange.TotalLength - lineRange.Length);
             }
@@ -79,16 +97,22 @@ namespace AvaloniaEdit.TextMate
 
         public int GetLineLength(int lineIndex)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(lineIndex);
             lock (_lock)
             {
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(lineIndex, _lineCount);
+
                 return _lineRanges[lineIndex].Length;
             }
         }
 
         public int GetTotalLineLength(int lineIndex)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(lineIndex);
             lock (_lock)
             {
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(lineIndex, _lineCount);
+
                 return _lineRanges[lineIndex].TotalLength;
             }
         }
@@ -107,7 +131,7 @@ namespace AvaloniaEdit.TextMate
             {
                 _lineCount = _document.Lines.Count;
 
-                if (e != null && e.OffsetChangeMap != null && _lineRanges != null && _lineCount == _lineRanges.Length)
+                if (e?.OffsetChangeMap != null && _lineRanges != null && _lineCount == _lineRanges.Length)
                 {
                     // it's a single-line change
                     // update the offsets usign the OffsetChangeMap
@@ -141,7 +165,6 @@ namespace AvaloniaEdit.TextMate
 
         private void RecomputeAllLineRanges(DocumentChangeEventArgs e)
         {
-            // only resize the array if the line count has changed, otherwise reuse the existing array
             if (_lineRanges.Length != _lineCount)
             {
                 Array.Resize(ref _lineRanges, _lineCount);
