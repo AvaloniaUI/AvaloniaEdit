@@ -7,12 +7,6 @@ using AvaloniaEdit.Rendering;
 using TextMateSharp.Grammars;
 using TextMateSharp.Model;
 
-#if NET6_0_OR_GREATER
-using Math = System.Math;
-#else
-using Math = AvaloniaEdit.TextMate.Compatibility.Math;
-#endif
-
 namespace AvaloniaEdit.TextMate
 {
     public class TextEditorModel : AbstractLineList, IDisposable
