@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 using AvaloniaEdit.Document;
 
@@ -8,9 +7,9 @@ namespace AvaloniaEdit.TextMate
     public class DocumentSnapshot
     {
         private LineRange[] _lineRanges;
-        private TextDocument _document;
+        private readonly TextDocument _document;
         private ITextSource _textSource;
-        private object _lock = new object();
+        private readonly object _lock = new object();
         private int _lineCount;
 
         public int LineCount
@@ -30,10 +29,15 @@ namespace AvaloniaEdit.TextMate
         {
             lock (_lock)
             {
-                var tmpList = _lineRanges.ToList();
-                tmpList.RemoveRange(startLine, endLine - startLine + 1);
-                _lineRanges = tmpList.ToArray();
-                _lineCount = _lineRanges.Length;
+                int removeCount = endLine - startLine + 1;
+                int shiftCount = _lineCount - (endLine + 1);
+                if (shiftCount > 0)
+                {
+                    Array.Copy(_lineRanges, endLine + 1, _lineRanges, startLine, shiftCount);
+                }
+
+                _lineCount -= removeCount;
+                Array.Resize(ref _lineRanges, _lineCount);
             }
         }
 
@@ -140,7 +144,7 @@ namespace AvaloniaEdit.TextMate
             // only resize the array if the line count has changed, otherwise reuse the existing array
             if (_lineRanges.Length != _lineCount)
             {
-            Array.Resize(ref _lineRanges, _lineCount);
+                Array.Resize(ref _lineRanges, _lineCount);
             }
 
             int currentLineIndex = (e != null) ?
