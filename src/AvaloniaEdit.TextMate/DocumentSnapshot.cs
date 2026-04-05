@@ -137,7 +137,11 @@ namespace AvaloniaEdit.TextMate
 
         private void RecomputeAllLineRanges(DocumentChangeEventArgs e)
         {
+            // only resize the array if the line count has changed, otherwise reuse the existing array
+            if (_lineRanges.Length != _lineCount)
+            {
             Array.Resize(ref _lineRanges, _lineCount);
+            }
 
             int currentLineIndex = (e != null) ?
                 _document.GetLineByOffset(e.Offset).LineNumber - 1 : 0;
