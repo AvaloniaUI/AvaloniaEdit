@@ -71,7 +71,7 @@ namespace AvaloniaEdit.Editing
 
         private SelectionMode _mode;
         private AnchorSegment _startWord;
-        private Point _possibleDragStartMousePos;
+        private (Point position, PointerPressedEventArgs args)? _possibleDragStartMouseState;
         private Point _lastMousePosition;
 
         #region Constructor + Attach + Detach
@@ -101,6 +101,7 @@ namespace AvaloniaEdit.Editing
         public void Detach()
         {
             _mode = SelectionMode.None;
+            _possibleDragStartMouseState = default;
             TextArea.PointerPressed -= TextArea_MouseLeftButtonDown;
             TextArea.PointerMoved -= TextArea_MouseMove;
             TextArea.TextView.ScrollOffsetChanged -= TextView_ScrollOffsetChanged;
@@ -323,7 +324,7 @@ namespace AvaloniaEdit.Editing
         #region Start Drag
         object currentDragDescriptor;
 
-        async void StartDrag(PointerEventArgs e)
+        async void StartDrag(PointerPressedEventArgs e)
         {
             // prevent nested StartDrag calls
             _mode = SelectionMode.Drag;
@@ -435,6 +436,7 @@ namespace AvaloniaEdit.Editing
         {
             var mousePosition = e.GetPosition(TextArea.TextView);
             _lastMousePosition = mousePosition;
+            _possibleDragStartMouseState = default;
 
             var pointer = e.GetCurrentPoint(TextArea);
             if (pointer.Properties.IsLeftButtonPressed == false)
@@ -461,7 +463,8 @@ namespace AvaloniaEdit.Editing
                             if (TextArea.CapturePointer(e.Pointer))
                             {
                                 _mode = SelectionMode.PossibleDragStart;
-                                _possibleDragStartMousePos = e.GetPosition(TextArea);
+                                var position = e.GetPosition(TextArea);
+                                _possibleDragStartMouseState = (position, e);
                             }
                             e.Handled = true;
                             return;
@@ -676,14 +679,15 @@ namespace AvaloniaEdit.Editing
                     ExtendSelectionToMouse(mousePosition);
                 }
             }
-            else if (_mode == SelectionMode.PossibleDragStart)
+            else if (_mode == SelectionMode.PossibleDragStart
+                     && _possibleDragStartMouseState is { } dragStartState && dragStartState.args.Pointer.Id == e.Pointer.Id)
             {
                 e.Handled = true;
-                Vector mouseMovement = e.GetPosition(TextArea) - _possibleDragStartMousePos;
+                Vector mouseMovement = e.GetPosition(TextArea) - dragStartState.position;
                 if (Math.Abs(mouseMovement.X) > MinimumHorizontalDragDistance
                     || Math.Abs(mouseMovement.Y) > MinimumVerticalDragDistance)
                 {
-                    StartDrag(e);
+                    StartDrag(dragStartState.args);
                 }
             }
         }
@@ -790,6 +794,7 @@ namespace AvaloniaEdit.Editing
                     break;
             }
             _mode = SelectionMode.None;
+            _possibleDragStartMouseState = default;
             TextArea.ReleasePointerCapture(e.Pointer);
         }
         #endregion
