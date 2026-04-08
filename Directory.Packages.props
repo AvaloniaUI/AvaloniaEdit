@@ -5,12 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup Label="Avalonia">
-    <PackageVersion Include="Avalonia" Version="12.0.0-rc1" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.0.0-rc1" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.0-rc1" />
-    <PackageVersion Include="Avalonia.Themes.Simple" Version="12.0.0-rc1" />
-    <PackageVersion Include="Avalonia.Headless.NUnit" Version="12.0.0-rc1" />
-    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.0-beta3" />
+    <PackageVersion Include="Avalonia" Version="12.0.0" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.0.0" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.0" />
+    <PackageVersion Include="Avalonia.Themes.Simple" Version="12.0.0" />
+    <PackageVersion Include="Avalonia.Headless.NUnit" Version="12.0.0" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup Label="TextMate">
@@ -19,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup Label="Testing">
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
-    <PackageVersion Include="NUnit" Version="4.4.0" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageVersion Include="NUnit" Version="4.5.1" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.5.1" />
   </ItemGroup>
 
   <ItemGroup Label="Build">
@@ -29,6 +29,6 @@
   </ItemGroup>
 
   <ItemGroup Label="Other">
-    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
   </ItemGroup>
 </Project>
