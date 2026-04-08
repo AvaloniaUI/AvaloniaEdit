@@ -223,7 +223,7 @@ namespace AvaloniaEdit.CodeCompletion
 
         private void CaretPositionChanged(object sender, EventArgs e)
         {
-            var offset = TextArea.Caret.Offset;
+           var offset = TextArea.Caret.Offset;
             if (offset == StartOffset)
             {
                 if (CloseAutomatically && CloseWhenCaretAtBeginning)
@@ -234,7 +234,11 @@ namespace AvaloniaEdit.CodeCompletion
                 {
                     CompletionList.SelectItem(string.Empty);
 
-                    if (CompletionList.ListBox.ItemCount == 0) CompletionList.IsVisible = false;
+                    if (CompletionList.ListBox.ItemCount == 0)
+                    {
+                        if (CloseAutomatically) { Hide(); return; }
+                        CompletionList.IsVisible = false;
+                    }
                     else CompletionList.IsVisible = true;
                 }
                 return;
@@ -253,7 +257,11 @@ namespace AvaloniaEdit.CodeCompletion
                 {
                     CompletionList.SelectItem(document.GetText(StartOffset, offset - StartOffset));
 
-                    if (CompletionList.ListBox.ItemCount == 0) CompletionList.IsVisible = false;
+                    if (CompletionList.ListBox.ItemCount == 0)
+                    {
+                        if (CloseAutomatically) { Hide(); return; }
+                        CompletionList.IsVisible = false;
+                    }
                     else CompletionList.IsVisible = true;
                 }
             }
