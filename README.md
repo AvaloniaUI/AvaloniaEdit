@@ -46,8 +46,6 @@ AvaloniaEdit currently consists of 2 packages
     </Application.Styles>
   </Application>
   ```
-  * If you're using `0.10.x.y` based versions, include `<StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />`
-  * If you're `11.x.y` based versions, include `<StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />`
 * Finally, add the AvaloniaEdit editor into your window:
     ```xaml
     <Window xmlns="https://github.com/avaloniaui"
