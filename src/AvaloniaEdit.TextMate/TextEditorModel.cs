@@ -174,8 +174,11 @@ namespace AvaloniaEdit.TextMate
             _invalidRange = _invalidRange?.Merge(startLine, endLine) ?? new InvalidLineRange(startLine, endLine);
         }
 
-        void DocumentOnUpdateFinished(object sender, EventArgs e)
+        private void DocumentOnUpdateFinished(object sender, EventArgs e)
         {
+            if (Volatile.Read(ref _isDisposed))
+                return;
+
             if (_invalidRange == null)
                 return;
 
