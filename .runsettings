@@ -6,8 +6,8 @@
                     <CodeCoverage>
                         <ModulePaths>
                             <Include>
-                                <ModulePath>avaloniaedit.textmate.dll$</ModulePath>
-                                <ModulePath>avaloniaedit.dll$</ModulePath>
+                                <ModulePath>AvaloniaEdit.TextMate.dll$</ModulePath>
+                                <ModulePath>AvaloniaEdit.dll$</ModulePath>
                             </Include>
                             <Exclude>
                                 <ModulePath>.*Tests\.dll$</ModulePath>
