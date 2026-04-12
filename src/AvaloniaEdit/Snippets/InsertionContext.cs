@@ -232,8 +232,8 @@ namespace AvaloniaEdit.Snippets
             // that span tab-expansion boundaries are correctly handled as single
             // units - identical to the original implementation.
             string result;
-            const int optimizedStackBufferSize = 512;
-            using (var vsb = new ValueStringBuilder(stackalloc char[optimizedStackBufferSize]))
+            const int optimizedStackCharacterCount = 512;
+            using (var vsb = new ValueStringBuilder(stackalloc char[optimizedStackCharacterCount]))
             {
                 int pos = 0;
                 while (pos < expandedSpan.Length)
