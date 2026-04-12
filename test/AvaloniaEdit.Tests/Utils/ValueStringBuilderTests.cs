@@ -39,7 +39,7 @@ namespace AvaloniaEdit.Tests.Utils
         public void Ctor_Span_CanAppend()
         {
             // Arrange
-            ValueStringBuilder vsb = new ValueStringBuilder(new char[1]);
+            using ValueStringBuilder vsb = new ValueStringBuilder(new char[1]);
 
             // Act
             int initialLength = vsb.Length;
@@ -57,7 +57,7 @@ namespace AvaloniaEdit.Tests.Utils
         public void Ctor_InitialCapacity_CanAppend()
         {
             // Arrange
-            ValueStringBuilder vsb = new ValueStringBuilder(1);
+            using ValueStringBuilder vsb = new ValueStringBuilder(1);
 
             // Act
             int initialLength = vsb.Length;
@@ -76,7 +76,7 @@ namespace AvaloniaEdit.Tests.Utils
         {
             // Arrange
             StringBuilder sb = new StringBuilder();
-            ValueStringBuilder vsb = new ValueStringBuilder();
+            using ValueStringBuilder vsb = new ValueStringBuilder();
 
             // Act
             for (int i = 1; i <= 100; i++)
@@ -100,7 +100,7 @@ namespace AvaloniaEdit.Tests.Utils
         {
             // Arrange
             StringBuilder sb = new StringBuilder();
-            ValueStringBuilder vsb = new ValueStringBuilder();
+            using ValueStringBuilder vsb = new ValueStringBuilder();
 
             // Act
             for (int i = 1; i <= 100; i++)
@@ -127,7 +127,7 @@ namespace AvaloniaEdit.Tests.Utils
         {
             // Arrange
             StringBuilder sb = new StringBuilder(initialLength);
-            ValueStringBuilder vsb = new ValueStringBuilder(new char[initialLength]);
+            using ValueStringBuilder vsb = new ValueStringBuilder(new char[initialLength]);
             string s = new string('a', stringLength);
 
             // Act
@@ -149,7 +149,7 @@ namespace AvaloniaEdit.Tests.Utils
         {
             // Arrange
             StringBuilder sb = new StringBuilder();
-            ValueStringBuilder vsb = new ValueStringBuilder();
+            using ValueStringBuilder vsb = new ValueStringBuilder();
 
             // Act
             for (int i = 1; i <= 100; i++)
@@ -172,7 +172,7 @@ namespace AvaloniaEdit.Tests.Utils
         public void AppendSpan_Capacity()
         {
             // Arrange
-            ValueStringBuilder vsb = new ValueStringBuilder();
+            using ValueStringBuilder vsb = new ValueStringBuilder();
 
             // Act
             vsb.AppendSpan(17);
@@ -191,7 +191,7 @@ namespace AvaloniaEdit.Tests.Utils
         {
             // Arrange
             StringBuilder sb = new StringBuilder();
-            ValueStringBuilder vsb = new ValueStringBuilder();
+            using ValueStringBuilder vsb = new ValueStringBuilder();
 
             // Act
             for (int i = 1; i <= 1000; i++)
@@ -219,7 +219,7 @@ namespace AvaloniaEdit.Tests.Utils
         {
             // Arrange
             StringBuilder sb = new StringBuilder();
-            ValueStringBuilder vsb = new ValueStringBuilder();
+            using ValueStringBuilder vsb = new ValueStringBuilder();
             Random rand = new Random(42);
 
             // Act
@@ -295,7 +295,7 @@ namespace AvaloniaEdit.Tests.Utils
         {
             // Arrange
             StringBuilder sb = new StringBuilder();
-            ValueStringBuilder vsb = new ValueStringBuilder();
+            using ValueStringBuilder vsb = new ValueStringBuilder();
 
             for (int i = 1; i <= 100; i++)
             {
@@ -324,7 +324,7 @@ namespace AvaloniaEdit.Tests.Utils
             // Arrange
             const string text1 = "test";
             const string text2 = "another test";
-            ValueStringBuilder vsb = new ValueStringBuilder();
+            using ValueStringBuilder vsb = new ValueStringBuilder();
 
             vsb.Append(text1);
 
@@ -400,7 +400,7 @@ namespace AvaloniaEdit.Tests.Utils
             // Arrange
             // Note: constants used here may be dependent on minimal buffer size
             // the ArrayPool is able to return.
-            ValueStringBuilder builder = new ValueStringBuilder(stackalloc char[32]);
+            using ValueStringBuilder builder = new ValueStringBuilder(stackalloc char[32]);
 
             // Act
             builder.EnsureCapacity(65);

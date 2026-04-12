@@ -13,8 +13,9 @@ using System.Runtime.InteropServices;
 
 namespace AvaloniaEdit.Utils
 {
+    // currently the dotnet/runtime version doesn't explicitly implement IDisposable even though it should do so
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    internal ref partial struct ValueStringBuilder
+    internal ref partial struct ValueStringBuilder : IDisposable
     {
         private char[]? _arrayToReturnToPool;
         private Span<char> _chars;
