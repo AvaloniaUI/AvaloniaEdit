@@ -192,7 +192,7 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
-        private void TokenizeViewPort()
+        internal void TokenizeViewPort()
         {
             // Post is fire-and-forget - avoids the Task allocation that
             // InvokeAsync incurs. DispatcherPriority.Default is the default
@@ -210,7 +210,7 @@ namespace AvaloniaEdit.TextMate
         /// tokenization. If the view is disposed or no visual lines are available, the method returns without
         /// performing any action. Any exceptions encountered during tokenization are passed to the configured exception
         /// handler, if one is set.</remarks>
-        private void TokenizeViewPortCore()
+        internal void TokenizeViewPortCore()
         {
             if (Volatile.Read(ref _isDisposed))
                 return;
