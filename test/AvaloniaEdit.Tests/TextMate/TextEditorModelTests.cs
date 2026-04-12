@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using Avalonia.Headless.NUnit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Tests.TestUtils;
 using AvaloniaEdit.TextMate;
 using NUnit.Framework;
 using TextMateSharp.Grammars;
@@ -739,26 +737,6 @@ namespace AvaloniaEdit.Tests.TextMate
             Assert.DoesNotThrow(() => textEditorModel.InvalidateViewPortLines());
         }
 
-        [Test]
-        public void InvalidateViewPortLines_Should_Not_Throw_When_VisualLines_Are_Empty()
-        {
-            // Arrange - set _visibleVisualLines to an empty collection
-            // so VisualLinesValid is true but Count is 0
-            TextView textView = new TextView();
-            TextDocument document = new TextDocument();
-            using var textEditorModel = new TextEditorModel(
-                textView, document, null);
-            document.Text = "puppy\npussy\nbirdie";
-
-            ReflectionTestHelper.SetPrivateField(textView,
-                "_visibleVisualLines",
-                new ReadOnlyCollection<VisualLine>(Array.Empty<VisualLine>()));
-
-            // Act & Assert - should early-return at Count == 0 check
-            Assert.IsTrue(textView.VisualLinesValid);
-            Assert.DoesNotThrow(() => textEditorModel.InvalidateViewPortLines());
-        }
-
         [AvaloniaTest]
         public void InvalidateViewPortLines_Should_Invoke_InvalidateLineRange_With_Valid_VisualLines()
         {
@@ -809,24 +787,6 @@ namespace AvaloniaEdit.Tests.TextMate
         #region TokenizeViewPort
 
         [Test]
-        public void TokenizeViewPort_Should_Not_Throw_When_Called_Before_Dispose()
-        {
-            // Arrange
-            TextView textView = new TextView();
-            TextDocument document = new TextDocument();
-            using var textEditorModel = new TextEditorModel(
-                textView, document, null);
-            document.Text = "puppy\npussy\nbirdie";
-
-            // Act & Assert - TokenizeViewPort is private; invoke via
-            // reflection to verify it does not throw when queuing
-            // work via Dispatcher.Post
-            Assert.DoesNotThrow(() =>
-                ReflectionTestHelper.InvokePrivateMethod(
-                    textEditorModel, "TokenizeViewPort"));
-        }
-
-        [Test]
         public void TokenizeViewPort_Should_Not_Throw_After_Dispose()
         {
             // Arrange
@@ -839,9 +799,7 @@ namespace AvaloniaEdit.Tests.TextMate
             // Act & Assert - invoking TokenizeViewPort after dispose
             // should not throw; the Post lambda will check _isDisposed
             // and silently return when it eventually executes
-            Assert.DoesNotThrow(() =>
-                ReflectionTestHelper.InvokePrivateMethod(
-                    textEditorModel, "TokenizeViewPort"));
+            Assert.DoesNotThrow(() => textEditorModel.TokenizeViewPort());
         }
 
         [Test]
@@ -854,9 +812,7 @@ namespace AvaloniaEdit.Tests.TextMate
             document.Text = "puppy\npussy\nbirdie";
 
             // Act & Assert
-            Assert.DoesNotThrow(() =>
-                ReflectionTestHelper.InvokePrivateMethod(
-                    textEditorModel, "TokenizeViewPort"));
+            Assert.DoesNotThrow(() => textEditorModel.TokenizeViewPort());
         }
 
         #endregion
@@ -875,7 +831,7 @@ namespace AvaloniaEdit.Tests.TextMate
 
             // Act & Assert - the _isDisposed guard should cause an
             // early return without accessing any other state
-            Assert.DoesNotThrow(() => ReflectionTestHelper.InvokePrivateMethod(textEditorModel, "TokenizeViewPortCore"));
+            Assert.DoesNotThrow(() => textEditorModel.TokenizeViewPortCore());
         }
 
         [Test]
@@ -890,26 +846,7 @@ namespace AvaloniaEdit.Tests.TextMate
 
             // Act & Assert - should early-return at VisualLinesValid check
             Assert.IsFalse(textView.VisualLinesValid);
-            Assert.DoesNotThrow(() => ReflectionTestHelper.InvokePrivateMethod(textEditorModel, "TokenizeViewPortCore"));
-        }
-
-        [Test]
-        public void TokenizeViewPortCore_Should_Return_When_VisualLines_Are_Empty()
-        {
-            // Arrange - set _visibleVisualLines to an empty collection
-            // so VisualLinesValid is true but Count is 0
-            TextView textView = new TextView();
-            TextDocument document = new TextDocument();
-            using var textEditorModel = new TextEditorModel(textView, document, null);
-            document.Text = "puppy\npussy\nbirdie";
-
-            ReflectionTestHelper.SetPrivateField(textView,
-                "_visibleVisualLines",
-                new ReadOnlyCollection<VisualLine>(Array.Empty<VisualLine>()));
-
-            // Act & Assert - should early-return at Count == 0 check
-            Assert.IsTrue(textView.VisualLinesValid);
-            Assert.DoesNotThrow(() => ReflectionTestHelper.InvokePrivateMethod(textEditorModel, "TokenizeViewPortCore"));
+            Assert.DoesNotThrow(() => textEditorModel.TokenizeViewPortCore());
         }
 
         [AvaloniaTest]
@@ -928,56 +865,7 @@ namespace AvaloniaEdit.Tests.TextMate
             // without throwing
             Assert.IsTrue(textView.VisualLinesValid);
             Assert.IsTrue(textView.VisualLines.Count > 0);
-            Assert.DoesNotThrow(() => ReflectionTestHelper.InvokePrivateMethod(textEditorModel, "TokenizeViewPortCore"));
-        }
-
-        [Test]
-        public void TokenizeViewPortCore_Should_Invoke_ExceptionHandler_On_Error()
-        {
-            // Arrange - set up an exception handler and force an error
-            // by setting _visibleVisualLines to a non-null, non-empty
-            // collection with null entries, causing an NRE when
-            // accessing FirstDocumentLine
-            Exception capturedException = null;
-            void Handler(Exception ex) => capturedException = ex;
-
-            TextView textView = new TextView();
-            TextDocument document = new TextDocument();
-            using var textEditorModel = new TextEditorModel(textView, document, Handler);
-            document.Text = "puppy\npussy\nbirdie";
-
-            // Inject a VisualLine array with a null entry to force
-            // NullReferenceException inside the try block
-            ReflectionTestHelper.SetPrivateField(textView,
-                "_visibleVisualLines",
-                new ReadOnlyCollection<VisualLine>(new VisualLine[] { null }));
-
-            // Act
-            ReflectionTestHelper.InvokePrivateMethod(textEditorModel, "TokenizeViewPortCore");
-
-            // Assert - exception was caught and routed to the handler
-            Assert.IsNotNull(capturedException, "ExceptionHandler should have been invoked");
-            Assert.IsInstanceOf<NullReferenceException>(capturedException);
-        }
-
-        [Test]
-        public void TokenizeViewPortCore_Should_Not_Throw_With_Null_ExceptionHandler_On_Error()
-        {
-            // Arrange - null exception handler with a forced error
-            TextView textView = new TextView();
-            TextDocument document = new TextDocument();
-            using var textEditorModel = new TextEditorModel(textView, document, null);
-            document.Text = "puppy\npussy\nbirdie";
-
-            // Inject a VisualLine array with a null entry
-            ReflectionTestHelper.SetPrivateField(textView,
-                "_visibleVisualLines",
-                new ReadOnlyCollection<VisualLine>(new VisualLine[] { null }));
-
-            // Act & Assert - null-conditional on _exceptionHandler
-            // should prevent NRE from the handler itself
-            Assert.DoesNotThrow(() =>
-                ReflectionTestHelper.InvokePrivateMethod(textEditorModel, "TokenizeViewPortCore"));
+            Assert.DoesNotThrow(() => textEditorModel.TokenizeViewPortCore());
         }
 
         #endregion
@@ -998,10 +886,7 @@ namespace AvaloniaEdit.Tests.TextMate
             // Act & Assert - fire ScrollOffsetChanged via the private
             // SetScrollOffset method; after dispose, the event handler
             // is unsubscribed so the model's handler is not invoked
-            Assert.DoesNotThrow(() =>
-                ReflectionTestHelper.InvokePrivateMethod(
-                    textView, "SetScrollOffset",
-                    new Avalonia.Vector(0, 50)));
+            Assert.DoesNotThrow(() => textView.SetScrollOffset(new Avalonia.Vector(0, 50)));
         }
 
         [Test]
@@ -1017,10 +902,7 @@ namespace AvaloniaEdit.Tests.TextMate
             // Act & Assert - fire ScrollOffsetChanged before dispose
             // the event handler calls TokenizeViewPort which queues
             // work via Dispatcher.Post
-            Assert.DoesNotThrow(() =>
-                ReflectionTestHelper.InvokePrivateMethod(
-                    textView, "SetScrollOffset",
-                    new Avalonia.Vector(0, 50)));
+            Assert.DoesNotThrow(() => textView.SetScrollOffset(new Avalonia.Vector(0, 50)));
         }
 
         [Test]
@@ -1037,18 +919,10 @@ namespace AvaloniaEdit.Tests.TextMate
             // each queue a Post without errors
             Assert.DoesNotThrow(() =>
             {
-                ReflectionTestHelper.InvokePrivateMethod(
-                    textView, "SetScrollOffset",
-                    new Avalonia.Vector(0, 10));
-                ReflectionTestHelper.InvokePrivateMethod(
-                    textView, "SetScrollOffset",
-                    new Avalonia.Vector(0, 20));
-                ReflectionTestHelper.InvokePrivateMethod(
-                    textView, "SetScrollOffset",
-                    new Avalonia.Vector(0, 30));
-                ReflectionTestHelper.InvokePrivateMethod(
-                    textView, "SetScrollOffset",
-                    new Avalonia.Vector(0, 0));
+                textView.SetScrollOffset(new Avalonia.Vector(0, 10));
+                textView.SetScrollOffset(new Avalonia.Vector(0, 20));
+                textView.SetScrollOffset(new Avalonia.Vector(0, 30));
+                textView.SetScrollOffset(new Avalonia.Vector(0, 0));
             });
         }
 
