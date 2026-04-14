@@ -1401,7 +1401,7 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public event EventHandler ScrollOffsetChanged;
 
-        private void SetScrollOffset(Vector vector)
+        internal void SetScrollOffset(Vector vector)
         {
             if (!_canHorizontallyScroll)
             {
@@ -1507,7 +1507,7 @@ namespace AvaloniaEdit.Rendering
                     0, 32000,
                     new VisualLineTextParagraphProperties { defaultTextRunProperties = textRunProperties });
             }
-            
+
             if (line != null)
             {
                 _wideSpaceWidth = Math.Max(1, line.WidthIncludingTrailingWhitespace);
