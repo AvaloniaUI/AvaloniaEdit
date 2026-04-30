@@ -406,12 +406,12 @@ namespace AvaloniaEdit.Highlighting.Xshd
         {
             if (string.IsNullOrEmpty(name))
                 return MainRuleSet;
-            return _ruleSetDict.TryGetValue(name, out var r) ? r : null;
+            return _ruleSetDict.GetValueOrDefault(name);
         }
 
         public HighlightingColor GetNamedColor(string name)
         {
-            return _colorDict.TryGetValue(name, out var c) ? c : null;
+            return _colorDict.GetValueOrDefault(name);
         }
 
         public IEnumerable<HighlightingColor> NamedHighlightingColors => _colorDict.Values;

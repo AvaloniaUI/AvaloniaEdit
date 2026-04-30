@@ -126,7 +126,7 @@ namespace AvaloniaEdit.Highlighting
         {
             lock (_lockObj)
             {
-                return _highlightingsByName.TryGetValue(name, out var rh) ? rh : null;
+                return _highlightingsByName.GetValueOrDefault(name);
             }
         }
 
@@ -152,7 +152,7 @@ namespace AvaloniaEdit.Highlighting
         {
             lock (_lockObj)
             {
-                return _highlightingsByExtension.TryGetValue(extension, out var rh) ? rh : null;
+                return _highlightingsByExtension.GetValueOrDefault(extension);
             }
         }
 
