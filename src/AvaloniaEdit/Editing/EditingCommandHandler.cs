@@ -199,8 +199,6 @@ namespace AvaloniaEdit.Editing
                         // see https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/breaking-changes/compiler%20breaking%20changes%20-%20dotnet%2010#enumerablereverse
                         foreach (var segment in System.Linq.Enumerable.Reverse(segments))
                         {
-                            // Use Enumerable.Reverse explicitly to avoid a breaking change in C# 14 where Reverse() now resolves to MemoryExtensions.Reverse instead of Enumerable.Reverse
-                            // see https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/breaking-changes/compiler%20breaking%20changes%20-%20dotnet%2010#enumerablereverse
                             foreach (var writableSegment in System.Linq.Enumerable.Reverse(textArea.GetDeletableSegments(segment)))
                             {
                                 transformSegment(textArea, writableSegment);
