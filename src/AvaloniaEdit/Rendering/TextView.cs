@@ -1590,26 +1590,14 @@ namespace AvaloniaEdit.Rendering
 
         #region Visual element pointer handling
 
-        [ThreadStatic] private static bool _invalidCursor;
-        //private VisualLineElement _currentHoveredElement;
-
         /// <summary>
-        /// Updates the pointe cursor, but with background priority.
+        /// Requests a cursor update. In Avalonia, cursor changes are handled automatically
+        /// by the platform when the pointer enters/leaves controls with different Cursor values.
+        /// This method is retained for API compatibility but is a no-op.
         /// </summary>
         public static void InvalidateCursor()
         {
-            if (!_invalidCursor)
-            {
-                _invalidCursor = true;
-                Dispatcher.UIThread.InvokeAsync(
-                    delegate
-                    {
-                        _invalidCursor = false;
-                        //MouseDevice.Instance.UpdateCursor();
-                    },
-                    DispatcherPriority.Background // fixes issue #288
-                    );
-            }
+            // No-op: Avalonia handles cursor updates automatically via the Cursor property.
         }
 
         internal void InvalidateCursorIfPointerWithinTextView()
