@@ -462,13 +462,42 @@ namespace AvaloniaEdit.Editing
             BringCaretToView(0);
         }
 
+        private bool _isUpdatingView;
+
         public void BringCaretToView(double border)
         {
+            // Guard against reentry, which can happen when the TextView height is too small.
+            // See https://github.com/AvaloniaUI/AvaloniaEdit/issues/596
+            if (_isUpdatingView)
+                return;
+
             var caretRectangle = CalculateCaretRectangle();
             if (caretRectangle != default)
             {
-                caretRectangle = caretRectangle.Inflate(border);
-                _textView.MakeVisible(caretRectangle);
+                try
+                {
+                    _isUpdatingView = true;
+
+                    if (border > 0)
+                    {
+                        // Add the specified border, but only when the TextView is large enough. We
+                        // don't want the text to scroll out of view.
+                        double horizontal = 0;
+                        double vertical = 0;
+                        if (_textView.Bounds.Width > caretRectangle.Width + 2 * border)
+                            horizontal = border;
+                        if (_textView.Bounds.Height > caretRectangle.Height + 2 * border)
+                            vertical = border;
+
+                        caretRectangle = caretRectangle.Inflate(new Thickness(horizontal, vertical));
+                    }
+
+                    _textView.MakeVisible(caretRectangle);
+                }
+                finally
+                {
+                    _isUpdatingView = false;
+                }
             }
         }
 
