@@ -1031,13 +1031,16 @@ namespace AvaloniaEdit.Rendering
             return p;
         }
 
+        private double LetterSpacing => TextElement.GetLetterSpacing(this);
+
         private VisualLineTextParagraphProperties CreateParagraphProperties(TextRunProperties defaultTextRunProperties)
         {
             return new VisualLineTextParagraphProperties
             {
                 defaultTextRunProperties = defaultTextRunProperties,
                 textWrapping = _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
-                tabSize = Options.IndentationSize * WideSpaceWidth
+                tabSize = Options.IndentationSize * WideSpaceWidth,
+                letterSpacing = LetterSpacing
             };
         }
 
@@ -1505,7 +1508,7 @@ namespace AvaloniaEdit.Rendering
                 line = _formatter.FormatLine(
                     new SimpleTextSource("x", textRunProperties),
                     0, 32000,
-                    new VisualLineTextParagraphProperties { defaultTextRunProperties = textRunProperties });
+                    new VisualLineTextParagraphProperties { defaultTextRunProperties = textRunProperties, letterSpacing = LetterSpacing });
             }
 
             if (line != null)
@@ -1940,7 +1943,8 @@ namespace AvaloniaEdit.Rendering
             if (change.Property == TemplatedControl.FontFamilyProperty
                 || change.Property == TemplatedControl.FontSizeProperty
                 || change.Property == TemplatedControl.FontStyleProperty
-                || change.Property == TemplatedControl.FontWeightProperty)
+                || change.Property == TemplatedControl.FontWeightProperty
+                || change.Property == TextElement.LetterSpacingProperty)
             {
                 // changing font properties requires recreating cached elements
                 RecreateCachedElements();

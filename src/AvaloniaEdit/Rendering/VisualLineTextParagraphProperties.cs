@@ -28,6 +28,7 @@ namespace AvaloniaEdit.Rendering
 		internal TextWrapping textWrapping;
 		internal double tabSize;
 		internal double indent;
+		internal double letterSpacing;
 		internal bool firstLineInParagraph;
 
 		public override double DefaultIncrementalTab => tabSize;
@@ -35,6 +36,7 @@ namespace AvaloniaEdit.Rendering
 		public override FlowDirection FlowDirection => FlowDirection.LeftToRight;
 		public override TextAlignment TextAlignment => TextAlignment.Left;
 		public override double LineHeight => double.NaN;
+		public override double LetterSpacing => letterSpacing;
 		public override bool FirstLineInParagraph => firstLineInParagraph;
 		public override TextRunProperties DefaultTextRunProperties => defaultTextRunProperties;
 
