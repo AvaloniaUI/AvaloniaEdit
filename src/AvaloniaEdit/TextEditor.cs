@@ -59,8 +59,6 @@ namespace AvaloniaEdit
             IsModifiedProperty.Changed.Subscribe(OnIsModifiedChanged);
             ShowLineNumbersProperty.Changed.Subscribe(OnShowLineNumbersChanged);
             LineNumbersForegroundProperty.Changed.Subscribe(OnLineNumbersForegroundChanged);
-            FontFamilyProperty.Changed.Subscribe(OnFontFamilyPropertyChanged);
-            FontSizeProperty.Changed.Subscribe(OnFontSizePropertyChanged);
             SearchResultsBrushProperty.Changed.Subscribe(SearchResultsBrushChangedCallback);
         }
 
@@ -88,7 +86,10 @@ namespace AvaloniaEdit
             SetValue(OptionsProperty, textArea.Options);
             SetValue(DocumentProperty, document);
 
+            // 建立属性绑定，确保 TextEditor 的属性变化能自动同步到 TextArea
             textArea[!BackgroundProperty] = this[!BackgroundProperty];
+            textArea[!FontFamilyProperty] = this[!FontFamilyProperty];
+            textArea[!FontSizeProperty] = this[!FontSizeProperty];
         }
 
         #endregion
@@ -598,20 +599,6 @@ namespace AvaloniaEdit
             lineNumberMargin?.SetValue(ForegroundProperty, e.NewValue);
         }
 
-        private static void OnFontFamilyPropertyChanged(AvaloniaPropertyChangedEventArgs e)
-        {
-            var editor = e.Sender as TextEditor;
-
-            editor?.TextArea.TextView.SetValue(FontFamilyProperty, e.NewValue);
-        }
-
-        private static void OnFontSizePropertyChanged(AvaloniaPropertyChangedEventArgs e)
-        {
-            var editor = e.Sender as TextEditor;
-
-            editor?.TextArea.TextView.SetValue(FontSizeProperty, e.NewValue);
-        }
-
         private static void SearchResultsBrushChangedCallback(AvaloniaPropertyChangedEventArgs e)
         {
             var editor = e.Sender as TextEditor;
@@ -827,8 +814,8 @@ namespace AvaloniaEdit
         public void ScrollToHorizontalOffset(double offset)
         {
             ApplyTemplate(); // ensure scrollViewer is created
-            //if (scrollViewer != null)
-            //    scrollViewer.ScrollToHorizontalOffset(offset);
+            if (ScrollViewer != null)
+                ScrollViewer.Offset = ScrollViewer.Offset.WithX(offset);
         }
 
         /// <summary>
@@ -837,8 +824,8 @@ namespace AvaloniaEdit
         public void ScrollToVerticalOffset(double offset)
         {
             ApplyTemplate(); // ensure scrollViewer is created
-            //if (scrollViewer != null)
-            //    scrollViewer.ScrollToVerticalOffset(offset);
+            if (ScrollViewer != null)
+                ScrollViewer.Offset = ScrollViewer.Offset.WithY(offset);
         }
 
         /// <summary>

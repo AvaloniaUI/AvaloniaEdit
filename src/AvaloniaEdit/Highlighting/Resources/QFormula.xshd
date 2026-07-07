@@ -1,0 +1,258 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Python" extensions=".py;.pyw" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Comment" foreground="Green" exampleText="# comment"/>
+  <Color name="String" foreground="Gray" exampleText="name = 'abc'"/>
+  <Color name="MethodCall" foreground="Purple" exampleText="def Hello()"/>
+  <Color name="NumberLiteral" foreground="DarkBlue" exampleText="3.1415f"/>
+  <Color name="Keywords" fontWeight="bold" foreground="Blue" exampleText="if"/>
+  <Color name="Operators" foreground="#DCDCDC" exampleText=""/>
+  <Color name="IndicatorKeys" foreground="#DF6836" exampleText=""/>
+  <Color name="IndicatorNames" foreground="#DF6836" exampleText=""/>
+
+  <Property name="DocCommentMarker" value="///"/>
+
+  <RuleSet name="CommentMarkerSet">
+    <Keywords fontWeight="bold" foreground="Red">
+      <Word>TODO</Word>
+      <Word>FIXME</Word>
+    </Keywords>
+    <Keywords fontWeight="bold" foreground="#E0E000">
+      <Word>HACK</Word>
+      <Word>UNDONE</Word>
+    </Keywords>
+  </RuleSet>
+
+  <RuleSet>
+    <Span color="Comment" ruleSet="CommentMarkerSet">
+      <Begin>\#</Begin>
+    </Span>
+
+    <Span color="String" multiline="true">
+      <Begin>'''</Begin>
+      <End>'''</End>
+    </Span>
+    <Span color="String" multiline="true">
+      <Begin>"""</Begin>
+      <End>"""</End>
+    </Span>
+
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="."/>
+      </RuleSet>
+    </Span>
+    <Span color="String">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <Span begin="\\" end="."/>
+      </RuleSet>
+    </Span>
+
+    <Keywords color="Keywords">
+      <Word>and</Word>
+      <Word>as</Word>
+      <Word>assert</Word>
+      <Word>break</Word>
+      <Word>class</Word>
+      <Word>continue</Word>
+      <Word>def</Word>
+      <Word>del</Word>
+      <Word>elif</Word>
+      <Word>else</Word>
+      <Word>except</Word>
+      <Word>exec</Word>
+      <Word>False</Word>
+      <Word>finally</Word>
+      <Word>for</Word>
+      <Word>from</Word>
+      <Word>global</Word>
+      <Word>if</Word>
+      <Word>import</Word>
+      <Word>in</Word>
+      <Word>is</Word>
+      <Word>lambda</Word>
+      <Word>None</Word>
+      <Word>nonlocal</Word>
+      <Word>not</Word>
+      <Word>or</Word>
+      <Word>pass</Word>
+      <Word>print</Word>
+      <Word>raise</Word>
+      <Word>return</Word>
+      <Word>True</Word>
+      <Word>try</Word>
+      <Word>while</Word>
+      <Word>with</Word>
+      <Word>yield</Word>
+      <Word>async</Word>
+      <Word>await</Word>
+    </Keywords>
+
+    <Keywords color="IndicatorKeys">
+      <Word>OPEN</Word>
+      <Word>O</Word>
+      <Word>HIGH</Word>
+      <Word>H</Word>
+      <Word>LOW</Word>
+      <Word>L</Word>
+      <Word>CLOSE</Word>
+      <Word>C</Word>
+      <Word>VOL</Word>
+      <Word>V</Word>
+      <Word>AMOUNT</Word>
+      <Word>PERIOD</Word>
+      <Word>DATE</Word>
+      <Word>DAY</Word>
+      <Word>HOUR</Word>
+      <Word>MINUTE</Word>
+      <Word>MONTH</Word>
+      <Word>TIME</Word>
+      <Word>YEAR</Word>
+      <Word>WEEKDAY</Word>
+      <Word>DRAWNULL</Word>
+      <Word>BACKSET</Word>
+      <Word>BARSCOUNT</Word>
+      <Word>BARSTATUS</Word>
+      <Word>BARSSINCE</Word>
+      <Word>BARSSINCEN</Word>
+      <Word>BARSLAST</Word>
+      <Word>BARSLASTCOUNT</Word>
+      <Word>BARSNEXT</Word>
+      <Word>CURRBARSCOUNT</Word>
+      <Word>COUNT</Word>
+      <Word>CONST</Word>
+      <Word>DMA</Word>
+      <Word>EMA</Word>
+      <Word>HHV</Word>
+      <Word>HHVBARS</Word>
+      <Word>HOD</Word>
+      <Word>ISLASTBAR</Word>
+      <Word>LLV</Word>
+      <Word>LLVBARS</Word>
+      <Word>LOD</Word>
+      <Word>LOWRANGE</Word>
+      <Word>MA</Word>
+      <Word>MEMA</Word>
+      <Word>EXPMEMA</Word>
+      <Word>MULAR</Word>
+      <Word>RANGE</Word>
+      <Word>REFV</Word>
+      <Word>REFXV</Word>
+      <Word>REFX</Word>
+      <Word>REF</Word>
+      <Word>REVERSE</Word>
+      <Word>SMA</Word>
+      <Word>SUMBARS</Word>
+      <Word>SUM</Word>
+      <Word>TMA</Word>
+      <Word>WMA</Word>
+      <Word>CROSS</Word>
+      <Word>LONGCROSS</Word>
+      <Word>UPNDAY</Word>
+      <Word>DOWNNDAY</Word>
+      <Word>NDAY</Word>
+      <Word>EXIST</Word>
+      <Word>EVERY</Word>
+      <Word>NOT</Word>
+      <Word>IFC</Word>
+      <Word>IF</Word>
+      <Word>IFF</Word>
+      <Word>IFN</Word>
+      <Word>ABS</Word>
+      <Word>ACOS</Word>
+      <Word>ASIN</Word>
+      <Word>ATAN</Word>
+      <Word>BETWEEN</Word>
+      <Word>CEILING</Word>
+      <Word>COS</Word>
+      <Word>EXP</Word>
+      <Word>FLOOR</Word>
+      <Word>FRACPART</Word>
+      <Word>INTPART</Word>
+      <Word>LN</Word>
+      <Word>LOG</Word>
+      <Word>MAX</Word>
+      <Word>MIN</Word>
+      <Word>MOD</Word>
+      <Word>POW</Word>
+      <Word>RAND</Word>
+      <Word>ROUND</Word>
+      <Word>SIGN</Word>
+      <Word>SIN</Word>
+      <Word>SQRT</Word>
+      <Word>TAN</Word>
+      <Word>AVEDEV</Word>
+      <Word>DEVSQ</Word>
+      <Word>FORCAST</Word>
+      <Word>SLOPE</Word>
+      <Word>STD</Word>
+      <Word>STDP</Word>
+      <Word>VAR</Word>
+      <Word>VARP</Word>
+      <Word>COVAR</Word>
+      <Word>SAR</Word>
+      <Word>DYNAINFO</Word>
+      <Word>INFORMATION</Word>
+    </Keywords>
+    <Keywords color="IndicatorNames">
+      <Word>MACD</Word>
+      <Word>KDJ</Word>
+      <Word>RSI</Word>
+      <Word>BOLL</Word>
+      <Word>DMI</Word>
+      <Word>BIAS</Word>
+      <Word>ASI</Word>
+      <Word>OBV</Word>
+      <Word>WAD</Word>
+      <Word>PSY</Word>
+      <Word>ATR</Word>
+      <Word>PVI</Word>
+      <Word>SAR</Word>
+      <Word>TRIX</Word>
+      <Word>ARBR</Word>
+      <Word>VR</Word>
+      <Word>DPO</Word>
+      <Word>DMA</Word>
+      <Word>BBI</Word>
+      <Word>MTM</Word>
+      <Word>MA</Word>
+      <Word>WR</Word>
+      <Word>DKX</Word>
+      <Word>ENE</Word>
+      <Word>EXPMA</Word>
+    </Keywords>
+    <Keywords color="Operators">
+      <Word>+</Word>
+      <Word>-</Word>
+      <Word>*</Word>
+      <Word>/</Word>
+      <Word>></Word>
+      <Word>&lt;</Word>
+      <Word>=</Word>
+      <Word>(</Word>
+      <Word>)</Word>
+      <Word>\</Word>
+      <Word>:</Word>
+      <Word>;</Word>
+      <Word>,</Word>
+      <Word>|</Word>
+      <Word>&amp;</Word>
+    </Keywords>
+
+    <Rule color="MethodCall">
+      \b
+      [\d\w_]+  # an identifier
+      (?=\s*\() # followed by (
+    </Rule>
+    <Rule color="NumberLiteral">
+      \b0[xX][0-9a-fA-F]+  # hex number
+      (	\b\d+(\.[0-9]+)?   #number with optional floating point
+      |	\.[0-9]+           #or just starting with floating point
+      )
+      ([eE][+-]?[0-9]+)? # optional exponent
+    </Rule>
+  </RuleSet>
+</SyntaxDefinition>

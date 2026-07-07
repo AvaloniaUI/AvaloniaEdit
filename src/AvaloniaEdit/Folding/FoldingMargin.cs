@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
@@ -39,6 +40,8 @@ namespace AvaloniaEdit.Folding
         public FoldingManager FoldingManager { get; set; }
 
         internal const double SizeFactor = Constants.PixelPerPoint;
+
+        public event EventHandler OnFoldedChanged;
 
         static FoldingMargin()
         {
@@ -165,6 +168,7 @@ namespace AvaloniaEdit.Folding
         {
             foreach (var m in _markers)
             {
+                m.OnFoldedChanged -= RaiseOnFoldedChanged;
                 VisualChildren.Remove(m);
             }
 
@@ -185,6 +189,7 @@ namespace AvaloniaEdit.Folding
                         };
                         ((ISetLogicalParent)m).SetParent(this);
 
+                        m.OnFoldedChanged += RaiseOnFoldedChanged;
                         _markers.Add(m);
                         VisualChildren.Add(m);
 
@@ -200,6 +205,11 @@ namespace AvaloniaEdit.Folding
                     }
                 }
             }
+        }
+
+        private void RaiseOnFoldedChanged(object sender, EventArgs e)
+        {
+            OnFoldedChanged?.Invoke(this, e);
         }
 
         private Pen _foldingControlPen = new Pen(FoldingMarkerBrushProperty.GetDefaultValue(typeof(FoldingMargin)));

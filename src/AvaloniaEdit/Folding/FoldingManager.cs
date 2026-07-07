@@ -331,6 +331,7 @@ namespace AvaloniaEdit.Folding
             {
                 _textArea = textArea;
                 _margin = new FoldingMargin { FoldingManager = this };
+                _margin.OnFoldedChanged += RaiseOnFoldedChanged;
                 _generator = new FoldingElementGenerator { FoldingManager = this };
                 textArea.LeftMargins.Add(_margin);
                 textArea.TextView.Services.AddService(typeof(FoldingManager), this);
@@ -389,6 +390,20 @@ namespace AvaloniaEdit.Folding
                         s.IsFolded = false;
                     }
                 }
+            }
+        }
+        #endregion
+
+        #region Event
+        /// <summary>
+        /// 代码折叠事件
+        /// </summary>
+        public event EventHandler OnFoldedChanged;
+        private void RaiseOnFoldedChanged(object sender, EventArgs e)
+        {
+            if (OnFoldedChanged != null)
+            {
+                OnFoldedChanged(this, e);
             }
         }
         #endregion

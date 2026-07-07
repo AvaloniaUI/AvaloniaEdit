@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using AvaloniaEdit.CodeCompletion;
 using AvaloniaEdit.Demo.Resources;
 using AvaloniaEdit.Document;
@@ -15,6 +18,7 @@ using AvaloniaEdit.Folding;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Grammars;
+using Avalonia.Diagnostics;
 using Avalonia.Layout;
 using AvaloniaEdit.Snippets;
 using Snippet = AvaloniaEdit.Snippets.Snippet;
@@ -23,12 +27,18 @@ namespace AvaloniaEdit.Demo
 {
     using Pair = KeyValuePair<int, Control>;
 
-    public partial class MainWindow : Window
+    public class MainWindow : Window
     {
+        private readonly TextEditor _textEditor;
         private FoldingManager _foldingManager;
         private readonly TextMate.TextMate.Installation _textMateInstallation;
         private CompletionWindow _completionWindow;
         private OverloadInsightWindow _insightWindow;
+        private Button _addControlButton;
+        private Button _clearControlButton;
+        private Button _insertSnippetButton;
+        private ComboBox _syntaxModeCombo;
+        private TextBlock _statusTextBlock;
         private ElementGenerator _generator = new ElementGenerator();
         private RegistryOptions _registryOptions;
         private int _currentTheme = (int)ThemeName.DarkPlus;
@@ -38,60 +48,73 @@ namespace AvaloniaEdit.Demo
         {
             InitializeComponent();
 
-            Editor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
-            Editor.Background = Brushes.Transparent;
-            Editor.ShowLineNumbers = true;
-            Editor.TextArea.Background = this.Background;
-            Editor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
-            Editor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
-            Editor.Options.AllowToggleOverstrikeMode = true;
-            Editor.Options.EnableTextDragDrop = true;
-            Editor.Options.ShowBoxForControlCharacters = true;
-            Editor.Options.ColumnRulerPositions = new List<int>() { 80, 100 };
-            Editor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy(Editor.Options);
-            Editor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
-            Editor.TextArea.RightClickMovesCaret = true;
-            Editor.Options.HighlightCurrentLine = true;
-            Editor.Options.CompletionAcceptAction = CompletionAcceptAction.DoubleTapped;
+            this.AttachDevTools();
 
-            AddControlBtn.Click += AddControlButton_Click;
-            ClearControlBtn.Click += ClearControlButton_Click;
-            InsertSnippetBtn.Click += InsertSnippetButton_Click;
+            _textEditor = this.FindControl<TextEditor>("Editor");
+            _textEditor.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
+            _textEditor.Background = Brushes.Transparent;
+            _textEditor.ShowLineNumbers = true;
+            _textEditor.TextArea.Background = this.Background;
+            _textEditor.TextArea.TextEntered += textEditor_TextArea_TextEntered;
+            _textEditor.TextArea.TextEntering += textEditor_TextArea_TextEntering;
+            _textEditor.Options.AllowToggleOverstrikeMode = true;
+            _textEditor.Options.EnableTextDragDrop = true;
+            _textEditor.Options.ShowSpaces = false;
+            _textEditor.Options.ShowLeadingSpaces = true;
+            _textEditor.Options.ShowBoxForControlCharacters = true;
+            _textEditor.Options.ColumnRulerPositions = new List<int>() { 80, 100 };
+            _textEditor.TextArea.IndentationStrategy = new Indentation.CSharp.CSharpIndentationStrategy(_textEditor.Options);
+            _textEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
+            _textEditor.TextArea.RightClickMovesCaret = true;
+            _textEditor.Options.HighlightCurrentLine = true;
+            _textEditor.Options.CompletionAcceptAction = CompletionAcceptAction.DoubleTapped;
 
-            Editor.TextArea.TextView.ElementGenerators.Add(_generator);
+            _addControlButton = this.FindControl<Button>("addControlBtn");
+            _addControlButton.Click += AddControlButton_Click;
+
+            _clearControlButton = this.FindControl<Button>("clearControlBtn");
+            _clearControlButton.Click += ClearControlButton_Click;
+
+            _insertSnippetButton = this.FindControl<Button>("insertSnippetBtn");
+            _insertSnippetButton.Click += InsertSnippetButton_Click;
+
+            _textEditor.TextArea.TextView.ElementGenerators.Add(_generator);
 
             _registryOptions = new RegistryOptions(
                 (ThemeName)_currentTheme);
 
-            _textMateInstallation = Editor.InstallTextMate(_registryOptions);
+            _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
 
             _textMateInstallation.AppliedTheme += TextMateInstallationOnAppliedTheme;
 
             Language csharpLanguage = _registryOptions.GetLanguageByExtension(".cs");
 
-            SyntaxModeCombo.ItemsSource = _registryOptions.GetAvailableLanguages();
-            SyntaxModeCombo.SelectedItem = csharpLanguage;
-            SyntaxModeCombo.SelectionChanged += SyntaxModeCombo_SelectionChanged;
+            _syntaxModeCombo = this.FindControl<ComboBox>("syntaxModeCombo");
+            _syntaxModeCombo.ItemsSource = _registryOptions.GetAvailableLanguages();
+            _syntaxModeCombo.SelectedItem = csharpLanguage;
+            _syntaxModeCombo.SelectionChanged += SyntaxModeCombo_SelectionChanged;
 
             string scopeName = _registryOptions.GetScopeByLanguageId(csharpLanguage.Id);
 
-            Editor.Document = new TextDocument(
+            _textEditor.Document = new TextDocument(
                 "// AvaloniaEdit supports displaying control chars: \a or \b or \v" + Environment.NewLine +
                 "// AvaloniaEdit supports displaying underline and strikethrough" + Environment.NewLine +
                 ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(csharpLanguage.Id));
-            Editor.TextArea.TextView.LineTransformers.Add(new UnderlineAndStrikeThroughTransformer());
+            _textEditor.TextArea.TextView.LineTransformers.Add(new UnderlineAndStrikeThroughTransformer());
+
+            _statusTextBlock = this.Find<TextBlock>("StatusText");
 
             this.AddHandler(PointerWheelChangedEvent, (o, i) =>
             {
                 if (i.KeyModifiers != KeyModifiers.Control) return;
-                if (i.Delta.Y > 0) Editor.FontSize++;
-                else Editor.FontSize = Editor.FontSize > 1 ? Editor.FontSize - 1 : 1;
+                if (i.Delta.Y > 0) _textEditor.FontSize++;
+                else _textEditor.FontSize = _textEditor.FontSize > 1 ? _textEditor.FontSize - 1 : 1;
             }, RoutingStrategies.Bubble, true);
 
             // Add a custom margin at the left of the text area, which can be clicked.
             _customMargin = new CustomMargin();
-            Editor.TextArea.LeftMargins.Insert(0, _customMargin);
+            _textEditor.TextArea.LeftMargins.Insert(0, _customMargin);
 
             var mainWindowVM = new MainWindowViewModel(_textMateInstallation, _registryOptions);
             foreach (ThemeName themeName in Enum.GetValues<ThemeName>())
@@ -104,6 +127,8 @@ namespace AvaloniaEdit.Demo
                 }
             }
             DataContext = mainWindowVM;
+
+
         }
 
         private void TextMateInstallationOnAppliedTheme(object sender, TextMate.TextMate.Installation e)
@@ -114,17 +139,17 @@ namespace AvaloniaEdit.Demo
 
         void ApplyThemeColorsToEditor(TextMate.TextMate.Installation e)
         {
-            ApplyBrushAction(e, "editor.background",brush => Editor.Background = brush);
-            ApplyBrushAction(e, "editor.foreground",brush => Editor.Foreground = brush);
+            ApplyBrushAction(e, "editor.background", brush => _textEditor.Background = brush);
+            ApplyBrushAction(e, "editor.foreground", brush => _textEditor.Foreground = brush);
 
             if (!ApplyBrushAction(e, "editor.selectionBackground",
-                    brush => Editor.TextArea.SelectionBrush = brush))
+                    brush => _textEditor.TextArea.SelectionBrush = brush))
             {
                 if (Application.Current!.TryGetResource("TextAreaSelectionBrush", out var resourceObject))
                 {
                     if (resourceObject is IBrush brush)
                     {
-                        Editor.TextArea.SelectionBrush = brush;
+                        _textEditor.TextArea.SelectionBrush = brush;
                     }
                 }
             }
@@ -132,31 +157,37 @@ namespace AvaloniaEdit.Demo
             if (!ApplyBrushAction(e, "editor.lineHighlightBackground",
                     brush =>
                     {
-                        Editor.TextArea.TextView.CurrentLineBackground = brush;
-                        Editor.TextArea.TextView.CurrentLineBorder = new Pen(brush); // Todo: VS Code didn't seem to have a border but it might be nice to have that option. For now just make it the same..
+                        _textEditor.TextArea.TextView.CurrentLineBackground = brush;
+                        _textEditor.TextArea.TextView.CurrentLineBorder = new Pen(brush); // Todo: VS Code didn't seem to have a border but it might be nice to have that option. For now just make it the same..
                     }))
             {
-                Editor.TextArea.TextView.SetDefaultHighlightLineColors();
+                _textEditor.TextArea.TextView.SetDefaultHighlightLineColors();
             }
 
             //Todo: looks like the margin doesn't have a active line highlight, would be a nice addition
             if (!ApplyBrushAction(e, "editorLineNumber.foreground",
-                    brush => Editor.LineNumbersForeground = brush))
+                    brush => _textEditor.LineNumbersForeground = brush))
             {
-                Editor.LineNumbersForeground = Editor.Foreground;
+                _textEditor.LineNumbersForeground = _textEditor.Foreground;
             }
         }
 
         private void ApplyThemeColorsToWindow(TextMate.TextMate.Installation e)
         {
-            if (!ApplyBrushAction(e, "statusBar.background", brush => StatusBar.Background = brush))
+            var panel = this.Find<StackPanel>("StatusBar");
+            if (panel == null)
             {
-                StatusBar.Background = Brushes.Purple;
+                return;
             }
 
-            if (!ApplyBrushAction(e, "statusBar.foreground", brush => StatusText.Foreground = brush))
+            if (!ApplyBrushAction(e, "statusBar.background", brush => panel.Background = brush))
             {
-                StatusText.Foreground = Brushes.White;
+                panel.Background = Brushes.Purple;
+            }
+
+            if (!ApplyBrushAction(e, "statusBar.foreground", brush => _statusTextBlock.Foreground = brush))
+            {
+                _statusTextBlock.Foreground = Brushes.White;
             }
 
             if (!ApplyBrushAction(e, "sideBar.background", brush => _customMargin.BackGroundBrush = brush))
@@ -165,8 +196,8 @@ namespace AvaloniaEdit.Demo
             }
 
             //Applying the Editor background to the whole window for demo sake.
-            ApplyBrushAction(e, "editor.background",brush => Background = brush);
-            ApplyBrushAction(e, "editor.foreground",brush => Foreground = brush);
+            ApplyBrushAction(e, "editor.background", brush => Background = brush);
+            ApplyBrushAction(e, "editor.foreground", brush => Foreground = brush);
         }
 
         bool ApplyBrushAction(TextMate.TextMate.Installation e, string colorKeyNameFromJson, Action<IBrush> applyColorAction)
@@ -184,9 +215,9 @@ namespace AvaloniaEdit.Demo
 
         private void Caret_PositionChanged(object sender, EventArgs e)
         {
-            StatusText.Text = string.Format("Line {0} Column {1}",
-                Editor.TextArea.Caret.Line,
-                Editor.TextArea.Caret.Column);
+            _statusTextBlock.Text = string.Format("Line {0} Column {1}",
+                _textEditor.TextArea.Caret.Line,
+                _textEditor.TextArea.Caret.Column);
         }
 
         protected override void OnClosed(EventArgs e)
@@ -200,7 +231,7 @@ namespace AvaloniaEdit.Demo
         {
             RemoveUnderlineAndStrikethroughTransformer();
 
-            Language language = (Language)SyntaxModeCombo.SelectedItem;
+            Language language = (Language)_syntaxModeCombo.SelectedItem;
 
             if (_foldingManager != null)
             {
@@ -211,28 +242,33 @@ namespace AvaloniaEdit.Demo
             string scopeName = _registryOptions.GetScopeByLanguageId(language.Id);
 
             _textMateInstallation.SetGrammar(null);
-            Editor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
+            _textEditor.Document = new TextDocument(ResourceLoader.LoadSampleFile(scopeName));
             _textMateInstallation.SetGrammar(scopeName);
 
             if (language.Id == "xml")
             {
-                _foldingManager = FoldingManager.Install(Editor.TextArea);
+                _foldingManager = FoldingManager.Install(_textEditor.TextArea);
 
                 var strategy = new XmlFoldingStrategy();
-                strategy.UpdateFoldings(_foldingManager, Editor.Document);
+                strategy.UpdateFoldings(_foldingManager, _textEditor.Document);
                 return;
             }
         }
 
         private void RemoveUnderlineAndStrikethroughTransformer()
         {
-            for (int i = Editor.TextArea.TextView.LineTransformers.Count - 1; i >= 0; i--)
+            for (int i = _textEditor.TextArea.TextView.LineTransformers.Count - 1; i >= 0; i--)
             {
-                if (Editor.TextArea.TextView.LineTransformers[i] is UnderlineAndStrikeThroughTransformer)
+                if (_textEditor.TextArea.TextView.LineTransformers[i] is UnderlineAndStrikeThroughTransformer)
                 {
-                    Editor.TextArea.TextView.LineTransformers.RemoveAt(i);
+                    _textEditor.TextArea.TextView.LineTransformers.RemoveAt(i);
                 }
             }
+        }
+
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
         }
 
         private void AddControlButton_Click(object sender, RoutedEventArgs e)
@@ -246,16 +282,16 @@ namespace AvaloniaEdit.Demo
             // of all elements within a line.
             TextBlock.SetBaselineOffset(button, 22);
 
-            _generator.controls.Add(new Pair(Editor.CaretOffset, button));
+            _generator.controls.Add(new Pair(_textEditor.CaretOffset, button));
             _generator.controls.Sort(0, _generator.controls.Count, _generator);
-            Editor.TextArea.TextView.Redraw();
+            _textEditor.TextArea.TextView.Redraw();
         }
 
         private void ClearControlButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: delete elements using back key
             _generator.controls.Clear();
-            Editor.TextArea.TextView.Redraw();
+            _textEditor.TextArea.TextView.Redraw();
         }
 
         private void textEditor_TextArea_TextEntering(object sender, TextInputEventArgs e)
@@ -281,7 +317,7 @@ namespace AvaloniaEdit.Demo
             if (e.Text == ".")
             {
 
-                _completionWindow = new CompletionWindow(Editor.TextArea);
+                _completionWindow = new CompletionWindow(_textEditor.TextArea);
                 _completionWindow.Closed += (o, args) => _completionWindow = null;
 
                 var data = _completionWindow.CompletionList.CompletionData;
@@ -297,7 +333,7 @@ namespace AvaloniaEdit.Demo
             }
             else if (e.Text == "(")
             {
-                _insightWindow = new OverloadInsightWindow(Editor.TextArea);
+                _insightWindow = new OverloadInsightWindow(_textEditor.TextArea);
                 _insightWindow.Closed += (o, args) => _insightWindow = null;
 
                 _insightWindow.Provider = new MyOverloadProvider(new[]
@@ -370,6 +406,7 @@ namespace AvaloniaEdit.Demo
         private class MyOverloadProvider : IOverloadProvider
         {
             private readonly IList<(string header, string content)> _items;
+            private int _selectedIndex;
 
             public MyOverloadProvider(IList<(string header, string content)> items)
             {
@@ -379,10 +416,10 @@ namespace AvaloniaEdit.Demo
 
             public int SelectedIndex
             {
-                get;
+                get => _selectedIndex;
                 set
                 {
-                    field = value;
+                    _selectedIndex = value;
                     OnPropertyChanged();
                     // ReSharper disable ExplicitCallerInfoArgument
                     OnPropertyChanged(nameof(CurrentHeader));
@@ -495,8 +532,8 @@ namespace AvaloniaEdit.Demo
                 }
             };
 
-            snippet.Insert(Editor.TextArea);
-            Editor.Focus();
+            snippet.Insert(_textEditor.TextArea);
+            _textEditor.Focus();
         }
     }
 }

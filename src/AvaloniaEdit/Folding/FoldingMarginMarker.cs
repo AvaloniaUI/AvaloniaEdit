@@ -17,11 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using Avalonia;
-using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Utils;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Utils;
+using System;
 
 namespace AvaloniaEdit.Folding
 {
@@ -31,6 +32,8 @@ namespace AvaloniaEdit.Folding
         internal FoldingSection FoldingSection;
 
         private bool _isExpanded;
+
+        public event EventHandler OnFoldedChanged;
 
         public bool IsExpanded
         {
@@ -43,7 +46,10 @@ namespace AvaloniaEdit.Folding
                     InvalidateVisual();
                 }
                 if (FoldingSection != null)
+                {
                     FoldingSection.IsFolded = !value;
+                    OnFoldedChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 

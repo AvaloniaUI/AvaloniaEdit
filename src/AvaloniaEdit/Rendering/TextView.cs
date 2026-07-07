@@ -296,7 +296,7 @@ namespace AvaloniaEdit.Rendering
             var options = Options;
 
             //			AddRemoveDefaultElementGeneratorOnDemand(ref newLineElementGenerator, options.ShowEndOfLine);
-            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces || options.ShowTabs);
+            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces || options.ShowLeadingSpaces || options.ShowTabs);
             AddRemoveDefaultElementGeneratorOnDemand(ref _linkElementGenerator, options.EnableHyperlinks);
             AddRemoveDefaultElementGeneratorOnDemand(ref _mailLinkElementGenerator, options.EnableEmailHyperlinks);
         }
@@ -1776,7 +1776,7 @@ namespace AvaloniaEdit.Rendering
         /// <summary>
         /// Gets a service container used to associate services with the text view.
         /// </summary>
-        internal IServiceContainer Services { get; } = new ServiceContainer();
+        public IServiceContainer Services { get; } = new ServiceContainer();
 
         /// <summary>
         /// Retrieves a service from the text view.
