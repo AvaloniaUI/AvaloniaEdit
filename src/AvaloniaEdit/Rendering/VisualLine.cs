@@ -41,6 +41,7 @@ namespace AvaloniaEdit.Rendering
     /// </summary>
     public sealed class VisualLine
     {
+        public const string LENGTH_LIMIT_MARKER = "...";
         public const int LENGTH_LIMIT = 3000;
 
         private enum LifetimePhase : byte
@@ -172,7 +173,10 @@ namespace AvaloniaEdit.Rendering
             // for long lines, do not run the element generators for performance reasons
             if (lineLength > LENGTH_LIMIT)
             {
-                _elements.Add(new VisualLineText(this, lineLength));
+                // shape only the first LENGTH_LIMIT characters and collapse the remainder
+                // into a marker. Otherwise stalls the UI thread.
+                _elements.Add(new VisualLineText(this, LENGTH_LIMIT));
+                _elements.Add(new FormattedTextElement(LENGTH_LIMIT_MARKER, lineLength - LENGTH_LIMIT));
                 return;
             }
 
