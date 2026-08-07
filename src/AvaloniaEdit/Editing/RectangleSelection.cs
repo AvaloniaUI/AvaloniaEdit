@@ -328,7 +328,7 @@ namespace AvaloniaEdit.Editing
         {
             if (lineSegment.Length == 0)
             {
-                if (newText.Length > 0 && textArea.ReadOnlySectionProvider.CanInsert(lineSegment.StartOffset))
+                if (newText.Length > 0 && textArea.CanInsert(lineSegment.StartOffset))
                 {
                     newText = AddSpacesIfRequired(newText, new TextViewPosition(_document.GetLocation(lineSegment.StartOffset), lineSegment.StartVisualColumn), new TextViewPosition(_document.GetLocation(lineSegment.EndOffset), lineSegment.EndVisualColumn));
                     textArea.Document.Insert(lineSegment.StartOffset, newText);
