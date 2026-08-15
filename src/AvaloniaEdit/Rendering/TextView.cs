@@ -1576,9 +1576,16 @@ namespace AvaloniaEdit.Rendering
             {
                 newScrollOffsetY = rectangle.Bottom - _scrollViewport.Height;
             }
+
             newScrollOffsetX = ValidateVisualOffset(newScrollOffsetX);
             newScrollOffsetY = ValidateVisualOffset(newScrollOffsetY);
             var newScrollOffset = new Vector(newScrollOffsetX, newScrollOffsetY);
+
+            // Clamp scroll offset to valid range.
+            var (maxScrollOffsetX, maxScrollOffsetY) = _scrollExtent - _scrollViewport;
+            var maxScrollOffset = Vector.Max(Vector.Zero, new Vector(maxScrollOffsetX, maxScrollOffsetY));
+            newScrollOffset = Vector.Min(newScrollOffset, maxScrollOffset);
+
             if (!_scrollOffset.IsClose(newScrollOffset))
             {
                 SetScrollOffset(newScrollOffset);
@@ -2108,13 +2115,13 @@ namespace AvaloniaEdit.Rendering
             set
             {
                 value = new Vector(ValidateVisualOffset(value.X), ValidateVisualOffset(value.Y));
-                var isX = !_scrollOffset.X.IsClose(value.X);
-                var isY = !_scrollOffset.Y.IsClose(value.Y);
-                if (isX || isY)
+                var xChanged = !_scrollOffset.X.IsClose(value.X);
+                var yChanged = !_scrollOffset.Y.IsClose(value.Y);
+                if (xChanged || yChanged)
                 {
                     SetScrollOffset(value);
 
-                    if (isX)
+                    if (xChanged)
                     {
                         InvalidateVisual();
                         TextLayer.InvalidateVisual();

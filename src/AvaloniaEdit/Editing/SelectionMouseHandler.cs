@@ -763,7 +763,7 @@ namespace AvaloniaEdit.Editing
                     TextArea.Caret.Offset = newWord.Offset < _startWord.Offset ? newWord.Offset : Math.Max(newWord.EndOffset, _startWord.EndOffset);
                 }
             }
-            TextArea.Caret.BringCaretToView(5.0);
+            TextArea.Caret.BringCaretToView();
         }
         #endregion
 
