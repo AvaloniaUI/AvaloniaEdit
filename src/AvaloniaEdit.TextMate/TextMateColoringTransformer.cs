@@ -483,6 +483,12 @@ namespace AvaloniaEdit.TextMate
                 firstLineIndexToRedraw = Clamp(firstLineIndexToRedraw, 0, totalLines);
                 lastLineIndexToRedrawLine = Clamp(lastLineIndexToRedrawLine, 0, totalLines);
 
+                if (!areVisualLinesValid || lastLineIndexToRedrawLine < firstLineIndexToRedraw)
+                {
+                    _textView.Redraw();
+                    return;
+                }
+
                 DocumentLine firstLineToRedraw = document.Lines[firstLineIndexToRedraw];
                 DocumentLine lastLineToRedraw = document.Lines[lastLineIndexToRedrawLine];
 
