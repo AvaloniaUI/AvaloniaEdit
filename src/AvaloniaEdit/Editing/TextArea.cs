@@ -52,7 +52,8 @@ namespace AvaloniaEdit.Editing
 
         private readonly ILogicalScrollable _logicalScrollable;
 
-        private readonly TextAreaTextInputMethodClient _imClient = new TextAreaTextInputMethodClient();
+        private readonly TextAreaTextInputMethodClient _imClient;
+        private PreeditLayer _preeditLayer;
 
         #region Constructor
         static TextArea()
@@ -104,6 +105,11 @@ namespace AvaloniaEdit.Editing
             Caret.PositionChanged += (sender, e) => RequestSelectionValidation();
             Caret.PositionChanged += CaretPositionChanged;
             AttachTypingEvents();
+
+            _preeditLayer = new PreeditLayer(this);
+            textView.InsertLayer(_preeditLayer, KnownLayer.Caret, LayerInsertionPosition.Above);
+
+            _imClient = new TextAreaTextInputMethodClient(this, _preeditLayer);
 
             LeftMargins.CollectionChanged += LeftMargins_CollectionChanged;
 
@@ -313,6 +319,8 @@ namespace AvaloniaEdit.Editing
             // in the new document (e.g. if new document is shorter than the old document).
             Caret.Location = new TextLocation(1, 1);
             ClearSelection();
+            _preeditLayer?.Clear();
+            _imClient?.ClearPreedit();
             DocumentChanged?.Invoke(this, new DocumentChangedEventArgs(oldValue, newValue));
             //CommandManager.InvalidateRequerySuggested();
         }
@@ -797,6 +805,7 @@ namespace AvaloniaEdit.Editing
             Caret.Hide();
 
             _imClient.SetTextArea(null);
+            _preeditLayer?.Clear();
         }
         #endregion
 
@@ -848,6 +857,9 @@ namespace AvaloniaEdit.Editing
                     return;
                 }
                 HideMouseCursor();
+                // Clear preedit text when committed text arrives from IME
+                _preeditLayer?.Clear();
+                _imClient.ClearPreedit();
                 PerformTextInput(e);
                 e.Handled = true;
             }
@@ -983,6 +995,13 @@ namespace AvaloniaEdit.Editing
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
+
+            // Clear preedit when Escape is pressed (IME composition cancelled)
+            if (e.Key == Key.Escape)
+            {
+                _preeditLayer?.Clear();
+                _imClient?.ClearPreedit();
+            }
 
             if (e.Key == Key.Tab && Options.AcceptsTab && IsFocused)
             {
@@ -1204,10 +1223,13 @@ namespace AvaloniaEdit.Editing
         private class TextAreaTextInputMethodClient : TextInputMethodClient
         {
             private TextArea _textArea;
+            private PreeditLayer _preeditLayer;
+            private string _preeditText;
 
-            public TextAreaTextInputMethodClient()
+            public TextAreaTextInputMethodClient(TextArea textArea, PreeditLayer preeditLayer)
             {
-
+                _textArea = textArea;
+                _preeditLayer = preeditLayer;
             }
 
             public override Rect CursorRectangle
@@ -1238,7 +1260,7 @@ namespace AvaloniaEdit.Editing
 
             public override Visual TextViewVisual => _textArea;
 
-            public override bool SupportsPreedit => false;
+            public override bool SupportsPreedit => true;
 
             public override bool SupportsSurroundingText => true;
 
@@ -1300,6 +1322,16 @@ namespace AvaloniaEdit.Editing
                 RaiseCursorRectangleChanged();
 
                 RaiseSurroundingTextChanged();
+
+                // Clear preedit when text area changes
+                _preeditLayer?.Clear();
+                _preeditText = null;
+            }
+
+            public void ClearPreedit()
+            {
+                _preeditText = null;
+                _preeditLayer?.Clear();
             }
 
             private void Caret_PositionChanged(object sender, EventArgs e)
@@ -1307,11 +1339,41 @@ namespace AvaloniaEdit.Editing
                 RaiseCursorRectangleChanged();
                 RaiseSurroundingTextChanged();
                 RaiseSelectionChanged();
+
+                // Update preedit position when caret moves
+                if (!string.IsNullOrEmpty(_preeditText) && _textArea != null && _preeditLayer != null)
+                {
+                    var caretRect = _textArea.Caret.CalculateCaretRectangle();
+                    var foreground = _textArea.Caret.CaretBrush
+                        ?? _textArea.TextView.GetValue(TemplatedControl.ForegroundProperty) as IBrush;
+                    _preeditLayer.SetPreedit(_preeditText, caretRect, foreground);
+                }
             }
 
             public override void SetPreeditText(string text)
             {
+                SetPreeditText(text, null);
+            }
 
+            public override void SetPreeditText(string text, int? cursorOffset)
+            {
+                _preeditText = text;
+
+                if (_textArea == null || _preeditLayer == null)
+                    return;
+
+                if (string.IsNullOrEmpty(text))
+                {
+                    _preeditLayer.Clear();
+                    return;
+                }
+
+                // Get the caret rectangle in document coordinates
+                var caretRect = _textArea.Caret.CalculateCaretRectangle();
+                var foreground = _textArea.Caret.CaretBrush
+                    ?? _textArea.TextView.GetValue(TemplatedControl.ForegroundProperty) as IBrush;
+
+                _preeditLayer.SetPreedit(text, caretRect, foreground, cursorOffset);
             }
         }
     }

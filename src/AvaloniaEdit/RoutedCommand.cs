@@ -18,6 +18,7 @@ namespace AvaloniaEdit
         {
             Name = name;
             Gesture = keyGesture;
+            CommandManager.Register(this);
         }
 
         static RoutedCommand()
@@ -51,6 +52,7 @@ namespace AvaloniaEdit
         private static void GotFocusEventHandler(Interactive control, FocusChangedEventArgs args)
         {
             _inputElement = args.Source as IInputElement;
+            CommandManager.InvalidateRequerySuggested();
         }
 
         public static RoutedEvent<CanExecuteRoutedEventArgs> CanExecuteEvent { get; } = RoutedEvent.Register<CanExecuteRoutedEventArgs>(nameof(CanExecuteEvent), RoutingStrategies.Bubble, typeof(RoutedCommand));
@@ -85,11 +87,45 @@ namespace AvaloniaEdit
             Execute(parameter, _inputElement);
         }
 
-        // TODO
+        private EventHandler _canExecuteChanged;
+
         event EventHandler ICommand.CanExecuteChanged
         {
-            add { }
-            remove { }
+            add => _canExecuteChanged += value;
+            remove => _canExecuteChanged -= value;
+        }
+
+        internal void RaiseCanExecuteChanged()
+        {
+            _canExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <summary>
+    /// Manages command re-evaluation. Call <see cref="InvalidateRequerySuggested"/>
+    /// to trigger CanExecuteChanged on all registered RoutedCommands.
+    /// </summary>
+    public static class CommandManager
+    {
+        private static readonly List<WeakReference<RoutedCommand>> _commands = new();
+
+        internal static void Register(RoutedCommand command)
+        {
+            _commands.Add(new WeakReference<RoutedCommand>(command));
+        }
+
+        /// <summary>
+        /// Forces re-evaluation of all registered commands' CanExecute state.
+        /// </summary>
+        public static void InvalidateRequerySuggested()
+        {
+            for (int i = _commands.Count - 1; i >= 0; i--)
+            {
+                if (_commands[i].TryGetTarget(out var command))
+                    command.RaiseCanExecuteChanged();
+                else
+                    _commands.RemoveAt(i);
+            }
         }
     }
 
