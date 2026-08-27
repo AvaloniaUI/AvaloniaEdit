@@ -296,7 +296,9 @@ namespace AvaloniaEdit.Rendering
             var options = Options;
 
             //			AddRemoveDefaultElementGeneratorOnDemand(ref newLineElementGenerator, options.ShowEndOfLine);
-            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces || options.ShowTabs);
+            // this generator also expands tabs to the next tab stop, which has to happen whether or
+            // not the whitespace glyphs are shown
+            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, true);
             AddRemoveDefaultElementGeneratorOnDemand(ref _linkElementGenerator, options.EnableHyperlinks);
             AddRemoveDefaultElementGeneratorOnDemand(ref _mailLinkElementGenerator, options.EnableEmailHyperlinks);
         }

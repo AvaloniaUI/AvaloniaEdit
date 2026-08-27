@@ -84,9 +84,7 @@ namespace AvaloniaEdit.Rendering
 							return startOffset + i;
 						break;
 					case '\t':
-						if (ShowTabs)
-							return startOffset + i;
-						break;
+						return startOffset + i;
 					default:
 						if (ShowBoxForControlCharacters && char.IsControl(c)) {
 							return startOffset + i;
@@ -110,13 +108,19 @@ namespace AvaloniaEdit.Rendering
 				return new SpaceTextElement(textLine);
 			}
 			
-			if (ShowTabs && (c == '\t'))
+			if (c == '\t')
 			{
+				var spaceCount = GetSpaceCountToNextTabStop(
+					CurrentContext, offset, CurrentContext.TextView.Options.IndentationSize);
+
+				if (!ShowTabs)
+					return new TabTextElement(null, spaceCount);
+
 				var properties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
 				properties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
 				var textSource = new SimpleTextSource(CurrentContext.TextView.Options.ShowTabsGlyph, properties);
 				var textLine = TextFormatter.Current.FormatLine(textSource, 0, double.MaxValue, new GenericTextParagraphProperties(properties));
-				return new TabTextElement(textLine);
+				return new TabTextElement(textLine, spaceCount);
 			}
 
 			if (ShowBoxForControlCharacters && char.IsControl(c))
@@ -130,6 +134,27 @@ namespace AvaloniaEdit.Rendering
 
             return null;
         }
+
+		// A tab reaches the next multiple of the indentation size, so its width depends on the column
+		// where it starts. The text shaper gives every '\t' glyph the same fixed advance
+		// (TextShaperOptions.IncrementalTabWidth) regardless of that column, so the tab is expanded
+		// here instead of being handed to the formatter.
+		static int GetSpaceCountToNextTabStop(
+			ITextRunConstructionContext context, int offset, int indentationSize)
+		{
+			var line = context.Document.GetLineByOffset(offset);
+			var textBeforeTab = context.GetText(line.Offset, offset - line.Offset);
+
+			var column = 0;
+			for (var i = 0; i < textBeforeTab.Count; i++)
+			{
+				column += textBeforeTab.Text[textBeforeTab.Offset + i] == '\t'
+					? indentationSize - column % indentationSize
+					: 1;
+			}
+
+			return indentationSize - column % indentationSize;
+		}
 
         private sealed class SpaceTextElement : FormattedTextElement
 		{
@@ -155,21 +180,29 @@ namespace AvaloniaEdit.Rendering
 		{
 			internal readonly TextLine Text;
 
-			public TabTextElement(TextLine text) : base(2, 1)
+			private readonly string _spaces;
+
+			public TabTextElement(TextLine text, int spaceCount)
+				: base(text != null ? spaceCount + 1 : spaceCount, 1)
 			{
 				Text = text;
+				_spaces = new string(' ', spaceCount);
 			}
 
 			public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
 			{
-				// the TabTextElement consists of two TextRuns:
-				// first a TabGlyphRun, then TextCharacters '\t' to let WPF handle the tab indentation
-				if (startVisualColumn == VisualColumn)
-					return new TabGlyphRun(this, TextRunProperties);
-				else if (startVisualColumn == VisualColumn + 1)
-					return new TextCharacters("\t".AsMemory(), TextRunProperties);
-				else
+				// the TabTextElement consists of the spaces that reach the next tab stop, preceded by
+				// a zero width TabGlyphRun when the tab glyph is shown
+				var relativeOffset = startVisualColumn - VisualColumn;
+				if (relativeOffset < 0 || relativeOffset >= VisualLength)
 					throw new ArgumentOutOfRangeException(nameof(startVisualColumn));
+
+				if (Text != null && relativeOffset == 0)
+					return new TabGlyphRun(this, TextRunProperties);
+
+				var remainingSpaceCount = VisualLength - relativeOffset;
+				return new TextCharacters(
+					_spaces.AsMemory(_spaces.Length - remainingSpaceCount), TextRunProperties);
 			}
 
 			public override int GetNextCaretPosition(int visualColumn, LogicalDirection direction, CaretPositioningMode mode)

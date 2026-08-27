@@ -1,6 +1,8 @@
-﻿using Avalonia;
+﻿using System.Text;
+using Avalonia;
 using Avalonia.Controls.Primitives;
 using Avalonia.Headless.NUnit;
+using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using Assert = NUnit.Framework.Legacy.ClassicAssert;
@@ -51,6 +53,41 @@ namespace AvaloniaEdit.Tests.Rendering
 
             Assert.AreEqual(1, visualLine.TextLines.Count);
             Assert.AreEqual("hello world", new string(visualLine.TextLines[0].TextRuns[0].Text.Span));
+        }
+
+        [AvaloniaTest]
+        public void Tab_Should_Reach_The_Next_Tab_Stop()
+        {
+            TextView textView = new TextView();
+
+            TextDocument document = new TextDocument("a\tb\naaa\tb\nabcd\tb".ToCharArray());
+
+            textView.Document = document;
+            textView.Options.IndentationSize = 4;
+
+            ((ILogicalScrollable)textView).CanHorizontallyScroll = false;
+            textView.Width = HeadlessGlyphAdvance * 500;
+
+            textView.Measure(Size.Infinity);
+
+            Assert.AreEqual("a   b", GetVisualLineText(textView, document, 0),
+                "a tab starting at column 1 should reach column 4");
+            Assert.AreEqual("aaa b", GetVisualLineText(textView, document, 1),
+                "a tab starting at column 3 should reach column 4");
+            Assert.AreEqual("abcd    b", GetVisualLineText(textView, document, 2),
+                "a tab starting on a tab stop should reach the next one");
+        }
+
+        private static string GetVisualLineText(TextView textView, TextDocument document, int lineIndex)
+        {
+            VisualLine visualLine = textView.GetOrConstructVisualLine(document.Lines[lineIndex]);
+
+            StringBuilder text = new StringBuilder();
+
+            foreach (TextRun textRun in visualLine.TextLines[0].TextRuns)
+                text.Append(textRun.Text.Span);
+
+            return text.ToString();
         }
     }
 }
