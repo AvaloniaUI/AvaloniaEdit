@@ -9,6 +9,7 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Folding;
 using AvaloniaEdit.Rendering;
 using Assert = NUnit.Framework.Legacy.ClassicAssert;
+using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Tests.Rendering
 {
@@ -150,6 +151,29 @@ namespace AvaloniaEdit.Tests.Rendering
             textView.Measure(Size.Infinity);
 
             Assert.AreEqual(3, GetTabColumnCount(textView, lineIndex: 0));
+        }
+
+        [AvaloniaTest]
+        public void Caret_Should_Step_Over_A_Tab_Rather_Than_Into_It()
+        {
+            TextView textView = CreateTextView("a\tb");
+            VisualLine visualLine = GetVisualLine(textView, lineIndex: 0);
+
+            // the tab starts at column 1 and reaches column 4
+            Assert.AreEqual(4, visualLine.GetNextCaretPosition(1, LogicalDirection.Forward,
+                CaretPositioningMode.Normal, allowVirtualSpace: false));
+            Assert.AreEqual(1, visualLine.GetNextCaretPosition(4, LogicalDirection.Backward,
+                CaretPositioningMode.Normal, allowVirtualSpace: false));
+        }
+
+        [AvaloniaTest]
+        public void Columns_Inside_A_Tab_Should_Map_To_Its_Offset()
+        {
+            TextView textView = CreateTextView("a\tb");
+            VisualLine visualLine = GetVisualLine(textView, lineIndex: 0);
+
+            Assert.AreEqual(1, visualLine.GetRelativeOffset(2));
+            Assert.AreEqual(1, visualLine.GetRelativeOffset(3));
         }
 
         private static TextView CreateTextView(string text, bool showTabs = true)
