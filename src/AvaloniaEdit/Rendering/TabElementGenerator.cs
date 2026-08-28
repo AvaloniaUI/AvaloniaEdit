@@ -53,12 +53,9 @@ namespace AvaloniaEdit.Rendering
 		{
 			var endLine = CurrentContext.VisualLine.LastDocumentLine;
 			var relevantText = CurrentContext.GetText(startOffset, endLine.EndOffset - startOffset);
+			var tab = relevantText.Text.AsSpan(relevantText.Offset, relevantText.Count).IndexOf('\t');
 
-			for (var i = 0; i < relevantText.Count; i++) {
-				if (relevantText.Text[relevantText.Offset + i] == '\t')
-					return startOffset + i;
-			}
-			return -1;
+			return tab < 0 ? -1 : startOffset + tab;
 		}
 
 		public override VisualLineElement ConstructElement(int offset)
