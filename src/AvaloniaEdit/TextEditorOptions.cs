@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using AvaloniaEdit.CodeCompletion;
+using AvaloniaEdit.Utils;
 
 namespace AvaloniaEdit
 {
@@ -390,7 +391,7 @@ namespace AvaloniaEdit
             int indentationSize = IndentationSize;
             if (ConvertTabsToSpaces)
             {
-                return new string(' ', indentationSize - ((column - 1) % indentationSize));
+                return new string(' ', TabStop.ColumnsUntilNext(column - 1, indentationSize));
             }
             else
             {

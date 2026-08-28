@@ -56,7 +56,14 @@ namespace AvaloniaEdit.Rendering
 		/// Gets the length of this element in the text document.
 		/// </summary>
 		public int DocumentLength { get; private set; }
-		
+
+		/// <summary>
+		/// Gets the number of columns this element occupies on screen, assuming a monospaced typeface.
+		/// Elements that render text longer or shorter than <see cref="VisualLength"/> should override
+		/// this, so that a tab following them reaches the correct tab stop.
+		/// </summary>
+		public virtual int DisplayColumnLength => VisualLength;
+
 		/// <summary>
 		/// Gets the visual column where this element starts.
 		/// </summary>
