@@ -40,6 +40,10 @@ namespace AvaloniaEdit.Rendering
 
 		private ReadOnlyMemory<char> _padding;
 
+		private TextLine _glyph;
+		private string _glyphText;
+		private TextRunProperties _glyphProperties;
+
 		public TabElementGenerator()
 		{
 			ShowTabs = true;
@@ -70,16 +74,34 @@ namespace AvaloniaEdit.Rendering
 			if (!ShowTabs || CurrentContext.Document.GetCharAt(offset) != '\t')
 				return null;
 
-			var properties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
-			properties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
-			var textSource = new SimpleTextSource(CurrentContext.TextView.Options.ShowTabsGlyph, properties);
-			var textLine = TextFormatter.Current.FormatLine(textSource, 0, double.MaxValue, new GenericTextParagraphProperties(properties));
-
 			var columnsUntilNextTabStop = TabStop.ColumnsUntilNext(
 				CurrentContext.VisualLine.CurrentDisplayColumn,
 				CurrentContext.TextView.Options.IndentationSize);
 
-			return new TabTextElement(textLine, GetPadding(columnsUntilNextTabStop));
+			return new TabTextElement(GetGlyph(), GetPadding(columnsUntilNextTabStop));
+		}
+
+		/// <summary>
+		/// Formats the glyph, and keeps it for as long as its inputs stay the same. The global text
+		/// run properties are a new instance for every redraw, which is what expires it.
+		/// </summary>
+		private TextLine GetGlyph()
+		{
+			var glyphText = CurrentContext.TextView.Options.ShowTabsGlyph;
+			var globalProperties = CurrentContext.GlobalTextRunProperties;
+
+			if (_glyph == null || _glyphText != glyphText || _glyphProperties != globalProperties)
+			{
+				var properties = new VisualLineElementTextRunProperties(globalProperties);
+				properties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
+				var textSource = new SimpleTextSource(glyphText, properties);
+
+				_glyph = TextFormatter.Current.FormatLine(textSource, 0, double.MaxValue, new GenericTextParagraphProperties(properties));
+				_glyphText = glyphText;
+				_glyphProperties = globalProperties;
+			}
+
+			return _glyph;
 		}
 
 		private ReadOnlyMemory<char> GetPadding(int columnCount)
