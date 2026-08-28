@@ -21,6 +21,7 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
+using AvaloniaEdit.Utils;
 using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Rendering
@@ -36,6 +37,8 @@ namespace AvaloniaEdit.Rendering
 		/// Gets/Sets whether to show » for tabs.
 		/// </summary>
 		public bool ShowTabs { get; set; }
+
+		private ReadOnlyMemory<char> _padding;
 
 		public TabElementGenerator()
 		{
@@ -71,28 +74,43 @@ namespace AvaloniaEdit.Rendering
 			properties.SetForegroundBrush(CurrentContext.TextView.NonPrintableCharacterBrush);
 			var textSource = new SimpleTextSource(CurrentContext.TextView.Options.ShowTabsGlyph, properties);
 			var textLine = TextFormatter.Current.FormatLine(textSource, 0, double.MaxValue, new GenericTextParagraphProperties(properties));
-			return new TabTextElement(textLine);
+
+			var columnsUntilNextTabStop = TabStop.ColumnsUntilNext(
+				CurrentContext.VisualLine.CurrentDisplayColumn,
+				CurrentContext.TextView.Options.IndentationSize);
+
+			return new TabTextElement(textLine, GetPadding(columnsUntilNextTabStop));
+		}
+
+		private ReadOnlyMemory<char> GetPadding(int columnCount)
+		{
+			if (_padding.Length < columnCount)
+				_padding = new string(' ', columnCount).AsMemory();
+			return _padding.Slice(0, columnCount);
 		}
 
 		private sealed class TabTextElement : VisualLineElement
 		{
-			internal readonly TextLine Text;
+			private readonly TextLine _glyph;
+			private readonly ReadOnlyMemory<char> _padding;
 
-			public TabTextElement(TextLine text) : base(2, 1)
+			public TabTextElement(TextLine glyph, ReadOnlyMemory<char> padding) : base(padding.Length, 1)
 			{
-				Text = text;
+				_glyph = glyph;
+				_padding = padding;
 			}
 
 			public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
 			{
-				// the TabTextElement consists of two TextRuns:
-				// first a TabGlyphRun, then TextCharacters '\t' to let WPF handle the tab indentation
-				if (startVisualColumn == VisualColumn)
-					return new TabGlyphRun(this, TextRunProperties);
-				else if (startVisualColumn == VisualColumn + 1)
-					return new TextCharacters("\t".AsMemory(), TextRunProperties);
-				else
+				// the glyph is drawn in the first column, the remaining columns are padded up to the tab stop
+				var column = startVisualColumn - VisualColumn;
+				if (column < 0 || column >= VisualLength)
 					throw new ArgumentOutOfRangeException(nameof(startVisualColumn));
+
+				if (column == 0)
+					return new TabGlyphRun(_glyph, TextRunProperties, context.TextView.WideSpaceWidth);
+
+				return new TextCharacters(_padding.Slice(column), TextRunProperties);
 			}
 
 			public override int GetNextCaretPosition(int visualColumn, LogicalDirection direction, CaretPositioningMode mode)
@@ -111,25 +129,26 @@ namespace AvaloniaEdit.Rendering
 
 		private sealed class TabGlyphRun : DrawableTextRun
 		{
-			private readonly TabTextElement _element;
+			private readonly TextLine _glyph;
 
-			public TabGlyphRun(TabTextElement element, TextRunProperties properties)
+			public TabGlyphRun(TextLine glyph, TextRunProperties properties, double width)
 			{
 				if (properties == null)
 					throw new ArgumentNullException(nameof(properties));
 				Properties = properties;
-				_element = element;
+				_glyph = glyph;
+				Size = new Size(width, 0);
 			}
 
 			public override TextRunProperties Properties { get; }
 
-			public override double Baseline => _element.Text.Baseline;
+			public override double Baseline => _glyph.Baseline;
 
-			public override Size Size => default;
+			public override Size Size { get; }
 
 			public override void Draw(DrawingContext drawingContext, Point origin)
 			{
-				_element.Text.Draw(drawingContext, origin);
+				_glyph.Draw(drawingContext, origin);
 			}
 		}
 	}
