@@ -1046,6 +1046,11 @@ namespace AvaloniaEdit.Rendering
             {
                 defaultTextRunProperties = defaultTextRunProperties,
                 textWrapping = _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
+                // only applies to a '\t' that reaches the formatter, which TabElementGenerator
+                // normally prevents. Avalonia gives such a tab this width as a fixed advance
+                // instead of aligning it to a multiple of it, unlike the WPF property this is
+                // named after, so it does not reach a tab stop.
+                // See https://github.com/AvaloniaUI/AvaloniaEdit/pull/611
                 tabSize = Options.IndentationSize * WideSpaceWidth
             };
         }

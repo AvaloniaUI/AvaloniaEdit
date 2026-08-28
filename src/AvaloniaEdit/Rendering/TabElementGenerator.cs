@@ -29,8 +29,16 @@ namespace AvaloniaEdit.Rendering
 	// This class is internal because it does not need to be accessed by the user - it can be configured using TextEditorOptions.
 
 	/// <summary>
-	/// Element generator for tab characters.
+	/// Element generator for tab characters. A tab spans the columns up to the next multiple of
+	/// <see cref="TextEditorOptions.IndentationSize"/>, so that text after it lines up.
 	/// </summary>
+	/// <remarks>
+	/// A column is <see cref="TextView.WideSpaceWidth"/> wide, so the alignment holds for the
+	/// monospaced typefaces a code editor is used with, but not for proportional ones. Columns are
+	/// counted from the start of the visual line, so on a wrapped row they continue the line they
+	/// belong to rather than restarting, and <see cref="TextEditorOptions.WordWrapIndentation"/>
+	/// shifts that whole row.
+	/// </remarks>
 	internal sealed class TabElementGenerator : VisualLineElementGenerator
 	{
 		/// <summary>
@@ -115,11 +123,12 @@ namespace AvaloniaEdit.Rendering
 
 			public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
 			{
-				// the glyph is drawn in the first column, the remaining columns are padded up to the tab stop
 				var column = startVisualColumn - VisualColumn;
 				if (column < 0 || column >= VisualLength)
 					throw new ArgumentOutOfRangeException(nameof(startVisualColumn));
 
+				// one column wide rather than as wide as the glyph, so that a wide ShowTabsGlyph
+				// cannot stretch a tab (#206, #207)
 				if (column == 0 && _glyph != null)
 					return new TabGlyphRun(_glyph, TextRunProperties, context.TextView.WideSpaceWidth);
 
