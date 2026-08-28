@@ -5,6 +5,8 @@ using Avalonia.Headless.NUnit;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
+using AvaloniaEdit.Editing;
+using AvaloniaEdit.Folding;
 using AvaloniaEdit.Rendering;
 using Assert = NUnit.Framework.Legacy.ClassicAssert;
 
@@ -105,6 +107,36 @@ namespace AvaloniaEdit.Tests.Rendering
                 visualLine.TextLines[0].GetDistanceFromCharacterHit(new CharacterHit(4)));
         }
 
+        [AvaloniaTest]
+        public void Tab_After_A_Control_Character_Box_Should_Reach_The_Next_Tab_Stop()
+        {
+            // the box shows the character name, NUL, so the tab starts at column 3
+            TextView textView = CreateTextView("\0\tb");
+
+            Assert.AreEqual(1, GetTabColumnCount(textView, lineIndex: 0));
+        }
+
+        [AvaloniaTest]
+        public void Tab_After_A_Collapsed_Folding_Should_Reach_The_Next_Tab_Stop()
+        {
+            TextArea textArea = new TextArea();
+            TextView textView = textArea.TextView;
+
+            textArea.Document = new TextDocument("a(\nx\n)\tb".ToCharArray());
+            textView.Options.IndentationSize = 4;
+            textView.Options.ShowTabs = true;
+            textView.Width = HeadlessGlyphAdvance * 500;
+
+            FoldingManager foldingManager = FoldingManager.Install(textArea);
+            // folds "(\nx\n" away, leaving "a" + "..." + ")" before the tab, so it starts at column 5
+            foldingManager.CreateFolding(1, 5).IsFolded = true;
+
+            ((ILogicalScrollable)textView).CanHorizontallyScroll = false;
+            textView.Measure(Size.Infinity);
+
+            Assert.AreEqual(3, GetTabColumnCount(textView, lineIndex: 0));
+        }
+
         private static TextView CreateTextView(string text)
         {
             TextView textView = new TextView
@@ -126,11 +158,36 @@ namespace AvaloniaEdit.Tests.Rendering
         /// </summary>
         private static int GetColumnAfterLastTab(TextView textView, int lineIndex)
         {
-            DocumentLine line = textView.Document.Lines[lineIndex];
-            VisualLine visualLine = textView.GetOrConstructVisualLine(line);
-            int lastTab = textView.Document.GetText(line).LastIndexOf('\t');
+            VisualLine visualLine = GetVisualLine(textView, lineIndex);
+            int lastTab = GetCoveredText(textView, visualLine).LastIndexOf('\t');
 
             return visualLine.GetVisualColumn(lastTab + 1);
+        }
+
+        /// <summary>
+        /// Gets the number of columns spanned by the first tab of the line.
+        /// </summary>
+        private static int GetTabColumnCount(TextView textView, int lineIndex)
+        {
+            VisualLine visualLine = GetVisualLine(textView, lineIndex);
+            int tab = GetCoveredText(textView, visualLine).IndexOf('\t');
+
+            return visualLine.GetVisualColumn(tab + 1) - visualLine.GetVisualColumn(tab);
+        }
+
+        private static VisualLine GetVisualLine(TextView textView, int lineIndex)
+        {
+            return textView.GetOrConstructVisualLine(textView.Document.Lines[lineIndex]);
+        }
+
+        /// <summary>
+        /// Gets the document text the visual line covers, which spans several document lines when a
+        /// folding between them is collapsed. Offsets into it are relative to the visual line start.
+        /// </summary>
+        private static string GetCoveredText(TextView textView, VisualLine visualLine)
+        {
+            return textView.Document.GetText(visualLine.StartOffset,
+                visualLine.LastDocumentLine.EndOffset - visualLine.StartOffset);
         }
 
         private static string RenderedText(VisualLine visualLine)

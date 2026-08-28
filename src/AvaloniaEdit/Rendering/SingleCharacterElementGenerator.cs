@@ -110,9 +110,10 @@ namespace AvaloniaEdit.Rendering
 			{
 				var properties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
 				properties.SetForegroundBrush(Brushes.White);
-				var textSource = new SimpleTextSource(TextUtilities.GetControlCharacterName(c), properties);
+				var name = TextUtilities.GetControlCharacterName(c);
+				var textSource = new SimpleTextSource(name, properties);
 				var textLine = TextFormatter.Current.FormatLine(textSource, 0, double.MaxValue, new GenericTextParagraphProperties(properties));
-				return new SpecialCharacterBoxElement(textLine);
+				return new SpecialCharacterBoxElement(textLine, name.Length);
 			}
 
             return null;
@@ -140,9 +141,12 @@ namespace AvaloniaEdit.Rendering
 
 		private sealed class SpecialCharacterBoxElement : FormattedTextElement
 		{
-			public SpecialCharacterBoxElement(TextLine text) : base(text, 1)
+			public SpecialCharacterBoxElement(TextLine text, int displayColumnLength) : base(text, 1)
 			{
+				DisplayColumnLength = displayColumnLength;
 			}
+
+			public override int DisplayColumnLength { get; }
 
 			public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
 			{
