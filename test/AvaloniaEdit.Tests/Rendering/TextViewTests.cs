@@ -115,6 +115,14 @@ namespace AvaloniaEdit.Tests.Rendering
         }
 
         [AvaloniaTest]
+        public void Tab_Should_Reach_The_Next_Tab_Stop_On_A_Line_Too_Long_For_Element_Generation()
+        {
+            TextView textView = CreateTextView("a\t" + new string('b', VisualLine.LENGTH_LIMIT));
+
+            Assert.AreEqual(4, GetColumnAfterLastTab(textView, lineIndex: 0));
+        }
+
+        [AvaloniaTest]
         public void Tab_After_A_Control_Character_Box_Should_Reach_The_Next_Tab_Stop()
         {
             // the box shows the character name, NUL, so the tab starts at column 3

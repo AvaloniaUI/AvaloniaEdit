@@ -175,12 +175,9 @@ namespace AvaloniaEdit.Rendering
             LastDocumentLine = FirstDocumentLine;
             var askInterestOffset = 0; // 0 or 1
 
-            // for long lines, do not run the element generators for performance reasons
+            // for long lines, run only the generators the layout depends on, for performance reasons
             if (lineLength > LENGTH_LIMIT)
-            {
-                AddElement(new VisualLineText(this, lineLength));
-                return;
-            }
+                generators = generators.Where(g => g.RunsOnLongLines).ToList();
 
             while (offset + askInterestOffset <= currentLineEnd)
             {

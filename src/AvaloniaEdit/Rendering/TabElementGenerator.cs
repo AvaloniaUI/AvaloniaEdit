@@ -49,6 +49,8 @@ namespace AvaloniaEdit.Rendering
 			ShowTabs = options.ShowTabs;
 		}
 
+		public override bool RunsOnLongLines => true;
+
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
 			var endLine = CurrentContext.VisualLine.LastDocumentLine;
