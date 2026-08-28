@@ -72,7 +72,14 @@ namespace AvaloniaEdit.Tests.Rendering
 
             VisualLine visualLine = textView.GetOrConstructVisualLine(textView.Document.Lines[0]);
 
-            Assert.AreEqual("a\tb", RenderedText(visualLine));
+            Assert.AreEqual("a   b", RenderedText(visualLine));
+        }
+
+        [AvaloniaTest]
+        public void Tab_Should_Span_The_Same_Columns_Whether_Or_Not_The_Glyph_Is_Shown()
+        {
+            Assert.AreEqual(3, GetTabColumnCount(CreateTextView("a\tb", showTabs: true), lineIndex: 0));
+            Assert.AreEqual(3, GetTabColumnCount(CreateTextView("a\tb", showTabs: false), lineIndex: 0));
         }
 
         [AvaloniaTest]
@@ -137,7 +144,7 @@ namespace AvaloniaEdit.Tests.Rendering
             Assert.AreEqual(3, GetTabColumnCount(textView, lineIndex: 0));
         }
 
-        private static TextView CreateTextView(string text)
+        private static TextView CreateTextView(string text, bool showTabs = true)
         {
             TextView textView = new TextView
             {
@@ -145,7 +152,7 @@ namespace AvaloniaEdit.Tests.Rendering
                 Width = HeadlessGlyphAdvance * 500
             };
             textView.Options.IndentationSize = 4;
-            textView.Options.ShowTabs = true;
+            textView.Options.ShowTabs = showTabs;
 
             ((ILogicalScrollable)textView).CanHorizontallyScroll = false;
             textView.Measure(Size.Infinity);

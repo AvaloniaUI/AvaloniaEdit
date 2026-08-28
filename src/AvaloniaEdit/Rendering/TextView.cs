@@ -78,6 +78,7 @@ namespace AvaloniaEdit.Rendering
 
             TextLayer = new TextLayer(this);
             _elementGenerators = new ObserveAddRemoveCollection<VisualLineElementGenerator>(ElementGenerator_Added, ElementGenerator_Removed);
+            _elementGenerators.Add(_tabElementGenerator);
             _lineTransformers = new ObserveAddRemoveCollection<IVisualLineTransformer>(LineTransformer_Added, LineTransformer_Removed);
             _backgroundRenderers = new ObserveAddRemoveCollection<IBackgroundRenderer>(BackgroundRenderer_Added, BackgroundRenderer_Removed);
             _currentLineHighlightRenderer = new CurrentLineHighlightRenderer(this);
@@ -288,7 +289,11 @@ namespace AvaloniaEdit.Rendering
         //		NewLineElementGenerator newLineElementGenerator;
         private SingleCharacterElementGenerator _singleCharacterElementGenerator;
 
-        private TabElementGenerator _tabElementGenerator;
+        /// <summary>
+        /// This one is always present: it lays tabs out, which has to happen whether or not the
+        /// whitespace glyphs are shown.
+        /// </summary>
+        private readonly TabElementGenerator _tabElementGenerator = new TabElementGenerator();
 
         private LinkElementGenerator _linkElementGenerator;
         private MailLinkElementGenerator _mailLinkElementGenerator;
@@ -297,9 +302,10 @@ namespace AvaloniaEdit.Rendering
         {
             var options = Options;
 
+            _tabElementGenerator.FetchOptions(options);
+
             //			AddRemoveDefaultElementGeneratorOnDemand(ref newLineElementGenerator, options.ShowEndOfLine);
             AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces);
-            AddRemoveDefaultElementGeneratorOnDemand(ref _tabElementGenerator, options.ShowTabs);
             AddRemoveDefaultElementGeneratorOnDemand(ref _linkElementGenerator, options.EnableHyperlinks);
             AddRemoveDefaultElementGeneratorOnDemand(ref _mailLinkElementGenerator, options.EnableEmailHyperlinks);
         }

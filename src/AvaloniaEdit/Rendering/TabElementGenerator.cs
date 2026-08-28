@@ -31,7 +31,7 @@ namespace AvaloniaEdit.Rendering
 	/// <summary>
 	/// Element generator for tab characters.
 	/// </summary>
-	internal sealed class TabElementGenerator : VisualLineElementGenerator, IBuiltinElementGenerator
+	internal sealed class TabElementGenerator : VisualLineElementGenerator
 	{
 		/// <summary>
 		/// Gets/Sets whether to show » for tabs.
@@ -44,21 +44,13 @@ namespace AvaloniaEdit.Rendering
 		private string _glyphText;
 		private TextRunProperties _glyphProperties;
 
-		public TabElementGenerator()
-		{
-			ShowTabs = true;
-		}
-
-		void IBuiltinElementGenerator.FetchOptions(TextEditorOptions options)
+		public void FetchOptions(TextEditorOptions options)
 		{
 			ShowTabs = options.ShowTabs;
 		}
 
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
-			if (!ShowTabs)
-				return -1;
-
 			var endLine = CurrentContext.VisualLine.LastDocumentLine;
 			var relevantText = CurrentContext.GetText(startOffset, endLine.EndOffset - startOffset);
 
@@ -71,14 +63,14 @@ namespace AvaloniaEdit.Rendering
 
 		public override VisualLineElement ConstructElement(int offset)
 		{
-			if (!ShowTabs || CurrentContext.Document.GetCharAt(offset) != '\t')
+			if (CurrentContext.Document.GetCharAt(offset) != '\t')
 				return null;
 
 			var columnsUntilNextTabStop = TabStop.ColumnsUntilNext(
 				CurrentContext.VisualLine.CurrentDisplayColumn,
 				CurrentContext.TextView.Options.IndentationSize);
 
-			return new TabTextElement(GetGlyph(), GetPadding(columnsUntilNextTabStop));
+			return new TabTextElement(ShowTabs ? GetGlyph() : null, GetPadding(columnsUntilNextTabStop));
 		}
 
 		/// <summary>
@@ -129,7 +121,7 @@ namespace AvaloniaEdit.Rendering
 				if (column < 0 || column >= VisualLength)
 					throw new ArgumentOutOfRangeException(nameof(startVisualColumn));
 
-				if (column == 0)
+				if (column == 0 && _glyph != null)
 					return new TabGlyphRun(_glyph, TextRunProperties, context.TextView.WideSpaceWidth);
 
 				return new TextCharacters(_padding.Slice(column), TextRunProperties);
