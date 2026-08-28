@@ -1,6 +1,8 @@
-﻿using Avalonia;
+﻿using System.Text;
+using Avalonia;
 using Avalonia.Controls.Primitives;
 using Avalonia.Headless.NUnit;
+using Avalonia.Media.TextFormatting;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using Assert = NUnit.Framework.Legacy.ClassicAssert;
@@ -51,6 +53,33 @@ namespace AvaloniaEdit.Tests.Rendering
 
             Assert.AreEqual(1, visualLine.TextLines.Count);
             Assert.AreEqual("hello world", new string(visualLine.TextLines[0].TextRuns[0].Text.Span));
+        }
+
+        [AvaloniaTest]
+        public void Tab_Should_Not_Be_Rendered_As_A_Control_Character_Box()
+        {
+            TextView textView = new TextView
+            {
+                Document = new TextDocument("a\tb".ToCharArray()),
+                Width = HeadlessGlyphAdvance * 500
+            };
+
+            ((ILogicalScrollable)textView).CanHorizontallyScroll = false;
+            textView.Measure(Size.Infinity);
+
+            VisualLine visualLine = textView.GetOrConstructVisualLine(textView.Document.Lines[0]);
+
+            Assert.AreEqual("a\tb", RenderedText(visualLine));
+        }
+
+        private static string RenderedText(VisualLine visualLine)
+        {
+            StringBuilder text = new StringBuilder();
+
+            foreach (TextRun textRun in visualLine.TextLines[0].TextRuns)
+                text.Append(textRun.Text.Span);
+
+            return text.ToString();
         }
     }
 }

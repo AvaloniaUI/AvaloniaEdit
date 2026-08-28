@@ -288,6 +288,8 @@ namespace AvaloniaEdit.Rendering
         //		NewLineElementGenerator newLineElementGenerator;
         private SingleCharacterElementGenerator _singleCharacterElementGenerator;
 
+        private TabElementGenerator _tabElementGenerator;
+
         private LinkElementGenerator _linkElementGenerator;
         private MailLinkElementGenerator _mailLinkElementGenerator;
 
@@ -296,7 +298,8 @@ namespace AvaloniaEdit.Rendering
             var options = Options;
 
             //			AddRemoveDefaultElementGeneratorOnDemand(ref newLineElementGenerator, options.ShowEndOfLine);
-            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces || options.ShowTabs);
+            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces);
+            AddRemoveDefaultElementGeneratorOnDemand(ref _tabElementGenerator, options.ShowTabs);
             AddRemoveDefaultElementGeneratorOnDemand(ref _linkElementGenerator, options.EnableHyperlinks);
             AddRemoveDefaultElementGeneratorOnDemand(ref _mailLinkElementGenerator, options.EnableEmailHyperlinks);
         }
