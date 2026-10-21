@@ -2121,6 +2121,12 @@ namespace AvaloniaEdit.Rendering
                     }
 
                     InvalidateMeasure();
+
+                    // The offset can be set directly (e.g. by code that scrolls several views
+                    // in sync) rather than through the owning ScrollViewer. Notify the
+                    // ScrollViewer so it does not keep a stale offset, which it would push
+                    // back into this view the next time the extent changes.
+                    OnScrollChange();
                 }
             }
         }
