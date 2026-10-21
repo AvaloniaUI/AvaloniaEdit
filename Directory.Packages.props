@@ -22,7 +22,7 @@
     <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup Label="Build">
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.201" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.303" />
   </ItemGroup>
   <ItemGroup Label="Other">
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
