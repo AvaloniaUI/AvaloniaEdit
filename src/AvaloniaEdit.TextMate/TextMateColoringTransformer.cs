@@ -285,6 +285,10 @@ namespace AvaloniaEdit.TextMate
                 if (model == null || document == null || theme == null || brushes == null)
                     return;
 
+                // for long lines, do not tokenize and colorize for performance reasons
+                if (line.Length > VisualLine.LENGTH_LIMIT)
+                    return;
+
                 int lineNumber = line.LineNumber;
 
                 var tokens = model.GetLineTokens(lineNumber - 1);

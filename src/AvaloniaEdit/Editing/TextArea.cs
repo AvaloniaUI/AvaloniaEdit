@@ -925,7 +925,7 @@ namespace AvaloniaEdit.Editing
             {
                 foreach (var s in _selection.Segments)
                 {
-                    Debug.Assert(!ReadOnlySectionProvider.GetDeletableSegments(s).Any());
+                    Debug.Assert(GetDeletableSegments(s).Length == 0);
                 }
             }
 #endif
@@ -940,12 +940,20 @@ namespace AvaloniaEdit.Editing
             _selection.ReplaceSelectionWithText(newText);
         }
 
+        internal bool CanInsert(int offset)
+        {
+            return ReadOnlySectionProvider.CanInsert(offset) &&
+                   LongLineEditProtection.CanInsert(Document, offset);
+        }
+
         internal ISegment[] GetDeletableSegments(ISegment segment)
         {
             var deletableSegments = ReadOnlySectionProvider.GetDeletableSegments(segment);
             if (deletableSegments == null)
                 throw new InvalidOperationException("ReadOnlySectionProvider.GetDeletableSegments returned null");
-            var array = deletableSegments.ToArray();
+            var array = deletableSegments
+                .SelectMany(s => LongLineEditProtection.GetDeletableSegments(Document, s))
+                .ToArray();
             var lastIndex = segment.Offset;
             foreach (var t in array)
             {

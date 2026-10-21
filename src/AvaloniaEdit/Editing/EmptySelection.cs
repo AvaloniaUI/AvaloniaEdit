@@ -68,7 +68,7 @@ namespace AvaloniaEdit.Editing
             newText = AddSpacesIfRequired(newText, TextArea.Caret.Position, TextArea.Caret.Position);
             if (newText.Length > 0)
             {
-                if (TextArea.ReadOnlySectionProvider.CanInsert(TextArea.Caret.Offset))
+                if (TextArea.CanInsert(TextArea.Caret.Offset))
                 {
                     TextArea.Document.Insert(TextArea.Caret.Offset, newText);
                 }
