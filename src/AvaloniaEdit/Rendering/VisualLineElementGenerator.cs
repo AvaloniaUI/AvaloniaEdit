@@ -50,7 +50,14 @@ namespace AvaloniaEdit.Rendering
 		/// Should only be used by VisualLine.ConstructVisualElements.
 		/// </summary>
 		internal int CachedInterest;
-		
+
+		/// <summary>
+		/// Gets whether this generator still runs on lines longer than <see cref="VisualLine.LENGTH_LIMIT"/>,
+		/// where generators are otherwise skipped to keep such lines cheap to build.
+		/// Override this only for generators the layout depends on.
+		/// </summary>
+		public virtual bool RunsOnLongLines => false;
+
 		/// <summary>
 		/// Gets the first offset >= startOffset where the generator wants to construct an element.
 		/// Return -1 to signal no interest.

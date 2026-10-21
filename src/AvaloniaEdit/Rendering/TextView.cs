@@ -80,6 +80,7 @@ namespace AvaloniaEdit.Rendering
 
             TextLayer = new TextLayer(this);
             _elementGenerators = new ObserveAddRemoveCollection<VisualLineElementGenerator>(ElementGenerator_Added, ElementGenerator_Removed);
+            _elementGenerators.Add(_tabElementGenerator);
             _lineTransformers = new ObserveAddRemoveCollection<IVisualLineTransformer>(LineTransformer_Added, LineTransformer_Removed);
             _backgroundRenderers = new ObserveAddRemoveCollection<IBackgroundRenderer>(BackgroundRenderer_Added, BackgroundRenderer_Removed);
             _currentLineHighlightRenderer = new CurrentLineHighlightRenderer(this);
@@ -290,6 +291,12 @@ namespace AvaloniaEdit.Rendering
         //		NewLineElementGenerator newLineElementGenerator;
         private SingleCharacterElementGenerator _singleCharacterElementGenerator;
 
+        /// <summary>
+        /// This one is always present: it lays tabs out, which has to happen whether or not the
+        /// whitespace glyphs are shown.
+        /// </summary>
+        private readonly TabElementGenerator _tabElementGenerator = new TabElementGenerator();
+
         private LinkElementGenerator _linkElementGenerator;
         private MailLinkElementGenerator _mailLinkElementGenerator;
 
@@ -297,8 +304,10 @@ namespace AvaloniaEdit.Rendering
         {
             var options = Options;
 
+            _tabElementGenerator.FetchOptions(options);
+
             //			AddRemoveDefaultElementGeneratorOnDemand(ref newLineElementGenerator, options.ShowEndOfLine);
-            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces || options.ShowTabs);
+            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces);
             AddRemoveDefaultElementGeneratorOnDemand(ref _linkElementGenerator, options.EnableHyperlinks);
             AddRemoveDefaultElementGeneratorOnDemand(ref _mailLinkElementGenerator, options.EnableEmailHyperlinks);
         }
@@ -1070,6 +1079,11 @@ namespace AvaloniaEdit.Rendering
             {
                 defaultTextRunProperties = defaultTextRunProperties,
                 textWrapping = _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
+                // only applies to a '\t' that reaches the formatter, which TabElementGenerator
+                // normally prevents. Avalonia gives such a tab this width as a fixed advance
+                // instead of aligning it to a multiple of it, unlike the WPF property this is
+                // named after, so it does not reach a tab stop.
+                // See https://github.com/AvaloniaUI/AvaloniaEdit/pull/611
                 tabSize = Options.IndentationSize * WideSpaceWidth
             };
         }

@@ -107,6 +107,12 @@ namespace AvaloniaEdit.Rendering
         public int VisualLength { get; private set; }
 
         /// <summary>
+        /// Gets the display column at which the element currently being constructed starts.
+        /// Only meaningful to element generators, while they are building this visual line.
+        /// </summary>
+        internal int CurrentDisplayColumn { get; private set; }
+
+        /// <summary>
         /// Length in visual line coordinates including the end of line marker, if TextEditorOptions.ShowEndOfLine is enabled.
         /// </summary>
         public int VisualLengthWithEndOfLineMarker
@@ -169,12 +175,9 @@ namespace AvaloniaEdit.Rendering
             LastDocumentLine = FirstDocumentLine;
             var askInterestOffset = 0; // 0 or 1
 
-            // for long lines, do not run the element generators for performance reasons
+            // for long lines, run only the generators the layout depends on, for performance reasons
             if (lineLength > LENGTH_LIMIT)
-            {
-                _elements.Add(new VisualLineText(this, lineLength));
-                return;
-            }
+                generators = generators.Where(g => g.RunsOnLongLines).ToList();
 
             while (offset + askInterestOffset <= currentLineEnd)
             {
@@ -197,7 +200,7 @@ namespace AvaloniaEdit.Rendering
                 {
                     var textPieceLength = textPieceEndOffset - offset;
 
-                    _elements.Add(new VisualLineText(this, textPieceLength));
+                    AddElement(new VisualLineText(this, textPieceLength));
 
                     offset = textPieceEndOffset;
                 }
@@ -211,7 +214,7 @@ namespace AvaloniaEdit.Rendering
                         var element = g.ConstructElement(offset);
                         if (element != null)
                         {
-                            _elements.Add(element);
+                            AddElement(element);
                             if (element.DocumentLength > 0)
                             {
                                 // a non-zero-length element was constructed
@@ -235,6 +238,12 @@ namespace AvaloniaEdit.Rendering
                     }
                 }
             }
+        }
+
+        private void AddElement(VisualLineElement element)
+        {
+            _elements.Add(element);
+            CurrentDisplayColumn += element.DisplayColumnLength;
         }
 
         private void CalculateOffsets()
