@@ -95,6 +95,102 @@ namespace AvaloniaEdit.Tests.Rendering
             Assert.AreEqual(new Vector(0, 500), scrollViewer.Offset);
         }
 
+        [AvaloniaTest]
+        public void Horizontal_Extent_Should_Be_Content_Width_By_Default()
+        {
+            TextView textView = CreateTextView("hello");
+
+            Assert.AreEqual(0, textView.MinimumHorizontalExtent);
+            Assert.Greater(textView.ContentWidth, 0);
+            Assert.AreEqual(textView.ContentWidth, ((IScrollable)textView).Extent.Width);
+
+            // The content is narrower than the viewport, so there is nothing to scroll.
+            ((IScrollable)textView).Offset = new Vector(50, 0);
+            LayoutTextView(textView);
+
+            Assert.AreEqual(0, textView.HorizontalOffset);
+        }
+
+        [AvaloniaTest]
+        public void MinimumHorizontalExtent_Should_Raise_Extent_Width()
+        {
+            TextView textView = CreateTextView("hello");
+            double contentWidth = textView.ContentWidth;
+
+            textView.MinimumHorizontalExtent = 500;
+            LayoutTextView(textView);
+
+            Assert.AreEqual(500, ((IScrollable)textView).Extent.Width);
+            Assert.AreEqual(contentWidth, textView.ContentWidth);
+        }
+
+        [AvaloniaTest]
+        public void MinimumHorizontalExtent_Should_Not_Raise_Extent_Width_Below_Content_Width()
+        {
+            TextView textView = CreateTextView("hello");
+            double contentWidth = textView.ContentWidth;
+
+            textView.MinimumHorizontalExtent = contentWidth / 2;
+            LayoutTextView(textView);
+
+            Assert.AreEqual(contentWidth, ((IScrollable)textView).Extent.Width);
+            Assert.AreEqual(contentWidth, textView.ContentWidth);
+        }
+
+        [AvaloniaTest]
+        public void MinimumHorizontalExtent_Should_Allow_Scrolling_Up_To_Extent_Minus_Viewport()
+        {
+            TextView textView = CreateTextView("hello");
+            textView.MinimumHorizontalExtent = 500;
+            LayoutTextView(textView);
+
+            double maxOffset = 500 - ((IScrollable)textView).Viewport.Width;
+
+            ((IScrollable)textView).Offset = new Vector(maxOffset, 0);
+            LayoutTextView(textView);
+            Assert.AreEqual(maxOffset, textView.HorizontalOffset);
+
+            ((IScrollable)textView).Offset = new Vector(maxOffset + 50, 0);
+            LayoutTextView(textView);
+            Assert.AreEqual(maxOffset, textView.HorizontalOffset);
+        }
+
+        [AvaloniaTest]
+        public void MinimumHorizontalExtent_Should_Be_Honored_By_ScrollViewer()
+        {
+            UnitTestApplication.InitializeStyles();
+
+            TextEditor textEditor = CreateEditor("hello");
+            TextView textView = textEditor.TextArea.TextView;
+            ScrollViewer scrollViewer = textEditor.ScrollViewer;
+
+            textView.MinimumHorizontalExtent = 1000;
+            textEditor.UpdateLayout();
+
+            Assert.AreEqual(1000, scrollViewer.Extent.Width);
+
+            double maxOffset = scrollViewer.Extent.Width - scrollViewer.Viewport.Width;
+            scrollViewer.Offset = new Vector(maxOffset, 0);
+            textEditor.UpdateLayout();
+
+            Assert.AreEqual(maxOffset, scrollViewer.Offset.X);
+            Assert.AreEqual(maxOffset, textView.HorizontalOffset);
+        }
+
+        private static TextView CreateTextView(string text)
+        {
+            TextView textView = new TextView();
+            textView.Document = new TextDocument(text);
+            LayoutTextView(textView);
+            return textView;
+        }
+
+        private static void LayoutTextView(TextView textView)
+        {
+            textView.Measure(new Size(200, 100));
+            textView.Arrange(new Rect(0, 0, 200, 100));
+        }
+
         private static TextEditor CreateEditor(string text)
         {
             TextEditor textEditor = new TextEditor
