@@ -711,8 +711,8 @@ namespace AvaloniaEdit
         /// </summary>
         public void LineDown()
         {
-            //if (scrollViewer != null)
-            //    scrollViewer.LineDown();
+            ApplyTemplate(); // ensure scrollViewer is created
+            ScrollViewer?.LineDown();
         }
 
         /// <summary>
@@ -720,8 +720,8 @@ namespace AvaloniaEdit
         /// </summary>
         public void LineLeft()
         {
-            //if (scrollViewer != null)
-            //    scrollViewer.LineLeft();
+            ApplyTemplate(); // ensure scrollViewer is created
+            ScrollViewer?.LineLeft();
         }
 
         /// <summary>
@@ -729,8 +729,8 @@ namespace AvaloniaEdit
         /// </summary>
         public void LineRight()
         {
-            //if (scrollViewer != null)
-            //    scrollViewer.LineRight();
+            ApplyTemplate(); // ensure scrollViewer is created
+            ScrollViewer?.LineRight();
         }
 
         /// <summary>
@@ -738,8 +738,8 @@ namespace AvaloniaEdit
         /// </summary>
         public void LineUp()
         {
-            //if (scrollViewer != null)
-            //    scrollViewer.LineUp();
+            ApplyTemplate(); // ensure scrollViewer is created
+            ScrollViewer?.LineUp();
         }
 
         /// <summary>
@@ -747,8 +747,8 @@ namespace AvaloniaEdit
         /// </summary>
         public void PageDown()
         {
-            //if (scrollViewer != null)
-            //    scrollViewer.PageDown();
+            ApplyTemplate(); // ensure scrollViewer is created
+            ScrollViewer?.PageDown();
         }
 
         /// <summary>
@@ -756,8 +756,8 @@ namespace AvaloniaEdit
         /// </summary>
         public void PageUp()
         {
-            //if (scrollViewer != null)
-            //    scrollViewer.PageUp();
+            ApplyTemplate(); // ensure scrollViewer is created
+            ScrollViewer?.PageUp();
         }
 
         /// <summary>
@@ -765,8 +765,8 @@ namespace AvaloniaEdit
         /// </summary>
         public void PageLeft()
         {
-            //if (scrollViewer != null)
-            //    scrollViewer.PageLeft();
+            ApplyTemplate(); // ensure scrollViewer is created
+            ScrollViewer?.PageLeft();
         }
 
         /// <summary>
@@ -774,8 +774,8 @@ namespace AvaloniaEdit
         /// </summary>
         public void PageRight()
         {
-            //if (scrollViewer != null)
-            //    scrollViewer.PageRight();
+            ApplyTemplate(); // ensure scrollViewer is created
+            ScrollViewer?.PageRight();
         }
 
         /// <summary>
@@ -827,8 +827,8 @@ namespace AvaloniaEdit
         public void ScrollToHorizontalOffset(double offset)
         {
             ApplyTemplate(); // ensure scrollViewer is created
-            //if (scrollViewer != null)
-            //    scrollViewer.ScrollToHorizontalOffset(offset);
+            if (ScrollViewer is { } scrollViewer)
+                scrollViewer.Offset = scrollViewer.Offset.WithX(offset);
         }
 
         /// <summary>
@@ -837,8 +837,8 @@ namespace AvaloniaEdit
         public void ScrollToVerticalOffset(double offset)
         {
             ApplyTemplate(); // ensure scrollViewer is created
-            //if (scrollViewer != null)
-            //    scrollViewer.ScrollToVerticalOffset(offset);
+            if (ScrollViewer is { } scrollViewer)
+                scrollViewer.Offset = scrollViewer.Offset.WithY(offset);
         }
 
         /// <summary>
