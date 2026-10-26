@@ -6,7 +6,6 @@
     <PackageId>Avalonia.AvaloniaEdit</PackageId>
     <PackageDescription>This project is a port of AvalonEdit, a WPF-based text editor for Avalonia.</PackageDescription>
     <PackageTags>editor;code-editor;avalonia;text-editor;netstandard</PackageTags>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,4 +31,6 @@
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+  <Import Project="$(RepositoryTargetsRoot)/PackEnable.targets" />
 </Project>
