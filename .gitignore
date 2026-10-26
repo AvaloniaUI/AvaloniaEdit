@@ -258,3 +258,6 @@ paket-files/
 
 # NUKE
 .nuke/temp/
+
+# Claude Code local settings
+.claude/settings.local.json
