@@ -86,3 +86,18 @@ _textMateInstallation.SetGrammar(_registryOptions.GetScopeByLanguageId(_registry
 ![avaloniaedit-demo](https://user-images.githubusercontent.com/501613/169226248-946e716d-dea3-4c6d-9ae9-6148b2a51f03.gif)
 
 
+
+## Building
+
+Clone with submodules (`git clone --recursive`, or `git submodule update --init` after cloning), then use `dotnet build` / `dotnet test` as usual.
+
+Packaging is driven by a [NUKE](https://nuke.build) build in `build/`:
+
+```sh
+# Run tests, build and pack every library into artifacts/packages, then install
+# them into the local NuGet cache as 9999.0.0-localbuild for testing in other apps
+dotnet run --project build/_build.csproj
+
+# Only create the packages (and their SBOMs)
+dotnet run --project build/_build.csproj -- --target CreateNugetPackages
+```

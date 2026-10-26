@@ -156,7 +156,7 @@ namespace AvaloniaEdit.Folding
 				var properties = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
 				properties.SetForegroundBrush(TextBrush);
 				var text = TextFormatter.Current.FormatLine(new SimpleTextSource(title, properties), 0, double.MaxValue, new GenericTextParagraphProperties(properties));
-				return new FoldingLineElement(foldingSection, text, foldedUntil - offset, TextBrush);
+				return new FoldingLineElement(foldingSection, text, foldedUntil - offset, TextBrush, title.Length);
 			} else {
 				return null;
 			}
@@ -167,11 +167,14 @@ namespace AvaloniaEdit.Folding
             private readonly FoldingSection _fs;
             private readonly IBrush _textBrush;
 
-            public FoldingLineElement(FoldingSection fs, TextLine text, int documentLength, IBrush textBrush) : base(text, documentLength)
+            public FoldingLineElement(FoldingSection fs, TextLine text, int documentLength, IBrush textBrush, int displayColumnLength) : base(text, documentLength)
             {
                 _fs = fs;
                 _textBrush = textBrush;
+                DisplayColumnLength = displayColumnLength;
             }
+
+            public override int DisplayColumnLength { get; }
 
 			public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
 			{

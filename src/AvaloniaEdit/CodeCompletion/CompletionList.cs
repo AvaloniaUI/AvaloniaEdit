@@ -249,6 +249,10 @@ namespace AvaloniaEdit.CodeCompletion
             if (!e.GetCurrentPoint(visual).Properties.IsLeftButtonPressed) 
                 return;
 
+            // Ignore event if pointer is outside the selected item (e.g. when the scrollbar is clicked).
+            if (!IsPointerOverSelectedItem(e))
+                return;
+
             RequestInsertion(e);
         }
 
@@ -258,11 +262,17 @@ namespace AvaloniaEdit.CodeCompletion
                 return;
 
             // Ignore event if pointer is released outside the selected item.
-            var listBoxItem = _listBox.ContainerFromIndex(_listBox.SelectedIndex);
-            if (listBoxItem == null || !this.GetVisualsAt(e.GetPosition(this)).Any(v => v == listBoxItem || listBoxItem.IsVisualAncestorOf(v)))
+            if (!IsPointerOverSelectedItem(e))
                 return;
 
             RequestInsertion(e);
+        }
+
+        private bool IsPointerOverSelectedItem(PointerEventArgs e)
+        {
+            var listBoxItem = _listBox.ContainerFromIndex(_listBox.SelectedIndex);
+            return listBoxItem != null && this.GetVisualsAt(e.GetPosition(this))
+                                              .Any(v => v == listBoxItem || listBoxItem.IsVisualAncestorOf(v));
         }
 
         private void OnDoubleTapped(object sender, TappedEventArgs e)

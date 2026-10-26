@@ -63,6 +63,8 @@ namespace AvaloniaEdit.Rendering
             OptionsProperty.Changed.Subscribe(OnOptionsChanged);
 
             DocumentProperty.Changed.Subscribe(OnDocumentChanged);
+
+            AffectsMeasure<TextView>(MinimumHorizontalExtentProperty);
         }
 
         private readonly ColumnRulerRenderer _columnRulerRenderer;
@@ -78,6 +80,7 @@ namespace AvaloniaEdit.Rendering
 
             TextLayer = new TextLayer(this);
             _elementGenerators = new ObserveAddRemoveCollection<VisualLineElementGenerator>(ElementGenerator_Added, ElementGenerator_Removed);
+            _elementGenerators.Add(_tabElementGenerator);
             _lineTransformers = new ObserveAddRemoveCollection<IVisualLineTransformer>(LineTransformer_Added, LineTransformer_Removed);
             _backgroundRenderers = new ObserveAddRemoveCollection<IBackgroundRenderer>(BackgroundRenderer_Added, BackgroundRenderer_Removed);
             _currentLineHighlightRenderer = new CurrentLineHighlightRenderer(this);
@@ -288,6 +291,12 @@ namespace AvaloniaEdit.Rendering
         //		NewLineElementGenerator newLineElementGenerator;
         private SingleCharacterElementGenerator _singleCharacterElementGenerator;
 
+        /// <summary>
+        /// This one is always present: it lays tabs out, which has to happen whether or not the
+        /// whitespace glyphs are shown.
+        /// </summary>
+        private readonly TabElementGenerator _tabElementGenerator = new TabElementGenerator();
+
         private LinkElementGenerator _linkElementGenerator;
         private MailLinkElementGenerator _mailLinkElementGenerator;
 
@@ -295,8 +304,10 @@ namespace AvaloniaEdit.Rendering
         {
             var options = Options;
 
+            _tabElementGenerator.FetchOptions(options);
+
             //			AddRemoveDefaultElementGeneratorOnDemand(ref newLineElementGenerator, options.ShowEndOfLine);
-            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces || options.ShowTabs);
+            AddRemoveDefaultElementGeneratorOnDemand(ref _singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces);
             AddRemoveDefaultElementGeneratorOnDemand(ref _linkElementGenerator, options.EnableHyperlinks);
             AddRemoveDefaultElementGeneratorOnDemand(ref _mailLinkElementGenerator, options.EnableEmailHyperlinks);
         }
@@ -869,6 +880,36 @@ namespace AvaloniaEdit.Rendering
         private Size _lastAvailableSize;
         private bool _inMeasure;
 
+        /// <summary>
+        /// Defines the <see cref="MinimumHorizontalExtent"/> property.
+        /// </summary>
+        public static readonly StyledProperty<double> MinimumHorizontalExtentProperty =
+            AvaloniaProperty.Register<TextView, double>(
+                nameof(MinimumHorizontalExtent),
+                validate: value => value >= 0 && !double.IsInfinity(value));
+
+        /// <summary>
+        /// Gets/Sets the minimum width of the horizontal scroll extent.
+        /// By default the horizontal extent is the width of the longest visible line
+        /// (<see cref="ContentWidth"/>). Setting a larger value extends the scrollable range, so
+        /// several views that are scrolled together (e.g. a side-by-side diff) can share the same
+        /// horizontal range and stay at the same horizontal offset even when their visible lines
+        /// have different widths. The default value is 0, which leaves the extent unchanged.
+        /// </summary>
+        public double MinimumHorizontalExtent
+        {
+            get => GetValue(MinimumHorizontalExtentProperty);
+            set => SetValue(MinimumHorizontalExtentProperty, value);
+        }
+
+        /// <summary>
+        /// Gets the width of the content, i.e. the width of the longest visible line plus the
+        /// small additional amount that keeps the caret visible at the end of that line.
+        /// This is the horizontal extent the view would have without <see cref="MinimumHorizontalExtent"/>.
+        /// Updated on each measure pass.
+        /// </summary>
+        public double ContentWidth { get; private set; }
+
         /// <inheritdoc/>
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -917,6 +958,7 @@ namespace AvaloniaEdit.Rendering
             RemoveInlineObjectsNow();
 
             maxWidth += AdditionalHorizontalScrollAmount;
+            ContentWidth = maxWidth;
             var heightTreeHeight = DocumentHeight;
             var options = Options;
             double desiredHeight = Math.Min(availableSize.Height, heightTreeHeight);
@@ -936,7 +978,7 @@ namespace AvaloniaEdit.Rendering
             TextLayer.SetVisualLines(_visibleVisualLines);
 
             SetScrollData(availableSize,
-                          new Size(maxWidth, heightTreeHeight + extraHeightToAllowScrollBelowDocument),
+                          new Size(Math.Max(maxWidth, MinimumHorizontalExtent), heightTreeHeight + extraHeightToAllowScrollBelowDocument),
                           _scrollOffset);
 
             VisualLinesChanged?.Invoke(this, EventArgs.Empty);
@@ -1037,6 +1079,11 @@ namespace AvaloniaEdit.Rendering
             {
                 defaultTextRunProperties = defaultTextRunProperties,
                 textWrapping = _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
+                // only applies to a '\t' that reaches the formatter, which TabElementGenerator
+                // normally prevents. Avalonia gives such a tab this width as a fixed advance
+                // instead of aligning it to a multiple of it, unlike the WPF property this is
+                // named after, so it does not reach a tab stop.
+                // See https://github.com/AvaloniaUI/AvaloniaEdit/pull/611
                 tabSize = Options.IndentationSize * WideSpaceWidth
             };
         }
@@ -1576,9 +1623,16 @@ namespace AvaloniaEdit.Rendering
             {
                 newScrollOffsetY = rectangle.Bottom - _scrollViewport.Height;
             }
+
             newScrollOffsetX = ValidateVisualOffset(newScrollOffsetX);
             newScrollOffsetY = ValidateVisualOffset(newScrollOffsetY);
             var newScrollOffset = new Vector(newScrollOffsetX, newScrollOffsetY);
+
+            // Clamp scroll offset to valid range.
+            var (maxScrollOffsetX, maxScrollOffsetY) = _scrollExtent - _scrollViewport;
+            var maxScrollOffset = Vector.Max(Vector.Zero, new Vector(maxScrollOffsetX, maxScrollOffsetY));
+            newScrollOffset = Vector.Min(newScrollOffset, maxScrollOffset);
+
             if (!_scrollOffset.IsClose(newScrollOffset))
             {
                 SetScrollOffset(newScrollOffset);
@@ -2108,19 +2162,25 @@ namespace AvaloniaEdit.Rendering
             set
             {
                 value = new Vector(ValidateVisualOffset(value.X), ValidateVisualOffset(value.Y));
-                var isX = !_scrollOffset.X.IsClose(value.X);
-                var isY = !_scrollOffset.Y.IsClose(value.Y);
-                if (isX || isY)
+                var xChanged = !_scrollOffset.X.IsClose(value.X);
+                var yChanged = !_scrollOffset.Y.IsClose(value.Y);
+                if (xChanged || yChanged)
                 {
                     SetScrollOffset(value);
 
-                    if (isX)
+                    if (xChanged)
                     {
                         InvalidateVisual();
                         TextLayer.InvalidateVisual();
                     }
 
                     InvalidateMeasure();
+
+                    // The offset can be set directly (e.g. by code that scrolls several views
+                    // in sync) rather than through the owning ScrollViewer. Notify the
+                    // ScrollViewer so it does not keep a stale offset, which it would push
+                    // back into this view the next time the extent changes.
+                    OnScrollChange();
                 }
             }
         }

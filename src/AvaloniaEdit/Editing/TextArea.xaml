@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:editing="using:AvaloniaEdit.Editing"
+                    xmlns:converters="using:AvaloniaEdit.Converters"
                     x:ClassModifier="internal">
   <ControlTheme x:Key="{x:Type editing:TextArea}" TargetType="editing:TextArea">
     <Setter Property="SelectionBrush" Value="{DynamicResource TextAreaSelectionBrush}" />
@@ -30,7 +31,7 @@
                        Text="{TemplateBinding Watermark}"
                        Foreground="{TemplateBinding Foreground}">
               <TextBlock.IsVisible>
-                <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Document.Text" Converter="{x:Static StringConverters.IsNullOrEmpty}"/>
+                <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Document.TextLength" Converter="{x:Static converters:TextLengthToBoolConverter.Instance}" FallbackValue="False"/>
               </TextBlock.IsVisible>
             </TextBlock>
           </Panel>
