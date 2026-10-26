@@ -41,6 +41,7 @@ namespace AvaloniaEdit.Rendering
     /// </summary>
     public sealed class VisualLine
     {
+        public const string LENGTH_LIMIT_MARKER = "...";
         public const int LENGTH_LIMIT = 3000;
 
         private enum LifetimePhase : byte
@@ -177,7 +178,12 @@ namespace AvaloniaEdit.Rendering
 
             // for long lines, run only the generators the layout depends on, for performance reasons
             if (lineLength > LENGTH_LIMIT)
+            {
+                // shape only the first LENGTH_LIMIT characters and collapse the remainder
+                // into a marker. Otherwise stalls the UI thread.
                 generators = generators.Where(g => g.RunsOnLongLines).ToList();
+                currentLineEnd = offset + LENGTH_LIMIT;
+            }
 
             while (offset + askInterestOffset <= currentLineEnd)
             {
@@ -238,6 +244,9 @@ namespace AvaloniaEdit.Rendering
                     }
                 }
             }
+
+            if (lineLength > LENGTH_LIMIT && offset < FirstDocumentLine.EndOffset)
+                AddElement(new FormattedTextElement(LENGTH_LIMIT_MARKER, FirstDocumentLine.EndOffset - offset));
         }
 
         private void AddElement(VisualLineElement element)

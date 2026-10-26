@@ -248,7 +248,7 @@ namespace AvaloniaEdit.Editing
                         while (true)
                         {
                             var offset = current.Offset;
-                            if (textArea.ReadOnlySectionProvider.CanInsert(offset))
+                            if (textArea.CanInsert(offset))
                                 textArea.Document.Replace(offset, 0, textArea.Options.IndentationString,
                                     OffsetChangeMappingType.KeepAnchorBeforeInsertion);
                             if (current == end)
@@ -499,7 +499,7 @@ namespace AvaloniaEdit.Editing
             var textArea = GetTextArea(target);
             if (textArea is { Document: not null })
             {
-                args.CanExecute = textArea.ReadOnlySectionProvider.CanInsert(textArea.Caret.Offset);
+                args.CanExecute = textArea.CanInsert(textArea.Caret.Offset);
                 args.Handled = true;
             }
         }

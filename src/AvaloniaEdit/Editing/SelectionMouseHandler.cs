@@ -188,7 +188,7 @@ namespace AvaloniaEdit.Editing
                 {
                     TextArea.Caret.Position = new TextViewPosition(TextArea.Document.GetLocation(offset), visualColumn) { IsAtEndOfLine = isAtEndOfLine };
                     TextArea.Caret.DesiredXPos = double.NaN;
-                    if (TextArea.ReadOnlySectionProvider.CanInsert(offset))
+                    if (TextArea.CanInsert(offset))
                     {
                         if ((e.DragEffects & DragDropEffects.Move) == DragDropEffects.Move
                             && (e.KeyModifiers & KeyModifiers.Control) != KeyModifiers.Control)
