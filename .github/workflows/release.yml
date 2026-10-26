@@ -1,0 +1,30 @@
+name: Release
+
+on:
+    push:
+        branches: [ "release/*.*.*" ]
+
+concurrency:
+    group: release-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    build:
+        uses: AvaloniaUI/build-common/.github/workflows/library-cicd.yml@main
+        with:
+            runs_on: windows-latest
+            global_json_file: global.json
+            validate_release_branch: true
+            push_package: 'false'
+
+    push:
+        needs: build
+        runs-on: ubuntu-latest
+        environment: release
+        steps:
+            - uses: actions/download-artifact@v8
+              with:
+                  name: nupkg
+                  path: ./nupkgs
+            - name: Push to Release Manager
+              run: dotnet nuget push './nupkgs/*.nupkg' --api-key '${{ secrets.RELEASE_MANAGER_API_KEY }}' --source '${{ vars.RELEASE_MANAGER_UPLOAD_URL }}'

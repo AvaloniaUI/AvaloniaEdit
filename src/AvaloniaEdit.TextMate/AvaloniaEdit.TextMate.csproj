@@ -15,4 +15,5 @@
     <PackageReference Include="TextMateSharp.Grammars" />
   </ItemGroup>
 
+  <Import Project="$(RepositoryTargetsRoot)/PackEnable.targets" />
 </Project>
