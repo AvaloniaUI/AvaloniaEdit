@@ -9,6 +9,11 @@
     <File Path="src/Directory.Build.props" />
     <File Path="src/Directory.Build.targets" />
   </Folder>
+  <Folder Name="/Nuke/">
+    <Project Path="build/_build.csproj">
+      <Build Project="false" />
+    </Project>
+  </Folder>
   <Project Path="src/AvaloniaEdit.Demo/AvaloniaEdit.Demo.csproj" />
   <Project Path="src/AvaloniaEdit.TextMate/AvaloniaEdit.TextMate.csproj" />
   <Project Path="src/AvaloniaEdit/AvaloniaEdit.csproj" />

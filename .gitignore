@@ -255,3 +255,6 @@ paket-files/
 # Visual Studio Code
 .vscode/
 .DS_Store
+
+# NUKE
+.nuke/temp/
