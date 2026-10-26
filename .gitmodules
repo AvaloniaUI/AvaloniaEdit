@@ -1,0 +1,3 @@
+[submodule "build-common"]
+	path = build-common
+	url = https://github.com/AvaloniaUI/build-common
