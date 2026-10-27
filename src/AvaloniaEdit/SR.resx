@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ReplaceLabel" xml:space="preserve">
-    <value>Replace...</value>
+    <value>Replace…</value>
   </data>
   <data name="SearchErrorText" xml:space="preserve">
     <value>Error: </value>
@@ -130,7 +130,7 @@
     <value>Find previous (Shift+F3)</value>
   </data>
   <data name="SearchLabel" xml:space="preserve">
-    <value>Find...</value>
+    <value>Find…</value>
   </data>
   <data name="SearchMatchCaseText" xml:space="preserve">
     <value>Match case</value>
