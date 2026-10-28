@@ -101,3 +101,7 @@ dotnet run --project build/_build.csproj
 # Only create the packages (and their SBOMs)
 dotnet run --project build/_build.csproj -- --target CreateNugetPackages
 ```
+
+## Translations
+
+Czech, French, German, Italian, Japanese, Korean, Polish, Portuguese (Brazil), Russian, Spanish, Turkish and Chinese (Traditional) are adapted from the [Visual Studio Code localization](https://github.com/microsoft/vscode-loc) (MIT, Microsoft). Swedish by Svante Seleborg.
