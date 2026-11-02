@@ -14,6 +14,7 @@ namespace AvaloniaEdit.TextMate
         private readonly TextView _textView;
         private readonly DocumentSnapshot _documentSnapshot;
         private readonly Action<Exception> _exceptionHandler;
+        private double _passVerticalOffset = double.NaN; // UI thread only.
         private InvalidLineRange? _invalidRange;
         private bool _isDisposed;
 
@@ -195,12 +196,59 @@ namespace AvaloniaEdit.TextMate
             }
         }
 
+        // Layout runs above Default, so on a visible view this sees the lines the scroll led to. A key that
+        // scrolls sideways shows the same lines; a pass would tokenize the edited line here against TMModel's
+        // thread and hold the next key back until it ends. Without that wait an edit can land inside TMModel's
+        // run on the line, as on a key that does not scroll, and TMModel then keeps the older text's tokens as
+        // valid. Lines without tokens still need a pass at the same offset: a resize, a fold or a grammar
+        // change leaves them.
+        private void TokenizeViewPortAfterScroll()
+        {
+            if (Volatile.Read(ref _isDisposed))
+                return;
+
+            try
+            {
+                double verticalOffset = _textView.VerticalOffset;
+                if (verticalOffset == _passVerticalOffset && ViewPortHasTokens())
+                    return;
+
+                _passVerticalOffset = verticalOffset;
+            }
+            catch (Exception ex)
+            {
+                _exceptionHandler?.Invoke(ex);
+                return;
+            }
+
+            TokenizeViewPortCore();
+        }
+
+        // Reads outside TMModel's lock, which it does not expose; a stale read costs one extra pass, or leaves
+        // a line to TMModel's thread.
+        private bool ViewPortHasTokens()
+        {
+            if (!_textView.VisualLinesValid ||
+                _textView.VisualLines.Count == 0)
+                return false;
+
+            int first = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
+            int last = _textView.VisualLines[^1].LastDocumentLine.LineNumber - 1;
+            for (int i = first; i <= last; i++)
+            {
+                if (Get(i)?.Tokens == null)
+                    return false;
+            }
+
+            return true;
+        }
+
         internal void TokenizeViewPort()
         {
             // Post is fire-and-forget - avoids the Task allocation that
             // InvokeAsync incurs. DispatcherPriority.Default is the default
             // for Post, matching the original InvokeAsync behavior
-            Dispatcher.UIThread.Post(TokenizeViewPortCore, DispatcherPriority.Default);
+            Dispatcher.UIThread.Post(TokenizeViewPortAfterScroll, DispatcherPriority.Default);
         }
 
         /// <summary>
