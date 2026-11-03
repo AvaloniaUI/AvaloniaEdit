@@ -208,13 +208,20 @@ namespace AvaloniaEdit.Tests.TextMate
             Dispatcher.UIThread.RunJobs();
             var viewport = h.VisibleLineIndexes();
             using var hold = new ManualResetEventSlim(false);
-            h.TmModel.SetGrammar(new ScriptedGrammar(text => { if (text == "HEAD") hold.Wait(); }));
-            Assert.IsNotEmpty(h.WithoutTokens(viewport), "the new grammar's thread was meant to be held");
+            List<int> left;
+            try
+            {
+                h.TmModel.SetGrammar(new ScriptedGrammar(text => { if (text == "HEAD") hold.Wait(); }));
+                Assert.IsNotEmpty(h.WithoutTokens(viewport), "the new grammar's thread was meant to be held");
 
-            h.ScrollSidewaysTo(50);
-            Dispatcher.UIThread.RunJobs();
-            var left = h.WithoutTokens(viewport);
-            hold.Set();
+                h.ScrollSidewaysTo(50);
+                Dispatcher.UIThread.RunJobs();
+                left = h.WithoutTokens(viewport);
+            }
+            finally
+            {
+                hold.Set();
+            }
 
             Assert.IsEmpty(left, "visible lines were left without tokens");
         }

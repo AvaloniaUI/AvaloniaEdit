@@ -68,13 +68,10 @@ namespace AvaloniaEdit.TextMate
         {
             ThrowIfDisposed();
 
-            if (!_textView.VisualLinesValid ||
-                _textView.VisualLines.Count == 0)
+            if (!TryGetViewPortRange(out int first, out int last))
                 return;
 
-            InvalidateLineRange(
-                _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
-                _textView.VisualLines[^1].LastDocumentLine.LineNumber - 1);
+            InvalidateLineRange(first, last);
         }
 
         public override int GetNumberOfLines()
@@ -228,12 +225,9 @@ namespace AvaloniaEdit.TextMate
         // a line to TMModel's thread.
         private bool ViewPortHasTokens()
         {
-            if (!_textView.VisualLinesValid ||
-                _textView.VisualLines.Count == 0)
+            if (!TryGetViewPortRange(out int first, out int last))
                 return false;
 
-            int first = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
-            int last = _textView.VisualLines[^1].LastDocumentLine.LineNumber - 1;
             for (int i = first; i <= last; i++)
             {
                 if (Get(i)?.Tokens == null)
@@ -268,18 +262,31 @@ namespace AvaloniaEdit.TextMate
 
             try
             {
-                if (!_textView.VisualLinesValid ||
-                    _textView.VisualLines.Count == 0)
+                if (!TryGetViewPortRange(out int first, out int last))
                     return;
 
-                ForceTokenization(
-                    _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1,
-                    _textView.VisualLines[^1].LastDocumentLine.LineNumber - 1);
+                ForceTokenization(first, last);
             }
             catch (Exception ex)
             {
                 _exceptionHandler?.Invoke(ex);
             }
+        }
+
+        // Zero-based document lines of the visual lines; false when they are invalid or empty.
+        private bool TryGetViewPortRange(out int first, out int last)
+        {
+            if (!_textView.VisualLinesValid ||
+                _textView.VisualLines.Count == 0)
+            {
+                first = -1;
+                last = -1;
+                return false;
+            }
+
+            first = _textView.VisualLines[0].FirstDocumentLine.LineNumber - 1;
+            last = _textView.VisualLines[^1].LastDocumentLine.LineNumber - 1;
+            return true;
         }
 
         /// <summary>
