@@ -459,6 +459,11 @@ namespace AvaloniaEdit.TextMate
                 lastChangedLineIndex = Math.Max(range.ToLineNumber - 1, lastChangedLineIndex);
             }
 
+            // Raised by a viewport run for its own lines; its pass redraws the lines it tokenized itself in its view.
+            if (Dispatcher.UIThread.CheckAccess() && model.GetLines() is TextEditorModel editorModel &&
+                editorModel.IsInViewPortRun(_textView, firstChangedLineIndex, lastChangedLineIndex))
+                return;
+
             if (areVisualLinesValid)
             {
                 bool changedLinesAreNotVisible =
