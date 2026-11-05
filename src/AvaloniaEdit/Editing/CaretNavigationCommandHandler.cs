@@ -29,22 +29,75 @@ using LogicalDirection = AvaloniaEdit.Document.LogicalDirection;
 
 namespace AvaloniaEdit.Editing
 {
-    internal enum CaretMovementType
+    /// <summary>
+    /// A caret movement, as the text area's own navigation commands make it.
+    /// </summary>
+    public enum CaretMovementType
     {
+        /// <summary>Does not move.</summary>
         None,
+        /// <summary>One character to the left.</summary>
         CharLeft,
+        /// <summary>One character to the right.</summary>
         CharRight,
+        /// <summary>One code point to the left, as Backspace deletes.</summary>
         Backspace,
+        /// <summary>To the start of the previous word.</summary>
         WordLeft,
+        /// <summary>To the start of the next word.</summary>
         WordRight,
+        /// <summary>One visual line up (a row of a wrapped line).</summary>
         LineUp,
+        /// <summary>One visual line down (a row of a wrapped line).</summary>
         LineDown,
+        /// <summary>One page up.</summary>
         PageUp,
+        /// <summary>One page down.</summary>
         PageDown,
+        /// <summary>To the start of the visual line, or to its first non-whitespace character (Home).</summary>
         LineStart,
+        /// <summary>To the end of the visual line (End).</summary>
         LineEnd,
+        /// <summary>To the start of the document.</summary>
         DocumentStart,
+        /// <summary>To the end of the document.</summary>
         DocumentEnd
+    }
+
+    /// <summary>
+    /// Computes caret movements the way the text area's navigation commands do, for applications that move a caret
+    /// of their own (for example extra carets, or an editing mode with its own keys).
+    /// </summary>
+    public static class CaretNavigation
+    {
+        /// <summary>
+        /// Gets the position a caret at <paramref name="caretPosition"/> moves to.
+        /// </summary>
+        /// <param name="textView">The text view the caret is in. Its visual lines are built as needed.</param>
+        /// <param name="caretPosition">Where the caret is. When its <see cref="TextViewPosition.VisualColumn"/> is not set
+        /// (negative), it is worked out from the line and column.</param>
+        /// <param name="direction">The movement.</param>
+        /// <param name="enableVirtualSpace">Whether the caret may move past the end of a line.</param>
+        /// <param name="desiredXPos">The x position the caret tries to keep when it moves up or down, or
+        /// <see cref="double.NaN"/> to use its current one. Updated for the next movement: keep it between
+        /// up and down movements, as <see cref="Caret.DesiredXPos"/> does for the text area's caret.</param>
+        /// <returns>The new caret position.</returns>
+        public static TextViewPosition GetNewCaretPosition(TextView textView, TextViewPosition caretPosition,
+            CaretMovementType direction, bool enableVirtualSpace, ref double desiredXPos)
+        {
+            if (textView == null)
+                throw new ArgumentNullException(nameof(textView));
+            if (textView.Document == null)
+                throw ThrowUtil.NoDocumentAssigned();
+            if (caretPosition.VisualColumn < 0)
+            {
+                // a plain location: work out its visual column, as the text area does for its own caret
+                var visualLine = textView.GetOrConstructVisualLine(textView.Document.GetLineByNumber(caretPosition.Line));
+                caretPosition.VisualColumn = visualLine.ValidateVisualColumn(caretPosition, enableVirtualSpace);
+            }
+            return CaretNavigationCommandHandler.GetNewCaretPosition(textView, caretPosition, direction,
+                enableVirtualSpace, ref desiredXPos);
+        }
     }
 
     internal static class CaretNavigationCommandHandler
@@ -244,7 +297,7 @@ namespace AvaloniaEdit.Editing
                     return caretPosition;
                 case CaretMovementType.DocumentStart:
                     desiredXPos = double.NaN;
-                    return new TextViewPosition(0, 0);
+                    return new TextViewPosition(1, 1);
                 case CaretMovementType.DocumentEnd:
                     desiredXPos = double.NaN;
                     return new TextViewPosition(textView.Document.GetLocation(textView.Document.TextLength));
