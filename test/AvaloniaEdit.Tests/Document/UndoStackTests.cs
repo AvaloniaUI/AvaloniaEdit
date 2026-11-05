@@ -78,6 +78,49 @@ namespace AvaloniaEdit.Document
 			Assert.AreEqual("", doc.Text);
 		}
 		
+		[Test]
+		public void ContinueUndoGroup_AfterMarkAsOriginalFile_IsNotOriginalFile()
+		{
+			var doc = new TextDocument();
+			doc.Insert(0, "a");
+			doc.UndoStack.MarkAsOriginalFile();
+			doc.UndoStack.StartContinuedUndoGroup();
+			doc.Insert(1, "b");
+			doc.UndoStack.EndUndoGroup();
+			Assert.IsFalse(doc.UndoStack.IsOriginalFile);
+		}
+
+		[Test]
+		public void ContinueUndoGroup_AfterMarkAsOriginalFile_UndoReturnsToOriginalFile()
+		{
+			var doc = new TextDocument();
+			doc.Insert(0, "a");
+			doc.UndoStack.MarkAsOriginalFile();
+			doc.UndoStack.StartContinuedUndoGroup();
+			doc.Insert(1, "b");
+			doc.UndoStack.EndUndoGroup();
+			doc.UndoStack.Undo();
+			Assert.AreEqual("a", doc.Text);
+			Assert.IsTrue(doc.UndoStack.IsOriginalFile);
+		}
+
+		[Test]
+		public void ContinueUndoGroup_AfterMarkAsOriginalFile_ContinuesTheGroupsAfterIt()
+		{
+			var doc = new TextDocument();
+			doc.Insert(0, "a");
+			doc.UndoStack.MarkAsOriginalFile();
+			doc.UndoStack.StartContinuedUndoGroup();
+			doc.Insert(1, "b");
+			doc.UndoStack.EndUndoGroup();
+			doc.UndoStack.StartContinuedUndoGroup();
+			doc.Insert(2, "c");
+			doc.UndoStack.EndUndoGroup();
+			doc.UndoStack.Undo();
+			Assert.AreEqual("a", doc.Text);
+			Assert.IsTrue(doc.UndoStack.IsOriginalFile);
+		}
+
 		class StubUndoableAction : IUndoableOperation
 		{
 			public void Undo()
