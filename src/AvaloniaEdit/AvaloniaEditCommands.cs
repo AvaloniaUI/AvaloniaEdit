@@ -40,6 +40,25 @@ namespace AvaloniaEdit
         public static RoutedCommand DeleteLine { get; } = new RoutedCommand(nameof(DeleteLine), new KeyGesture(Key.D, KeyModifiers.Control));
 
         /// <summary>
+        /// Moves the current line, or the lines touched by the selection, up by one line.
+        /// The default shortcut is Alt+Up.
+        /// </summary>
+        public static RoutedCommand MoveLinesUp { get; } = new RoutedCommand(nameof(MoveLinesUp), new KeyGesture(Key.Up, KeyModifiers.Alt));
+
+        /// <summary>
+        /// Moves the current line, or the lines touched by the selection, down by one line.
+        /// The default shortcut is Alt+Down.
+        /// </summary>
+        public static RoutedCommand MoveLinesDown { get; } = new RoutedCommand(nameof(MoveLinesDown), new KeyGesture(Key.Down, KeyModifiers.Alt));
+
+        /// <summary>
+        /// Inserts a copy of the current line, or of the lines touched by the selection, below them.
+        /// The caret and selection move to the copy.
+        /// The default shortcut is Ctrl+Shift+D.
+        /// </summary>
+        public static RoutedCommand DuplicateLines { get; } = new RoutedCommand(nameof(DuplicateLines), new KeyGesture(Key.D, KeyModifiers.Control | KeyModifiers.Shift));
+
+        /// <summary>
         /// Removes leading whitespace from the selected lines (or the whole document if the selection is empty).
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Whitespace")]

@@ -82,6 +82,9 @@ namespace AvaloniaEdit.Editing
 
             AddBinding(AvaloniaEditCommands.ToggleOverstrike, OnToggleOverstrike);
             AddBinding(AvaloniaEditCommands.DeleteLine, OnDeleteLine);
+            AddBinding(AvaloniaEditCommands.MoveLinesUp, OnMoveLines(-1));
+            AddBinding(AvaloniaEditCommands.MoveLinesDown, OnMoveLines(1));
+            AddBinding(AvaloniaEditCommands.DuplicateLines, OnDuplicateLines);
 
             AddBinding(AvaloniaEditCommands.RemoveLeadingWhitespace, OnRemoveLeadingWhitespace);
             AddBinding(AvaloniaEditCommands.RemoveTrailingWhitespace, OnRemoveTrailingWhitespace);
@@ -631,6 +634,120 @@ namespace AvaloniaEdit.Editing
                 textArea.RemoveSelectedText();
                 args.Handled = true;
             }
+        }
+
+        #endregion
+
+        #region MoveLines / DuplicateLines
+
+        /// <summary>
+        /// Gets the lines touched by the selection, or the caret line if the selection is empty.
+        /// A last line on which no characters are selected is not included.
+        /// </summary>
+        private static void GetSelectedLines(TextArea textArea, out DocumentLine first, out DocumentLine last)
+        {
+            if (textArea.Selection.IsEmpty)
+            {
+                first = last = textArea.Document.GetLineByNumber(textArea.Caret.Line);
+                return;
+            }
+            var segment = textArea.Selection.SurroundingSegment;
+            first = textArea.Document.GetLineByOffset(segment.Offset);
+            last = textArea.Document.GetLineByOffset(segment.EndOffset);
+            if (first != last && last.Offset == segment.EndOffset)
+                last = last.PreviousLine;
+        }
+
+        private static bool IsWritable(TextArea textArea, int offset, int length)
+        {
+            var deletable = textArea.GetDeletableSegments(new SimpleSegment(offset, length));
+            return deletable.Length == 1 && deletable[0].Offset == offset && deletable[0].Length == length;
+        }
+
+        /// <summary>
+        /// Replaces a range and keeps the caret and selection on the same text, which moved by delta.
+        /// </summary>
+        private static void ReplaceAndShiftSelection(TextArea textArea, int offset, int length, string text, int delta)
+        {
+            var document = textArea.Document;
+            var hadSelection = !textArea.Selection.IsEmpty;
+            var selectionStart = hadSelection ? document.GetOffset(textArea.Selection.StartPosition.Location) : 0;
+            var selectionEnd = hadSelection ? document.GetOffset(textArea.Selection.EndPosition.Location) : 0;
+            var caret = textArea.Caret.Offset;
+
+            using (document.RunUpdate())
+            {
+                document.Replace(offset, length, text);
+            }
+
+            textArea.Caret.Offset = caret + delta;
+            textArea.Selection = hadSelection
+                ? Selection.Create(textArea, selectionStart + delta, selectionEnd + delta)
+                : Selection.Create(textArea, caret + delta, caret + delta);
+            textArea.Caret.BringCaretToView();
+        }
+
+        private static EventHandler<ExecutedRoutedEventArgs> OnMoveLines(int direction)
+        {
+            return (target, args) =>
+            {
+                var textArea = GetTextArea(target);
+                if (textArea?.Document == null)
+                    return;
+                var document = textArea.Document;
+                GetSelectedLines(textArea, out var first, out var last);
+                var block = document.GetText(first.Offset, last.EndOffset - first.Offset);
+                if (direction < 0)
+                {
+                    var previous = first.PreviousLine;
+                    if (previous != null)
+                    {
+                        var newLine = document.GetText(previous.EndOffset, previous.DelimiterLength);
+                        var length = last.EndOffset - previous.Offset;
+                        if (IsWritable(textArea, previous.Offset, length))
+                        {
+                            ReplaceAndShiftSelection(textArea, previous.Offset, length,
+                                block + newLine + document.GetText(previous.Offset, previous.Length),
+                                -(previous.Length + newLine.Length));
+                        }
+                    }
+                }
+                else
+                {
+                    var next = last.NextLine;
+                    if (next != null)
+                    {
+                        var newLine = document.GetText(last.EndOffset, last.DelimiterLength);
+                        var length = next.EndOffset - first.Offset;
+                        if (IsWritable(textArea, first.Offset, length))
+                        {
+                            ReplaceAndShiftSelection(textArea, first.Offset, length,
+                                document.GetText(next.Offset, next.Length) + newLine + block,
+                                next.Length + newLine.Length);
+                        }
+                    }
+                }
+                args.Handled = true;
+            };
+        }
+
+        private static void OnDuplicateLines(object target, ExecutedRoutedEventArgs args)
+        {
+            var textArea = GetTextArea(target);
+            if (textArea?.Document == null)
+                return;
+            var document = textArea.Document;
+            GetSelectedLines(textArea, out var first, out var last);
+            if (textArea.CanInsert(last.EndOffset))
+            {
+                var block = document.GetText(first.Offset, last.EndOffset - first.Offset);
+                var newLine = last.DelimiterLength > 0
+                    ? document.GetText(last.EndOffset, last.DelimiterLength)
+                    : TextUtilities.GetNewLineFromDocument(document, last.LineNumber);
+                // the copy goes below; the caret and selection move to it
+                ReplaceAndShiftSelection(textArea, last.EndOffset, 0, newLine + block, block.Length + newLine.Length);
+            }
+            args.Handled = true;
         }
 
         #endregion
