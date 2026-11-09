@@ -80,6 +80,8 @@ namespace AvaloniaEdit.Document
         public void MarkAsOriginalFile()
         {
             _elementsOnUndoUntilOriginalFile = 0;
+            // the original state must stay an undo boundary: don't let a later group continue the one before it
+            _allowContinue = false;
             RecalcIsOriginalFile();
         }
 
