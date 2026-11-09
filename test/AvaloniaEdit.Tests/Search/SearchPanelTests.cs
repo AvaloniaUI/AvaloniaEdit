@@ -1,8 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Headless.NUnit;
 using AvaloniaEdit.AvaloniaMocks;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Legacy.ClassicAssert;
+using CollectionAssert = NUnit.Framework.Legacy.CollectionAssert;
 
 namespace AvaloniaEdit.Search;
 
@@ -205,6 +208,113 @@ public class SearchPanelTests
         textEditor.SearchPanel.ReplaceAll();
 
         Assert.AreEqual("bye world bye world", textEditor.Text);
+    }
+
+    [AvaloniaTest]
+    public void Search_Results_Should_Contain_All_Occurences_In_Document_Order()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "world hello world world";
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.Open();
+
+        CollectionAssert.AreEqual(new[] { 0, 12, 18 }, textEditor.SearchPanel.SearchResults.Select(r => r.Offset));
+        CollectionAssert.AreEqual(new[] { 5, 5, 5 }, textEditor.SearchPanel.SearchResults.Select(r => r.Length));
+    }
+
+    [AvaloniaTest]
+    public void Search_Results_Should_Be_Empty_When_Closed()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world";
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        Assert.IsEmpty(textEditor.SearchPanel.SearchResults);
+
+        textEditor.SearchPanel.Open();
+        Assert.AreEqual(1, textEditor.SearchPanel.SearchResults.Count());
+
+        textEditor.SearchPanel.Close();
+        Assert.IsEmpty(textEditor.SearchPanel.SearchResults);
+    }
+
+    [AvaloniaTest]
+    public void Search_Results_Should_Follow_Document_Changes()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world";
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.Open();
+
+        textEditor.Document.Insert(0, "world ");
+
+        CollectionAssert.AreEqual(new[] { 0, 12 }, textEditor.SearchPanel.SearchResults.Select(r => r.Offset));
+    }
+
+    [AvaloniaTest]
+    public void Search_Results_Should_Be_Empty_For_Invalid_Regex()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world";
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.Open();
+        textEditor.SearchPanel.UseRegex = true;
+        textEditor.SearchPanel.SearchPattern = "(world";
+
+        Assert.IsEmpty(textEditor.SearchPanel.SearchResults);
+    }
+
+    [AvaloniaTest]
+    public void Search_Results_Changed_Should_Be_Raised_When_Results_Change()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world";
+
+        var counts = new List<int>();
+        textEditor.SearchPanel.SearchResultsChanged += (sender, e) =>
+        {
+            Assert.AreSame(textEditor.SearchPanel, sender);
+            counts.Add(textEditor.SearchPanel.SearchResults.Count());
+        };
+
+        textEditor.SearchPanel.Open();                   // empty pattern: no results
+        textEditor.SearchPanel.SearchPattern = "o";       // hell[o] w[o]rld
+        textEditor.Document.Insert(0, "o");               // [o]hell[o] w[o]rld
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.SearchPanel.Close();
+
+        CollectionAssert.AreEqual(new[] { 0, 2, 3, 1, 0 }, counts);
+    }
+
+    [AvaloniaTest]
+    public void Search_Results_Changed_Should_Not_Be_Raised_While_Closed()
+    {
+        UnitTestApplication.InitializeStyles();
+
+        TextEditor textEditor = CreateEditor();
+        textEditor.Text = "hello world";
+
+        int raised = 0;
+        textEditor.SearchPanel.SearchResultsChanged += (_, _) => raised++;
+
+        textEditor.SearchPanel.SearchPattern = "world";
+        textEditor.Document.Insert(0, "world ");
+        textEditor.SearchPanel.Close();
+
+        Assert.AreEqual(0, raised);
     }
 
     static TextEditor CreateEditor()

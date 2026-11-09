@@ -139,6 +139,16 @@ namespace AvaloniaEdit.Search
             _textEditor.TextArea.TextView.InvalidateVisual();
         }
 
+        /// <summary>
+        /// Gets the search results currently highlighted in the document, in document order.
+        /// The collection is empty while the panel is closed.
+        /// </summary>
+        /// <remarks>
+        /// The results are updated when the search pattern, the search options or the document change;
+        /// <see cref="SearchResultsChanged"/> is raised each time.
+        /// </remarks>
+        public IEnumerable<ISearchResult> SearchResults => _renderer.CurrentResults;
+
         private ISearchStrategy _strategy;
 
         private static void SearchPatternChangedCallback(AvaloniaPropertyChangedEventArgs e)
@@ -166,6 +176,7 @@ namespace AvaloniaEdit.Search
             {
                 CleanSearchResults();
                 UpdateSearchLabel();
+                OnSearchResultsChanged(EventArgs.Empty);
             }
         }
 
@@ -476,6 +487,7 @@ namespace AvaloniaEdit.Search
 
             UpdateSearchLabel();
             _textArea.TextView.InvalidateLayer(KnownLayer.Selection);
+            OnSearchResultsChanged(EventArgs.Empty);
         }
 
         void CleanSearchResults()
@@ -579,8 +591,11 @@ namespace AvaloniaEdit.Search
             IsClosed = true;
 
             // Clear existing search results so that the segments don't have to be maintained
+            bool hadResults = _renderer.CurrentResults.Count > 0;
             _renderer.CurrentResults.Clear();
             _currentSearchResultIndex = -1;
+            if (hadResults)
+                OnSearchResultsChanged(EventArgs.Empty);
 
             _textArea.Focus();
         }
@@ -644,6 +659,19 @@ namespace AvaloniaEdit.Search
         protected virtual void OnSearchOptionsChanged(SearchOptionsChangedEventArgs e)
         {
             SearchOptionsChanged?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Fired when <see cref="SearchResults"/> changes.
+        /// </summary>
+        public event EventHandler SearchResultsChanged;
+
+        /// <summary>
+        /// Raises the <see cref="SearchResultsChanged" /> event.
+        /// </summary>
+        protected virtual void OnSearchResultsChanged(EventArgs e)
+        {
+            SearchResultsChanged?.Invoke(this, e);
         }
 
         public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
