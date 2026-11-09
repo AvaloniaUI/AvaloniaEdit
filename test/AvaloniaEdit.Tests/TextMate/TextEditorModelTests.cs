@@ -192,6 +192,99 @@ namespace AvaloniaEdit.Tests.TextMate
             AssertLinesAreEqual("birdie", textEditorModel.GetLineTextIncludingTerminators(1));
         }
 
+        [Test]
+        public void Lines_Below_A_Removal_Should_Keep_Their_Text_While_The_Document_Changes()
+        {
+            // Arrange
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            using var textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "puppy\npussy\nbirdie\nkitty\nbunny\nfoal";
+
+            // A handler added after the model's runs once the model has removed the lines,
+            // and can tokenize there.
+            int modelLines = 0;
+            int snapshotLines = 0;
+            LineText lineBelow = default;
+            document.Changing += (_, _) =>
+            {
+                textEditorModel.ForEach(_ => modelLines++);
+                snapshotLines = textEditorModel.GetNumberOfLines();
+                lineBelow = textEditorModel.GetLineTextIncludingTerminators(2);
+            };
+
+            // Act
+            document.Remove(
+                document.Lines[1].Offset,
+                document.Lines[1].TotalLength + document.Lines[2].TotalLength);
+
+            // Assert
+            Assert.AreEqual(4, modelLines);
+            Assert.AreEqual(modelLines, snapshotLines);
+            AssertLinesAreEqual("bunny\n", lineBelow);
+
+            AssertLinesAreEqual("puppy\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("kitty\n", textEditorModel.GetLineTextIncludingTerminators(1));
+            AssertLinesAreEqual("bunny\n", textEditorModel.GetLineTextIncludingTerminators(2));
+            AssertLinesAreEqual("foal", textEditorModel.GetLineTextIncludingTerminators(3));
+        }
+
+        [TestCase(OffsetChangeMappingType.Normal)]
+        [TestCase(OffsetChangeMappingType.RemoveAndInsert)]
+        [TestCase(OffsetChangeMappingType.CharacterReplace)]
+        [TestCase(OffsetChangeMappingType.KeepAnchorBeforeInsertion)]
+        public void Line_Feed_Joining_A_CR_Should_Update_The_Line_After_It(OffsetChangeMappingType mappingType)
+        {
+            // Arrange
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            using var textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "a\rb\rc";
+
+            // Act: the line feed ends the first line with the CR before it, and the line count stays the same.
+            document.Replace(2, 1, "\n", mappingType);
+
+            // Assert
+            Assert.AreEqual(3, textEditorModel.GetNumberOfLines());
+            AssertLinesAreEqual("a\r\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("\r", textEditorModel.GetLineTextIncludingTerminators(1));
+            AssertLinesAreEqual("c", textEditorModel.GetLineTextIncludingTerminators(2));
+        }
+
+        [TestCase(OffsetChangeMappingType.Normal)]
+        [TestCase(OffsetChangeMappingType.RemoveAndInsert)]
+        [TestCase(OffsetChangeMappingType.CharacterReplace)]
+        [TestCase(OffsetChangeMappingType.KeepAnchorBeforeInsertion)]
+        public void Removal_Should_Recompute_Line_Ranges_An_Earlier_Edit_Left_Wrong(OffsetChangeMappingType mappingType)
+        {
+            // Arrange
+            TextView textView = new TextView();
+            TextDocument document = new TextDocument();
+
+            using var textEditorModel = new TextEditorModel(
+                textView, document, null);
+
+            document.Text = "a\n\r\n";
+
+            // Removing the LF of the CR LF pair leaves the range of the line that keeps the CR wrong.
+            document.Remove(3, 1);
+
+            // Act
+            document.Replace(0, 1, "", mappingType);
+
+            // Assert
+            Assert.AreEqual(3, textEditorModel.GetNumberOfLines());
+            AssertLinesAreEqual("\n", textEditorModel.GetLineTextIncludingTerminators(0));
+            AssertLinesAreEqual("\r", textEditorModel.GetLineTextIncludingTerminators(1));
+            AssertLinesAreEqual(string.Empty, textEditorModel.GetLineTextIncludingTerminators(2));
+        }
+
         #endregion
 
         #region Insert / Remove Line Count

@@ -115,7 +115,9 @@ namespace AvaloniaEdit.TextMate
                         RemoveLine(i);
                     }
 
-                    _documentSnapshot.RemoveLines(startLine, endLine);
+                    // The first line stays, as it does in the model: Changed updates it.
+                    if (endLine > startLine)
+                        _documentSnapshot.RemoveLines(startLine + 1, endLine);
                 }
             }
             catch (Exception ex)

@@ -131,7 +131,10 @@ namespace AvaloniaEdit.TextMate
             {
                 _lineCount = _document.Lines.Count;
 
-                if (e?.OffsetChangeMap != null && _lineRanges != null && _lineCount == _lineRanges.Length)
+                // A removal recomputes even when the count is unchanged: joining a CR and LF can move a later line's
+                // end, and recomputing also repairs ranges an earlier edit left wrong.
+                if (e?.OffsetChangeMap != null && _lineRanges != null && _lineCount == _lineRanges.Length &&
+                    e.RemovalLength == 0)
                 {
                     // it's a single-line change
                     // update the offsets usign the OffsetChangeMap
