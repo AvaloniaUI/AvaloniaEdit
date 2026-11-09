@@ -13,8 +13,8 @@
     <PackageVersion Include="Tmds.DBus.Protocol" Version="0.92.0" />
   </ItemGroup>
   <ItemGroup Label="TextMate">
-    <PackageVersion Include="TextMateSharp" Version="2.0.4" />
-    <PackageVersion Include="TextMateSharp.Grammars" Version="2.0.4" />
+    <PackageVersion Include="TextMateSharp" Version="2.0.5" />
+    <PackageVersion Include="TextMateSharp.Grammars" Version="2.0.5" />
   </ItemGroup>
   <ItemGroup Label="Testing">
     <PackageVersion Include="NUnit" Version="4.6.1" />
