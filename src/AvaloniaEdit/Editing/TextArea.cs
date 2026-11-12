@@ -68,7 +68,8 @@ namespace AvaloniaEdit.Editing
 
             TextInputMethodClientRequestedEvent.AddClassHandler<TextArea>((ta, e) =>
             {
-                if (!ta.IsReadOnly)
+                // Only handle IME for the TextArea itself, not for child controls (e.g. search TextBox)
+                if (!ta.IsReadOnly && e.Source == ta)
                 {
                     e.Client = ta._imClient;
                 }
