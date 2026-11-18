@@ -75,6 +75,9 @@ namespace AvaloniaEdit.Editing
 
         private UndoStack GetUndoStack()
         {
+            // Undo and redo modify the document, which a read-only text area must not allow.
+            if (TextArea.IsReadOnly)
+                return null;
             var document = TextArea.Document;
             return document?.UndoStack;
         }
