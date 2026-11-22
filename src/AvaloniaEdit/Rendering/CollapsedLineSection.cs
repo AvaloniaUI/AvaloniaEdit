@@ -15,6 +15,7 @@
 // FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
+#nullable enable
 
 using AvaloniaEdit.Document;
 using System.Globalization;
@@ -28,6 +29,10 @@ namespace AvaloniaEdit.Rendering
 	public sealed class CollapsedLineSection
     {
         private readonly HeightTree _heightTree;
+        internal HeightTreeLeafNode? startLeaf, endLeaf;
+        // tree nodes that contain the start/end of the collapsed section
+        internal byte startIndexInLeaf, endIndexInLeaf;
+        // start/end line within the HeightTreeLeafNode
 
 #if DEBUG
         internal string Id;
@@ -60,14 +65,21 @@ namespace AvaloniaEdit.Rendering
         /// When the section is uncollapsed or the text containing it is deleted,
         /// this property returns null.
         /// </summary>
-        public DocumentLine Start { get; internal set; }
+        public DocumentLine? Start { get; internal set; }
 
         /// <summary>
         /// Gets the end line of the section.
         /// When the section is uncollapsed or the text containing it is deleted,
         /// this property returns null.
         /// </summary>
-        public DocumentLine End { get; internal set; }
+        public DocumentLine? End { get; internal set; }
+
+        internal void Reset()
+        {
+            Start = null;
+            End = null;
+            startLeaf = endLeaf = null;
+        }
 
         /// <summary>
         /// Uncollapses the section.
@@ -76,19 +88,30 @@ namespace AvaloniaEdit.Rendering
         /// </summary>
         public void Uncollapse()
         {
-            if (Start == null)
+            if (startLeaf == null || endLeaf == null)
                 return;
-
-            if (!_heightTree.IsDisposed)
+            HeightTreeNode startNode = startLeaf;
+            HeightTreeNode endNode = endLeaf;
+            while (startNode != endNode)
             {
-                _heightTree.Uncollapse(this);
-#if DEBUG
-                _heightTree.CheckProperties();
-#endif
+                startNode.RemoveEvent(this, HeightTreeNode.EventKind.Start);
+                endNode.RemoveEvent(this, HeightTreeNode.EventKind.End);
+                startNode.parent!.UpdateHeight(startNode.indexInParent);
+                endNode.parent!.UpdateHeight(endNode.indexInParent);
+                startNode = startNode.parent;
+                endNode = endNode.parent;
+            }
+            // Now we have arrived at the node which has both events.
+            startNode.RemoveEvent(this, HeightTreeNode.EventKind.Start);
+            startNode.RemoveEvent(this, HeightTreeNode.EventKind.End);
+            // Propagate the new height up to the root node.
+            while (startNode.parent != null)
+            {
+                startNode.parent.UpdateHeight(startNode.indexInParent);
+                startNode = startNode.parent;
             }
 
-            Start = null;
-            End = null;
+            Reset();
         }
 
         /// <summary>
@@ -97,6 +120,34 @@ namespace AvaloniaEdit.Rendering
         public override string ToString()
         {
             return string.Create(CultureInfo.InvariantCulture, $"[CollapsedSection{Id} {nameof(Start)}={(Start != null ? Start.LineNumber.ToString() : "null")} {nameof(End)}={(End != null ? End.LineNumber.ToString() : "null")}]");
+        }
+
+        internal bool StartIsWithin(HeightTreeNode heightTreeNode, out int index)
+        {
+            index = startIndexInLeaf;
+            HeightTreeNode? node = startLeaf;
+            while (node != null)
+            {
+                if (node == heightTreeNode)
+                    return true;
+                index = node.indexInParent;
+                node = node.parent;
+            }
+            return false;
+        }
+
+        internal bool EndIsWithin(HeightTreeNode heightTreeNode, out int index)
+        {
+            index = endIndexInLeaf;
+            HeightTreeNode? node = endLeaf;
+            while (node != null)
+            {
+                if (node == heightTreeNode)
+                    return true;
+                index = node.indexInParent;
+                node = node.parent;
+            }
+            return false;
         }
     }
 }
