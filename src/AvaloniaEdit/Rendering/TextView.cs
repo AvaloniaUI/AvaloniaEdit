@@ -786,7 +786,7 @@ namespace AvaloniaEdit.Rendering
                 // update all visual top values (building the line might have changed visual top of other lines due to word wrapping)
                 foreach (var line in _allVisualLines)
                 {
-                    line.VisualTop = _heightTree.GetVisualPosition(line.FirstDocumentLine);
+                    line.VisualTop = _heightTree.GetVisualPosition(line.FirstDocumentLine.LineNumber);
                 }
             }
             return l;
@@ -996,10 +996,11 @@ namespace AvaloniaEdit.Rendering
             VisualLineTextParagraphProperties paragraphProperties = CreateParagraphProperties(globalTextRunProperties);
 
             //Debug.WriteLine("Measure availableSize=" + availableSize + ", scrollOffset=" + _scrollOffset);
-            var firstLineInView = _heightTree.GetLineByVisualPosition(_scrollOffset.Y);
+            var firstLineNumberInView = _heightTree.GetLineByVisualPosition(_scrollOffset.Y);
+            var firstLineInView = Document.GetLineByNumber(firstLineNumberInView);
 
             // number of pixels clipped from the first visual line(s)
-            _clippedPixelsOnTop = _scrollOffset.Y - _heightTree.GetVisualPosition(firstLineInView);
+            _clippedPixelsOnTop = _scrollOffset.Y - _heightTree.GetVisualPosition(firstLineNumberInView);
             // clippedPixelsOnTop should be >= 0, except for floating point inaccurracy.
             Debug.Assert(_clippedPixelsOnTop >= -ExtensionMethods.Epsilon);
 
@@ -1113,8 +1114,8 @@ namespace AvaloniaEdit.Rendering
             if (visualLine.FirstDocumentLine != visualLine.LastDocumentLine)
             {
                 // Check whether the lines are collapsed correctly:
-                double firstLinePos = _heightTree.GetVisualPosition(visualLine.FirstDocumentLine.NextLine);
-                double lastLinePos = _heightTree.GetVisualPosition(visualLine.LastDocumentLine.NextLine ?? visualLine.LastDocumentLine);
+                double firstLinePos = _heightTree.GetVisualPosition(visualLine.FirstDocumentLine.LineNumber + 1);
+                double lastLinePos = _heightTree.GetVisualPosition(visualLine.LastDocumentLine.LineNumber + 1);
                 if (!firstLinePos.IsClose(lastLinePos))
                 {
                     for (int i = visualLine.FirstDocumentLine.LineNumber + 1; i <= visualLine.LastDocumentLine.LineNumber; i++)
@@ -1174,7 +1175,7 @@ namespace AvaloniaEdit.Rendering
                 lastLineBreak = textLine.TextLineBreak;
             }
             visualLine.SetTextLines(textLines);
-            _heightTree.SetHeight(visualLine.FirstDocumentLine, visualLine.Height);
+            _heightTree.SetHeight(visualLine.FirstDocumentLine.LineNumber, visualLine.Height);
             return visualLine;
         }
 
@@ -1747,7 +1748,7 @@ namespace AvaloniaEdit.Rendering
             VerifyAccess();
             if (_heightTree == null)
                 throw ThrowUtil.NoDocumentAssigned();
-            return _heightTree.GetVisualPosition(_heightTree.GetLineByNumber(line));
+            return _heightTree.GetVisualPosition(line);
         }
 
         private VisualLineElement GetVisualLineElementFromPosition(Point visualPosition)
@@ -1973,7 +1974,7 @@ namespace AvaloniaEdit.Rendering
             VerifyAccess();
             if (_heightTree == null)
                 throw ThrowUtil.NoDocumentAssigned();
-            return _heightTree.GetLineByVisualPosition(visualTop);
+            return Document.GetLineByNumber(_heightTree.GetLineByVisualPosition(visualTop));
         }
 
         /// <inheritdoc/>
