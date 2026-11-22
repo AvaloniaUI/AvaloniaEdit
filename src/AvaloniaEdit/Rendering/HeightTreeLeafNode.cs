@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -34,11 +35,10 @@ namespace AvaloniaEdit.Rendering
 		// Must be at least 2 to avoid the degenerate trees
 		// Must be at most MaxChildCount/2 (rounded up) to allow node merging
 
+		[InlineArray(MaxLineCount)]
 		struct LineData
 		{
-			// C# requires fixed-size arrays to appear only in structs  
-			internal unsafe fixed double heights[MaxLineCount];
-			// only indices 0..lineCount-1 are valid
+			private double element;
 		}
 		LineData data;
 
@@ -47,12 +47,10 @@ namespace AvaloniaEdit.Rendering
 			if (lineCount > MaxLineCount)
 				throw new ArgumentOutOfRangeException(nameof(lineCount));
 			HeightTreeLeafNode leaf = new HeightTreeLeafNode();
-			unsafe {
-				for (int i = 0; i < lineCount; i++) {
-					leaf.data.heights[i] = defaultLineHeight;
-				}
-				leaf.childCount = (byte)lineCount;
+			for (int i = 0; i < lineCount; i++) {
+				leaf.data[i] = defaultLineHeight;
 			}
+			leaf.childCount = (byte)lineCount;
 			return leaf;
 		}
 
@@ -62,15 +60,12 @@ namespace AvaloniaEdit.Rendering
 
 		internal double GetTotalHeightUntilChildIndex(int childIndex)
 		{
-			// To avoid memory unsafety this is not just an assertion, but a runtime check.
 			if (childIndex < 0 || childIndex > childCount)
 				throw new ArgumentOutOfRangeException(nameof(childIndex));
 			double totalHeight = 0;
-			unsafe { // using the safety invariant that childIndex<=lineCount<=MaxLineCount
-				for (int i = 0; i < childIndex; i++) {
-					if ((collapsed & (1 << i)) == 0) {
-						totalHeight += data.heights[i];
-					}
+			for (int i = 0; i < childIndex; i++) {
+				if ((collapsed & (1 << i)) == 0) {
+					totalHeight += data[i];
 				}
 			}
 			return totalHeight;
@@ -79,13 +74,11 @@ namespace AvaloniaEdit.Rendering
 		internal int FindChildForVisualPosition(double position)
 		{
 			double totalHeight = 0;
-			unsafe { // using the safety invariant that lineCount<=MaxLineCount
-				for (int i = 0; i < childCount; i++) {
-					if ((collapsed & (1 << i)) == 0) {
-						totalHeight += data.heights[i];
-						if (position < totalHeight)
-							return i;
-					}
+			for (int i = 0; i < childCount; i++) {
+				if ((collapsed & (1 << i)) == 0) {
+					totalHeight += data[i];
+					if (position < totalHeight)
+						return i;
 				}
 			}
 			// Not Found: Can happen when position>totalHeight,
@@ -102,31 +95,23 @@ namespace AvaloniaEdit.Rendering
 
 		public double GetHeight(int line)
 		{
-			// To avoid memory unsafety this is not just an assertion, but a runtime check.
 			if (line < 0 || line >= childCount)
 				throw new ArgumentOutOfRangeException(nameof(line));
-			unsafe {
-				return data.heights[line];
-			}
+			return data[line];
 		}
 
 		internal override void SetHeight(int line, double val)
 		{
-			// To avoid memory unsafety this is not just an assertion, but a runtime check.
 			if (line < 0 || line >= childCount)
 				throw new ArgumentOutOfRangeException(nameof(line));
-			unsafe {
-				data.heights[line] = val;
-			}
+			data[line] = val;
 		}
 
 		internal override void UpdateHeight(double oldValue, double newValue)
 		{
-			unsafe { // using the safety invariant that lineCount<=MaxLineCount
-				for (int i = 0; i < childCount; i++) {
-					if (data.heights[i] == oldValue) {
-						data.heights[i] = newValue;
-					}
+			for (int i = 0; i < childCount; i++) {
+				if (data[i] == oldValue) {
+					data[i] = newValue;
 				}
 			}
 		}
@@ -137,9 +122,8 @@ namespace AvaloniaEdit.Rendering
 			return (collapsed & (1 << line)) != 0;
 		}
 
-		internal unsafe override HeightTreeNode? InsertLine(int line, double height)
+		internal override HeightTreeNode? InsertLine(int line, double height)
 		{
-			// To avoid memory unsafety this is not just an assertion, but a runtime check.
 			if (line < 0 || line > childCount)
 				throw new ArgumentOutOfRangeException(nameof(line));
 			HeightTreeLeafNode? newLeaf = null;
@@ -156,7 +140,7 @@ namespace AvaloniaEdit.Rendering
 			}
 			MakeGapForInsertion(line, 1);
 			// insert new line
-			data.heights[line] = height;
+			data[line] = height;
 			return newLeaf;
 		}
 
@@ -167,10 +151,8 @@ namespace AvaloniaEdit.Rendering
 			if (childCount + amount > MaxLineCount) {
 				throw new ArgumentOutOfRangeException(nameof(amount));
 			}
-			unsafe { // checked in if above
-				for (int i = childCount - 1; i >= line; i--) {
-					data.heights[i + amount] = data.heights[i];
-				}
+			for (int i = childCount - 1; i >= line; i--) {
+				data[i + amount] = data[i];
 			}
 			childCount += (byte)amount;
 			AdjustEventPositions(line, amount, deleteAffectedEvents: false);
@@ -178,7 +160,6 @@ namespace AvaloniaEdit.Rendering
 
 		internal override DeletionResults DeleteLine(int line, HeightTreeNode? predecessor, HeightTreeNode? successor)
 		{
-			// To avoid memory unsafety this is not just an assertion, but a runtime check.
 			if (line < 0 || line >= childCount)
 				throw new ArgumentOutOfRangeException(nameof(line));
 			DeletionResults results = AdjustEventsOnLine(line, predecessor, successor);
@@ -288,22 +269,20 @@ namespace AvaloniaEdit.Rendering
 			// shift data to remove the lines
 			byte length = (byte)(end - start);
 			childCount -= length;
-			unsafe {
-				for (int i = start; i < childCount; i++) {
-					data.heights[i] = data.heights[i + length];
-				}
+			for (int i = start; i < childCount; i++) {
+				data[i] = data[i + length];
 			}
 			AdjustEventPositions(start, -length, deleteAffectedEvents: false);
 		}
 
-		internal unsafe void StealFromPredecessor(HeightTreeLeafNode prev, int linesToMove)
+		internal void StealFromPredecessor(HeightTreeLeafNode prev, int linesToMove)
 		{
 			if (linesToMove > prev.childCount || childCount + linesToMove > MaxLineCount)
 				throw new ArgumentOutOfRangeException(nameof(linesToMove));
 			MakeGapForInsertion(0, linesToMove);
 			// steal lines
 			for (int i = 0; i < linesToMove; i++) {
-				data.heights[i] = prev.data.heights[prev.childCount - linesToMove + i];
+				data[i] = prev.data[prev.childCount - linesToMove + i];
 			}
 			StealEvents(prev, prev.childCount - linesToMove, prev.childCount, 0);
 			// update line count
@@ -316,13 +295,13 @@ namespace AvaloniaEdit.Rendering
 			prev.collapsed = prev.RecomputeCollapsedBits();
 		}
 
-		internal unsafe void StealFromSuccessor(HeightTreeLeafNode next, int linesToMove)
+		internal void StealFromSuccessor(HeightTreeLeafNode next, int linesToMove)
 		{
 			if (linesToMove > next.childCount || childCount + linesToMove > MaxLineCount)
 				throw new ArgumentOutOfRangeException(nameof(linesToMove));
 			// steal lines
 			for (int i = 0; i < linesToMove; i++) {
-				data.heights[childCount + i] = next.data.heights[i];
+				data[childCount + i] = next.data[i];
 			}
 			StealEvents(next, 0, linesToMove, childCount);
 			// update line count
@@ -377,13 +356,11 @@ namespace AvaloniaEdit.Rendering
 		{
 			b.AppendFormat("leaf (LineCount={0}, TotalHeight={1})", childCount, TotalHeight);
 			b.AppendLine();
-			unsafe {
-				for (int i = 0; i < childCount; i++) {
-					b.Append(' ', indent + 2);
-					b.AppendFormat("[{0}] @{1} height={2}, collapsed={3}",
-								  i, lineNumber + i, data.heights[i], (collapsed & (1 << i)) != 0);
-					b.AppendLine();
-				}
+			for (int i = 0; i < childCount; i++) {
+				b.Append(' ', indent + 2);
+				b.AppendFormat("[{0}] @{1} height={2}, collapsed={3}",
+							  i, lineNumber + i, data[i], (collapsed & (1 << i)) != 0);
+				b.AppendLine();
 			}
 			AppendEventsToString(b, indent + 2);
 		}

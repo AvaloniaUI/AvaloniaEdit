@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Linq;
 using AvaloniaEdit.Rendering;
 using NUnit.Framework;
@@ -68,6 +69,39 @@ namespace AvaloniaEdit.Document
 			heightTree.SetHeight(document.Lines[1], 1000);
 			heightTree.SetHeight(document.Lines[2], 10000);
 			CheckHeights();
+		}
+
+		[Test]
+		public void InlineChildrenSurviveCollectionAndRebalancing()
+		{
+			var largeDocument = new TextDocument(string.Join("\n", Enumerable.Repeat("x", 600)));
+			using var tree = new HeightTree(largeDocument, 10);
+			for (int i = 1; i <= largeDocument.LineCount; i++) {
+				tree.SetHeight(i, i);
+			}
+			var section = tree.CollapseText(largeDocument.GetLineByNumber(50), largeDocument.GetLineByNumber(470));
+			int originalLength = largeDocument.TextLength;
+			largeDocument.Insert(originalLength, string.Concat(Enumerable.Repeat("\nx", 300)));
+
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+			GC.Collect();
+
+			Assert.AreEqual(900, largeDocument.LineCount);
+			Assert.AreEqual(50, section.Start.LineNumber);
+			Assert.AreEqual(470, section.End.LineNumber);
+			largeDocument.Remove(originalLength, largeDocument.TextLength - originalLength);
+
+			Assert.AreEqual(600, largeDocument.LineCount);
+			for (int i = 1; i <= largeDocument.LineCount; i++) {
+				Assert.AreEqual(i, tree.GetHeight(i));
+				Assert.AreEqual(i >= 50 && i <= 470, tree.GetIsCollapsed(i));
+			}
+			CheckHeights(largeDocument, tree);
+			Assert.AreEqual(49, tree.GetLineByVisualPosition(tree.GetVisualPosition(49) + 0.5));
+			Assert.AreEqual(471, tree.GetLineByVisualPosition(tree.GetVisualPosition(471) + 0.5));
+			section.Uncollapse();
+			CheckHeights(largeDocument, tree);
 		}
 		
 		void CheckHeights()

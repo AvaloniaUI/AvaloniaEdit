@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace AvaloniaEdit.Rendering
 {
@@ -34,15 +35,28 @@ namespace AvaloniaEdit.Rendering
 		// Must be at least 2 to avoid the degenerate trees
 		// Must be at most MaxChildCount/2 (rounded up) to allow node merging
 
-		struct AggregatedData
+		[InlineArray(MaxChildCount)]
+		struct Heights
 		{
-			// C# requires fixed-size arrays to appear only in structs  
-			internal unsafe fixed double totalHeights[MaxChildCount];
-			internal unsafe fixed int lineCounts[MaxChildCount];
-			// only indices 0..childCount-1 are valid
+			private double element;
 		}
-		AggregatedData data;
-		internal readonly HeightTreeNode?[] children = new HeightTreeNode?[MaxChildCount];
+
+		[InlineArray(MaxChildCount)]
+		struct LineCounts
+		{
+			private int element;
+		}
+
+		[InlineArray(MaxChildCount)]
+		internal struct Children
+		{
+			private HeightTreeNode? element;
+		}
+
+		// only indices 0..childCount-1 are valid
+		Heights totalHeights;
+		LineCounts lineCounts;
+		internal Children children;
 		// invariant: children[0..childCount-1] are non-null
 
 		public static HeightTreeInnerNode NewRoot(HeightTreeNode a, HeightTreeNode b)
@@ -65,23 +79,21 @@ namespace AvaloniaEdit.Rendering
 		internal int FindChildForLine(int line, out int lineInChild)
 		{
 			Debug.Assert(line >= 0);
-			unsafe {
-				for (int i = 0; i < childCount; i++) {
-					if (line < data.lineCounts[i]) {
-						lineInChild = line;
-						return i;
-					}
-					line -= data.lineCounts[i];
+			for (int i = 0; i < childCount; i++) {
+				if (line < lineCounts[i]) {
+					lineInChild = line;
+					return i;
 				}
-				// line is out of range, this might happen when inserting a line at the end of the document
-				Debug.Assert(line == 0);
-				if (childCount == 0) {
-					throw new InvalidOperationException("childCount==0");
-				}
-				// return the last child
-				lineInChild = line + data.lineCounts[childCount - 1];
-				return childCount - 1;
+				line -= lineCounts[i];
 			}
+			// line is out of range, this might happen when inserting a line at the end of the document
+			Debug.Assert(line == 0);
+			if (childCount == 0) {
+				throw new InvalidOperationException("childCount==0");
+			}
+			// return the last child
+			lineInChild = line + lineCounts[childCount - 1];
+			return childCount - 1;
 		}
 
 		// Gets the index of the child that contains the specified visual position.
@@ -90,44 +102,39 @@ namespace AvaloniaEdit.Rendering
 		{
 			Debug.Assert(childCount >= 1);
 			double totalHeight = 0;
-			unsafe { // using the safety invariant that childCount<=MaxChildCount
-				for (int i = 0; i < childCount; i++) {
-					if ((collapsed & (1 << i)) != 0)
-						continue;
-					double newTotalHeight = totalHeight + data.totalHeights[i];
-					if (position < newTotalHeight) {
-						positionInChild = position - totalHeight;
-						return i;
-					}
-					totalHeight = newTotalHeight;
+			for (int i = 0; i < childCount; i++) {
+				if ((collapsed & (1 << i)) != 0)
+					continue;
+				double newTotalHeight = totalHeight + totalHeights[i];
+				if (position < newTotalHeight) {
+					positionInChild = position - totalHeight;
+					return i;
 				}
-				// Not Found: Can happen when position>totalHeight,
-				// i.e. at the end of the document, or due to rounding errors.
-				// In this case, return the last non-collapsed child.
-				for (int i = childCount - 1; i >= 0; i--) {
-					if (data.totalHeights[i] > 0 && (collapsed & (1 << i)) == 0) {
-						positionInChild = data.totalHeights[i];
-						return i;
-					}
-				}
-				// If all children are collapsed, return the first child.
-				positionInChild = data.totalHeights[0];
-				return 0;
+				totalHeight = newTotalHeight;
 			}
+			// Not Found: Can happen when position>totalHeight,
+			// i.e. at the end of the document, or due to rounding errors.
+			// In this case, return the last non-collapsed child.
+			for (int i = childCount - 1; i >= 0; i--) {
+				if (totalHeights[i] > 0 && (collapsed & (1 << i)) == 0) {
+					positionInChild = totalHeights[i];
+					return i;
+				}
+			}
+			// If all children are collapsed, return the first child.
+			positionInChild = totalHeights[0];
+			return 0;
 		}
 
 		internal override int LineCount => GetTotalLineCountUntilChildIndex(childCount);
 
 		internal int GetTotalLineCountUntilChildIndex(int childIndex)
 		{
-			// To avoid memory unsafety this is not just an assertion, but a runtime check.
 			if (childIndex < 0 || childIndex > childCount)
 				throw new ArgumentOutOfRangeException(nameof(childIndex));
 			int totalCount = 0;
-			unsafe { // using the safety invariant that childCount<=MaxChildCount
-				for (int i = 0; i < childIndex; i++) {
-					totalCount += data.lineCounts[i];
-				}
+			for (int i = 0; i < childIndex; i++) {
+				totalCount += lineCounts[i];
 			}
 			return totalCount;
 		}
@@ -136,15 +143,12 @@ namespace AvaloniaEdit.Rendering
 
 		internal double GetTotalHeightUntilChildIndex(int childIndex)
 		{
-			// To avoid memory unsafety this is not just an assertion, but a runtime check.
 			if (childIndex < 0 || childIndex > childCount)
 				throw new ArgumentOutOfRangeException(nameof(childIndex));
 			double totalHeight = 0;
-			unsafe {
-				for (int i = 0; i < childIndex; i++) {
-					if ((collapsed & (1 << i)) == 0) {
-						totalHeight += data.totalHeights[i];
-					}
+			for (int i = 0; i < childIndex; i++) {
+				if ((collapsed & (1 << i)) == 0) {
+					totalHeight += totalHeights[i];
 				}
 			}
 			return totalHeight;
@@ -155,18 +159,14 @@ namespace AvaloniaEdit.Rendering
 			int lineInChild;
 			int childIndex = FindChildForLine(line, out lineInChild);
 			children[childIndex]!.SetHeight(lineInChild, val);
-			unsafe { // index already validated by array access above
-				data.totalHeights[childIndex] = children[childIndex]!.TotalHeight;
-			}
+			totalHeights[childIndex] = children[childIndex]!.TotalHeight;
 		}
 
 		internal override void UpdateHeight(double oldValue, double newValue)
 		{
 			for (int i = 0; i < childCount; i++) {
 				children[i]!.UpdateHeight(oldValue, newValue);
-				unsafe { // index already validated by array access above
-					data.totalHeights[i] = children[i]!.TotalHeight;
-				}
+				totalHeights[i] = children[i]!.TotalHeight;
 			}
 		}
 
@@ -218,10 +218,8 @@ namespace AvaloniaEdit.Rendering
 			Debug.Assert(0 <= childIndex && childIndex < childCount);
 			var child = children[childIndex]!;
 			Debug.Assert(child.parent == this && child.indexInParent == childIndex);
-			unsafe { // index already validated by array access above
-				data.totalHeights[childIndex] = child.TotalHeight;
-				data.lineCounts[childIndex] = child.LineCount;
-			}
+			totalHeights[childIndex] = child.TotalHeight;
+			lineCounts[childIndex] = child.LineCount;
 			// First, clear out the events belonging to this child so that we can propagate
 			// them again from scratch.
 			bool needRecomputeCollapsed = false;
@@ -269,9 +267,7 @@ namespace AvaloniaEdit.Rendering
 			Debug.Assert(0 <= childIndex && childIndex < childCount);
 			var child = children[childIndex]!;
 			Debug.Assert(child.parent == this && child.indexInParent == childIndex);
-			unsafe { // index already validated by array access above
-				data.totalHeights[childIndex] = child.TotalHeight;
-			}
+			totalHeights[childIndex] = child.TotalHeight;
 		}
 
 		internal bool InsertChild(int childIndex, HeightTreeNode newChild)
@@ -290,10 +286,8 @@ namespace AvaloniaEdit.Rendering
 			Debug.Assert(childCount + amount <= MaxChildCount);
 			for (int i = childCount - 1; i >= childIndex; i--) {
 				children[i + amount] = children[i];
-				unsafe { // index already validated by array access above
-					data.totalHeights[i + amount] = data.totalHeights[i];
-					data.lineCounts[i + amount] = data.lineCounts[i];
-				}
+				totalHeights[i + amount] = totalHeights[i];
+				lineCounts[i + amount] = lineCounts[i];
 				children[i + amount]!.indexInParent = (byte)(i + amount);
 			}
 			childCount += (byte)amount;
@@ -399,10 +393,8 @@ namespace AvaloniaEdit.Rendering
 			childCount -= (byte)length;
 			for (int i = start; i < childCount; i++) {
 				children[i] = children[i + length];
-				unsafe { // index already validated by array access above
-					data.totalHeights[i] = data.totalHeights[i + length];
-					data.lineCounts[i] = data.lineCounts[i + length];
-				}
+				totalHeights[i] = totalHeights[i + length];
+				lineCounts[i] = lineCounts[i + length];
 				children[i]!.indexInParent = (byte)i;
 			}
 			for (int i = 0; i < length; i++) {
@@ -419,10 +411,8 @@ namespace AvaloniaEdit.Rendering
 			// steal children
 			for (int i = 0; i < childrenToMove; i++) {
 				children[i] = prev.children[prev.childCount - childrenToMove + i];
-				unsafe { // index already validated by array access above
-					data.totalHeights[i] = prev.data.totalHeights[prev.childCount - childrenToMove + i];
-					data.lineCounts[i] = prev.data.lineCounts[prev.childCount - childrenToMove + i];
-				}
+				totalHeights[i] = prev.totalHeights[prev.childCount - childrenToMove + i];
+				lineCounts[i] = prev.lineCounts[prev.childCount - childrenToMove + i];
 				children[i]!.parent = this;
 				children[i]!.indexInParent = (byte)i;
 			}
@@ -447,10 +437,8 @@ namespace AvaloniaEdit.Rendering
 			// steal children
 			for (int i = 0; i < childrenToMove; i++) {
 				children[childCount + i] = next.children[i];
-				unsafe { // index already validated by array access above
-					data.totalHeights[childCount + i] = next.data.totalHeights[i];
-					data.lineCounts[childCount + i] = next.data.lineCounts[i];
-				}
+				totalHeights[childCount + i] = next.totalHeights[i];
+				lineCounts[childCount + i] = next.lineCounts[i];
 				children[childCount + i]!.parent = this;
 				children[childCount + i]!.indexInParent = (byte)(childCount + i);
 			}
@@ -559,17 +547,15 @@ namespace AvaloniaEdit.Rendering
 			b.AppendFormat("inner (childCount={0}, LineCount={1}, TotalHeight={2}, collapsed={3:x})", childCount, LineCount, TotalHeight, collapsed);
 			b.AppendLine();
 			indent += 2;
-			unsafe {
-				for (int i = 0; i < childCount; i++) {
-					b.Append(' ', indent);
-					b.Append($"[{i}] ");
-					if (children[i] == null) {
-						b.AppendLine("null");
-					} else {
-						children[i]!.AppendTreeToString(b, indent, lineNumber);
-					}
-					lineNumber += data.lineCounts[i];
+			for (int i = 0; i < childCount; i++) {
+				b.Append(' ', indent);
+				b.Append($"[{i}] ");
+				if (children[i] == null) {
+					b.AppendLine("null");
+				} else {
+					children[i]!.AppendTreeToString(b, indent, lineNumber);
 				}
+				lineNumber += lineCounts[i];
 			}
 			AppendEventsToString(b, indent);
 		}
@@ -586,11 +572,9 @@ namespace AvaloniaEdit.Rendering
 			int lineNumberInChild = lineNumber;
 			for (int i = 0; i < childCount; i++) {
 				children[i]!.CheckInvariant(false, lineNumberInChild);
-				unsafe {
-					lineNumberInChild += data.lineCounts[i];
-					Debug.Assert(children[i]!.TotalHeight == data.totalHeights[i]);
-					Debug.Assert(children[i]!.LineCount == data.lineCounts[i]);
-				}
+				lineNumberInChild += lineCounts[i];
+				Debug.Assert(children[i]!.TotalHeight == totalHeights[i]);
+				Debug.Assert(children[i]!.LineCount == lineCounts[i]);
 			}
 			foreach (var e in events ?? Array.Empty<Event>()) {
 				if (e.Section != null) {
