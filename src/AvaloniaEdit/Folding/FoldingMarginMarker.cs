@@ -93,15 +93,19 @@ namespace AvaloniaEdit.Folding
                 IsPointerOver ? activePen : inactivePen,
                 rect);
 
+            // the sign: in the selected brush while pointed at, else in FoldingMarkerSignBrush when one is set
+            var signPen = IsPointerOver || margin.FoldingMarkerSignBrush == null
+                ? activePen
+                : new Pen(margin.FoldingMarkerSignBrush, lineCap: PenLineCap.Square);
             var middleX = rect.X + rect.Width / 2;
             var middleY = rect.Y + rect.Height / 2;
             var space = PixelSnapHelpers.Round(rect.Width / 8, pixelSize.Width) + pixelSize.Width;
-            drawingContext.DrawLine(activePen,
+            drawingContext.DrawLine(signPen,
                                     new Point(rect.X + space, middleY),
                                     new Point(rect.Right - space, middleY));
             if (!_isExpanded)
             {
-                drawingContext.DrawLine(activePen,
+                drawingContext.DrawLine(signPen,
                                         new Point(middleX, rect.Y + space),
                                         new Point(middleX, rect.Bottom - space));
             }

@@ -46,9 +46,28 @@ namespace AvaloniaEdit.Folding
             FoldingMarkerBackgroundBrushProperty.Changed.Subscribe(OnUpdateBrushes);
             SelectedFoldingMarkerBrushProperty.Changed.Subscribe(OnUpdateBrushes);
             SelectedFoldingMarkerBackgroundBrushProperty.Changed.Subscribe(OnUpdateBrushes);
+            FoldingMarkerSignBrushProperty.Changed.Subscribe(OnUpdateBrushes);
         }
 
         #region Brushes
+        /// <summary>
+        /// FoldingMarkerSignBrush dependency property.
+        /// </summary>
+        public static readonly AttachedProperty<IBrush> FoldingMarkerSignBrushProperty =
+            AvaloniaProperty.RegisterAttached<FoldingMargin, Control, IBrush>("FoldingMarkerSignBrush",
+                                                null, inherits: true);
+
+        /// <summary>
+        /// Gets/sets the Brush used for the plus or minus sign in a folding marker that is not pointed at.
+        /// When null (the default), the sign is drawn in <see cref="SelectedFoldingMarkerBrush"/>, as it always was;
+        /// set it (to <see cref="FoldingMarkerBrush"/>'s brush, say) for markers whose sign matches their box.
+        /// </summary>
+        public IBrush FoldingMarkerSignBrush
+        {
+            get => GetValue(FoldingMarkerSignBrushProperty);
+            set => SetValue(FoldingMarkerSignBrushProperty, value);
+        }
+
         /// <summary>
         /// FoldingMarkerBrush dependency property.
         /// </summary>
@@ -128,6 +147,11 @@ namespace AvaloniaEdit.Folding
             if (e.Property.Name == SelectedFoldingMarkerBrushProperty.Name)
             {
                 m._selectedFoldingControlPen = new Pen((IBrush)e.NewValue);
+            }
+            // the markers draw themselves from these brushes too
+            foreach (var marker in m._markers)
+            {
+                marker.InvalidateVisual();
             }
         }
         #endregion
