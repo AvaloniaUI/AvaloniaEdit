@@ -219,7 +219,24 @@ namespace AvaloniaEdit.Folding
 
             CalculateFoldLinesForFoldingsActiveAtStart(allTextLines, colors, endMarker);
             CalculateFoldLinesForMarkers(allTextLines, colors, endMarker);
-            DrawFoldLines(drawingContext, colors, endMarker);
+            if (_markers.Count == 0)
+            {
+                DrawFoldLines(drawingContext, colors, endMarker);
+                return;
+            }
+
+            // A line starts in the middle of its marker: leave the markers out, so it never shows inside one whose
+            // background brush is transparent (or not opaque).
+            var markers = new GeometryGroup();
+            foreach (var m in _markers)
+            {
+                markers.Children.Add(new RectangleGeometry(m.Bounds));
+            }
+            var clip = new CombinedGeometry(GeometryCombineMode.Exclude, new RectangleGeometry(new Rect(Bounds.Size)), markers);
+            using (drawingContext.PushGeometryClip(clip))
+            {
+                DrawFoldLines(drawingContext, colors, endMarker);
+            }
         }
 
         /// <summary>
