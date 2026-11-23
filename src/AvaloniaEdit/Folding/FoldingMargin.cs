@@ -46,6 +46,8 @@ namespace AvaloniaEdit.Folding
             FoldingMarkerBackgroundBrushProperty.Changed.Subscribe(OnUpdateBrushes);
             SelectedFoldingMarkerBrushProperty.Changed.Subscribe(OnUpdateBrushes);
             SelectedFoldingMarkerBackgroundBrushProperty.Changed.Subscribe(OnUpdateBrushes);
+            FoldingLineDashStyleProperty.Changed.Subscribe(OnUpdateBrushes);
+            AffectsRender<FoldingMargin>(ShowFoldingLinesProperty);
         }
 
         #region Brushes
@@ -121,14 +123,54 @@ namespace AvaloniaEdit.Folding
             else if (e.Sender is TextEditor editor)
                 m = editor.TextArea.LeftMargins.FirstOrDefault(c => c is FoldingMargin) as FoldingMargin;
             if (m == null) return;
-            if (e.Property.Name == FoldingMarkerBrushProperty.Name)
+            var source = (AvaloniaObject)e.Sender;
+            if (e.Property.Name == FoldingMarkerBrushProperty.Name || e.Property.Name == FoldingLineDashStyleProperty.Name)
             {
-                m._foldingControlPen = new Pen((IBrush)e.NewValue);
+                m._foldingControlPen = new Pen(source.GetValue(FoldingMarkerBrushProperty), dashStyle: source.GetValue(FoldingLineDashStyleProperty));
             }
-            if (e.Property.Name == SelectedFoldingMarkerBrushProperty.Name)
+            if (e.Property.Name == SelectedFoldingMarkerBrushProperty.Name || e.Property.Name == FoldingLineDashStyleProperty.Name)
             {
-                m._selectedFoldingControlPen = new Pen((IBrush)e.NewValue);
+                m._selectedFoldingControlPen = new Pen(source.GetValue(SelectedFoldingMarkerBrushProperty), dashStyle: source.GetValue(FoldingLineDashStyleProperty));
             }
+            m.InvalidateVisual();
+        }
+        #endregion
+
+        #region Fold lines
+        /// <summary>
+        /// FoldingLineDashStyle dependency property.
+        /// </summary>
+        public static readonly AttachedProperty<IDashStyle> FoldingLineDashStyleProperty =
+            AvaloniaProperty.RegisterAttached<FoldingMargin, Control, IDashStyle>("FoldingLineDashStyle",
+                                                null, inherits: true);
+
+        /// <summary>
+        /// Gets/sets the dash style of the lines that run from a folding marker to the end of its folding
+        /// (null for solid lines). The markers themselves are always drawn solid.
+        /// The lines have flat caps, so a dash style of zero-length dashes (such as <see cref="DashStyle.Dot"/>) draws
+        /// nothing: for dots, use short dashes, e.g. <c>new DashStyle(new double[] { 1, 2 }, 0)</c>.
+        /// </summary>
+        public IDashStyle FoldingLineDashStyle
+        {
+            get => GetValue(FoldingLineDashStyleProperty);
+            set => SetValue(FoldingLineDashStyleProperty, value);
+        }
+
+        /// <summary>
+        /// ShowFoldingLines dependency property.
+        /// </summary>
+        public static readonly AttachedProperty<bool> ShowFoldingLinesProperty =
+            AvaloniaProperty.RegisterAttached<FoldingMargin, Control, bool>("ShowFoldingLines",
+                                                true, inherits: true);
+
+        /// <summary>
+        /// Gets/sets whether the lines that run from a folding marker to the end of its folding are drawn.
+        /// When false, only the markers are shown.
+        /// </summary>
+        public bool ShowFoldingLines
+        {
+            get => GetValue(ShowFoldingLinesProperty);
+            set => SetValue(ShowFoldingLinesProperty, value);
         }
         #endregion
 
@@ -211,6 +253,8 @@ namespace AvaloniaEdit.Folding
             if (TextView == null || !TextView.VisualLinesValid)
                 return;
             if (TextView.VisualLines.Count == 0 || FoldingManager == null)
+                return;
+            if (!ShowFoldingLines)
                 return;
 
             var allTextLines = TextView.VisualLines.SelectMany(vl => vl.TextLines).ToList();
